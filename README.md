@@ -9,6 +9,7 @@ We remove this bottleneck by synthesising MSAs directly from secondary structure
 Feeding these artificial alignments to AlphaFold 3 boosts RNA 3D accuracy across a diverse set of RNA structures, including state-of-the-art models for monomeric RNA-protein complexes. 
 Secondary structure driven synthetic evolution therefore unlocks deep-alignment benefits for RNA 3D structure prediction.
 
+**Note that this repo currently mainly serves for reproducing the results of our Nature Methods submission.**
 
 ## Install
 We use [miniconda](https://www.anaconda.com/docs/getting-started/miniconda/main)/[Micromamba](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html) to create a virtual environment for all our dependencies. If you are not familiar with using ```conda``` or ```mamba``` please find more information at <https://www.anaconda.com/docs/getting-started/miniconda/main> and <https://mamba.readthedocs.io/en/latest/index.html>. You can download miniconda for Linux, Windows, and MAC [here](https://www.anaconda.com/download) or read about Micromamba installation [here](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html).
