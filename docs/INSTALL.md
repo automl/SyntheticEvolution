@@ -3,7 +3,7 @@ Please find the guidelines for installing required dependencies below.
 Our install requires ```conda``` or ```mamba```.
 For installation of these, please follow our guidelines in the repository root ```README.md```.
 
-## Synthetic-MSA
+## Synthetic Homologous Sequences (SHS)
 If you have ```conda``` or ```mamba```, we provide a ready to use install script via
 ```
 ./install.sh
@@ -131,6 +131,7 @@ Alternatively, you can also directly download a zip of the binaries for your OS.
 
 ### Help:
 [USAlign Help Page](https://zhanggroup.org/US-align/help)
+
 
 
 
