@@ -14,7 +14,7 @@ Secondary structure driven synthetic evolution therefore unlocks deep-alignment 
 ## Install
 We use [miniconda](https://www.anaconda.com/docs/getting-started/miniconda/main)/[Micromamba](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html) to create a virtual environment for all our dependencies. If you are not familiar with using ```conda``` or ```mamba``` please find more information at <https://www.anaconda.com/docs/getting-started/miniconda/main> and <https://mamba.readthedocs.io/en/latest/index.html>. You can download miniconda for Linux, Windows, and MAC [here](https://www.anaconda.com/download) or read about Micromamba installation [here](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html).
 
-Please find detailed guidelines for installation of our synthetic MSA pipeline in our [Synthetic MSA Install Guidelines](/docs/INSTALL.md#Synthetic-MSA). 
+Please find detailed guidelines for installation of our pipeline for the generation of synthetic homologues in our [Install Guidelines](/docs/INSTALL.md). 
 For quick install, you can use our installation script by running 
 ```
 ./install.sh
