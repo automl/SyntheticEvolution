@@ -9,7 +9,6 @@ from Bio.PDB import MMCIFParser, PDBIO, PDBParser
 from pymol import cmd
 import tempfile
 from structures.rna import RNA
-from structures.dna import DNA
 from structures.protein import Protein
 import re
 from scipy.spatial.distance import pdist, squareform
@@ -60,7 +59,6 @@ def get_rmsd_tm_lddt_scores(file_name_cif_pdb, file_name_cif_af):
 
     protein_rmsd = []
     rna_rmsd = []
-    dna_rmsd = []
     complex_rmsd = []
     cmd.load(temp_pdb_file_ref_path, 'reference')
     cmd.load(temp_pdb_file_tgt_path, 'predicted')
@@ -96,9 +94,6 @@ def get_rmsd_tm_lddt_scores(file_name_cif_pdb, file_name_cif_af):
         protein = Protein.get_protein_from_db(id=file_pdb.upper())
         if protein.is_protein:
             pdb_protein_chain_id = protein.get_longest_chain_id()
-        dna = DNA.get_dna_from_db(id=file_pdb.upper())
-        if dna.is_dna:
-            pdb_dna_chain_id = dna.get_longest_chain_id()
     if len(file_af) > 6:
         parts = file_name_cif_af.split('_')
         rna = RNA.get_rna_from_db(id=parts[1].upper(), file_name=file_name_cif_af)
@@ -108,9 +103,6 @@ def get_rmsd_tm_lddt_scores(file_name_cif_pdb, file_name_cif_af):
         protein = Protein.get_protein_from_db(id=parts[1].upper(), file_name=file_name_cif_af)
         if protein.is_protein:
             af_protein_chain_id = protein.get_longest_chain_id()
-        dna = DNA.get_dna_from_db(id=parts[1].upper(), file_name=file_name_cif_af)
-        if dna.is_dna:
-            af_dna_chain_id = dna.get_longest_chain_id()
 
     aligned_folder = os.path.join(os.path.dirname(af_folder), "aligned")
     if not os.path.exists(aligned_folder):
@@ -274,43 +266,6 @@ def get_rmsd_tm_lddt_scores(file_name_cif_pdb, file_name_cif_af):
         # rna_lddt_score = 0
         print(f"RNA lDDT Score: {rna_lddt_score:.2f}")
 
-    if dna.is_dna:
-        # cmd.alter(f'predicted and chain {af_dna_chain_id}', f'chain="{pdb_dna_chain_id}"') # Change chain label?
-        # It seems that the other chain labelled as {pdb_dna_chain_id} is considered instead
-        alignment_result = cmd.align(f'predicted and chain {af_dna_chain_id} and polymer.nucleic and name P',
-                  f'reference and chain {pdb_dna_chain_id} and polymer.nucleic and name P',
-                  quiet=0) #, object='alignment_rna', reset=1)
-        rmsd_dna = round(alignment_result[0], 2)
-        print(f"RMSD for DNA structure from alignment = {rmsd_dna} Å")
-        dna_rmsd.append(rmsd_dna)
-        num_dna_atoms = cmd.count_atoms(f"predicted and chain {af_dna_chain_id} and polymer.nucleic")
-
-        dna_aligned_reference_pdb = os.path.join(aligned_folder, f'{pdb_id}_pdb_aligned_dna.pdb')
-        dna_aligned_predicted_pdb = os.path.join(aligned_folder, f'{pdb_id}_af_aligned_dna.pdb')
-        cmd.save(dna_aligned_reference_pdb, f'reference and chain {pdb_dna_chain_id}')
-        cmd.save(dna_aligned_predicted_pdb, f'predicted and chain {af_dna_chain_id}')
-
-        if contains_parentheses(protein.protein_sequence) == False:
-            # Obtain TM-score from https://zhanggroup.org/TM-score/
-            tm_output_path_dna = os.path.join(af_folder, f'{pdb_id}_dna_tm_output.txt')
-            os.system(
-                f"./USalign/USalign {dna_aligned_reference_pdb} {dna_aligned_predicted_pdb} "
-                f"-mol DNA -mm 0 -ter 2 > {tm_output_path_dna}"
-            )
-            with open(tm_output_path_dna, 'r') as file:
-                content = file.read()
-                tm_score_dna = extract_score(content, 'TM-score')
-                rmsd_score_dna = extract_score(content, 'RMSD')
-                if rmsd_score_dna:
-                    dna_rmsd.append(rmsd_score_dna)
-        else:
-            tm_score_dna = None
-            rmsd_score_dna = None
-
-        # Calculate DNA LDDT using the complex LDDT function
-        dna_lddt_score = calculate_complex_lddt(dna_aligned_reference_pdb, dna_aligned_predicted_pdb)
-        print(f"DNA lDDT Score: {dna_lddt_score:.2f}")
-
     database_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'database', 'rbpDatabase.db')
     conn = sqlite3.connect(database_path)
     cursor = conn.cursor()
@@ -369,9 +324,8 @@ def get_rmsd_tm_lddt_scores(file_name_cif_pdb, file_name_cif_af):
     complex_rmsd = handle_list_or_value(complex_rmsd)
     protein_rmsd = handle_list_or_value(protein_rmsd)
     rna_rmsd = handle_list_or_value(rna_rmsd)
-    dna_rmsd = handle_list_or_value(dna_rmsd)
 
-    if protein.is_protein and rna.is_rna and not dna.is_dna:
+    if protein.is_protein and rna.is_rna:
         cursor.execute('''UPDATE pred_protein_rna
                           SET Complex_RMSD = ?, Protein_RMSD = ?, RNA_RMSD = ?, 
                               Protein_LDDT = ?, RNA_LDDT = ?, 
@@ -384,24 +338,7 @@ def get_rmsd_tm_lddt_scores(file_name_cif_pdb, file_name_cif_af):
                         tm_score_complex, complex_lddt,
                         file_name_cif_af))
 
-    if protein.is_protein and rna.is_rna and dna.is_dna:
-        cursor.execute('''UPDATE pred_protein_rna_dna
-                                  SET Complex_RMSD = ?, Protein_RMSD = ?, RNA_RMSD = ?, DNA_RMSD = ?, Protein_LDDT = ?, 
-                                  RNA_LDDT = ?, DNA_LDDT = ?, Protein_TM = ?, RNA_TM = ?, DNA_TM = ?, 
-                                  Complex_TM = ?, Complex_LDDT = ?
-                                  WHERE FileName = ?''',
-                       (complex_rmsd, protein_rmsd, rna_rmsd, dna_rmsd, protein_lddt_score, rna_lddt_score, dna_lddt_score,
-                        tm_score_protein, tm_score_rna, tm_score_dna, tm_score_complex, complex_lddt, file_name_cif_af))
-
-    if protein.is_protein and not rna.is_rna and dna.is_dna:
-        cursor.execute('''UPDATE pred_protein_dna
-                                  SET Complex_RMSD = ?, Protein_RMSD = ?, DNA_RMSD = ?, Protein_LDDT = ?, DNA_LDDT = ?, 
-                                  Protein_TM = ?, DNA_TM = ?, Complex_TM = ?, Complex_LDDT = ?
-                                  WHERE FileName = ?''',
-                       (complex_rmsd, protein_rmsd, dna_rmsd, protein_lddt_score, dna_lddt_score, tm_score_protein,
-                        tm_score_dna, tm_score_complex, complex_lddt, file_name_cif_af))
-
-    if not protein.is_protein and rna.is_rna and not dna.is_dna:
+    if not protein.is_protein and rna.is_rna:
         cursor.execute('''UPDATE pred_rna_rna
                                   SET Complex_RMSD = ?, RNA_RMSD = ?, RNA_LDDT = ?, RNA_TM = ?, Complex_TM = ?, Complex_LDDT = ?
                                   WHERE FileName = ?''',
