@@ -1,5 +1,5 @@
 # SyntheticEvolution
-Secondary Structure Based synthetic MSA generation that improves AlphaFold 3 Predictions
+Secondary Structure Based generation of synthetic homologues that improves AlphaFold 3 Predictions
 
 Cellular RNA function is dictated by its three-dimensional fold, yet experimental structure determination is slow and expensive.
 Although protein structures can now be predicted with near-experimental fidelity, RNA 3D prediction still lags behind.
