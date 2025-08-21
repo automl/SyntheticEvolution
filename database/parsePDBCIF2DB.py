@@ -38,19 +38,14 @@ def parse_cif_sequence(cif_file):
     strand_ids = pdb_info.get('_entity_poly.pdbx_strand_id', [])
     protein_sequences = []
     rna_sequences = []
-    dna_sequences = []
     protein_chain_ids = []
     rna_chain_ids = []
-    dna_chain_ids = []
     protein_seq_lengths = []
     rna_seq_lengths = []
-    dna_seq_lengths = []
     number_proteins = 0
     number_RNAs = 0
-    number_DNAs = 0
     protein_modified_aas = []
     rna_modified_nucleotides = []
-    dna_modified_nucleotides = []
 
     for poly_type, strand_id in zip(poly_types, strand_ids):
         chain_ids = strand_id.split(',') # Split strand IDs in case there are multiple strands for an entity
@@ -81,16 +76,6 @@ def parse_cif_sequence(cif_file):
                     elif resname in unmodified_residues:
                         sequences[chain_id].append(resname)
 
-                elif poly_type == 'polydeoxyribonucleotide':
-                    if chain_id not in dna_chain_ids:
-                        dna_chain_ids.append(chain_id)
-                    if resname in modified_residues:
-                        sequences[chain_id].append(f"({resname})")
-                        if resname not in dna_modified_nucleotides:
-                            dna_modified_nucleotides.append(resname)
-                    elif resname in unmodified_residues:
-                        sequences[chain_id].append(resname)
-
     for chain_id, seq_list in sequences.items():
         sequence = ''.join(seq_list)
         if any(poly_type == 'polypeptide(L)' for poly_type, chain_ids in zip(poly_types, strand_ids) if
@@ -105,27 +90,10 @@ def parse_cif_sequence(cif_file):
             length = calculate_length(sequence)
             rna_seq_lengths.append(length)
             number_RNAs += 1
-        elif any(poly_type == 'polydeoxyribonucleotide' for poly_type, chain_ids in zip(poly_types, strand_ids) if
-                 chain_id in chain_ids.split(',')):
-            dna_sequences.append(sequence)
-            length = (calculate_length(sequence))/2
-            dna_seq_lengths.append(length)
-            number_DNAs += 1
 
-    # print("Protein Sequences:", protein_sequences)
-    # print("RNA Sequences:", rna_sequences)
-    # print("DNA Sequences:", dna_sequences)
-    # print("protein_chain_ids", protein_chain_ids)
-    # print("rna_chain_ids", rna_chain_ids)
-    # print("protein_seq_lengths", protein_seq_lengths)
-    # print("rna_seq_lengths", rna_seq_lengths)
-    # print("number_proteins", number_proteins)
-    # print("number_RNAs", number_RNAs)
-    # print("protein_modified_aas", protein_modified_aas)
-    # print("rna_modified_nucleotides", rna_modified_nucleotides)
-    return protein_sequences, rna_sequences, dna_sequences, protein_chain_ids, rna_chain_ids, dna_chain_ids, \
-        protein_seq_lengths, rna_seq_lengths, dna_seq_lengths, number_proteins, number_RNAs, number_DNAs, \
-        protein_modified_aas, rna_modified_nucleotides, dna_modified_nucleotides
+    return protein_sequences, rna_sequences, protein_chain_ids, rna_chain_ids, \
+        protein_seq_lengths, rna_seq_lengths, number_proteins, number_RNAs, \
+        protein_modified_aas, rna_modified_nucleotides
 
 # Extract data from the PDB CIF file only
 def parse_cif_file(cif_file):
@@ -139,7 +107,6 @@ def parse_cif_file(cif_file):
 
     is_protein = False
     is_rna = False
-    is_dna = False
     protein_names = []
     uniprot_ids = []
     protein_descriptions = []
@@ -147,21 +114,17 @@ def parse_cif_file(cif_file):
     protein_organisms = []
     rna_descriptions = []
     rna_sources = []
-    dna_descriptions = []
-    dna_sources = []
     rna_families = []
 
-    protein_sequences, rna_sequences, dna_sequences, protein_chain_ids, rna_chain_ids, dna_chain_ids, \
-    protein_lengths, rna_lengths, dna_lengths, number_proteins, number_RNAs, number_DNAs, \
-    protein_modified_aas, rna_modified_nucleotides, dna_modified_nucleotides = parse_cif_sequence(cif_file)
+    protein_sequences, rna_sequences, protein_chain_ids, rna_chain_ids, \
+    protein_lengths, rna_lengths,number_proteins, number_RNAs, \
+    protein_modified_aas, rna_modified_nucleotides= parse_cif_sequence(cif_file)
 
     entity_info_map = {}
     for i in range(len(pdb_info.get('_entity.id', []))):
         entity_id = pdb_info['_entity.id'][i]
         entity_info_map[entity_id] = {
             'type': pdb_info['_entity.type'][i],
-            # src_method: man: entity isolated from a genetically manipulated source, nat: entity isolated from a natural source
-            # syn: entity obtained synthetically
             'src_method': pdb_info['_entity.src_method'][i],
             'description': pdb_info['_entity.pdbx_description'][i],
         }
@@ -201,7 +164,7 @@ def parse_cif_file(cif_file):
                 protein_descriptions.append(protein_description)
                 protein_sources.append(protein_source)
                 protein_organisms.append(organism)
-                # print(f"Protein Name: {protein_name}, uniprot_id: {uniprot_id}, Protein Description: {protein_description}, Source Method: {protein_source}, Organism: {organism}")
+
         elif entity_type == 'polyribonucleotide':
             rna_sequence += seq
             if '(D' in rna_sequence and ')' in rna_sequence:
@@ -224,58 +187,19 @@ def parse_cif_file(cif_file):
                     rna_family = rna_family['families'][0]
                 rna_families.append(rna_family)
                 print("rna_families", rna_families)
-                # print(f"RNA rna_length: {rna_length}, RNA description: {rna_description}, Source Method: {rna_source}")
-        elif entity_type == 'polydeoxyribonucleotide':
-            is_dna = True
-            if entity_id in entity_info_map:
-                # dna_name = entity_info_map[entity_id]['id_name']
-                dna_description = entity_info_map[entity_id]['description']
-                dna_source = entity_info_map[entity_id]['src_method']
-                dna_descriptions.append(dna_description)
-                dna_sources.append(dna_source)
-                # print(f"DNA Description: {description}, Source Method: {dna_source}")
 
-    # print(f"RNA rna_length: {rna_lengths}, RNA description: {rna_descriptions}, Source Method: {rna_sources}")
-    # print(f"Protein Name: {protein_names}, uniprot_id: {uniprot_ids}, Protein Description: {protein_descriptions}, Source Method: {protein_sources}, Organism: {protein_organisms}")
-
-    # print(f"Date: {deposited_date}")
-    # print(f"Protein Name: {protein_name}")
-    # print(f"Uniprot ID: {uniprot_id}")
-    # print(f"PDB ID: {pdb_id}")
-    # print(f"Protein Sequence: {protein_sequence}")
-    # print(f"RNA Sequence: {rna_sequence}")
-    # print(f"Organism: {organism}")
-    # print(f"Experiment: {experiment}")
-    # print(f"Protein Length: {protein_length}")
-    # print(f"RNA Length: {rna_length}")
-
-    if is_rna and is_protein and not is_dna:
+    if is_rna and is_protein:
         classification = "protein_rna"
-        return classification, (pdb_id, uniprot_ids, protein_names, protein_descriptions, protein_sources, "", protein_modified_aas, protein_organisms,
-            protein_sequences, protein_chain_ids, protein_lengths, number_proteins, "", "", "", rna_descriptions, rna_sources, rna_families,
-            rna_modified_nucleotides, rna_sequences, rna_chain_ids, rna_lengths, number_RNAs, "", "", "", "", "", "", "", "", "", "",
-            "", "", "", deposited_date, experiment, xray_resolution, "", "", "", "", "", "", "", "", "", "", "", "", "")
+        return classification, (pdb_id, uniprot_ids, protein_names, protein_descriptions, protein_sources,
+                                protein_modified_aas, protein_organisms,protein_sequences, protein_chain_ids,
+                                protein_lengths, number_proteins, rna_descriptions, rna_sources, rna_families,
+                                rna_modified_nucleotides, rna_sequences, rna_chain_ids, rna_lengths, number_RNAs,
+                                deposited_date, experiment, xray_resolution)
 
-    elif is_rna and is_protein and is_dna:
-        classification = "protein_rna_dna"
-        return classification, (pdb_id, uniprot_ids, protein_names, protein_descriptions, protein_sources, "", protein_modified_aas,
-            protein_organisms, protein_sequences, protein_chain_ids, protein_lengths, number_proteins, "", "", "", "", rna_descriptions, rna_sources,
-            rna_families, rna_modified_nucleotides, rna_sequences, rna_chain_ids, rna_lengths, number_RNAs, "", "", dna_descriptions, dna_sources,
-            dna_modified_nucleotides, dna_sequences, dna_chain_ids, dna_lengths, number_DNAs, "", "", "", "", "", "", "", "",
-            "", "", "", "", "", "", "", "", "", deposited_date, experiment, xray_resolution, "")
-
-    elif not is_rna and is_protein and is_dna:
-        classification = "protein_dna"
-        return classification, (pdb_id, uniprot_ids, protein_names, protein_descriptions, protein_sources, "", protein_modified_aas,
-            protein_organisms, protein_sequences, protein_chain_ids, protein_lengths, number_proteins, "", "", "", dna_descriptions, dna_sources,
-            dna_modified_nucleotides, dna_sequences, dna_chain_ids, dna_lengths, number_DNAs, "", "", "", "", "", "", "", "", "",
-            deposited_date, experiment, xray_resolution, "")
-
-    elif is_rna and not is_protein and not is_dna:
+    elif is_rna and not is_protein:
         classification = "rna_rna"
         return classification, (pdb_id, rna_descriptions, rna_sources, rna_families, rna_modified_nucleotides,
-            rna_sequences, rna_chain_ids, rna_lengths, number_RNAs, "", "", "", "", "", "", "", "", "", "",
-            "", "", "", deposited_date, experiment, xray_resolution, "")
+            rna_sequences, rna_chain_ids, rna_lengths, number_RNAs, deposited_date, experiment, xray_resolution)
 
 def insert_data_to_db(db_path, classification, data):
     conn = sqlite3.connect(db_path)
@@ -298,16 +222,12 @@ def insert_data_to_db(db_path, classification, data):
                             ProteinName TEXT,
                             ProteinDescription TEXT,
                             ProteinSource TEXT,
-                            ProteinFamily TEXT,
                             ProteinModified TEXT,
                             ProteinOrganism TEXT,
                             ProteinSequence TEXT,
                             ProteinChainIDs TEXT,
                             ProteinLength INTEGER,
                             NumberProteins INTEGER,
-                            AAMotif TEXT,
-                            AAC TEXT,
-                            AAPproteinRNA TEXT,
                             RNADescription TEXT,
                             RNASource TEXT,
                             RNAFamily TEXT,
@@ -316,35 +236,9 @@ def insert_data_to_db(db_path, classification, data):
                             RNAChainIDs TEXT,
                             RNALength INTEGER,
                             NumberRNAs INTEGER,
-                            RNAMotif TEXT,
-                            RNAMotifLength TEXT,
-                            ContactList TEXT,
-                            ChainIDpairList_proteinRNA TEXT,
-                            Hbond_proteinRNA TEXT,
-                            vdWbond_proteinRNA TEXT,
-                            ProteinRNAInterfaceArea FLOAT,
-                            ProteinRNAInterfaceRatio FLOAT,
-                            Free_energy REAL,
-                            Binding_affinity_kd TEXT,
-                            RNA_GlycosidicBond TEXT, 
-                            RNA_SugarPucker TEXT, 
-                            RNA_GammaAngle TEXT,
                             Deposited_date TEXT,
                             Experiment TEXT,
-                            XRayResolution FLOAT,
-                            Comment TEXT,
-                            domain_ids TEXT,
-                            domain_names TEXT,
-                            domain_counts TEXT,
-                            domain_pos TEXT,
-                            RNA_Stems TEXT,
-                            RNA_HairpinLoops TEXT,
-                            RNA_InternalLoops TEXT,
-                            RNA_MultibranchLoops TEXT,
-                            RNA_DanglingEnds TEXT,
-                            RNA_Pseudoknots TEXT,
-                            RNA_isDuplex INTEGER,
-                            RNAMotif_isDuplex INTEGER
+                            XRayResolution FLOAT
                           )''')
 
         # Check if PDBId already exists in the database
@@ -352,191 +246,18 @@ def insert_data_to_db(db_path, classification, data):
         if cursor.fetchone() is None:
             # Insert new record
             cursor.execute('''INSERT INTO exp_protein_rna (PDBId, UniprotId, ProteinName, ProteinDescription, ProteinSource, 
-                              ProteinFamily, ProteinModified, ProteinOrganism, ProteinSequence, ProteinChainIDs, ProteinLength, 
-                              NumberProteins, AAMotif, AAC, AAPproteinRNA,
+                              ProteinModified, ProteinOrganism, ProteinSequence, ProteinChainIDs, ProteinLength, NumberProteins, 
                               RNADescription, RNASource, RNAFamily, RNAModified, RNASequence, RNAChainIDs, RNALength, NumberRNAs, 
-                              RNAMotif, RNAMotifLength, ContactList, ChainIDpairList_proteinRNA, Hbond_proteinRNA, 
-                              vdWbond_proteinRNA, ProteinRNAInterfaceArea, ProteinRNAInterfaceRatio, 
-                              Free_energy, Binding_affinity_kd,
-                              RNA_GlycosidicBond, RNA_SugarPucker, RNA_GammaAngle,
-                              Deposited_date, Experiment, XRayResolution, Comment, domain_ids, domain_names,
-                              domain_counts, domain_pos, RNA_Stems, RNA_HairpinLoops, RNA_InternalLoops, 
-                              RNA_MultibranchLoops, RNA_DanglingEnds, RNA_Pseudoknots, RNA_isDuplex, RNAMotif_isDuplex)
-                              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 
-                              ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', record_values)
+                              Deposited_date, Experiment, XRayResolution)
+                              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', record_values)
         else:
             # Update existing record
             cursor.execute('''UPDATE exp_protein_rna SET 
                               UniprotId=?, ProteinName=?, ProteinDescription=?, ProteinSource=?, 
-                              ProteinFamily=?, ProteinModified=?, ProteinOrganism=?, ProteinSequence=?, ProteinChainIDs=?, ProteinLength=?, 
-                              NumberProteins=?, AAMotif=?, AAC=?, AAPproteinRNA=?,
+                              ProteinModified=?, ProteinOrganism=?, ProteinSequence=?, ProteinChainIDs=?, ProteinLength=?, 
+                              NumberProteins=?,
                               RNADescription=?, RNASource=?, RNAFamily=?, RNAModified=?, RNASequence=?, RNAChainIDs=?, RNALength=?, NumberRNAs=?, 
-                              RNAMotif=?, RNAMotifLength=?, ContactList=?, ChainIDpairList_proteinRNA=?, Hbond_proteinRNA=?, 
-                              vdWbond_proteinRNA=?, ProteinRNAInterfaceArea=?, ProteinRNAInterfaceRatio=?, 
-                              Free_energy=?, Binding_affinity_kd=?,
-                              RNA_GlycosidicBond=?, RNA_SugarPucker=?, RNA_GammaAngle=?,
-                              Deposited_date=?, Experiment=?, XRayResolution=?, Comment=?, domain_ids=?, domain_names=?,
-                              domain_counts=?, domain_pos=?, RNA_Stems=?, RNA_HairpinLoops=?, RNA_InternalLoops=?, 
-                              RNA_MultibranchLoops=?, RNA_DanglingEnds=?, RNA_Pseudoknots=?, RNA_isDuplex=?, RNAMotif_isDuplex=?
-                              WHERE PDBId=?''',
-                              record_values[1:] + [record_values[0]])  # Move PDBId to the end for WHERE clause
-
-    if classification == "protein_rna_dna":
-        cursor.execute('''CREATE TABLE IF NOT EXISTS exp_protein_rna_dna (
-                            Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                            PDBId TEXT,
-                            UniprotId TEXT,
-                            ProteinName TEXT,
-                            ProteinDescription TEXT,
-                            ProteinSource TEXT,
-                            ProteinFamily TEXT,
-                            ProteinModified TEXT,
-                            ProteinOrganism TEXT,
-                            ProteinSequence TEXT,
-                            ProteinChainIDs TEXT,
-                            ProteinLength INTEGER,
-                            NumberProteins INTEGER,
-                            AAMotif TEXT,
-                            AAC TEXT,
-                            AAPproteinRNA TEXT,
-                            AAPproteinDNA TEXT,
-                            RNADescription TEXT,
-                            RNASource TEXT,
-                            RNAFamily TEXT,
-                            RNAModified TEXT,
-                            RNASequence TEXT,
-                            RNAChainIDs TEXT,
-                            RNALength INTEGER,
-                            NumberRNAs INTEGER,
-                            RNAMotif TEXT,
-                            RNAMotifLength TEXT,
-                            DNADescription TEXT,
-                            DNASource TEXT,
-                            DNAModified TEXT,
-                            DNASequence TEXT,
-                            DNAChainIDs TEXT,
-                            DNALength INTEGER,
-                            NumberDNAs INTEGER,
-                            DNAMotif TEXT,
-                            ContactList TEXT,
-                            ChainIDpairList_proteinRNA TEXT,
-                            Hbond_proteinRNA TEXT,
-                            vdWbond_proteinRNA TEXT,
-                            ChainIDpairList_proteinDNA TEXT,
-                            Hbond_proteinDNA TEXT,
-                            vdWbond_proteinDNA TEXT,
-                            ProteinRNAInterfaceArea FLOAT,
-                            ProteinDNAInterfaceArea FLOAT,
-                            RNAdnaInterfaceArea FLOAT,
-                            ProteinRNAInterfaceRatio FLOAT,
-                            ProteinDNAInterfaceRatio FLOAT,
-                            RNAdnaInterfaceRatio FLOAT,
-                            RNA_GlycosidicBond TEXT, 
-                            RNA_SugarPucker TEXT, 
-                            RNA_GammaAngle TEXT,
-                            Deposited_date TEXT,
-                            Experiment TEXT,
-                            XRayResolution FLOAT,
-                            Comment TEXT
-                          )''')
-
-        # Check if PDBId already exists in the database
-        cursor.execute("SELECT 1 FROM exp_protein_rna_dna WHERE PDBId = ?", (data[0],))
-        if cursor.fetchone() is None:
-            # Insert new record
-            cursor.execute('''INSERT INTO exp_protein_rna_dna (PDBId, UniprotId, ProteinName, ProteinDescription, ProteinSource, 
-                              ProteinFamily, ProteinModified, ProteinOrganism, ProteinSequence, ProteinChainIDs, ProteinLength, 
-                              NumberProteins, AAMotif, AAC, AAPproteinRNA, AAPproteinDNA,
-                              RNADescription, RNASource, RNAFamily, RNAModified, RNASequence, RNAChainIDs, RNALength, NumberRNAs, 
-                              RNAMotif, RNAMotifLength,  DNADescription, DNASource, DNAModified, DNASequence, DNAChainIDs, DNALength, NumberDNAs, 
-                              DNAMotif, ContactList, ChainIDpairList_proteinRNA, Hbond_proteinRNA, vdWbond_proteinRNA, 
-                              ChainIDpairList_proteinDNA, Hbond_proteinDNA, vdWbond_proteinDNA, 
-                              ProteinRNAInterfaceArea, ProteinDNAInterfaceArea, RNAdnaInterfaceArea,
-                              ProteinRNAInterfaceRatio, ProteinDNAInterfaceRatio, RNAdnaInterfaceRatio,
-                              RNA_GlycosidicBond, RNA_SugarPucker, RNA_GammaAngle,
-                              Deposited_date, Experiment, XRayResolution, Comment)
-                              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-                              ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', record_values)
-        else:
-            # Update existing record
-            cursor.execute('''UPDATE exp_protein_rna_dna SET 
-                              UniprotId=?, ProteinName=?, ProteinDescription=?, ProteinSource=?, 
-                              ProteinFamily=?, ProteinModified=?, ProteinOrganism=?, ProteinSequence=?, ProteinChainIDs=?, ProteinLength=?, 
-                              NumberProteins=?, AAMotif=?, AAC=?, AAPproteinRNA=?, AAPproteinDNA=?,
-                              RNADescription=?, RNASource=?, RNAFamily=?, RNAModified=?, RNASequence=?, RNAChainIDs=?, RNALength=?, NumberRNAs=?, 
-                              RNAMotif=?, RNAMotifLength=?, DNADescription=?, DNASource=?, DNAModified=?, DNASequence=?, DNAChainIDs=?, DNALength=?, NumberDNAs=?, 
-                              DNAMotif=?, ContactList=?, ChainIDpairList_proteinRNA=?, Hbond_proteinRNA=?, vdWbond_proteinRNA=?, 
-                              ChainIDpairList_proteinDNA=?, Hbond_proteinDNA=?, vdWbond_proteinDNA=?, 
-                              ProteinRNAInterfaceArea=?, ProteinDNAInterfaceArea=?, RNAdnaInterfaceArea=?,
-                              ProteinRNAInterfaceRatio=?, ProteinDNAInterfaceRatio=?, RNAdnaInterfaceRatio=?,
-                              RNA_GlycosidicBond=?, RNA_SugarPucker=?, RNA_GammaAngle=?,
-                              Deposited_date=?, Experiment=?, XRayResolution=?, Comment=?
-                              WHERE PDBId=?''',
-                              record_values[1:] + [record_values[0]])  # Move PDBId to the end for WHERE clause
-
-    if classification == "protein_dna":
-        cursor.execute('''CREATE TABLE IF NOT EXISTS exp_protein_dna (
-                            Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                            PDBId TEXT,
-                            UniprotId TEXT,
-                            ProteinName TEXT,
-                            ProteinDescription TEXT,
-                            ProteinSource TEXT,
-                            ProteinFamily TEXT,
-                            ProteinModified,
-                            ProteinOrganism TEXT,
-                            ProteinSequence TEXT,
-                            ProteinChainIDs TEXT,
-                            ProteinLength INTEGER,
-                            NumberProteins INTEGER,
-                            AAMotif TEXT,
-                            AAC TEXT,
-                            AAPproteinDNA TEXT,
-                            DNADescription TEXT,
-                            DNASource TEXT,
-                            DNAModified TEXT,
-                            DNASequence TEXT,
-                            DNAChainIDs TEXT,
-                            DNALength INTEGER,
-                            NumberDNAs INTEGER,
-                            DNAMotif TEXT,
-                            ContactList TEXT,
-                            ChainIDpairList_proteinDNA TEXT,
-                            Hbond_proteinDNA TEXT,
-                            vdWbond_proteinDNA TEXT,
-                            ProteinDNAInterfaceArea FLOAT,
-                            ProteinDNAInterfaceRatio FLOAT,
-                            Free_energy REAL,
-                            Binding_affinity_kd TEXT,
-                            Deposited_date TEXT,
-                            Experiment TEXT,
-                            XRayResolution FLOAT,
-                            Comment TEXT
-                          )''')
-
-        # Check if PDBId already exists in the database
-        cursor.execute("SELECT 1 FROM exp_protein_dna WHERE PDBId = ?", (data[0],))
-        if cursor.fetchone() is None:
-            # Insert new record
-            cursor.execute('''INSERT INTO exp_protein_dna (PDBId, UniprotId, ProteinName, ProteinDescription, ProteinSource, 
-                              ProteinFamily, ProteinModified, ProteinOrganism, ProteinSequence, ProteinChainIDs, ProteinLength, 
-                              NumberProteins, AAMotif, AAC, AAPproteinDNA,
-                              DNADescription, DNASource, DNAModified, DNASequence, DNAChainIDs, DNALength, NumberDNAs, 
-                              DNAMotif, ContactList, ChainIDpairList_proteinDNA, Hbond_proteinDNA, vdWbond_proteinDNA, 
-                              ProteinDNAInterfaceArea, ProteinDNAInterfaceRatio, Free_energy, Binding_affinity_kd,
-                              Deposited_date, Experiment, XRayResolution, Comment)
-                              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 
-                              ?, ?, ?, ?, ?, ?, ?, ?)''', record_values)
-        else:
-            # Update existing record
-            cursor.execute('''UPDATE exp_protein_dna SET 
-                              UniprotId=?, ProteinName=?, ProteinDescription=?, ProteinSource=?, 
-                              ProteinFamily=?, ProteinModified=?, ProteinOrganism=?, ProteinSequence=?, ProteinChainIDs=?, ProteinLength=?, 
-                              NumberProteins=?, AAMotif=?, AAC=?, AAPproteinDNA=?,
-                              DNADescription=?, DNASource=?, DNAModified=?, DNASequence=?, DNAChainIDs=?, DNALength=?, NumberDNAs=?, 
-                              DNAMotif=?, ContactList=?, ChainIDpairList_proteinDNA=?, Hbond_proteinDNA=?, vdWbond_proteinDNA=?, 
-                              ProteinDNAInterfaceArea=?, ProteinDNAInterfaceRatio=?, Free_energy=?, Binding_affinity_kd=?,
-                              Deposited_date=?, Experiment=?, XRayResolution=?, Comment=?
+                              Deposited_date=?, Experiment=?, XRayResolution=?
                               WHERE PDBId=?''',
                               record_values[1:] + [record_values[0]])  # Move PDBId to the end for WHERE clause
 
@@ -552,23 +273,9 @@ def insert_data_to_db(db_path, classification, data):
                             RNAChainIDs TEXT,
                             RNALength INTEGER,
                             NumberRNAs INTEGER,
-                            RNAMotif TEXT,
-                            RNAMotifLength TEXT,
-                            ContactList TEXT,
-                            ChainIDpairList_rnaRNA TEXT,
-                            Hbond_rnaRNA TEXT,
-                            vdWbond_rnaRNA TEXT,
-                            RNArnaInterfaceArea FLOAT,
-                            RNArnaInterfaceRatio FLOAT,
-                            Free_energy REAL,
-                            Binding_affinity_kd TEXT,
-                            RNA_GlycosidicBond TEXT, 
-                            RNA_SugarPucker TEXT, 
-                            RNA_GammaAngle TEXT,
                             Deposited_date TEXT,
                             Experiment TEXT,
-                            XRayResolution FLOAT,
-                            Comment TEXT
+                            XRayResolution FLOAT
                           )''')
 
         # Check if PDBId already exists in the database
@@ -577,21 +284,13 @@ def insert_data_to_db(db_path, classification, data):
             # Insert new record
             cursor.execute('''INSERT INTO exp_rna_rna (PDBId, 
                               RNADescription, RNASource, RNAFamily, RNAModified, RNASequence, RNAChainIDs, RNALength, NumberRNAs, 
-                              RNAMotif, RNAMotifLength, ContactList, 
-                              ChainIDpairList_rnaRNA, Hbond_rnaRNA, vdWbond_rnaRNA,
-                              RNArnaInterfaceArea, RNArnaInterfaceRatio, Free_energy, Binding_affinity_kd,
-                              RNA_GlycosidicBond, RNA_SugarPucker, RNA_GammaAngle,
-                              Deposited_date, Experiment, XRayResolution, Comment)
-                              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', record_values)
+                              Deposited_date, Experiment, XRayResolution)
+                              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', record_values)
         else:
             # Update existing record
             cursor.execute('''UPDATE exp_rna_rna SET 
                               RNADescription=?, RNASource=?, RNAFamily=?, RNAModified=?, RNASequence=?, RNAChainIDs=?, RNALength=?, NumberRNAs=?, 
-                              RNAMotif=?, RNAMotifLength=?, ContactList=?, 
-                              ChainIDpairList_rnaRNA=?, Hbond_rnaRNA=?, vdWbond_rnaRNA=?,
-                              RNArnaInterfaceArea=?, RNArnaInterfaceRatio=?, Free_energy=?, Binding_affinity_kd=?,
-                              RNA_GlycosidicBond=?, RNA_SugarPucker=?, RNA_GammaAngle=?,
-                              Deposited_date=?, Experiment=?, XRayResolution=?, Comment=?
+                              Deposited_date=?, Experiment=?, XRayResolution=?
                               WHERE PDBId=?''',
                               record_values[1:] + [record_values[0]])  # Move PDBId to the end for WHERE clause
 
@@ -599,12 +298,6 @@ def insert_data_to_db(db_path, classification, data):
     conn.close()
 
 def process_cif_files(directory_path, db_path):
-    # cif_files = [os.path.join(directory_path, f) for f in os.listdir(directory_path) if f.endswith('.cif')]
-    # for cif_file in cif_files:
-    #     classification, data = parse_cif_file(cif_file)
-    #     # print("data", data)
-    #     # print("classification", classification)
-    #     insert_data_to_db(db_path, classification, data)
     check_folder = os.path.join(os.path.dirname(directory_path), 'check_pdb')
     if not os.path.exists(check_folder):
         os.makedirs(check_folder)
