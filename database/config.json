@@ -1,0 +1,8 @@
+{
+    "parent_folder": "/home/fred/current_projects/github/SyntheticEvolution/data/rna_rna",
+    "pred_folder": "/home/fred/current_projects/github/SyntheticEvolution/data/rna_rna/af",
+    "ref_folder": "/home/fred/current_projects/github/SyntheticEvolution/data/rna_rna/pdb",
+    "pred_table": "pred_rna_rna",
+    "ref_table": "exp_rna_rna",
+    "db_path": "/home/fred/current_projects/github/SyntheticEvolution/database/rbpDatabase.db"
+}

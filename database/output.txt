@@ -1,0 +1,13 @@
+#idx target name          accession query name           accession clan name mdl mdl from   mdl to seq from   seq to strand trunc pass   gc  bias  score   E-value inc olp anyidx afrct1 afrct2 winidx wfrct1 wfrct2 description of target
+#--- -------------------- --------- -------------------- --------- --------- --- -------- -------- -------- -------- ------ ----- ---- ---- ----- ------ --------- --- --- ------ ------ ------ ------ ------ ------ ---------------------
+1    GIR1                 RF01807   sequence             -         -          cm        1      199        3      186      +    no    1 0.51   0.0  107.7   3.1e-24  !   *       -      -      -      -      -      - GIR1 branching ribozyme
+#
+# Program:         cmscan
+# Version:         1.1.4 (Dec 2020)
+# Pipeline mode:   SCAN
+# Query file:      sequence.fasta
+# Target file:     /Users/Iris/Desktop/BachelorProject/AF3InterfaceEval/evaluation/data/rfam/Rfam.cm
+# Option settings: cmscan --tblout output.txt --fmt 2 --cut_ga --rfam --nohmmonly --clanin /Users/Iris/Desktop/BachelorProject/AF3InterfaceEval/evaluation/data/rfam/Rfam.clanin --oskip /Users/Iris/Desktop/BachelorProject/AF3InterfaceEval/evaluation/data/rfam/Rfam.cm sequence.fasta 
+# Current dir:     /Users/Iris/Desktop/BachelorProject/AF3InterfaceEval/database
+# Date:            Tue Jul 22 18:39:05 2025
+# [ok]

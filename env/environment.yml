@@ -1,0 +1,12 @@
+name: synEvo
+channels:
+  - conda-forge
+  - defaults
+  - bioconda
+  - pytorch
+  - lb_arrakistx
+dependencies:
+  - python=3.9
+  - pymol-open-source
+  - infernal
+  - varna
