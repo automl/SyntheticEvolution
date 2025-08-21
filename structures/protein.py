@@ -10,17 +10,14 @@ class Protein:
     exp_table_name = config.ref_table
     db_path = config.db_path
     def __init__(self, id: str, is_pred: bool = None, protein_length: int = None, file_name: str = None, protein_sequence: str = "",
-                 protein_chain_IDs: str = "", aa_motif: str = "", protein_family: str = "", protein_chain_number: int = None,
+                 protein_chain_IDs: str = "", protein_chain_number: int = None,
                  is_protein: bool = None):
         self.id = id
         self.is_pred = is_pred
         self.file_name = file_name if is_pred else None
         self.protein_sequence = protein_sequence
         self.protein_chain_IDs = protein_chain_IDs
-        self.aa_motif = aa_motif
-        # self.class_type = class_type
         self.protein_length = protein_length
-        self.protein_family = protein_family
         self.protein_chain_number = protein_chain_number
         self.is_protein = is_protein
 
@@ -32,12 +29,6 @@ class Protein:
 
     def get_protein_length(self):
         return self.protein_length
-
-    def get_aa_motif(self):
-        return self.aa_motif
-
-    def get_protein_family(self):
-        return self.protein_family
 
     def get_protein_chain_number(self):
         if self.protein_sequence.startswith('[') and self.protein_sequence.endswith(']'):
@@ -89,7 +80,6 @@ class Protein:
                 protein_sequence=row['ProteinSequence'],
                 protein_chain_IDs=row['ProteinChainIDs'],
                 protein_length=row['ProteinLength'],
-                aa_motif=row['AAMotif'],
                 is_protein=True
             )
             return protein
