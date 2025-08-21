@@ -11,22 +11,19 @@ class RNA:
     exp_table_name = config.ref_table
     db_path = config.db_path
     def __init__(self,  id: str, is_pred: bool = None, rna_length: int = None, file_name: str = None, rna_sequence: str = "",
-                 rna_chain_IDs: str = "", rna_metrics=None, rna_motif: str = "", rna_chain_number: int = None,
-                 is_rna: bool = None, chain_pairs: str = "", motif_lengths: str = ""):
+                 rna_chain_IDs: str = "", rna_metrics=None, rna_chain_number: int = None,
+                 is_rna: bool = None):
         self.id = id
         self.is_pred = is_pred
         self.file_name = file_name if is_pred else None
         self.rna_sequence = rna_sequence
         self.rna_chain_IDs = rna_chain_IDs
         self.rna_metrics = rna_metrics if rna_metrics is not None else []
-        self.rna_motif = rna_motif
         # self.class_type = class_type
         self.rna_length = rna_length
         # print(f"Initialized RNA with id: {id}, is_pred: {is_pred}, file_name: {file_name}")
         self.rna_chain_number = rna_chain_number
         self.is_rna = is_rna
-        self.chain_pairs = chain_pairs
-        self.motif_lengths = motif_lengths
 
     @classmethod
     def get_rna_from_db(cls, id: str, file_name=None):
@@ -57,10 +54,7 @@ class RNA:
                     rna_sequence=row['RNASequence'],
                     rna_chain_IDs=row['RNAChainIDs'],
                     rna_length=row['RNALength'],
-                    rna_motif=row['RNAMotif'],
-                    is_rna=True,
-                    chain_pairs=row['ChainIDpairList_proteinRNA'],
-                    motif_lengths=row['RNAMotifLength']
+                    is_rna=True
                 )
             elif cls.exp_table_name == "exp_rna_rna":
                 rna = RNA(
@@ -68,10 +62,7 @@ class RNA:
                     rna_sequence=row['RNASequence'],
                     rna_chain_IDs=row['RNAChainIDs'],
                     rna_length=row['RNALength'],
-                    rna_motif=row['RNAMotif'],
-                    is_rna=True,
-                    chain_pairs=row['ChainIDpairList_rnaRNA'],
-                    motif_lengths=row['RNAMotifLength']
+                    is_rna=True
                 )
 
             return rna
@@ -87,12 +78,6 @@ class RNA:
 
     def get_rna_length(self):
         return self.rna_length
-
-    def get_rna_motif(self):
-        return self.rna_motif
-
-    # def get_rna_motif_length(self):
-    #     return self.motif_lengths
 
     def get_rna_chain_number(self):
         if self.rna_sequence.startswith('[') and self.rna_sequence.endswith(']'):
@@ -152,35 +137,6 @@ class RNA:
         # print("longest_chain", longest_chain)
         return longest_chain
 
-    # def is_rna_modified(self):
-    #     if not self.rna_modified or self.rna_modified == ["[]"]:
-    #         return False
-    #     return True
-
-    def get_chain_pair_with_longest_motif(self):
-        """Get the chain pair that corresponds to the longest RNA motif"""
-        try:
-            # print("self.chain_pairs", self.chain_pairs)
-            # print("self.motif_lengths", self.motif_lengths)
-            # Convert string representations to lists
-            chain_pairs = eval(self.chain_pairs) if isinstance(self.chain_pairs, str) else self.chain_pairs
-            motif_lengths = eval(self.motif_lengths) if isinstance(self.motif_lengths, str) else self.motif_lengths
-            # print("chain_pairs",chain_pairs)
-            # print("motif_lengths", motif_lengths)
-
-            if isinstance(motif_lengths, int):
-                max_length_idx = 0
-            else:
-                # Find index of longest motif
-                max_length_idx = motif_lengths.index(max(motif_lengths))
-                # print("chain_pairs[max_length_idx]", chain_pairs[max_length_idx])
-            
-            # Return corresponding chain pair
-            return chain_pairs[max_length_idx]
-            
-        except (ValueError, SyntaxError, IndexError) as e:
-            print(f"Error processing chain pairs and motif lengths: {e}")
-            return None
 
 # rna_instance = RNA.get_rna_from_db(id="8hb1", file_name='fold_8hb1_s1_model_0.cif')
 # print("rna_instance", rna_instance.is_pred)
