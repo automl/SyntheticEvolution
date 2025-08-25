@@ -83,7 +83,7 @@ python plot_secondary_structures.py
 
 You can also get predictions for any sequence with SPOT-RNA, RNAfold or the RNAformer using
 ```
-python get_secondary_structure_prediction.py --predictor <choose your predictor> --sequence AGUCGAUCGAU
+python get_secondary_structure_prediction.py --predictor <choose your predictor> --sequence GAUGGCCGGCAUGGUCCCAGCCUCCUCGCUGGCGCCGGCUGGGCAACACCAUUGCACUCCGGUGGUGAAUGGGACU
 ```
 choose the predictor from rnaformer, rnafold, spotrna.
 The nucleotide interaction maps will be saved to the ```secondary_structure_predictions``` directory.
