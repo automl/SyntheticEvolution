@@ -9,7 +9,7 @@ This process produces deep, MSA-like sequence ensembles in seconds, without reli
 When supplied to AlphaFold 3, synthetic homologs substantially improve local RNA structural accuracy while largely preserving global fold topology, and rescue predictions for orphan RNAs where no natural alignment exists.
 Secondary-structure-guided synthetic homologs thus provide a practical route to accurate RNA 3D structure prediction in regimes where evolutionary information is sparse or absent.
 
-![RNAformer Architecture and SHS Pipeline](SHS_pipeline_and_architecture_2.png)
+![RNAformer Architecture and SHS Pipeline](SHS_pipeline_and_architecture_2_bg_white.png)
 **RNAformer network architecture and workflow for the generation of synthetic homologous sequences.** **a,** *After embedding the input RNA sequence into a 2D latent representation, the RNAformer successively refines this internal representation in subsequent blocks leveraging axial attention layers to finally predict a full nucleotide interaction map.* **b,** *The synthetic homologous sequences (SHS) generation pipeline uses RNAformer to predict an interaction map. The interaction information is subsequently used to inform the generation of SHS.* **c,** *For comparison with our novel SHS approach, we show a (non-iterative) standard pipeline for obtaining MSA using a profile HMM for database mining and subsequent sequence alignment as e.g. used in the HMMER-based genetic search of AlphaFold 3.* **d,** *The generated set of SHS (or the obtained MSA in the case of vanilla AlphaFold 3 predictions) serves as the interaction information for 3D Structure prediction of AlphaFold 3.*
 
 ## Install
