@@ -28,6 +28,7 @@ You can find more guidelines for installation in our [Install Guidelines](/docs/
 
 ## Data
 **Note: Our SHS pipeline works with any AlphaFold 3 json input (data) file for the standalone code version. The AlphaFold 3 server currently does not support custom MSA inputs.**
+
 For reproducing the analysis from our manuscript, we provide all predictions, data files, and processed results for download from stable URLs.
 
 You can download all required files by running
