@@ -1,15 +1,15 @@
 # SyntheticEvolution
-Secondary Structure Based generation of synthetic homologues that improves AlphaFold 3 Predictions
+Synthetic RNA Homologs Enable Accurate Alignment-Free 3D Structure Prediction
 
-Cellular RNA function is dictated by its three-dimensional fold, yet experimental structure determination is slow and expensive.
-Although protein structures can now be predicted with near-experimental fidelity, RNA 3D prediction still lags behind.
-One reason is that state-of-the-art tools such as AlphaFold 3 require deep multiple sequence alignments (MSAs) that are far harder to obtain for RNA than for proteins. 
-Although predicted secondary structures and large sequence foundation models can, in principle, supply covariation information, state-of-the-art predictors continue to rely almost exclusively on deep MSAs.
-We remove this bottleneck by synthesising MSAs directly from secondary structure information. First, we introduce RNAformer, a transformer-based predictor that generates highly accurate secondary structures. Guided only by these predictions and evolution-inspired mutation rules, we inflate a single RNA into an arbitrarily large synthetic MSA in a fraction of a second, embedding realistic intramolecular interaction biases without relying on natural homologs.
-Feeding these artificial alignments to AlphaFold 3 boosts RNA 3D accuracy across a diverse set of RNA structures, including state-of-the-art models for monomeric RNA-protein complexes. 
-Secondary structure driven synthetic evolution therefore unlocks deep-alignment benefits for RNA 3D structure prediction.
+Accurate RNA 3D structure prediction remains a bottleneck in computational biology.
+Unlike proteins, most RNAs lack deep multiple sequence alignments (MSAs), limiting the ability of structure prediction methods such as AlphaFold 3 to extract evolutionary constraints.
+Here, we address this limitation by generating synthetic homologous sequences instead of searching for natural ones.
+Starting from a single RNA sequence, our deep learning model RNAformer predicts secondary structure with high fidelity, which we use to generate structurally consistent synthetic homologs through lightweight, evolution-inspired mutation rules.
+This process produces deep, MSA-like sequence ensembles in seconds, without reliance on natural sequence databases.
+When supplied to AlphaFold 3, synthetic homologs substantially improve local RNA structural accuracy while largely preserving global fold topology, and rescue predictions for orphan RNAs where no natural alignment exists.
+Secondary-structure-guided synthetic homologs thus provide a practical route to accurate RNA 3D structure prediction in regimes where evolutionary information is sparse or absent.
 
-**Note that this repo currently mainly serves for reproducing the results of our Nature Methods submission.**
+**Note that this repo currently mainly serves for reproducing the results of our Nature Biotechnology submission.**
 
 ## Install
 We use [miniconda](https://www.anaconda.com/docs/getting-started/miniconda/main)/[Micromamba](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html) to create a virtual environment for all our dependencies. If you are not familiar with using ```conda``` or ```mamba``` please find more information at <https://www.anaconda.com/docs/getting-started/miniconda/main> and <https://mamba.readthedocs.io/en/latest/index.html>. You can download miniconda for Linux, Windows, and MAC [here](https://www.anaconda.com/download) or read about Micromamba installation [here](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html).
