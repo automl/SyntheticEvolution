@@ -12,7 +12,7 @@ For example run
 ```
 python rna_msa_generator_base_pair.py --structure "..((((....))))...." --rna-seq AGCGCGUAACGAUAGCUA --protein-seq MKTIIALSYIFCLVFAGQDEIRTLVSRVELTKLSDKIAARHGLQEVNRAALGRGIVRVA --seed 42 --show_plot
 ```
-Per default, the generation pipeline will use the parameters that were also used in our Nature Methods submission.
+Per default, the generation pipeline will use the parameters that were also used in our Nature Biotechnology submission.
 The ```--show_plot``` option enables plotting of some MSA features.
 The output is a json file that can be used as input for AlphaFold 3.
 
@@ -33,7 +33,7 @@ For example, you can use
 python rna_msa_generator_base_pair.py --structure_predictor rnaformer --input_json_path data/datafiles/alphafold3/1SJ4_data.json --pdb_id myverylongcustomid
 ```
 
-**Note that we only provide a runtime patch for RNAformer that allows to run it on CPU. The runtime of RNAformer is substantially increased compared to running on GPU.**
+**Note that we only provide a runtime patch for RNAformer that allows to run it on CPU. The runtime of RNAformer is substantially increased compared to running on GPU and we observed some differences in the predictions when using the CPU variant provided here.**
 
 ## Evaluation
 We also provide scripts for rerunning our evaluation. 
@@ -61,7 +61,7 @@ python analysis/analyse_gapped_alignment.py --fasta1 data/gapped_alignments/rnaf
 ```
 
 ### Analyze RNA families
-To analyze the RNA families of the data accompanying our Nature Methods submission, run
+To analyze the RNA families of the data accompanying our Nature Biotechnology submission, run
 ```
 python analyse_fam.py
 ```
