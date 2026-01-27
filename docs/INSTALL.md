@@ -92,15 +92,13 @@ Alternatively, you can use the ```infer_d``` branch of the original github repos
 To do so, please follow the install instructions as desribed in the RNAformer repository: <https://github.com/automl/RNAformer>.
 
 ## AlphaFold 3
-We use the inference code of AlphaFold 3 to run our experiments. Some of the initial AlphaFold 3 predictions used for our Nature Methods submission were further obtained from the AlphaFold 3 webserver at <https://alphafoldserver.com/>.
+We use the inference code of AlphaFold 3 to run our experiments. 
 
-**NOTE that running predictions with the AlphaFold 3 server requires a google account. Furthermore, the number of predictions per day is limited.**
+**Note that the AlphaFold 3 webserver at <https://alphafoldserver.com/> currently does not support custom MSAs.**
 
 To install AlphaFold 3, we follow the instructions at <https://github.com/google-deepmind/alphafold3>.
 
 **NOTE that using AlphaFold 3 requires to agree to the terms of usage and requires to request the open weights.**
-
-Alternatively, our json files for running AlphaFold 3 should also be compatible with the AlphaFold 3 webserver at <https://alphafoldserver.com/> (untested).
 
 ## DSSR
 For completeness, we also provide instructions for the usage of DSSR.
@@ -131,6 +129,7 @@ Alternatively, you can also directly download a zip of the binaries for your OS.
 
 ### Help:
 [USAlign Help Page](https://zhanggroup.org/US-align/help)
+
 
 
 
