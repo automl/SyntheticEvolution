@@ -27,11 +27,14 @@ The install script was tested on ```Ubuntu 22.04.5 LTS (Jammy Jellyfish)```.
 You can find more guidelines for installation in our [Install Guidelines](/docs/INSTALL.md).
 
 ## Data
+**Note: Our SHS pipeline works with any AlphaFold 3 json input (data) file for the standalone code version. The AlphaFold 3 server currently does not support custom MSA inputs.**
+For reproducing the analysis from our manuscript, we provide all predictions, data files, and processed results for download from stable URLs.
+
 You can download all required files by running
 ```
 ./download.sh
 ```
-This will download all data files, predictions, and evaluation ```.csv``` files to reproduce the results of our Nature Methods submission.
+This will download all data files, predictions, and evaluation ```.csv``` files to reproduce the results of our Nature Biotechnology submission.
 **NOTE: The data files archive download is roughly 9GB and extracts to roughly 50GB.**
 
 Alternatively, directly download all predictions, datafiles, and evaluations manually from
