@@ -35,7 +35,7 @@ You can download all required files by running
 ```
 ./download.sh
 ```
-This will download all data files, predictions, and evaluation ```.csv``` files to reproduce the results of our Nature Biotechnology submission.
+This will download all data files, predictions, and evaluation ```.csv``` files to reproduce the results of our manuscript.
 **NOTE: The data files archive download is roughly 9GB and extracts to roughly 50GB.**
 
 Alternatively, directly download all predictions, datafiles, and evaluations manually from
