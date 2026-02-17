@@ -778,6 +778,9 @@ if __name__ == "__main__":
 
     aln1 = AlignIO.read(Path(fasta_file1), fmt)
     aln2 = AlignIO.read(Path(fasta_file2), fmt)
+
+    AlignIO.write(aln1, Path(plotting_dir, f"{Path(fasta_file1).stem}.stk"), "stockholm")
+    AlignIO.write(aln2, Path(plotting_dir, f"{Path(fasta_file2).stem}.stk"), "stockholm")
     
     # 2) Trim every sequence to the non-gap columns of your reference
     #     (so that both seqs1 and seqs2 line up on the exact same query coords)

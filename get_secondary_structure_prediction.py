@@ -13,6 +13,7 @@ import subprocess
 
 import RnaBench
 
+from RnaBench.lib.visualization import RnaVisualizer
 from RnaBench.lib.rna_folding_algorithms.rnafold import RNAFold
 # from RnaBench.lib.rna_folding_algorithms.contrafold import ContraFold
 # from RnaBench.lib.rna_folding_algorithms.ipknot import IpKnot
@@ -248,6 +249,7 @@ if __name__ == '__main__':
         raise ValueError("Either --pdb_id or --sequence must be provided.")
     elif args.sequence is not None and args.pdb_id is not None:
         logging.warning("Both --pdb_id and --sequence provided. Using --sequence.")
+        pdb_id = args.pdb_id
     elif args.sequence is not None and args.pdb_id is None:
         pdb_id = 'custom_prediction'
         logging.info("Using custom sequence prediction with ID: %s", pdb_id)
@@ -267,17 +269,29 @@ if __name__ == '__main__':
     mat = pairs2mat(sorted(pred_pairs.items()), length=len(seq), no_pk=True, symmetric=True)
 
     import matplotlib.pyplot as plt
-
+    from matplotlib.colors import ListedColormap
+    
     plotting_dir = Path('secondary_structure_predictions')
     plotting_dir.mkdir(exist_ok=True, parents=True)
-    
-    plt.imshow(mat, cmap='gray', interpolation='nearest')
+
+    # cmap = ListedColormap(["white", "#9bd0ff"])  # light blue as other plots
+    # cmap = ListedColormap(["white", "#D81B60"])  # white + nice magenta
+    cmap = ListedColormap(["white", "#b20000"])  # white + red from dot plot
+    #cmap='gray'
+
+
+    plt.imshow(mat, cmap=cmap, interpolation='nearest')
     # plt.colorbar()
     # plt.title(f"Base Pair Matrix for {pdb_id} using {args.predictor}")
     # plt.xlabel("Position")
     # plt.ylabel("Position")
     # plt.show()
     plt.tight_layout()
-    plt.savefig(f"{plotting_dir}/{pdb_id}_{args.predictor}.png", dpi=300)
+    plt.savefig(f"{plotting_dir}/{pdb_id}_{args.predictor}_white_red.png", dpi=300)
     plt.close()
+
+    vis = RnaVisualizer()
+    pred_pairs = sorted(set((min(p1, p2), max(p1, p2)) for p1, p2 in pred_pairs.items()), key=lambda x: x[0])
+    vis.visualize_rna(pred_pairs, seq, f'{pdb_id}_{args.predictor}', algorithm=args.predictor, plot_dir=plotting_dir, plot_type='radiate', resolution='8.0')
+    vis.visualize_rna(pred_pairs, seq, f'{pdb_id}_{args.predictor}', algorithm=args.predictor, plot_dir=plotting_dir, plot_type='line', resolution='8.0')
 

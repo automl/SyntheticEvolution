@@ -196,11 +196,20 @@ def plot_grouped_bar_with_error_and_stats(
                 if stars:
                     x1 = xi + offsets[ref_idx]
                     x2 = xi + offsets[j]
-                    ax.plot([x1, x1, x2, x2], [y, y+0.5*offset_unit, y+0.5*offset_unit, y],
-                            color='black', linewidth=1, clip_on=False)
-                    ax.text((x1+x2)/2, y+0.5*offset_unit, stars,
+                    
+                    line_y = y
+                    ax.plot([x1, x2], [line_y, line_y], color='black', linewidth=1, clip_on=False)
+                    
+                    ax.text((x1 + x2) / 2, line_y + 0.2 * offset_unit, stars,
                             ha='center', va='bottom', fontsize=ytick_label_size, clip_on=False)
+                    
                     y += step_factor * offset_unit
+                    
+                    # ax.plot([x1, x1, x2, x2], [y, y+0.5*offset_unit, y+0.5*offset_unit, y],
+                    #         color='black', linewidth=1, clip_on=False)
+                    # ax.text((x1+x2)/2, y+0.5*offset_unit, stars,
+                    #         ha='center', va='bottom', fontsize=ytick_label_size, clip_on=False)
+                    # y += step_factor * offset_unit
 
     plt.tight_layout()
     plt.savefig(outpath, dpi=300)
@@ -1243,8 +1252,29 @@ def get_max_rna_length(row):
     return np.max([int(x) for x in rnalengths])
 
 def get_rna_msa_size(row):
-    msasizes = ast.literal_eval(row['RNA_msa_size'])
-    return np.max([int(x) for x in msasizes.values()])
+    val = row["RNA_msa_size"]
+    print(val)
+    
+    # 1. Handle real NaN/None
+    if pd.isna(val):
+        return 0
+    
+    # 2. If it's already a dict, use it directly
+    if isinstance(val, dict):
+        msasizes = val
+    else:
+        # 3. Otherwise assume it's a string, try to parse it
+        try:
+            msasizes = ast.literal_eval(str(val))
+        except (ValueError, SyntaxError):
+            # Could not parse, decide what you want here
+            raise
+    
+    # 4. Compute max, guarding against empty dict
+    if not msasizes:
+        return 0
+    
+    return int(np.max([int(x) for x in msasizes.values()]))
 
 def get_rna_max_msa_size(row, annot):
     i = row['exp_db_id']
@@ -1309,6 +1339,14 @@ print(f'### Plotting directory: {plotting_dir}')
 
 #####################################################################################################################
 # AlphaFold 3
+
+msa_sizes = pd.read_csv('msa_sizes_all_data.csv')
+# msa_sizes = pd.concat([
+#     pd.read_csv('msa_sizes_all_data_orphan.csv'),
+#     pd.read_csv('msa_sizes_all_data_non_orphan.csv')
+# ])
+print(msa_sizes)
+
 
 # all data
 alphafold_all = pd.read_csv(Path(datadir, 'csvs/All_alphafold.csv'))
@@ -1435,6 +1473,49 @@ rnafold_b2021_protein_rna_orphan = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_b
 rnafold_b2021_protein_rna_non_orphan = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_b2021_rnafold_non_orphan.csv'))
 
 #####################################################################################################################
+# SHS RNAfold N100
+
+# all data
+rnafoldN100_all = pd.read_csv(Path(datadir, 'csvs/All_rnafoldN100.csv'))
+rnafoldN100_all_orphan = pd.read_csv(Path(datadir, 'csvs/All_rnafoldN100_orphan.csv'))
+rnafoldN100_all_non_orphan = pd.read_csv(Path(datadir, 'csvs/All_rnafoldN100_non_orphan.csv'))
+
+rnafoldN100_a2021_all = pd.read_csv(Path(datadir, 'csvs/All_a2021_rnafoldN100.csv'))
+rnafoldN100_a2021_all_orphan = pd.read_csv(Path(datadir, 'csvs/All_a2021_rnafoldN100_orphan.csv'))
+rnafoldN100_a2021_all_non_orphan = pd.read_csv(Path(datadir, 'csvs/All_a2021_rnafoldN100_non_orphan.csv'))
+
+rnafoldN100_b2021_all = pd.read_csv(Path(datadir, 'csvs/All_b2021_rnafoldN100.csv'))
+rnafoldN100_b2021_all_orphan = pd.read_csv(Path(datadir, 'csvs/All_b2021_rnafoldN100_orphan.csv'))
+rnafoldN100_b2021_all_non_orphan = pd.read_csv(Path(datadir, 'csvs/All_b2021_rnafoldN100_non_orphan.csv'))
+
+# rna monomers
+rnafoldN100_rnamonomers = pd.read_csv(Path(datadir, 'csvs/RNA_Monomers_rnafoldN100.csv'))
+rnafoldN100_rnamonomers_orphan = pd.read_csv(Path(datadir, 'csvs/RNA_Monomers_rnafoldN100_orphan.csv'))
+rnafoldN100_rnamonomers_non_orphan = pd.read_csv(Path(datadir, 'csvs/RNA_Monomers_rnafoldN100_non_orphan.csv'))
+
+rnafoldN100_a2021_rnamonomers = pd.read_csv(Path(datadir, 'csvs/RNA_Monomers_a2021_rnafoldN100.csv'))
+rnafoldN100_a2021_rnamonomers_orphan = pd.read_csv(Path(datadir, 'csvs/RNA_Monomers_a2021_rnafoldN100_orphan.csv'))
+rnafoldN100_a2021_rnamonomers_non_orphan = pd.read_csv(Path(datadir, 'csvs/RNA_Monomers_a2021_rnafoldN100_non_orphan.csv'))
+
+rnafoldN100_b2021_rnamonomers = pd.read_csv(Path(datadir, 'csvs/RNA_Monomers_b2021_rnafoldN100.csv'))
+rnafoldN100_b2021_rnamonomers_orphan = pd.read_csv(Path(datadir, 'csvs/RNA_Monomers_b2021_rnafoldN100_orphan.csv'))
+rnafoldN100_b2021_rnamonomers_non_orphan = pd.read_csv(Path(datadir, 'csvs/RNA_Monomers_b2021_rnafoldN100_non_orphan.csv'))
+
+# protein-rna
+rnafoldN100_protein_rna = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_rnafoldN100.csv'))
+rnafoldN100_protein_rna_orphan = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_rnafoldN100_orphan.csv'))
+rnafoldN100_protein_rna_non_orphan = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_rnafoldN100_non_orphan.csv'))
+
+rnafoldN100_a2021_protein_rna = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_a2021_rnafoldN100.csv'))
+rnafoldN100_a2021_protein_rna_orphan = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_a2021_rnafoldN100_orphan.csv'))
+rnafoldN100_a2021_protein_rna_non_orphan = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_a2021_rnafoldN100_non_orphan.csv'))
+
+rnafoldN100_b2021_protein_rna = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_b2021_rnafoldN100.csv'))
+rnafoldN100_b2021_protein_rna_orphan = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_b2021_rnafoldN100_orphan.csv'))
+rnafoldN100_b2021_protein_rna_non_orphan = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_b2021_rnafoldN100_non_orphan.csv'))
+
+
+#####################################################################################################################
 # SHS SPOT-RNA
 
 # all data
@@ -1475,6 +1556,49 @@ spotrna_a2021_protein_rna_non_orphan = pd.read_csv(Path(datadir, 'csvs/RNA-Prote
 spotrna_b2021_protein_rna = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_b2021_spotrna.csv'))
 spotrna_b2021_protein_rna_orphan = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_b2021_spotrna_orphan.csv'))
 spotrna_b2021_protein_rna_non_orphan = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_b2021_spotrna_non_orphan.csv'))
+
+#####################################################################################################################
+# SHS SPOT-RNA N100
+
+# all data
+spotrnaN100_all = pd.read_csv(Path(datadir, 'csvs/All_spotrnaN100.csv'))
+spotrnaN100_all_orphan = pd.read_csv(Path(datadir, 'csvs/All_spotrnaN100_orphan.csv'))
+spotrnaN100_all_non_orphan = pd.read_csv(Path(datadir, 'csvs/All_spotrnaN100_non_orphan.csv'))
+
+spotrnaN100_a2021_all = pd.read_csv(Path(datadir, 'csvs/All_a2021_spotrnaN100.csv'))
+spotrnaN100_a2021_all_orphan = pd.read_csv(Path(datadir, 'csvs/All_a2021_spotrnaN100_orphan.csv'))
+spotrnaN100_a2021_all_non_orphan = pd.read_csv(Path(datadir, 'csvs/All_a2021_spotrnaN100_non_orphan.csv'))
+
+spotrnaN100_b2021_all = pd.read_csv(Path(datadir, 'csvs/All_b2021_spotrnaN100.csv'))
+spotrnaN100_b2021_all_orphan = pd.read_csv(Path(datadir, 'csvs/All_b2021_spotrnaN100_orphan.csv'))
+spotrnaN100_b2021_all_non_orphan = pd.read_csv(Path(datadir, 'csvs/All_b2021_spotrnaN100_non_orphan.csv'))
+
+# rna monomers
+spotrnaN100_rnamonomers = pd.read_csv(Path(datadir, 'csvs/RNA_Monomers_spotrnaN100.csv'))
+spotrnaN100_rnamonomers_orphan = pd.read_csv(Path(datadir, 'csvs/RNA_Monomers_spotrnaN100_orphan.csv'))
+spotrnaN100_rnamonomers_non_orphan = pd.read_csv(Path(datadir, 'csvs/RNA_Monomers_spotrnaN100_non_orphan.csv'))
+
+spotrnaN100_a2021_rnamonomers = pd.read_csv(Path(datadir, 'csvs/RNA_Monomers_a2021_spotrnaN100.csv'))
+spotrnaN100_a2021_rnamonomers_orphan = pd.read_csv(Path(datadir, 'csvs/RNA_Monomers_a2021_spotrnaN100_orphan.csv'))
+spotrnaN100_a2021_rnamonomers_non_orphan = pd.read_csv(Path(datadir, 'csvs/RNA_Monomers_a2021_spotrnaN100_non_orphan.csv'))
+
+spotrnaN100_b2021_rnamonomers = pd.read_csv(Path(datadir, 'csvs/RNA_Monomers_b2021_spotrnaN100.csv'))
+spotrnaN100_b2021_rnamonomers_orphan = pd.read_csv(Path(datadir, 'csvs/RNA_Monomers_b2021_spotrnaN100_orphan.csv'))
+spotrnaN100_b2021_rnamonomers_non_orphan = pd.read_csv(Path(datadir, 'csvs/RNA_Monomers_b2021_spotrnaN100_non_orphan.csv'))
+
+# protein-rna
+spotrnaN100_protein_rna = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_spotrnaN100.csv'))
+spotrnaN100_protein_rna_orphan = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_spotrnaN100_orphan.csv'))
+spotrnaN100_protein_rna_non_orphan = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_spotrnaN100_non_orphan.csv'))
+
+spotrnaN100_a2021_protein_rna = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_a2021_spotrnaN100.csv'))
+spotrnaN100_a2021_protein_rna_orphan = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_a2021_spotrnaN100_orphan.csv'))
+spotrnaN100_a2021_protein_rna_non_orphan = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_a2021_spotrnaN100_non_orphan.csv'))
+
+spotrnaN100_b2021_protein_rna = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_b2021_spotrnaN100.csv'))
+spotrnaN100_b2021_protein_rna_orphan = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_b2021_spotrnaN100_orphan.csv'))
+spotrnaN100_b2021_protein_rna_non_orphan = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_b2021_spotrnaN100_non_orphan.csv'))
+
 
 
 #####################################################################################################################
@@ -1647,6 +1771,49 @@ rnaformerN20000_b2021_protein_rna = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_
 rnaformerN20000_b2021_protein_rna_orphan = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_b2021_rnaformerN20000_orphan.csv'))
 rnaformerN20000_b2021_protein_rna_non_orphan = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_b2021_rnaformerN20000_non_orphan.csv'))
 
+#####################################################################################################################
+# SHS RNAformerN20000
+
+# all data
+noMSA_all = pd.read_csv(Path(datadir, 'csvs/All_noMSA.csv'))
+noMSA_all_orphan = pd.read_csv(Path(datadir, 'csvs/All_noMSA_orphan.csv'))
+noMSA_all_non_orphan = pd.read_csv(Path(datadir, 'csvs/All_noMSA_non_orphan.csv'))
+
+noMSA_a2021_all = pd.read_csv(Path(datadir, 'csvs/All_a2021_noMSA.csv'))
+noMSA_a2021_all_orphan = pd.read_csv(Path(datadir, 'csvs/All_a2021_noMSA_orphan.csv'))
+noMSA_a2021_all_non_orphan = pd.read_csv(Path(datadir, 'csvs/All_a2021_noMSA_non_orphan.csv'))
+
+noMSA_b2021_all = pd.read_csv(Path(datadir, 'csvs/All_b2021_noMSA.csv'))
+noMSA_b2021_all_orphan = pd.read_csv(Path(datadir, 'csvs/All_b2021_noMSA_orphan.csv'))
+noMSA_b2021_all_non_orphan = pd.read_csv(Path(datadir, 'csvs/All_b2021_noMSA_non_orphan.csv'))
+
+# rna monomers
+noMSA_rnamonomers = pd.read_csv(Path(datadir, 'csvs/RNA_Monomers_noMSA.csv'))
+noMSA_rnamonomers_orphan = pd.read_csv(Path(datadir, 'csvs/RNA_Monomers_noMSA_orphan.csv'))
+noMSA_rnamonomers_non_orphan = pd.read_csv(Path(datadir, 'csvs/RNA_Monomers_noMSA_non_orphan.csv'))
+
+noMSA_a2021_rnamonomers = pd.read_csv(Path(datadir, 'csvs/RNA_Monomers_a2021_noMSA.csv'))
+noMSA_a2021_rnamonomers_orphan = pd.read_csv(Path(datadir, 'csvs/RNA_Monomers_a2021_noMSA_orphan.csv'))
+noMSA_a2021_rnamonomers_non_orphan = pd.read_csv(Path(datadir, 'csvs/RNA_Monomers_a2021_noMSA_non_orphan.csv'))
+
+noMSA_b2021_rnamonomers = pd.read_csv(Path(datadir, 'csvs/RNA_Monomers_b2021_noMSA.csv'))
+noMSA_b2021_rnamonomers_orphan = pd.read_csv(Path(datadir, 'csvs/RNA_Monomers_b2021_noMSA_orphan.csv'))
+noMSA_b2021_rnamonomers_non_orphan = pd.read_csv(Path(datadir, 'csvs/RNA_Monomers_b2021_noMSA_non_orphan.csv'))
+
+# protein-rna
+noMSA_protein_rna = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_noMSA.csv'))
+noMSA_protein_rna_orphan = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_noMSA_orphan.csv'))
+noMSA_protein_rna_non_orphan = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_noMSA_non_orphan.csv'))
+
+noMSA_a2021_protein_rna = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_a2021_noMSA.csv'))
+noMSA_a2021_protein_rna_orphan = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_a2021_noMSA_orphan.csv'))
+noMSA_a2021_protein_rna_non_orphan = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_a2021_noMSA_non_orphan.csv'))
+
+noMSA_b2021_protein_rna = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_b2021_noMSA.csv'))
+noMSA_b2021_protein_rna_orphan = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_b2021_noMSA_orphan.csv'))
+noMSA_b2021_protein_rna_non_orphan = pd.read_csv(Path(datadir, 'csvs/RNA-Protein_b2021_noMSA_non_orphan.csv'))
+
+
 def suggest_figsize(
         n_bars: int,
         height: float = 3.0,      # keep panels short for grids
@@ -1713,105 +1880,176 @@ def suggest_figsize_with_inset(
 
 
 dfs = [
-    ['AD', (alphafold_all, rnaformer_all, rnafold_all, spotrna_all, rnaformerN100_all, rnaformerN5000_all, rnaformerN10000_all, rnaformerN20000_all)], 
-    ['ADO', (alphafold_all_orphan, rnaformer_all_orphan, rnafold_all_orphan, spotrna_all_orphan, rnaformerN100_all_orphan, rnaformerN5000_all_orphan, rnaformerN10000_all_orphan, rnaformerN20000_all_orphan)],
-    ['ADNO', (alphafold_all_non_orphan, rnaformer_all_non_orphan, rnafold_all_non_orphan, spotrna_all_non_orphan, rnaformerN100_all_non_orphan, rnaformerN5000_all_non_orphan, rnaformerN10000_all_non_orphan, rnaformerN20000_all_non_orphan)],
-    ['ADb2021', (alphafold_b2021_all, rnaformer_b2021_all, rnafold_b2021_all, spotrna_b2021_all, rnaformerN100_b2021_all, rnaformerN5000_b2021_all, rnaformerN10000_b2021_all, rnaformerN20000_b2021_all)],
-    ['ADOb2021', (alphafold_b2021_all_orphan, rnaformer_b2021_all_orphan, rnafold_b2021_all_orphan, spotrna_b2021_all_orphan, rnaformerN100_b2021_all_orphan, rnaformerN5000_b2021_all_orphan, rnaformerN10000_b2021_all_orphan, rnaformerN20000_b2021_all_orphan)],
-    ['ADNOb2021', (alphafold_b2021_all_non_orphan, rnaformer_b2021_all_non_orphan, rnafold_b2021_all_non_orphan, spotrna_b2021_all_non_orphan, rnaformerN100_b2021_all_non_orphan, rnaformerN5000_b2021_all_non_orphan, rnaformerN10000_b2021_all_non_orphan, rnaformerN20000_b2021_all_non_orphan)],
-    ['ADa2021', (alphafold_a2021_all, rnaformer_a2021_all, rnafold_a2021_all, spotrna_a2021_all, rnaformerN100_a2021_all, rnaformerN5000_a2021_all, rnaformerN10000_a2021_all, rnaformerN20000_a2021_all)],
-    ['ADOa2021', (alphafold_a2021_all_orphan, rnaformer_a2021_all_orphan, rnafold_a2021_all_orphan, spotrna_a2021_all_orphan, rnaformerN100_a2021_all_orphan, rnaformerN5000_a2021_all_orphan, rnaformerN10000_a2021_all_orphan, rnaformerN20000_a2021_all_orphan)],
-    ['ADNOa2021', (alphafold_a2021_all_non_orphan, rnaformer_a2021_all_non_orphan, rnafold_a2021_all_non_orphan, spotrna_a2021_all_non_orphan, rnaformerN100_a2021_all_non_orphan, rnaformerN5000_a2021_all_non_orphan, rnaformerN10000_a2021_all_non_orphan, rnaformerN20000_a2021_all_non_orphan)],
-    ['RM', (alphafold_rnamonomers, rnaformer_rnamonomers, rnafold_rnamonomers, spotrna_rnamonomers, rnaformerN100_rnamonomers, rnaformerN5000_rnamonomers, rnaformerN10000_rnamonomers, rnaformerN20000_rnamonomers)], 
-    ['RMO', (alphafold_rnamonomers_orphan, rnaformer_rnamonomers_orphan, rnafold_rnamonomers_orphan, spotrna_rnamonomers_orphan, rnaformerN100_rnamonomers_orphan, rnaformerN5000_rnamonomers_orphan, rnaformerN10000_rnamonomers_orphan, rnaformerN20000_rnamonomers_orphan)],
-    ['RMNO', (alphafold_rnamonomers_non_orphan, rnaformer_rnamonomers_non_orphan, rnafold_rnamonomers_non_orphan, spotrna_rnamonomers_non_orphan, rnaformerN100_rnamonomers_non_orphan, rnaformerN5000_rnamonomers_non_orphan, rnaformerN10000_rnamonomers_non_orphan, rnaformerN20000_rnamonomers_non_orphan)],
-    ['RMb2021', (alphafold_b2021_rnamonomers, rnaformer_b2021_rnamonomers, rnafold_b2021_rnamonomers, spotrna_b2021_rnamonomers, rnaformerN100_b2021_rnamonomers, rnaformerN5000_b2021_rnamonomers, rnaformerN10000_b2021_rnamonomers, rnaformerN20000_b2021_rnamonomers)],
-    ['RMOb2021', (alphafold_b2021_rnamonomers_orphan, rnaformer_b2021_rnamonomers_orphan, rnafold_b2021_rnamonomers_orphan, spotrna_b2021_rnamonomers_orphan, rnaformerN100_b2021_rnamonomers_orphan, rnaformerN5000_b2021_rnamonomers_orphan, rnaformerN10000_b2021_rnamonomers_orphan, rnaformerN20000_b2021_rnamonomers_orphan)],
-    ['RMNOb2021', (alphafold_b2021_rnamonomers_non_orphan, rnaformer_b2021_rnamonomers_non_orphan, rnafold_b2021_rnamonomers_non_orphan, spotrna_b2021_rnamonomers_non_orphan, rnaformerN100_b2021_rnamonomers_non_orphan, rnaformerN5000_b2021_rnamonomers_non_orphan, rnaformerN10000_b2021_rnamonomers_non_orphan, rnaformerN20000_b2021_rnamonomers_non_orphan)],
-    ['RMa2021', (alphafold_a2021_rnamonomers, rnaformer_a2021_rnamonomers, rnafold_a2021_rnamonomers, spotrna_a2021_rnamonomers, rnaformerN100_a2021_rnamonomers, rnaformerN5000_a2021_rnamonomers, rnaformerN10000_a2021_rnamonomers, rnaformerN20000_a2021_rnamonomers)],
-    ['RMOa2021', (alphafold_a2021_rnamonomers_orphan, rnaformer_a2021_rnamonomers_orphan, rnafold_a2021_rnamonomers_orphan, spotrna_a2021_rnamonomers_orphan, rnaformerN100_a2021_rnamonomers_orphan, rnaformerN5000_a2021_rnamonomers_orphan, rnaformerN10000_a2021_rnamonomers_orphan, rnaformerN20000_a2021_rnamonomers_orphan)],
-    ['RMNOa2021', (alphafold_a2021_rnamonomers_non_orphan, rnaformer_a2021_rnamonomers_non_orphan, rnafold_a2021_rnamonomers_non_orphan, spotrna_a2021_rnamonomers_non_orphan, rnaformerN100_a2021_rnamonomers_non_orphan, rnaformerN5000_a2021_rnamonomers_non_orphan, rnaformerN10000_a2021_rnamonomers_non_orphan, rnaformerN20000_a2021_rnamonomers_non_orphan)],
-    ['RP', (alphafold_protein_rna, rnaformer_protein_rna, rnafold_protein_rna, spotrna_protein_rna, rnaformerN100_protein_rna, rnaformerN5000_protein_rna, rnaformerN10000_protein_rna, rnaformerN20000_protein_rna)], 
-    ['RPO', (alphafold_protein_rna_orphan, rnaformer_protein_rna_orphan, rnafold_protein_rna_orphan, spotrna_protein_rna_orphan, rnaformerN100_protein_rna_orphan, rnaformerN5000_protein_rna_orphan, rnaformerN10000_protein_rna_orphan, rnaformerN20000_protein_rna_orphan)],
-    ['RPNO', (alphafold_protein_rna_non_orphan, rnaformer_protein_rna_non_orphan, rnafold_protein_rna_non_orphan, spotrna_protein_rna_non_orphan, rnaformerN100_protein_rna_non_orphan, rnaformerN5000_protein_rna_non_orphan, rnaformerN10000_protein_rna_non_orphan, rnaformerN20000_protein_rna_non_orphan)],
-    ['RPb2021', (alphafold_b2021_protein_rna, rnaformer_b2021_protein_rna, rnafold_b2021_protein_rna, spotrna_b2021_protein_rna, rnaformerN100_b2021_protein_rna, rnaformerN5000_b2021_protein_rna, rnaformerN10000_b2021_protein_rna, rnaformerN20000_b2021_protein_rna)],
-    ['RPOb2021', (alphafold_b2021_protein_rna_orphan, rnaformer_b2021_protein_rna_orphan, rnafold_b2021_protein_rna_orphan, spotrna_b2021_protein_rna_orphan, rnaformerN100_b2021_protein_rna_orphan, rnaformerN5000_b2021_protein_rna_orphan, rnaformerN10000_b2021_protein_rna_orphan, rnaformerN20000_b2021_protein_rna_orphan)],
-    ['RPNOb2021', (alphafold_b2021_protein_rna_non_orphan, rnaformer_b2021_protein_rna_non_orphan, rnafold_b2021_protein_rna_non_orphan, spotrna_b2021_protein_rna_non_orphan, rnaformerN100_b2021_protein_rna_non_orphan, rnaformerN5000_b2021_protein_rna_non_orphan, rnaformerN10000_b2021_protein_rna_non_orphan, rnaformerN20000_b2021_protein_rna_non_orphan)],
-    ['RPa2021', (alphafold_a2021_protein_rna, rnaformer_a2021_protein_rna, rnafold_a2021_protein_rna, spotrna_a2021_protein_rna, rnaformerN100_a2021_protein_rna, rnaformerN5000_a2021_protein_rna, rnaformerN10000_a2021_protein_rna, rnaformerN20000_a2021_protein_rna)],
-    ['RPOa2021', (alphafold_a2021_protein_rna_orphan, rnaformer_a2021_protein_rna_orphan, rnafold_a2021_protein_rna_orphan, spotrna_a2021_protein_rna_orphan, rnaformerN100_a2021_protein_rna_orphan, rnaformerN5000_a2021_protein_rna_orphan, rnaformerN10000_a2021_protein_rna_orphan, rnaformerN20000_a2021_protein_rna_orphan)],
-    ['RPNOa2021', (alphafold_a2021_protein_rna_non_orphan, rnaformer_a2021_protein_rna_non_orphan, rnafold_a2021_protein_rna_non_orphan, spotrna_a2021_protein_rna_non_orphan, rnaformerN100_a2021_protein_rna_non_orphan, rnaformerN5000_a2021_protein_rna_non_orphan, rnaformerN10000_a2021_protein_rna_non_orphan, rnaformerN20000_a2021_protein_rna_non_orphan)],
+    ['AD', (alphafold_all, rnaformer_all, rnafold_all, spotrna_all, rnaformerN100_all, rnaformerN5000_all, rnaformerN10000_all, rnaformerN20000_all, rnafoldN100_all, spotrnaN100_all, noMSA_all)], 
+    ['ADO', (alphafold_all_orphan, rnaformer_all_orphan, rnafold_all_orphan, spotrna_all_orphan, rnaformerN100_all_orphan, rnaformerN5000_all_orphan, rnaformerN10000_all_orphan, rnaformerN20000_all_orphan, rnafoldN100_all_orphan, spotrnaN100_all_orphan, noMSA_all_orphan)],
+    ['ADNO', (alphafold_all_non_orphan, rnaformer_all_non_orphan, rnafold_all_non_orphan, spotrna_all_non_orphan, rnaformerN100_all_non_orphan, rnaformerN5000_all_non_orphan, rnaformerN10000_all_non_orphan, rnaformerN20000_all_non_orphan, rnafoldN100_all_non_orphan, spotrnaN100_all_non_orphan, noMSA_all_non_orphan)],
+    ['ADb2021', (alphafold_b2021_all, rnaformer_b2021_all, rnafold_b2021_all, spotrna_b2021_all, rnaformerN100_b2021_all, rnaformerN5000_b2021_all, rnaformerN10000_b2021_all, rnaformerN20000_b2021_all, rnafoldN100_b2021_all, spotrnaN100_b2021_all, noMSA_b2021_all)],
+    ['ADOb2021', (alphafold_b2021_all_orphan, rnaformer_b2021_all_orphan, rnafold_b2021_all_orphan, spotrna_b2021_all_orphan, rnaformerN100_b2021_all_orphan, rnaformerN5000_b2021_all_orphan, rnaformerN10000_b2021_all_orphan, rnaformerN20000_b2021_all_orphan, rnafoldN100_b2021_all_orphan, spotrnaN100_b2021_all_orphan, noMSA_b2021_all_orphan)],
+    ['ADNOb2021', (alphafold_b2021_all_non_orphan, rnaformer_b2021_all_non_orphan, rnafold_b2021_all_non_orphan, spotrna_b2021_all_non_orphan, rnaformerN100_b2021_all_non_orphan, rnaformerN5000_b2021_all_non_orphan, rnaformerN10000_b2021_all_non_orphan, rnaformerN20000_b2021_all_non_orphan, rnafoldN100_b2021_all_non_orphan, spotrnaN100_b2021_all_non_orphan, noMSA_b2021_all_non_orphan)],
+    ['ADa2021', (alphafold_a2021_all, rnaformer_a2021_all, rnafold_a2021_all, spotrna_a2021_all, rnaformerN100_a2021_all, rnaformerN5000_a2021_all, rnaformerN10000_a2021_all, rnaformerN20000_a2021_all, rnafoldN100_a2021_all, spotrnaN100_a2021_all, noMSA_a2021_all)],
+    ['ADOa2021', (alphafold_a2021_all_orphan, rnaformer_a2021_all_orphan, rnafold_a2021_all_orphan, spotrna_a2021_all_orphan, rnaformerN100_a2021_all_orphan, rnaformerN5000_a2021_all_orphan, rnaformerN10000_a2021_all_orphan, rnaformerN20000_a2021_all_orphan, rnafoldN100_a2021_all_orphan, spotrnaN100_a2021_all_orphan, noMSA_a2021_all_orphan)],
+    ['ADNOa2021', (alphafold_a2021_all_non_orphan, rnaformer_a2021_all_non_orphan, rnafold_a2021_all_non_orphan, spotrna_a2021_all_non_orphan, rnaformerN100_a2021_all_non_orphan, rnaformerN5000_a2021_all_non_orphan, rnaformerN10000_a2021_all_non_orphan, rnaformerN20000_a2021_all_non_orphan, rnafoldN100_a2021_all_non_orphan, spotrnaN100_a2021_all_non_orphan, noMSA_a2021_all_non_orphan)],
+    ['RM', (alphafold_rnamonomers, rnaformer_rnamonomers, rnafold_rnamonomers, spotrna_rnamonomers, rnaformerN100_rnamonomers, rnaformerN5000_rnamonomers, rnaformerN10000_rnamonomers, rnaformerN20000_rnamonomers, rnafoldN100_rnamonomers, spotrnaN100_rnamonomers, noMSA_rnamonomers)], 
+    ['RMO', (alphafold_rnamonomers_orphan, rnaformer_rnamonomers_orphan, rnafold_rnamonomers_orphan, spotrna_rnamonomers_orphan, rnaformerN100_rnamonomers_orphan, rnaformerN5000_rnamonomers_orphan, rnaformerN10000_rnamonomers_orphan, rnaformerN20000_rnamonomers_orphan, rnafoldN100_rnamonomers_orphan, spotrnaN100_rnamonomers_orphan, noMSA_rnamonomers_orphan)],
+    ['RMNO', (alphafold_rnamonomers_non_orphan, rnaformer_rnamonomers_non_orphan, rnafold_rnamonomers_non_orphan, spotrna_rnamonomers_non_orphan, rnaformerN100_rnamonomers_non_orphan, rnaformerN5000_rnamonomers_non_orphan, rnaformerN10000_rnamonomers_non_orphan, rnaformerN20000_rnamonomers_non_orphan, rnafoldN100_rnamonomers_non_orphan, spotrnaN100_rnamonomers_non_orphan, noMSA_rnamonomers_non_orphan)],
+    ['RMb2021', (alphafold_b2021_rnamonomers, rnaformer_b2021_rnamonomers, rnafold_b2021_rnamonomers, spotrna_b2021_rnamonomers, rnaformerN100_b2021_rnamonomers, rnaformerN5000_b2021_rnamonomers, rnaformerN10000_b2021_rnamonomers, rnaformerN20000_b2021_rnamonomers, rnafoldN100_b2021_rnamonomers, spotrnaN100_b2021_rnamonomers, noMSA_b2021_rnamonomers)],
+    ['RMOb2021', (alphafold_b2021_rnamonomers_orphan, rnaformer_b2021_rnamonomers_orphan, rnafold_b2021_rnamonomers_orphan, spotrna_b2021_rnamonomers_orphan, rnaformerN100_b2021_rnamonomers_orphan, rnaformerN5000_b2021_rnamonomers_orphan, rnaformerN10000_b2021_rnamonomers_orphan, rnaformerN20000_b2021_rnamonomers_orphan, rnafoldN100_b2021_rnamonomers_orphan, spotrnaN100_b2021_rnamonomers_orphan, noMSA_b2021_rnamonomers_orphan)],
+    ['RMNOb2021', (alphafold_b2021_rnamonomers_non_orphan, rnaformer_b2021_rnamonomers_non_orphan, rnafold_b2021_rnamonomers_non_orphan, spotrna_b2021_rnamonomers_non_orphan, rnaformerN100_b2021_rnamonomers_non_orphan, rnaformerN5000_b2021_rnamonomers_non_orphan, rnaformerN10000_b2021_rnamonomers_non_orphan, rnaformerN20000_b2021_rnamonomers_non_orphan, rnafoldN100_b2021_rnamonomers_non_orphan, spotrnaN100_b2021_rnamonomers_non_orphan, noMSA_b2021_rnamonomers_non_orphan)],
+    ['RMa2021', (alphafold_a2021_rnamonomers, rnaformer_a2021_rnamonomers, rnafold_a2021_rnamonomers, spotrna_a2021_rnamonomers, rnaformerN100_a2021_rnamonomers, rnaformerN5000_a2021_rnamonomers, rnaformerN10000_a2021_rnamonomers, rnaformerN20000_a2021_rnamonomers, rnafoldN100_a2021_rnamonomers, spotrnaN100_a2021_rnamonomers, noMSA_a2021_rnamonomers)],
+    ['RMOa2021', (alphafold_a2021_rnamonomers_orphan, rnaformer_a2021_rnamonomers_orphan, rnafold_a2021_rnamonomers_orphan, spotrna_a2021_rnamonomers_orphan, rnaformerN100_a2021_rnamonomers_orphan, rnaformerN5000_a2021_rnamonomers_orphan, rnaformerN10000_a2021_rnamonomers_orphan, rnaformerN20000_a2021_rnamonomers_orphan, rnafoldN100_a2021_rnamonomers_orphan, spotrnaN100_a2021_rnamonomers_orphan, noMSA_a2021_rnamonomers_orphan)],
+    ['RMNOa2021', (alphafold_a2021_rnamonomers_non_orphan, rnaformer_a2021_rnamonomers_non_orphan, rnafold_a2021_rnamonomers_non_orphan, spotrna_a2021_rnamonomers_non_orphan, rnaformerN100_a2021_rnamonomers_non_orphan, rnaformerN5000_a2021_rnamonomers_non_orphan, rnaformerN10000_a2021_rnamonomers_non_orphan, rnaformerN20000_a2021_rnamonomers_non_orphan, rnafoldN100_a2021_rnamonomers_non_orphan, spotrnaN100_a2021_rnamonomers_non_orphan, noMSA_a2021_rnamonomers_non_orphan)],
+    ['RP', (alphafold_protein_rna, rnaformer_protein_rna, rnafold_protein_rna, spotrna_protein_rna, rnaformerN100_protein_rna, rnaformerN5000_protein_rna, rnaformerN10000_protein_rna, rnaformerN20000_protein_rna, rnafoldN100_protein_rna, spotrnaN100_protein_rna, noMSA_protein_rna)], 
+    ['RPO', (alphafold_protein_rna_orphan, rnaformer_protein_rna_orphan, rnafold_protein_rna_orphan, spotrna_protein_rna_orphan, rnaformerN100_protein_rna_orphan, rnaformerN5000_protein_rna_orphan, rnaformerN10000_protein_rna_orphan, rnaformerN20000_protein_rna_orphan, rnafoldN100_protein_rna_orphan, spotrnaN100_protein_rna_orphan, noMSA_protein_rna_orphan)],
+    ['RPNO', (alphafold_protein_rna_non_orphan, rnaformer_protein_rna_non_orphan, rnafold_protein_rna_non_orphan, spotrna_protein_rna_non_orphan, rnaformerN100_protein_rna_non_orphan, rnaformerN5000_protein_rna_non_orphan, rnaformerN10000_protein_rna_non_orphan, rnaformerN20000_protein_rna_non_orphan, rnafoldN100_protein_rna_non_orphan, spotrnaN100_protein_rna_non_orphan, noMSA_protein_rna_non_orphan)],
+    ['RPb2021', (alphafold_b2021_protein_rna, rnaformer_b2021_protein_rna, rnafold_b2021_protein_rna, spotrna_b2021_protein_rna, rnaformerN100_b2021_protein_rna, rnaformerN5000_b2021_protein_rna, rnaformerN10000_b2021_protein_rna, rnaformerN20000_b2021_protein_rna, rnafoldN100_b2021_protein_rna, spotrnaN100_b2021_protein_rna, noMSA_b2021_protein_rna)],
+    ['RPOb2021', (alphafold_b2021_protein_rna_orphan, rnaformer_b2021_protein_rna_orphan, rnafold_b2021_protein_rna_orphan, spotrna_b2021_protein_rna_orphan, rnaformerN100_b2021_protein_rna_orphan, rnaformerN5000_b2021_protein_rna_orphan, rnaformerN10000_b2021_protein_rna_orphan, rnaformerN20000_b2021_protein_rna_orphan, rnafoldN100_b2021_protein_rna_orphan, spotrnaN100_b2021_protein_rna_orphan, noMSA_b2021_protein_rna_orphan)],
+    ['RPNOb2021', (alphafold_b2021_protein_rna_non_orphan, rnaformer_b2021_protein_rna_non_orphan, rnafold_b2021_protein_rna_non_orphan, spotrna_b2021_protein_rna_non_orphan, rnaformerN100_b2021_protein_rna_non_orphan, rnaformerN5000_b2021_protein_rna_non_orphan, rnaformerN10000_b2021_protein_rna_non_orphan, rnaformerN20000_b2021_protein_rna_non_orphan, rnafoldN100_b2021_protein_rna_non_orphan, spotrnaN100_b2021_protein_rna_non_orphan, noMSA_b2021_protein_rna_non_orphan)],
+    ['RPa2021', (alphafold_a2021_protein_rna, rnaformer_a2021_protein_rna, rnafold_a2021_protein_rna, spotrna_a2021_protein_rna, rnaformerN100_a2021_protein_rna, rnaformerN5000_a2021_protein_rna, rnaformerN10000_a2021_protein_rna, rnaformerN20000_a2021_protein_rna, rnafoldN100_a2021_protein_rna, spotrnaN100_a2021_protein_rna, noMSA_a2021_protein_rna)],
+    ['RPOa2021', (alphafold_a2021_protein_rna_orphan, rnaformer_a2021_protein_rna_orphan, rnafold_a2021_protein_rna_orphan, spotrna_a2021_protein_rna_orphan, rnaformerN100_a2021_protein_rna_orphan, rnaformerN5000_a2021_protein_rna_orphan, rnaformerN10000_a2021_protein_rna_orphan, rnaformerN20000_a2021_protein_rna_orphan, rnafoldN100_a2021_protein_rna_orphan, spotrnaN100_a2021_protein_rna_orphan, noMSA_a2021_protein_rna_orphan)],
+    ['RPNOa2021', (alphafold_a2021_protein_rna_non_orphan, rnaformer_a2021_protein_rna_non_orphan, rnafold_a2021_protein_rna_non_orphan, spotrna_a2021_protein_rna_non_orphan, rnaformerN100_a2021_protein_rna_non_orphan, rnaformerN5000_a2021_protein_rna_non_orphan, rnaformerN10000_a2021_protein_rna_non_orphan, rnaformerN20000_a2021_protein_rna_non_orphan, rnafoldN100_a2021_protein_rna_non_orphan, spotrnaN100_a2021_protein_rna_non_orphan, noMSA_a2021_protein_rna_non_orphan)],
     ]
 
 print('Evaluate', measure)
 
-for dset, (af, rf, rnafold, spot, n100, n5000, n10000, n20000) in dfs:
+val_ids = ['3BWP', '255D', '6E80', '4FAQ', '3Q50', '2ZY6', '4E8V', '7KD1', '3AM1', '2Q1R', '3GCA', '3ND3', '3DHS', '3NPN', '7M5O', '4E8P', '4E8Q', '4RBQ', '1U9S', '4WJ4', '6UES', '4EN5', '4E8M', '4C40', '6TF3', '5C5W', '4CS1', '4E8N', '5DA6', '6TB7', '4P8Z', '2A2E', '6IV9', '2A64', '5HSW', '413D', '3R4F', '2DVI', '4GMA', '6TFE', '3D0M', '4DS6', '387D', '7D7W', '6TF1', '6UET', '6T3S', '6DTD', '6PQ7', '4AOB']
+
+msa_sizes = msa_sizes[~msa_sizes['exp_db_id'].isin(val_ids)]
+
+print(msa_sizes)
+
+for dset, (af, rf, rnafold, spot, n100, n5000, n10000, n20000, rnafoldN100, spotN100, noMSA) in dfs:
+    af = af[~af['exp_db_id'].isin(val_ids)]
+    rf = rf[~rf['exp_db_id'].isin(val_ids)]
+    rnafold = rnafold[~rnafold['exp_db_id'].isin(val_ids)]
+    spot = spot[~spot['exp_db_id'].isin(val_ids)]
+    n100 = n100[~n100['exp_db_id'].isin(val_ids)]
+    n5000 = n5000[~n5000['exp_db_id'].isin(val_ids)]
+    n10000 = n10000[~n10000['exp_db_id'].isin(val_ids)]
+    n20000 = n20000[~n20000['exp_db_id'].isin(val_ids)]
+    rnafoldN100 = rnafoldN100[~rnafoldN100['exp_db_id'].isin(val_ids)]
+    spotN100 = spotN100[~spotN100['exp_db_id'].isin(val_ids)]
+    noMSA = noMSA[~noMSA['exp_db_id'].isin(val_ids)]
+
+    af = af[af['NumberRNAs'] <= max_rna]
+    af = af[af['NumberProteins'] <= max_protein]
+    rf = rf[rf['exp_db_id'].isin(af['exp_db_id'].unique())]
+    rnafold = rnafold[rnafold['exp_db_id'].isin(af['exp_db_id'].unique())]
+    spot = spot[spot['exp_db_id'].isin(af['exp_db_id'].unique())]
+    n100 = n100[n100['exp_db_id'].isin(af['exp_db_id'].unique())]
+    n5000 = n5000[n5000['exp_db_id'].isin(af['exp_db_id'].unique())]
+    n20000 = n20000[n20000['exp_db_id'].isin(af['exp_db_id'].unique())]
+    rnafoldN100 = rnafoldN100[rnafoldN100['exp_db_id'].isin(af['exp_db_id'].unique())]
+    spotN100 = spotN100[spotN100['exp_db_id'].isin(af['exp_db_id'].unique())]
+    noMSA = noMSA[noMSA['exp_db_id'].isin(af['exp_db_id'].unique())]
+
+    # af['msa_size'] = af.apply(get_rna_msa_size, axis=1)
+    # rf['msa_size'] = rf.apply(get_rna_msa_size, axis=1)
+    # rnafold['msa_size'] = rnafold.apply(get_rna_msa_size, axis=1)
+    # spot['msa_size'] = spot.apply(get_rna_msa_size, axis=1)
+    # n100['msa_size'] = n100.apply(get_rna_msa_size, axis=1)
+    # n5000['msa_size'] = n5000.apply(get_rna_msa_size, axis=1)
+    # n10000['msa_size'] = n10000.apply(get_rna_msa_size, axis=1)
+    # n20000['msa_size'] = n20000.apply(get_rna_msa_size, axis=1)
+    # rnafoldN100['msa_size'] = rnafoldN100.apply(get_rna_msa_size, axis=1)
+    # spotN100['msa_size'] = spotN100.apply(get_rna_msa_size, axis=1)
+    # noMSA['msa_size'] = noMSA.apply(get_rna_msa_size, axis=1)
+    # # rf = rf[rf['NumberRNAs'] <= max_rna]
+    # # rf = rf[rf['NumberProteins'] <= max_protein]
+    # rnafold = rnafold[rnafold['NumberRNAs'] <= max_rna]
+    # rnafold = rnafold[rnafold['NumberProteins'] <= max_protein]
+    # spot = spot[spot['NumberRNAs'] <= max_rna]
+    # spot = spot[spot['NumberProteins'] <= max_protein]
+    # n100 = n100[n100['NumberRNAs'] <= max_rna]
+    # n100 = n100[n100['NumberProteins'] <= max_protein]
+    # n5000 = n5000[n5000['NumberRNAs'] <= max_rna]
+    # n5000 = n5000[n5000['NumberProteins'] <= max_protein]
+    # n20000 = n20000[n20000['NumberRNAs'] <= max_rna]
+    # n20000 = n20000[n20000['NumberProteins'] <= max_protein]
+    # rnafoldN100 = rnafoldN100[rnafoldN100['NumberRNAs'] <= max_rna]
+    # rnafoldN100 = rnafoldN100[rnafoldN100['NumberProteins'] <= max_protein]
+    # spotN100 = spotN100[spotN100['NumberRNAs'] <= max_rna]
+    # spotN100 = spotN100[spotN100['NumberProteins'] <= max_protein]
+
+
     print()
     print(dset, f'(n={len(af)})')
-    print(f'Alphafold 3 (n={len(af)}):', np.round(af[measure].mean(), 3))
-    print(f'sMSA RNAformer (n={len(rf)}):', np.round(rf[measure].mean(), 3))
-    print(f'sMSA RNAfold (n={len(rnafold)}):', np.round(rnafold[measure].mean(), 3))
-    print(f'sMSA SPOT-RNA (n={len(spot)}):', np.round(spot[measure].mean(), 3))
-    print()
-    print(f"sMSA {n100['algorithm'].unique()} (n={len(n100)}):", np.round(n100[measure].mean(), 3))
-    print(f'sMSA RNAformerN5000 (n={len(n5000)}):', np.round(n5000[measure].mean(), 3))
-    print(f'sMSA RNAformerN10000 (n={len(n10000)}):', np.round(n10000[measure].mean(), 3))
-    print(f'sMSA RNAformerN20000 (n={len(n20000)}):', np.round(n20000[measure].mean(), 3))
+    print(f'Alphafold 3 (n={len(af)}):', np.round(af['Complex_RMSD'].mean(), 3), np.round(af['Complex_RMSD'].std(), 3), np.round(af['Complex_LDDT'].mean(), 3), np.round(af['Complex_LDDT'].std(), 3), np.round(af['Complex_TM'].mean(), 3), np.round(af['Complex_TM'].std(), 3))
+    
+    print(f'SHS RNAformer (n={len(rf)}):', np.round(rf['Complex_RMSD'].mean(), 3), np.round(rf['Complex_RMSD'].std(), 3), np.round(rf['Complex_LDDT'].mean(), 3), np.round(rf['Complex_LDDT'].std(), 3), np.round(rf['Complex_TM'].mean(), 3), np.round(rf['Complex_TM'].std(), 3))
+    
+    print(f'SHS RNAfold (n={len(rnafold)}):', np.round(rnafold['Complex_RMSD'].mean(), 3), np.round(rnafold['Complex_RMSD'].std(), 3), np.round(rnafold['Complex_LDDT'].mean(), 3), np.round(rnafold['Complex_LDDT'].std(), 3), np.round(rnafold['Complex_TM'].mean(), 3), np.round(rnafold['Complex_TM'].std(), 3))
+    
+    print(f'SHS SPOT-RNA (n={len(spot)}):', np.round(spot['Complex_RMSD'].mean(), 3), np.round(spot['Complex_RMSD'].std(), 3), np.round(spot['Complex_LDDT'].mean(), 3), np.round(spot['Complex_LDDT'].std(), 3), np.round(spot['Complex_TM'].mean(), 3), np.round(spot['Complex_TM'].std(), 3))
+    
+    print(f"SHS {n100['algorithm'].unique()} (n={len(n100)}):", np.round(n100['Complex_RMSD'].mean(), 3), np.round(n100['Complex_RMSD'].std(), 3), np.round(n100['Complex_LDDT'].mean(), 3), np.round(n100['Complex_LDDT'].std(), 3), np.round(n100['Complex_TM'].mean(), 3), np.round(n100['Complex_TM'].std(), 3))
+    
+    print(f'SHS RNAformerN5000 (n={len(n5000)}):', np.round(n5000['Complex_RMSD'].mean(), 3), np.round(n5000['Complex_RMSD'].std(), 3), np.round(n5000['Complex_LDDT'].mean(), 3), np.round(n5000['Complex_LDDT'].std(), 3), np.round(n5000['Complex_TM'].mean(), 3), np.round(n5000['Complex_TM'].std(), 3))
+    
+    print(f'SHS RNAformerN10000 (n={len(n10000)}):', np.round(n10000['Complex_RMSD'].mean(), 3), np.round(n10000['Complex_RMSD'].std(), 3), np.round(n10000['Complex_LDDT'].mean(), 3), np.round(n10000['Complex_LDDT'].std(), 3), np.round(n10000['Complex_TM'].mean(), 3), np.round(n10000['Complex_TM'].std(), 3))
+    
+    print(f'SHS RNAformerN20000 (n={len(n20000)}):', np.round(n20000['Complex_RMSD'].mean(), 3), np.round(n20000['Complex_RMSD'].std(), 3), np.round(n20000['Complex_LDDT'].mean(), 3), np.round(n20000['Complex_LDDT'].std(), 3), np.round(n20000['Complex_TM'].mean(), 3), np.round(n20000['Complex_TM'].std(), 3))
+    
+    print(f"SHS RNAfoldN100 (n={len(rnafoldN100)}):", np.round(rnafoldN100['Complex_RMSD'].mean(), 3), np.round(rnafoldN100['Complex_RMSD'].std(), 3), np.round(rnafoldN100['Complex_LDDT'].mean(), 3), np.round(rnafoldN100['Complex_LDDT'].std(), 3), np.round(rnafoldN100['Complex_TM'].mean(), 3), np.round(rnafoldN100['Complex_TM'].std(), 3))
+    
+    print(f"SHS SPOT-RNA N100 (n={len(spotN100)}):", np.round(spotN100['Complex_RMSD'].mean(), 3), np.round(spotN100['Complex_RMSD'].std(), 3), np.round(spotN100['Complex_LDDT'].mean(), 3), np.round(spotN100['Complex_LDDT'].std(), 3), np.round(spotN100['Complex_TM'].mean(), 3), np.round(spotN100['Complex_TM'].std(), 3))
+    
+    print(f"Alphafold noMSA (n={len(noMSA)}):", np.round(noMSA['Complex_RMSD'].mean(), 3), np.round(noMSA['Complex_RMSD'].std(), 3), np.round(noMSA['Complex_LDDT'].mean(), 3), np.round(noMSA['Complex_LDDT'].std(), 3), np.round(noMSA['Complex_TM'].mean(), 3), np.round(noMSA['Complex_TM'].std(), 3))
 
 
     if dset == 'AD':
         dataset = f'All Data (n={len(af)})'
     elif dset == 'ADO':
-        dataset = f'All Data w/o Homologues (n={len(af)})'
+        dataset = f'All Data w/o Homologs (n={len(af)})'
     elif dset == 'ADNO':
-        dataset = f'All Data w/ Homologues (n={len(af)})'
+        dataset = f'All Data w/ Homologs (n={len(af)})'
     elif dset == 'ADb2021':
         dataset = f'All Data (n={len(af)}; b2021)'
     elif dset == 'ADOb2021':
-        dataset = f'All Data w/o Homologues (n={len(af)}; b2021)'
+        dataset = f'All Data w/o Homologs (n={len(af)}; b2021)'
     elif dset == 'ADNOb2021':
-        dataset = f'All Data w/ Homologues (n={len(af)}; b2021)'
+        dataset = f'All Data w/ Homologs (n={len(af)}; b2021)'
     elif dset == 'ADa2021':
         dataset = f'All Data (n={len(af)}; a2021)'
     elif dset == 'ADOa2021':
-        dataset = f'All Data w/o Homologues (n={len(af)}; a2021)'
+        dataset = f'All Data w/o Homologs (n={len(af)}; a2021)'
     elif dset == 'ADNOa2021':
-        dataset = f'All Data w/ Homologues (n={len(af)}; a2021)'
+        dataset = f'All Data w/ Homologs (n={len(af)}; a2021)'
     elif dset == 'RM':
         dataset = f'RNA (n={len(af)})'
     elif dset == 'RMO':
-        dataset = f'RNA w/o Homologues (n={len(af)})'
+        dataset = f'RNA w/o Homologs (n={len(af)})'
     elif dset == 'RMNO':
-        dataset = f'RNA w/ Homologues (n={len(af)})'
+        dataset = f'RNA w/ Homologs (n={len(af)})'
     elif dset == 'RMb2021':
         dataset = f'RNA (n={len(af)}; b2021)'
     elif dset == 'RMOb2021':
-        dataset = f'RNA w/o Homologues (n={len(af)}; b2021)'
+        dataset = f'RNA w/o Homologs (n={len(af)}; b2021)'
     elif dset == 'RMNOb2021':
-        dataset = f'RNA w/ Homologues (n={len(af)}; b2021)'
+        dataset = f'RNA w/ Homologs (n={len(af)}; b2021)'
     elif dset == 'RMa2021':
         dataset = f'RNA (n={len(af)}; a2021)'        
     elif dset == 'RMOa2021':
-        dataset = f'RNA w/o Homologues (n={len(af)}; a2021)'
+        dataset = f'RNA w/o Homologs (n={len(af)}; a2021)'
     elif dset == 'RMNOa2021':
-        dataset = f'RNA w/ Homologues (n={len(af)}; a2021)'
+        dataset = f'RNA w/ Homologs (n={len(af)}; a2021)'
     elif dset == 'RP':
         dataset = f'RNA-Protein (n={len(af)})'
     elif dset == 'RPO':
-        dataset = f'RNA-Protein w/o Homologues (n={len(af)})'
+        dataset = f'RNA-Protein w/o Homologs (n={len(af)})'
     elif dset == 'RPNO':
-        dataset = f'RNA-Protein w/ Homologues (n={len(af)})'
+        dataset = f'RNA-Protein w/ Homologs (n={len(af)})'
     elif dset == 'RPb2021':
         dataset = f'RNA-Protein (n={len(af)}; b2021)'
     elif dset == 'RPOb2021':
-        dataset = f'RNA-Protein w/o Homologues (n={len(af)}; b2021)'
+        dataset = f'RNA-Protein w/o Homologs (n={len(af)}; b2021)'
     elif dset == 'RPNOb2021':
-        dataset = f'RNA-Protein w/ Homologues (n={len(af)}; b2021)'
+        dataset = f'RNA-Protein w/ Homologs (n={len(af)}; b2021)'
     elif dset == 'RPa2021':
         dataset = f'RNA-Protein (n={len(af)}; a2021)'
     elif dset == 'RPOa2021':
-        dataset = f'RNA-Protein w/o Homologues (n={len(af)}; a2021)'
+        dataset = f'RNA-Protein w/o Homologs (n={len(af)}; a2021)'
     elif dset == 'RPNOa2021':
-        dataset = f'RNA-Protein w/ Homologues (n={len(af)}; a2021)'
+        dataset = f'RNA-Protein w/ Homologs (n={len(af)}; a2021)'
     else:
         raise UserWarning(f'Unknown dataset {dset} during plotting of results.')
     
@@ -1825,7 +2063,8 @@ for dset, (af, rf, rnafold, spot, n100, n5000, n10000, n20000) in dfs:
 
     print('Plotting', dataset)
 
-    combined_df = pd.concat([af, rf, spot, rnafold])
+    # combined_df = pd.concat([af, rf, spot, rnafold])
+    combined_df = pd.concat([af, n100, spotN100, rnafoldN100])
     print(len(combined_df), combined_df['algorithm'].unique())
     
     plotting_data = []
@@ -1833,16 +2072,16 @@ for dset, (af, rf, rnafold, spot, n100, n5000, n10000, n20000) in dfs:
     for model, group in combined_df.groupby('algorithm'):
         g = group.copy()
         print(model)
-        print(model, f"n={len(g)}", np.round(np.mean(g['Complex_RMSD']), 3), np.round(np.mean(g['Complex_LDDT']), 3), np.round(np.mean(g['Complex_TM']), 3))
+        print(model, f"n={len(g)}", np.round(np.mean(g['Complex_RMSD']), 3), np.round(np.std(g['Complex_RMSD']), 3), np.round(np.mean(g['Complex_LDDT']), 3), np.round(np.std(g['Complex_LDDT']), 3), np.round(np.median(g['Complex_LDDT']), 3), np.round(np.mean(g['Complex_TM']), 3), np.round(np.std(g['Complex_TM']), 3), np.round(np.median(g['Complex_TM']), 3), g[g['Complex_TM'] >= 0.6].shape[0], np.round(np.mean(g['iLDDT']), 3), np.round(np.std(g['iLDDT']), 3), np.round(np.median(g['iLDDT']), 3))
         if model == 'alphafold':
             g.loc[:, 'algorithm'] = 'MSA'
-        elif model == 'spotrna':
+        elif model == 'spotrnaN100':
             g.loc[:, 'algorithm'] = 'SHS\n(SPOT-RNA)'
             # continue
-        elif model == 'rnaformer':
+        elif model == 'rnaformerN100':
             g.loc[:, 'algorithm'] = 'SHS\n(RNAformer)'  # 'Synthetic MSA\n(RNAformer)'
             # continue
-        elif model == 'rnafold':
+        elif model == 'rnafoldN100':
             g.loc[:, 'algorithm'] = 'SHS\n(RNAfold)'
             # continue
         else:
@@ -1858,7 +2097,7 @@ for dset, (af, rf, rnafold, spot, n100, n5000, n10000, n20000) in dfs:
     bar_width=2.5 
     bar_spacing=3.5
     width_add = 1.5
-    title_pad = 55
+    title_pad = 10  # 55
     annot_offset = 0.04
     bracket_arm = 0.0
     step_factor = 2.8
@@ -1984,7 +2223,8 @@ for dset, (af, rf, rnafold, spot, n100, n5000, n10000, n20000) in dfs:
 
     print('Plotting', dataset)
 
-    combined_df = pd.concat([af, rf, spot, rnafold])
+    # combined_df = pd.concat([af, rf, spot, rnafold])
+    combined_df = pd.concat([af, n100, spotN100, rnafoldN100])
     print(len(combined_df), combined_df['algorithm'].unique())
     
     plotting_data = []
@@ -1992,16 +2232,16 @@ for dset, (af, rf, rnafold, spot, n100, n5000, n10000, n20000) in dfs:
     for model, group in combined_df.groupby('algorithm'):
         g = group.copy()
         print(model)
-        print(model, f"n={len(g)}", np.round(np.mean(g['Complex_RMSD']), 3), np.round(np.mean(g['Complex_LDDT']), 3), np.round(np.mean(g['Complex_TM']), 3))
+        print(model, f"n={len(g)}", np.round(np.mean(g['Complex_RMSD']), 3), np.round(np.mean(g['Complex_LDDT']), 3), np.round(np.std(g['Complex_LDDT']), 3), np.round(np.median(g['Complex_LDDT']), 3), np.round(np.mean(g['Complex_TM']), 3), np.round(np.std(g['Complex_TM']), 3), np.round(np.median(g['Complex_TM']), 3), g[g['Complex_TM'] >= 0.6].shape[0], np.round(np.mean(g['iLDDT']), 3), np.round(np.std(g['iLDDT']), 3), np.round(np.median(g['iLDDT']), 3))
         if model == 'alphafold':
             g.loc[:, 'algorithm'] = 'MSA'
-        elif model == 'spotrna':
+        elif model == 'spotrnaN100':
             # g.loc[:, 'algorithm'] = 'AF3shs\n(SPOT-RNA)'
             continue
-        elif model == 'rnaformer':
+        elif model == 'rnaformerN100':
             g.loc[:, 'algorithm'] = 'SHS\n(RNAformer)'  # 'Synthetic MSA\n(RNAformer)'
             # continue
-        elif model == 'rnafold':
+        elif model == 'rnafoldN100':
             # g.loc[:, 'algorithm'] = 'AF3shs\n(RNAfold)'
             continue
         else:
@@ -2018,7 +2258,7 @@ for dset, (af, rf, rnafold, spot, n100, n5000, n10000, n20000) in dfs:
     bar_spacing=0.4
     width_add = 3.0
     width_add_inset = 4.0
-    title_pad = 55  #  55
+    title_pad = 10  #  55
     annot_offset = 0.04
     bracket_arm = 0.0
     step_factor = 2.8
@@ -2052,7 +2292,7 @@ for dset, (af, rf, rnafold, spot, n100, n5000, n10000, n20000) in dfs:
         bar_width=bar_width,
         bar_spacing=bar_spacing,
         ylabel='Complex RMSD',
-        title=dataset.replace('; a2021', '').replace('; b2021', '').replace('w/ Homologues', 'w/\nHomologues').replace('w/o Homologues', 'w/o\nHomologues'),
+        title=dataset.replace('; a2021', '').replace('; b2021', '').replace('w/ Homologs', 'w/\nHomologs').replace('w/o Homologs', 'w/o\nHomologs'),
         title_size=24,
         title_pad=title_pad,
         ylabel_size=24,
@@ -2088,8 +2328,8 @@ for dset, (af, rf, rnafold, spot, n100, n5000, n10000, n20000) in dfs:
     #     bar_width=bar_width, bar_spacing=bar_spacing,
     #     ylabel='Complex RMSD',
     #     title=dataset.replace('; a2021','').replace('; b2021','')
-    #                  .replace('w/ Homologues','w/\nHomologues')
-    #                  .replace('w/o Homologues','w/o\nHomologues'),
+    #                  .replace('w/ Homologs','w/\nHomologs')
+    #                  .replace('w/o Homologs','w/o\nHomologs'),
     #     title_size=24,
     #     title_pad=10,
     #     ylabel_size=24, 
@@ -2122,8 +2362,8 @@ for dset, (af, rf, rnafold, spot, n100, n5000, n10000, n20000) in dfs:
     #     bar_width=bar_width, bar_spacing=bar_spacing,
     #     ylabel='Complex RMSD',
     #     title=dataset.replace('; a2021','').replace('; b2021','')
-    #                  .replace('w/ Homologues','w/\nHomologues')
-    #                  .replace('w/o Homologues','w/o\nHomologues'),
+    #                  .replace('w/ Homologs','w/\nHomologs')
+    #                  .replace('w/o Homologs','w/o\nHomologs'),
     #     title_size=24,
     #     title_pad=10,
     #     ylabel_size=24, 
@@ -2157,7 +2397,7 @@ for dset, (af, rf, rnafold, spot, n100, n5000, n10000, n20000) in dfs:
         bar_width=bar_width,
         bar_spacing=bar_spacing,
         ylabel='Complex LDDT',
-        title=dataset.replace('; a2021', '').replace('; b2021', '').replace('w/ Homologues', 'w/\nHomologues').replace('w/o Homologues', 'w/o\nHomologues'),
+        title=dataset.replace('; a2021', '').replace('; b2021', '').replace('w/ Homologs', 'w/\nHomologs').replace('w/o Homologs', 'w/o\nHomologs'),
         title_size=24,
         title_pad=title_pad,
         ylabel_size=24,
@@ -2194,7 +2434,7 @@ for dset, (af, rf, rnafold, spot, n100, n5000, n10000, n20000) in dfs:
         bar_width=bar_width,
         bar_spacing=bar_spacing,
         ylabel='Complex TM',
-        title=dataset.replace('; a2021', '').replace('; b2021', '').replace('w/ Homologues', 'w/\nHomologues').replace('w/o Homologues', 'w/o\nHomologues'),
+        title=dataset.replace('; a2021', '').replace('; b2021', '').replace('w/ Homologs', 'w/\nHomologs').replace('w/o Homologs', 'w/o\nHomologs'),
         title_size=24,
         title_pad=title_pad,
         ylabel_size=24,
@@ -2227,7 +2467,8 @@ for dset, (af, rf, rnafold, spot, n100, n5000, n10000, n20000) in dfs:
 
     print('Plotting', dataset)
 
-    combined_df = pd.concat([af, rf, spot, rnafold])
+    # combined_df = pd.concat([af, rf, spot, rnafold])
+    combined_df = pd.concat([af, n100, spotN100, rnafoldN100])
     print(len(combined_df), combined_df['algorithm'].unique())
     
     plotting_data = []
@@ -2238,13 +2479,13 @@ for dset, (af, rf, rnafold, spot, n100, n5000, n10000, n20000) in dfs:
         print(model, f"n={len(g)}", np.round(np.mean(g['Complex_RMSD']), 3), np.round(np.mean(g['Complex_LDDT']), 3), np.round(np.mean(g['Complex_TM']), 3))
         if model == 'alphafold':
             g.loc[:, 'algorithm'] = 'MSA'
-        elif model == 'spotrna':
+        elif model == 'spotrnaN100':
             # g.loc[:, 'algorithm'] = 'AF3shs\n(SPOT-RNA)'
             continue
-        elif model == 'rnaformer':
+        elif model == 'rnaformerN100':
             g.loc[:, 'algorithm'] = 'SHS (RNAformer)'  # 'Synthetic MSA\n(RNAformer)'
             # continue
-        elif model == 'rnafold':
+        elif model == 'rnafoldN100':
             # g.loc[:, 'algorithm'] = 'AF3shs\n(RNAfold)'
             continue
         else:
@@ -2287,7 +2528,7 @@ for dset, (af, rf, rnafold, spot, n100, n5000, n10000, n20000) in dfs:
             fig_size=(16, 6),
             bar_width=0.5,
             bar_spacing=1.5,
-            title=dataset.replace('; a2021', '').replace('; b2021', '').replace('w/ Homologues', 'w/\nHomologues').replace('w/o Homologues', 'w/o\nHomologues'),
+            title=dataset.replace('; a2021', '').replace('; b2021', '').replace('w/ Homologs', 'w/\nHomologs').replace('w/o Homologs', 'w/o\nHomologs'),
             title_size=24,
             # xlabel='RNA Length (nt)',
             # xlabel_size=16,
@@ -2315,13 +2556,13 @@ for dset, (af, rf, rnafold, spot, n100, n5000, n10000, n20000) in dfs:
         )
 
 
-
 ###########################################################################################################################################
-# shs comparison
+# RNAformer vs AF3 length analysis
 
     print('Plotting', dataset)
 
-    combined_df = pd.concat([af, rf, spot, rnafold])
+    # combined_df = pd.concat([af, rf, spot, rnafold])
+    combined_df = pd.concat([af, n100, spotN100, rnafoldN100])
     print(len(combined_df), combined_df['algorithm'].unique())
     
     plotting_data = []
@@ -2331,15 +2572,228 @@ for dset, (af, rf, rnafold, spot, n100, n5000, n10000, n20000) in dfs:
         print(model)
         print(model, f"n={len(g)}", np.round(np.mean(g['Complex_RMSD']), 3), np.round(np.mean(g['Complex_LDDT']), 3), np.round(np.mean(g['Complex_TM']), 3))
         if model == 'alphafold':
+            g.loc[:, 'algorithm'] = 'MSA'
+        elif model == 'spotrnaN100':
+            # g.loc[:, 'algorithm'] = 'AF3shs\n(SPOT-RNA)'
+            continue
+        elif model == 'rnaformerN100':
+            g.loc[:, 'algorithm'] = 'SHS (RNAformer)'  # 'Synthetic MSA\n(RNAformer)'
+            # continue
+        elif model == 'rnafoldN100':
+            # g.loc[:, 'algorithm'] = 'AF3shs\n(RNAfold)'
+            continue
+        else:
+            raise UserWarning(f'Unknown algorithm {model} in rf vs af')
+        plotting_data.append(g)
+    
+    plot_df = pd.concat(plotting_data)
+
+
+    length_classes = ['Length 0-20', 'Length 20-50', 'Length 50-100', 'Length 100-150', 'Length >150']
+    length_bins = [0, 20, 50, 100, 150, np.inf]
+        
+    label_df = plot_df.copy()
+    length_labels = []
+    label_df['length_class'] = pd.cut(label_df['RNALength'], 
+                           bins=length_bins,
+                           labels=length_classes)
+    total = []
+    for name, group in label_df.groupby('length_class'):
+        if len(group) == 0:
+            total.append(0)
+            length_labels.append(f"{name}\n(n=0)")
+        else:
+            length_labels.append(f"{name}\n(n={int(len(group) / len(group['algorithm'].unique()))})")
+            total.append(int(len(group) / len(group['algorithm'].unique())))
+        
+    total = int(np.sum(total))
+
+    for m in ['Complex_RMSD', 'Complex_LDDT', 'Complex_TM']:    
+
+        plot_grouped_bar_with_error_and_stats(
+            df=plot_df,
+            x_col='RNALength',
+            hue_col='algorithm',
+            value_col=m,
+            x_bins=length_bins,
+            x_bin_labels=length_labels,
+            x_order=length_labels,
+            palette=['#9bd0ff', '#bfbfbf', '#bfbfbf', '#bfbfbf'],  # ['#1f77b4', '#ff7f0e', '#2ca02c'],  # Custom colors for the bars
+            fig_size=(16, 6),
+            bar_width=0.5,
+            bar_spacing=1.5,
+            title=dataset.replace('; a2021', '').replace('; b2021', '').replace('w/ Homologs', 'w/\nHomologs').replace('w/o Homologs', 'w/o\nHomologs'),
+            title_size=24,
+            # xlabel='RNA Length (nt)',
+            # xlabel_size=16,
+            ylabel=m.replace('_', ' '),
+            ylabel_size=24,
+            xtick_label_size=18,
+            ytick_label_size=18,
+            # legend_title='Algorithm',
+            # legend_title_size=16,
+            legend_label_size=24,
+            remove_spines=True,
+            annotate=True,
+            ref_hue='SHS\n(RNAformer)',
+            test_method='wilcoxon',
+            sig_levels=[(0.001, '***'), (0.01, '**'), (0.05, '*')],
+            step_factor=5.5,
+            # legend_position='below',
+            legend_position='above',
+            # legend_title_size=16,
+            # legend_label_size=14,
+            legend_offset = 0.95,
+            yticks = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0] if m in ['Complex_LDDT', 'Complex_TM'] else None,
+            limit_y_range=True if m in ['Complex_LDDT', 'Complex_TM'] else False,
+            outpath=Path(plotting_dir, f"{'_'.join(dataset.split()).replace('/', '_')}_af3_rnaformershs_bar_lengths_means_{m}.svg"),
+        )
+
+###########################################################################################################################################
+# RNAformer vs AF3 msa size analysis
+
+    print('Plotting', dataset)
+
+    for tmp_df in (af, n100):
+        tmp_df.drop(columns=['RNA_msa_size'], errors='ignore', inplace=True)
+
+    n100 = n100.merge(
+        msa_sizes[['exp_db_id', 'RNA_msa_size']],
+        on='exp_db_id',
+        how='left'
+    )    # combined_df = pd.concat([af, rf, spot, rnafold])
+
+    af = af.merge(
+        msa_sizes[['exp_db_id', 'RNA_msa_size']],
+        on='exp_db_id',
+        how='left'
+    )    # combined_df = pd.concat([af, rf, spot, rnafold])
+
+    # n100 = n100.merge(
+    #     af[['exp_db_id', 'RNA_msa_size']],
+    #     on='exp_db_id',
+    #     how='left'
+    # )    # combined_df = pd.concat([af, rf, spot, rnafold])
+    
+    af['msa_size'] = af.apply(get_rna_msa_size, axis=1)
+    n100['msa_size'] = n100.apply(get_rna_msa_size, axis=1)
+    
+
+    combined_df = pd.concat([af, n100, spotN100, rnafoldN100])
+    print(len(combined_df), combined_df['algorithm'].unique())
+
+
+    
+    plotting_data = []
+    
+    for model, group in combined_df.groupby('algorithm'):
+        g = group.copy()
+        print(model)
+        print(model, f"n={len(g)}", np.round(np.mean(g['Complex_RMSD']), 3), np.round(np.mean(g['Complex_LDDT']), 3), np.round(np.mean(g['Complex_TM']), 3))
+        if model == 'alphafold':
+            g.loc[:, 'algorithm'] = 'MSA'
+        elif model == 'spotrnaN100':
+            # g.loc[:, 'algorithm'] = 'AF3shs\n(SPOT-RNA)'
+            continue
+        elif model == 'rnaformerN100':
+            g.loc[:, 'algorithm'] = 'SHS (RNAformer)'  # 'Synthetic MSA\n(RNAformer)'
+            # continue
+        elif model == 'rnafoldN100':
+            # g.loc[:, 'algorithm'] = 'AF3shs\n(RNAfold)'
+            continue
+        else:
+            raise UserWarning(f'Unknown algorithm {model} in rf vs af')
+        plotting_data.append(g)
+    
+    plot_df = pd.concat(plotting_data)
+
+
+    msa_classes = ['no_msa', 'Depth 1-20', 'Depth 21-100', 'Depth 101-500', 'Depth 501-1000', 'Depth >1000']
+    msa_bins = [-np.inf, 0.9, 20, 100, 500, 1000, np.inf]
+        
+    label_df = plot_df.copy()
+    msa_labels = []
+    label_df['msa_class'] = pd.cut(label_df['msa_size'], 
+                           bins=msa_bins,
+                           labels=msa_classes)
+    total = []
+    for name, group in label_df.groupby('msa_class'):
+        if len(group) == 0:
+            total.append(0)
+            msa_labels.append(f"{name}\n(n=0)")
+        else:
+            msa_labels.append(f"{name}\n(n={int(len(group) / len(group['algorithm'].unique()))})")
+            total.append(int(len(group) / len(group['algorithm'].unique())))
+        
+    total = int(np.sum(total))
+
+    for m in ['Complex_RMSD', 'Complex_LDDT', 'Complex_TM']:    
+
+        plot_grouped_bar_with_error_and_stats(
+            df=plot_df,
+            x_col='msa_size',
+            hue_col='algorithm',
+            value_col=m,
+            x_bins=msa_bins,
+            x_bin_labels=msa_labels,
+            x_order=msa_labels,
+            palette=['#9bd0ff', '#bfbfbf', '#bfbfbf', '#bfbfbf'],  # ['#1f77b4', '#ff7f0e', '#2ca02c'],  # Custom colors for the bars
+            fig_size=(16, 6),
+            bar_width=0.5,
+            bar_spacing=1.5,
+            title=dataset.replace('; a2021', '').replace('; b2021', '').replace('w/ Homologs', 'w/\nHomologs').replace('w/o Homologs', 'w/o\nHomologs'),
+            title_size=24,
+            # xlabel='Number of Sequences in MSA',
+            # xlabel_size=16,
+            ylabel=m.replace('_', ' '),
+            ylabel_size=24,
+            xtick_label_size=18,
+            ytick_label_size=18,
+            # legend_title='Algorithm',
+            # legend_title_size=16,
+            legend_label_size=24,
+            remove_spines=True,
+            annotate=True,
+            ref_hue='SHS\n(RNAformer)',
+            test_method='wilcoxon',
+            sig_levels=[(0.001, '***'), (0.01, '**'), (0.05, '*')],
+            step_factor=5.5,
+            # legend_position='below',
+            legend_position='above',
+            # legend_title_size=16,
+            # legend_label_size=14,
+            legend_offset = 0.95,
+            yticks = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0] if m in ['Complex_LDDT', 'Complex_TM'] else None,
+            limit_y_range=True if m in ['Complex_LDDT', 'Complex_TM'] else False,
+            outpath=Path(plotting_dir, f"{'_'.join(dataset.split()).replace('/', '_')}_af3_rnaformershs_bar_msa_size_means_{m}.svg"),
+        )
+
+
+###########################################################################################################################################
+# shs comparison
+
+    print('Plotting', dataset)
+
+    # combined_df = pd.concat([af, rf, spot, rnafold])
+    combined_df = pd.concat([af, n100, spotN100, rnafoldN100])
+    print(len(combined_df), combined_df['algorithm'].unique())
+    
+    plotting_data = []
+    
+    for model, group in combined_df.groupby('algorithm'):
+        g = group.copy()
+        print(model)
+        print(model, f"n={len(g)}", np.round(np.mean(g['Complex_RMSD']), 3), np.round(np.mean(g['Complex_LDDT']), 3), np.round(np.std(g['Complex_LDDT']), 3), np.round(np.median(g['Complex_LDDT']), 3), np.round(np.mean(g['Complex_TM']), 3), np.round(np.std(g['Complex_TM']), 3), np.round(np.median(g['Complex_TM']), 3), g[g['Complex_TM'] >= 0.6].shape[0], np.round(np.mean(g['iLDDT']), 3), np.round(np.std(g['iLDDT']), 3), np.round(np.median(g['iLDDT']), 3))
+        if model == 'alphafold':
             # g.loc[:, 'algorithm'] = 'AlphaFold 3'
             continue
-        elif model == 'spotrna':
+        elif model == 'spotrnaN100':
             g.loc[:, 'algorithm'] = 'SHS\n(SPOT-RNA)'
             # continue
-        elif model == 'rnaformer':
+        elif model == 'rnaformerN100':
             g.loc[:, 'algorithm'] = 'SHS\n(RNAformer)'  # 'Synthetic MSA\n(RNAformer)'
             # continue
-        elif model == 'rnafold':
+        elif model == 'rnafoldN100':
             g.loc[:, 'algorithm'] = 'SHS\n(RNAfold)'
             # continue
         else:
@@ -2355,7 +2809,7 @@ for dset, (af, rf, rnafold, spot, n100, n5000, n10000, n20000) in dfs:
     bar_width=0.3 
     bar_spacing=0.4
     width_add = 3.0
-    title_pad = 55
+    title_pad = 30  # 55
     annot_offset = 0.04
     bracket_arm = 0.0
     step_factor = 2.8
@@ -2376,7 +2830,7 @@ for dset, (af, rf, rnafold, spot, n100, n5000, n10000, n20000) in dfs:
         bar_width=bar_width,
         bar_spacing=bar_spacing,
         ylabel='Complex RMSD',
-        title=dataset.replace('; a2021', '').replace('; b2021', '').replace('w/ Homologues', 'w/\nHomologues').replace('w/o Homologues', 'w/o\nHomologues'),
+        title=dataset.replace('; a2021', '').replace('; b2021', '').replace('w/ Homologs', 'w/\nHomologs').replace('w/o Homologs', 'w/o\nHomologs'),
         title_size=24,
         title_pad=title_pad,
         ylabel_size=24,
@@ -2411,7 +2865,7 @@ for dset, (af, rf, rnafold, spot, n100, n5000, n10000, n20000) in dfs:
         bar_width=bar_width,
         bar_spacing=bar_spacing,
         ylabel='Complex LDDT',
-        title=dataset.replace('; a2021', '').replace('; b2021', '').replace('w/ Homologues', 'w/\nHomologues').replace('w/o Homologues', 'w/o\nHomologues'),
+        title=dataset.replace('; a2021', '').replace('; b2021', '').replace('w/ Homologs', 'w/\nHomologs').replace('w/o Homologs', 'w/o\nHomologs'),
         title_size=24,
         title_pad=title_pad,
         ylabel_size=24,
@@ -2448,7 +2902,7 @@ for dset, (af, rf, rnafold, spot, n100, n5000, n10000, n20000) in dfs:
         bar_width=bar_width,
         bar_spacing=bar_spacing,
         ylabel='Complex TM',
-        title=dataset.replace('; a2021', '').replace('; b2021', '').replace('w/ Homologues', 'w/\nHomologues').replace('w/o Homologues', 'w/o\nHomologues'),
+        title=dataset.replace('; a2021', '').replace('; b2021', '').replace('w/ Homologs', 'w/\nHomologs').replace('w/o Homologs', 'w/o\nHomologs'),
         title_size=24,
         title_pad=title_pad,
         ylabel_size=24,
@@ -2489,7 +2943,11 @@ for dset, (af, rf, rnafold, spot, n100, n5000, n10000, n20000) in dfs:
     for model, group in combined_df.groupby('algorithm'):
         g = group.copy()
         print(model)
-        print(model, f"n={len(g)}", np.round(np.mean(g['Complex_RMSD']), 3), np.round(np.mean(g['Complex_LDDT']), 3), np.round(np.mean(g['Complex_TM']), 3))
+        print(model, f"n={len(g)}", np.round(np.mean(g['Complex_RMSD']), 3), np.round(np.mean(g['Complex_LDDT']), 3), np.round(np.std(g['Complex_LDDT']), 3), np.round(np.median(g['Complex_LDDT']), 3), np.round(np.mean(g['Complex_TM']), 3), np.round(np.std(g['Complex_TM']), 3), np.round(np.median(g['Complex_TM']), 3), g[g['Complex_TM'] >= 0.6].shape[0], np.round(np.mean(g['iLDDT']), 3), np.round(np.std(g['iLDDT']), 3), np.round(np.median(g['iLDDT']), 3))
+        if 'spotrna' in model:
+            continue
+        if 'rnafold' in model:
+            continue
         if 'N10000' in model:
             g.loc[:, 'algorithm'] = 'SHS\n(N=10000)'
             # continue
