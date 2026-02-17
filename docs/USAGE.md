@@ -12,7 +12,7 @@ For example run
 ```
 python rna_msa_generator_base_pair.py --structure "..((((....))))...." --rna-seq AGCGCGUAACGAUAGCUA --protein-seq MKTIIALSYIFCLVFAGQDEIRTLVSRVELTKLSDKIAARHGLQEVNRAALGRGIVRVA --seed 42 --show_plot
 ```
-Per default, the generation pipeline will use the parameters that were also used in our Nature Biotechnology submission.
+Per default, the generation pipeline will use the parameters that were also used in our manuscript.
 The ```--show_plot``` option enables plotting of some MSA features.
 The output is a json file that can be used as input for AlphaFold 3.
 
@@ -61,7 +61,7 @@ python analysis/analyse_gapped_alignment.py --fasta1 data/gapped_alignments/rnaf
 ```
 
 ### Analyze RNA families
-To analyze the RNA families of the data accompanying our Nature Biotechnology submission, run
+To analyze the RNA families of the data accompanying our manuscript, run
 ```
 python analyse_fam.py
 ```
