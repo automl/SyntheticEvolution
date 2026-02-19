@@ -85,11 +85,15 @@ Then go back to the project root.
 
 
 ## RNAformer
+### CPU
 We provide a CPU runtime patch for RNAformer so one can also run it here without any further dependencies.
+However, this patch mainly serves demonstration purposes and we strongly recommend running RNAformer on GPU as desccribed below for any performance critique use cases. 
 
-Alternatively, you can use the ```infer_d``` branch of the original github repository of the RNAformer to produce secondary structure predictions using GPUs.
+### GPU
+You can use the ```infer_d``` branch of the original github repository of the RNAformer to produce secondary structure predictions using GPUs.
 
 To do so, please follow the install instructions as desribed in the RNAformer repository: <https://github.com/automl/RNAformer>.
+The models used in our manuscript can be downloaded following the instructions in the [README](/README.md)
 
 ## AlphaFold 3
 We use the inference code of AlphaFold 3 to run our experiments. 
@@ -129,6 +133,7 @@ Alternatively, you can also directly download a zip of the binaries for your OS.
 
 ### Help:
 [USAlign Help Page](https://zhanggroup.org/US-align/help)
+
 
 
 
