@@ -16,21 +16,40 @@ You can plot individual MSA comparisons afterwards using e.g.
 ```
 python analysis/analyse_gapped_alignment.py --fasta1 data/gapped_alignments/rnaformerN100/1SJ3_gapped_rna_alignment_rnaformer.fasta --fasta2 data/gapped_alignments/rnafold/1SJ3_gapped_rna_alignment_rnafold.fasta
 ```
+The resulting pngs are saved to the ```plots/MSA``` directory. 
+
 
 ### Analyze RNA families
-To analyze the RNA families of the data accompanying our manuscript, run
+For completeness, we also include our analysis regarding RNA families. Simply run
 ```
 python analyse_fam.py
 ```
+to obtain an overview of RNAfamilies in different predictions.
 
 ### 3D plotting
 To visually compare the predictions of two methods, we include a plotting scipt using [pymol](https://www.pymol.org/).
 Currently, we are using the free version of pymol without the requirement to obtain a license first.
-To plot all predictions, run
+To plot the comparison of the 3D predictions of vanilla AlphaFold3 and SHS seeded by RNAformer for PDB ID 2PLY, you can run
 ```
-./plot_all_3d.sh
+python plot_3d_structures.py --rnaformer-pred-dir evaluation/predictions/rnaformerN100 --alphafold-pred-dir evaluation/predictions/alphafold3 --gt-dir evaluation/predictions/gt --out-dir paper_figures --buffer 25 --alg1-name AlphaFold --alg2-name RNAformer --rf-color green --af3-color blue --gt-color gray --gt-rna-color brightorange --pred-rna-color magenta --plot-rna-only --show-plot --transparent --views-dir pymol_views --specific-id 2PLY
 ```
-**Note that the script will take a while to plot all 3D structures using PYMOL.**
+The resuting structure visuals are saved to the ```paper_figures``` directory.
+
+For other comparisons, simply run the command above with the correct paths to other predictions, and provide a valid id as well as colors of choice.
+For example, to reproduce the predictions of the different SHS seeded variants for PDB id 1SJ4, the following commands were used:
+
+#### SPOT-RNA
+```
+python plot_3d_structures.py --rnaformer-pred-dir evaluation/predictions/rnaformerN100 --alphafold-pred-dir evaluation/predictions/spotrna --gt-dir evaluation/predictions/gt --out-dir paper_figures --buffer 25 --alg1-name SPOT-RNAN100 --alg2-name RNAformerN100 --rf-color green --af3-color tv_red --gt-color gray --gt-rna-color brightorange --pred-rna-color magenta --plot-rna-only --show-plot --transparent --views-dir pymol_views --specific-id 1SJ4
+```
+#### RNAfold
+```
+python plot_3d_structures.py --rnaformer-pred-dir evaluation/predictions/rnaformerN100 --alphafold-pred-dir evaluation/predictions/rnafold --gt-dir evaluation/predictions/gt --out-dir paper_figures --buffer 25 --alg1-name RNAfoldN100 --alg2-name RNAformerN100 --rf-color green --af3-color deepteal --gt-color gray --gt-rna-color brightorange --pred-rna-color magenta --plot-rna-only --show-plot --transparent --views-dir pymol_views --specific-id 1SJ4
+```
+#### Ground Truth (DSSR)
+```
+python plot_3d_structures.py --rnaformer-pred-dir evaluation/predictions/rnaformerN100 --alphafold-pred-dir evaluation/dssr --gt-dir evaluation/predictions/gt --out-dir paper_figures --views-dir pymol_views --buffer 25 --alg1-name DSSRN100 --alg2-name RNAformerN100 --rf-color green --af3-color purpleblue --gt-color gray --gt-rna-color brightorange --pred-rna-color magenta --plot-rna-only --show-plot --transparent --views-dir pymol_views --specific-id 1SJ4
+```
 
 ### Secondary structure plotting
 We also provide all data for running the script for plotting secondary structures of 1SJ4 and 4P8Z by running
