@@ -800,9 +800,9 @@ if __name__ == "__main__":
     plot_mi_with_upper_origin(compute_mi_matrix(seqs2), cmap=cmap, plotting_dir=args.plotting_dir, id=id2)   # ,   # cmap='PiYG')  # 'magma')
         
     # t-SNE & UMAP
-    plot_tsne_umap(seqs1, seqs2)
+    # plot_tsne_umap(seqs1, seqs2)
 
-    results = compare_sequence_diversity(seqs1, seqs2, bins=bins)
+    # results = compare_sequence_diversity(seqs1, seqs2, bins=bins)
     # Access raw distances if needed:
     # d1 = results['distances1']
     # d2 = results['distances2']
