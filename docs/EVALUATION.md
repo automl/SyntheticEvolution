@@ -1,5 +1,5 @@
 # Evaluation
-We provide all csvs from our 3D evaluations in the ```results/csv``` directory.
+We provide all csvs from our 3D evaluations in the ```results/csvs``` directory.
 However, for reproducibility, we also provide scripts for rerunning our evaluations.
 
 **Note: Evaluations of 3D predictions might take a bit, especially when rerunning our scripts for the full benchmark.**
