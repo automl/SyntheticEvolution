@@ -65,8 +65,9 @@ python plot_secondary_structures.py
 ```
 **However, we note that this script depends on analysis obtained by running DSSR. Please see our [install instructions](/docs/INSTALL.md) for more information on DSSR.**
 
-### Reporduce all paper figures
+### Reporduce all plots from paper figures
 To reproduce the plots from the figures of our paper, run
 ```
 python plot_results.py
 ```
+You can find all plots in the ```plots/performance``` directory afterwards.
