@@ -35,6 +35,9 @@ python rna_msa_generator_base_pair.py --structure_predictor rnaformer --input_js
 
 **Note that we only provide a runtime patch for RNAformer that allows to run it on CPU. The runtime of RNAformer is substantially increased compared to running on GPU and we observed some differences in the predictions when using the CPU variant provided here.**
 
+For structure prediction, we currently natively support ```rnafold```, ```rnaformer```, and ```spotrna```. However, more predictors are generally available via RnaBench and can easily be included into our SHS generation script e.g. to serve benchmarking purposes.
+Please see RnaBench at ```https://github.com/automl/RnaBench``` for more information and guidelines on the installation and usage of several other folding engines.
+
 ## Evaluation
 We also provide scripts for rerunning our evaluation. 
 
