@@ -43,7 +43,7 @@ setup(
         "tensorflow-io-gcs-filesystem==0.32.0",
         "torch",
         "torchvision",
-        "umap",
+        "umap-learn",
     ],
     classifiers=[
         "Programming Language :: Python :: 3.9",
