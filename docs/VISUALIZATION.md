@@ -52,17 +52,18 @@ python plot_3d_structures.py --rnaformer-pred-dir evaluation/predictions/rnaform
 ```
 
 ### Secondary structure plotting
-We also provide all data for running the script for plotting secondary structures of 1SJ4 and 4P8Z by running
-```
-python plot_secondary_structures.py
-```
-
 You can also get predictions for any sequence with SPOT-RNA, RNAfold or the RNAformer using
 ```
 python get_secondary_structure_prediction.py --predictor <choose your predictor> --sequence GAUGGCCGGCAUGGUCCCAGCCUCCUCGCUGGCGCCGGCUGGGCAACACCAUUGCACUCCGGUGGUGAAUGGGACU
 ```
 choose the predictor from rnaformer, rnafold, spotrna.
 The nucleotide interaction maps will be saved to the ```secondary_structure_predictions``` directory.
+
+We also provide the script for plotting secondary structures used in the paper
+```
+python plot_secondary_structures.py
+```
+**However, we note that this script depends on analysis obtained by running DSSR. Please see our [install instructions](/docs/INSTALL.md) for more information on DSSR.**
 
 ### Reporduce all paper figures
 To reproduce the plots from the figures of our paper, run
