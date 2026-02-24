@@ -28,7 +28,7 @@ setup(
         "logomaker",
         "matplotlib",
         "matplotlib_venn",
-        "numpy>=2.0",
+        "numpy",
         "pandas",
         "plotly",
         "pyaml",
