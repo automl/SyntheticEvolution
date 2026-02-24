@@ -38,15 +38,6 @@ python rna_msa_generator_base_pair.py --structure_predictor rnaformer --input_js
 For structure prediction, we currently natively support ```rnafold```, ```rnaformer```, and ```spotrna```. However, more predictors are generally available via RnaBench and can easily be included into our SHS generation script e.g. to serve benchmarking purposes.
 Please see RnaBench at ```https://github.com/automl/RnaBench``` for more information and guidelines on the installation and usage of several other folding engines.
 
-## Evaluation
-We also provide scripts for rerunning our evaluation. 
-
-You can run the eval with 
-```
-./run_evaluation.sh <prediction_data_dir> <true_data_dir> <sample type; either rna_rna (includes RNA monomers) or protein_rna>
-```
-The ouput are two csvs saved to the ```results``` directory, ```pred_protein_rna.csv``` (or ```pred_rna_rna.csv```) with the computed metrics for the prediction and ```exp_protein_rna.csv``` (or ```exp_rna_rna.csv```) for further information on each sample.
-
 ## Plotting and Analysis
 All plots will be saved in the ```plots``` directory.
 
