@@ -7,6 +7,6 @@ channels:
   - lb_arrakistx
 dependencies:
   - python=3.9
-  - pymol-open-source
+  - pymol-open-source=2.5.0
   - infernal
   - varna
