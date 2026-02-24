@@ -59,15 +59,6 @@ After that, you can clone RnaBench via
 ```
 git clone https://github.com/automl/RnaBench.git
 ```
-and copy the lib into the correct location via
-
-```
-cd RnaBench
-```
-and 
-```
-mv RnaBench/lib .
-```
 For SPOT-RNA, first create the ```external_algorithms``` directory
 ```
 mkdir -p external_algorithms
@@ -141,6 +132,7 @@ Alternatively, you can also directly download a zip of the binaries for your OS.
 
 ### Help:
 [USAlign Help Page](https://zhanggroup.org/US-align/help)
+
 
 
 
