@@ -52,6 +52,12 @@ python plot_3d_structures.py --rnaformer-pred-dir evaluation/predictions/rnaform
 ```
 
 ### Secondary structure plotting
+**Note: Our secondary structure prediction script depends on RnaBench visualization with additional requirements. Before running the following commands, please additionally install the following dependencies using pip after activating the synEvo environment:**
+
+```
+pip install plotly matplotlib_venn upsetplot
+```
+
 You can also get predictions for any sequence with SPOT-RNA, RNAfold or the RNAformer using
 ```
 python get_secondary_structure_prediction.py --predictor <choose your predictor> --sequence GAUGGCCGGCAUGGUCCCAGCCUCCUCGCUGGCGCCGGCUGGGCAACACCAUUGCACUCCGGUGGUGAAUGGGACU
