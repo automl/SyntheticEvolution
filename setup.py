@@ -27,8 +27,10 @@ setup(
         "GraKeL",
         "logomaker",
         "matplotlib",
+        "matplotlib_venn",
         "numpy",
         "pandas",
+        "plotly",
         "pyaml",
         "pynisher",
         "pytest",
@@ -44,6 +46,7 @@ setup(
         "torch",
         "torchvision",
         "umap-learn",
+        "upsetplot",
     ],
     classifiers=[
         "Programming Language :: Python :: 3.9",
