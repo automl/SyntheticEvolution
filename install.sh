@@ -200,7 +200,7 @@ create_or_update_env "$ENV_MGR" "$ENV_NAME" "$ENV_FILE"
 # pip install -e . inside env
 log "Installing current repo into '$ENV_NAME' (editable)…"
 env_run "$ENV_MGR" "$ENV_NAME" python -m pip install --upgrade pip
-env_run "$ENV_MGR" "$ENV_NAME" python -m pip install -e --no-cache-dir "$PROJECT_ROOT"
+env_run "$ENV_MGR" "$ENV_NAME" python -m pip install --no-cache-dir -e "$PROJECT_ROOT"
 
 # External algorithms
 mkdir -p "$PROJECT_ROOT/$EXTERNAL_DIR"
