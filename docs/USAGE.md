@@ -40,3 +40,5 @@ Please see RnaBench at ```https://github.com/automl/RnaBench``` for more informa
 
 
 All figures will be saved to the ```paper_figures``` directory.
+
+Please find more usage information for our [evaluation](/docs/EVALUATION.md) and [visualization](/docs/VISUALIZATION.md) in [the docs](/docs/).
