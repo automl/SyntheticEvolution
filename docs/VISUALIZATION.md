@@ -5,7 +5,7 @@ Here we provide guidelines how to visualize different parts of our results, incl
 All plots will be saved in the ```plots``` directory.
 
 ### Analyze MSA
-To analyse the MSA of different algorithms, first make sure to download all data as described above.
+To analyse the MSA of all algorithms, first make sure to download all data as described in [our main README.md](/README.md).
 Then, run
 ```
 ./get_all_gapped_alignments.sh
@@ -14,7 +14,7 @@ to generate gapped alignments from the original/modified input json files for Al
 You can plot individual MSA comparisons afterwards using e.g.
 
 ```
-python analysis/analyse_gapped_alignment.py --fasta1 data/gapped_alignments/rnaformer/1SJ3_gapped_rna_alignment_rnaformer.fasta --fasta2 data/gapped_alignments/rnafold/1SJ3_gapped_rna_alignment_rnafold.fasta
+python analysis/analyse_gapped_alignment.py --fasta1 data/gapped_alignments/rnaformerN100/1SJ3_gapped_rna_alignment_rnaformer.fasta --fasta2 data/gapped_alignments/rnafold/1SJ3_gapped_rna_alignment_rnafold.fasta
 ```
 
 ### Analyze RNA families
