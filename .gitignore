@@ -1,0 +1,15 @@
+/data/
+/evaluation/
+/RnaBench/
+/results/
+/database/
+/RNAformer/
+/synEvo.egg-info/
+/USalign/
+/external_algorithms/
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd

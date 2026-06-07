@@ -1,3 +1,4 @@
+import shutil
 import subprocess
 
 from typing import Optional, Union
@@ -37,7 +38,9 @@ def annotate_family(query_fasta: Union[str, Path],
     
     out_path = Path(working_dir, 'output.txt')
     
-    get_family_information(query_fasta, Path(rfam_dir, 'Rfam.cm'), Path(rfam_dir, 'Rfam.clanin'), out_path)
+    ran_successfully = get_family_information(query_fasta, Path(rfam_dir, 'Rfam.cm'), Path(rfam_dir, 'Rfam.clanin'), out_path)
+    if not ran_successfully or not out_path.exists():
+        return None
 
     results = extract_info_from_tbl(out_path)
 
@@ -53,7 +56,34 @@ def get_family_information(
     """
     Run cmscan to get the family information.
     """
-    subprocess.call(["cmscan", "--rfam", "--cut_ga", "--nohmmonly", "--oskip", "--tblout", outpath, "--fmt", "2", "--clanin", clanin_path, cm_path, queries_fasta_path], stdout=subprocess.DEVNULL)  # remove , stdout=subprocess.DEVNULL to see output of command
+    cmscan_exe = shutil.which("cmscan")
+    if cmscan_exe is None:
+        return False
+
+    try:
+        completed = subprocess.run(
+            [
+                cmscan_exe,
+                "--rfam",
+                "--cut_ga",
+                "--nohmmonly",
+                "--oskip",
+                "--tblout",
+                outpath,
+                "--fmt",
+                "2",
+                "--clanin",
+                clanin_path,
+                cm_path,
+                queries_fasta_path,
+            ],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=False,
+        )
+        return completed.returncode == 0
+    except OSError:
+        return False
 
 
 def extract_info_from_tbl(tbl_path: Union[str, Path]) -> dict:

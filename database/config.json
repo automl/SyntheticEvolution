@@ -1,8 +1,8 @@
 {
-    "parent_folder": "/home/fred/current_projects/github/SyntheticEvolution/data/rna_rna",
-    "pred_folder": "/home/fred/current_projects/github/SyntheticEvolution/data/rna_rna/af",
-    "ref_folder": "/home/fred/current_projects/github/SyntheticEvolution/data/rna_rna/pdb",
+    "parent_folder": "/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/rna_rna",
+    "pred_folder": "/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/rna_rna/af",
+    "ref_folder": "/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/rna_rna/pdb",
     "pred_table": "pred_rna_rna",
     "ref_table": "exp_rna_rna",
-    "db_path": "/home/fred/current_projects/github/SyntheticEvolution/database/rbpDatabase.db"
+    "db_path": "/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/database/rbpDatabase.db"
 }
