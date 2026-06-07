@@ -159,9 +159,6 @@ def parse_args() -> argparse.Namespace:
                                 "(15,18) -> {1,15,18}) is promoted and co-mutated. Set to 0 to disable.")
     mut_group.add_argument('--triplet-keep-prob', type=float, default=0.99,
                            help="Probability of keeping a multiplet's residues unchanged (analog of --stem-keep-prob).")
-    mut_group.add_argument('--triplet-window', type=int, default=5,
-                           help="DEPRECATED / unused: triplets are now derived from positions shared "
-                                "between predicted pairs, not from a search window. Kept for CLI compatibility.")
     # Additional options.
     parser.add_argument('--seed', type=int, default=None)
     parser.add_argument('--max_chains', type=int, default=None)
