@@ -121,25 +121,6 @@ def test_partner_for_wobble_shifts_gu(make_gen):
     assert g._partner_for("U") == "G"
 
 
-############################### mutate_triplet ###############################
-
-def test_mutate_triplet_known_motif_stays_in_table(make_gen):
-    g = make_gen(wobble_prob=0.0)
-    for _ in range(50):
-        assert g.mutate_triplet("G", "C", "A") in shs.TRIPLET_MUTATIONS["GCA"]
-
-
-def test_mutate_triplet_unknown_motif_falls_back(make_gen):
-    # 'AAA' is absent from TRIPLET_MUTATIONS -> mutate (nt1,nt2) as a pair and
-    # draw the third base uniformly. Result is 3 chars, first two a valid pair.
-    g = make_gen(wobble_prob=0.0)
-    for _ in range(50):
-        out = g.mutate_triplet("A", "A", "A")
-        assert len(out) == 3
-        assert out[:2] in VALID_PAIRS
-        assert out[2] in "AUGC"
-
-
 ############################### mutate_multiplet (CLI-unreachable) ###############################
 
 def test_mutate_multiplet_chain_keeps_every_edge_valid(make_gen):

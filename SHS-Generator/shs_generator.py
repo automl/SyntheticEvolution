@@ -41,31 +41,6 @@ PAIR_MUTATIONS: Dict[str, List[str]] = {
 }
 WC_PAIRS: List[str] = ['AU', 'UA', 'GC', 'CG']
 
-# Triplet co-mutations. Key = seq[i] + seq[j] + seq[k] where (i, j) is a
-# Watson-Crick / wobble pair (i < j) and k is the third interacting residue.
-# Values are alternative 3-nt motifs that preserve the triplet's chemistry.
-# For motifs absent from this table, mutate_triplet falls back to mutating
-# (nt1, nt2) via PAIR_MUTATIONS and drawing nt3 uniformly from {A, U, G, C}.
-TRIPLET_MUTATIONS: Dict[str, List[str]] = {
-    # A-minor motifs: pair + adenosine in minor groove
-    'GCA': ['GCA', 'CGA', 'AUA', 'UAA', 'GCG'],
-    'CGA': ['CGA', 'GCA', 'AUA', 'UAA'],
-    'AUA': ['AUA', 'UAA', 'GCA', 'CGA'],
-    'UAA': ['UAA', 'AUA', 'GCA', 'CGA'],
-    # Hoogsteen-like triples (U in the third position)
-    'AUU': ['AUU', 'UAU', 'GCU'],
-    'UAU': ['UAU', 'AUU'],
-    'GCU': ['GCU', 'AUU', 'CGU'],
-    'CGU': ['CGU', 'GCU', 'UAU'],
-    # G-rich / quadruplex-adjacent triples
-    'GCG': ['GCG', 'CGG', 'GCA'],
-    'CGG': ['CGG', 'GCG'],
-    # Wobble-containing triples
-    'GUA': ['GUA', 'GCA', 'AUA'],
-    'UGA': ['UGA', 'GUA', 'AUA'],
-    'GUU': ['GUU', 'GCU', 'AUU'],
-    'UGU': ['UGU', 'GUU', 'UAU'],
-}
 
 def load_json(json_path: str) -> Any:
     try:
@@ -288,22 +263,6 @@ class MsaGenerator:
             return random.choice(['GU', 'UG'])
         return chosen
 
-    def mutate_triplet(self, nt1: str, nt2: str, nt3: str) -> str:
-        """Co-mutate a triplet (i, j, k). Mirrors mutate_pair: look up the
-        original 3-nt motif in TRIPLET_MUTATIONS, pick a candidate, and apply
-        the same wobble override on the (i, j) pair. For unseen motifs, fall
-        back to mutating (nt1, nt2) as a pair and drawing nt3 uniformly."""
-        original = nt1 + nt2 + nt3
-        candidates = TRIPLET_MUTATIONS.get(original)
-        if candidates is None:
-            new_pair = self.mutate_pair(nt1, nt2)
-            new_third = random.choice(['A', 'U', 'G', 'C'])
-            return new_pair + new_third
-        chosen = random.choice(candidates)
-        if random.random() < self.args.wobble_prob:
-            return random.choice(['GU', 'UG']) + chosen[2]
-        return chosen
-
     def _partner_for(self, nt: str) -> str:
         """Pick a base that pairs with `nt`: Watson-Crick by default, with a
         --wobble-prob chance of a G-U wobble where chemically valid."""
@@ -324,10 +283,9 @@ class MsaGenerator:
 
         Multiplets here are built from *known pairs*: each edge is a real base
         pair, including both edges of a triple (e.g. position 15 pairs with
-        both 1 and 18 in {1,15,18}). So we cannot use the old TRIPLET_MUTATIONS
-        table — that was for an A-minor-style model where the third base only
-        loosely contacts a WC pair and need not pair with it, which would break
-        the (15,18) contact here. Instead, for triples *and* the extended
+        both 1 and 18 in {1,15,18}). So we cannot treat the third base as only
+        loosely contacting a WC pair (which need not pair with it) — that would
+        break the (15,18) contact here. Instead, for triples *and* the extended
         chain/hub case alike, we walk the component's edges in sorted order
         keeping a position->base assignment: the first edge of a sub-tree is
         mutated as a free pair; once one endpoint is fixed (e.g. the hub shared
@@ -349,7 +307,7 @@ class MsaGenerator:
             assigned.setdefault(p, seq[p])
         return assigned
 
-    def mutate_unpaired(self, nt: str) -> str:
+    def mutate_unpaired(self) -> str:
         return random.choice(['A', 'U', 'G', 'C'])
 
     def _mutate_anchor(self, mutated: List[str], seq: str, m: Dict[str, Any]) -> None:
@@ -381,7 +339,7 @@ class MsaGenerator:
         elif random.random() < self.args.deletion_prob_loop:
             mutated[i] = '-'
         elif mutated[i] != '-':
-            mutated[i] = self.mutate_unpaired(seq[i])
+            mutated[i] = self.mutate_unpaired()
         mutated[i] = insertion + mutated[i]
         return 1
 
