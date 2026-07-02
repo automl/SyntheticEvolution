@@ -161,13 +161,13 @@ def test_mutate_multiplet_covers_all_positions_even_with_cycle(make_gen):
 
 def test_derive_multiplets_disabled_returns_empty(make_gen):
     g = make_gen(triplet_prob=0.0)
-    assert g.derive_multiplets([(0, 1), (1, 2)], 3) == []
+    assert g.derive_multiplets([(0, 1), (1, 2)]) == []
 
 
 def test_derive_multiplets_promotes_connected_component(make_gen):
     # Shared node 1 -> connected component {0,1,2} of size 3 -> one multiplet.
     g = make_gen(triplet_prob=1.0)
-    assert g.derive_multiplets([(0, 1), (1, 2)], 3) == [
+    assert g.derive_multiplets([(0, 1), (1, 2)]) == [
         {"positions": (0, 1, 2), "edges": [(0, 1), (1, 2)]}
     ]
 
@@ -175,13 +175,13 @@ def test_derive_multiplets_promotes_connected_component(make_gen):
 def test_derive_multiplets_ignores_ordinary_pairs(make_gen):
     # Two disjoint size-2 pairs are ordinary pairs, not multiplets.
     g = make_gen(triplet_prob=1.0)
-    assert g.derive_multiplets([(0, 5), (1, 4)], 6) == []
+    assert g.derive_multiplets([(0, 5), (1, 4)]) == []
 
 
 def test_derive_multiplets_is_deterministic_under_seed(make_gen):
     pair_list = [(0, 1), (1, 2), (5, 6), (6, 7)]
-    a = make_gen(seed=123, triplet_prob=0.5).derive_multiplets(pair_list, 8)
-    b = make_gen(seed=123, triplet_prob=0.5).derive_multiplets(pair_list, 8)
+    a = make_gen(seed=123, triplet_prob=0.5).derive_multiplets(pair_list)
+    b = make_gen(seed=123, triplet_prob=0.5).derive_multiplets(pair_list)
     assert a == b
 
 

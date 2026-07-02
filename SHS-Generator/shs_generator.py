@@ -93,7 +93,6 @@ def _unique_pairs(pairs: Dict[int, int]) -> set:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Generate RNA MSA and AF3-compatible JSON.")
-    # I/O and structure parameters.
     io_group = parser.add_argument_group("I/O and Structure")
     io_group.add_argument('--structure_predictor', type=str, default=None,
                           help="Predictor for secondary structure (base pairs output). Options: rnafold, spotrna, rnaformer, dssr")
@@ -108,7 +107,6 @@ def parse_args() -> argparse.Namespace:
     io_group.add_argument('--pdb_id', type=str, required=False,
                           help="PDB ID (used in JSON name)")
     io_group.add_argument('--output_json_dir', type=str, default="custom_msa_json_output")
-    # Mutation parameters. TODO: Default to config 80
     mut_group = parser.add_argument_group("Mutation Parameters")
     mut_group.add_argument('-N', type=int, default=20, help="Number of sequences in the MSA")
     mut_group.add_argument('--insertion-prob-loop', type=float, default=0.2)
@@ -122,7 +120,6 @@ def parse_args() -> argparse.Namespace:
                            help="Max insertion length as fraction of RNA length")
     mut_group.add_argument('--max-deletion-fraction', type=float, default=0.1,
                            help="Max deletion length as fraction of RNA length")
-    # Parameter to help preserve stem structure.
     mut_group.add_argument('--stem-keep-prob', type=float, default=0.99,
                            help="Probability of keeping paired (stem) residues unchanged to provide strong structural hints")
     # Triplet co-mutation parameters (extension of the pairwise mutation
@@ -134,7 +131,6 @@ def parse_args() -> argparse.Namespace:
                                 "(15,18) -> {1,15,18}) is promoted and co-mutated. Set to 0 to disable.")
     mut_group.add_argument('--triplet-keep-prob', type=float, default=0.99,
                            help="Probability of keeping a multiplet's residues unchanged (analog of --stem-keep-prob).")
-    # Additional options.
     parser.add_argument('--seed', type=int, default=None)
     parser.add_argument('--max_chains', type=int, default=None)
     parser.add_argument('--plot', action='store_true')
@@ -178,7 +174,7 @@ class MsaGenerator:
                 logging.warning("Both structure predictor and structure provided. Using provided structure.")
             logging.info("Using provided dot-bracket structure: %s", self.args.structure)
             pairs = self.pair_indices(self.args.structure)
-            return pairs, self.derive_multiplets(_normalize_pairs(pairs), len(seq))
+            return pairs, self.derive_multiplets(_normalize_pairs(pairs))
         if self.args.structure_predictor:
             import structure_predictor  # Imported lazily so the no-predict path never pays the RnaBench cost.
             pdb_id = self.args.pdb_id.lower()[:4] if self.args.pdb_id else None
@@ -191,27 +187,17 @@ class MsaGenerator:
             logging.info("%s predicted %d unique base pairs.",
                          self.args.structure_predictor,
                          len(_unique_pairs(pred_pairs)))
-            return pred_pairs, self.derive_multiplets(pair_list, len(seq))
+            return pred_pairs, self.derive_multiplets(pair_list)
         raise ValueError("Either a structure predictor or a structure must be provided.")
 
-    def derive_multiplets(self, pair_list: List[Tuple[int, int]],
-                          seq_len: int) -> List[Dict[str, Any]]:
-        """Derive base triples / higher multiplets directly from the predicted
-        pairs, rather than fabricating a third base from a search window.
+    def derive_multiplets(self, pair_list: List[Tuple[int, int]]) -> List[Dict[str, Any]]:
+        """Derive base triples / higher multiplets from the predicted pairs.
 
-        The base pairs form a graph (positions = nodes, pairs = edges). A
-        normal secondary-structure pair is an isolated edge: two nodes, each of
-        degree 1. A *base triple* is what you get when one position pairs with
-        two partners, e.g. pairs (1, 15) and (15, 18) share position 15 -> the
-        connected component {1, 15, 18}. The general "further extended" case is
-        just a larger connected component: a chain (1,15),(15,18),(18,30) ->
-        {1,15,18,30}, or a hub paired with several partners. So: any connected
-        component of size >= 3 is a multiplet; components of size 2 stay
-        ordinary pairs and are handled by the existing pair machinery.
-
-        Each surviving multiplet is kept with probability --triplet-prob. Like
-        the pair sourcing, this runs once and is deterministic given --seed, so
-        every MSA row sees the same multiplet set."""
+        The pairs form a graph (positions = nodes, pairs = edges): any connected
+        component of size >= 3 is a multiplet (e.g. (1,15) and (15,18) share
+        position 15 -> {1,15,18}); size-2 components stay ordinary pairs handled
+        by the existing pair machinery. Each multiplet is kept with probability
+        --triplet-prob, once per run and deterministic given --seed."""
         if self.args.triplet_prob <= 0.0 or not pair_list:
             return []
 
@@ -253,6 +239,7 @@ class MsaGenerator:
         return multiplets
 
     def mutate_pair(self, nt1: str, nt2: str) -> str:
+        """with wobble_prob, overrides the chosen candidate with a G-U/U-G wobble"""
         original = nt1 + nt2
         candidates = PAIR_MUTATIONS.get(original, WC_PAIRS)
         chosen = random.choice(candidates)
@@ -278,18 +265,12 @@ class MsaGenerator:
         """Co-mutate the residues of a base triple / multiplet so that every
         structural contact (graph edge) stays a valid pair.
 
-        Multiplets here are built from *known pairs*: each edge is a real base
-        pair, including both edges of a triple (e.g. position 15 pairs with
-        both 1 and 18 in {1,15,18}). So we cannot treat the third base as only
-        loosely contacting a WC pair (which need not pair with it) — that would
-        break the (15,18) contact here. Instead, for triples *and* the extended
-        chain/hub case alike, we walk the component's edges in sorted order
-        keeping a position->base assignment: the first edge of a sub-tree is
-        mutated as a free pair; once one endpoint is fixed (e.g. the hub shared
-        between two pairs), the other endpoint is chosen to be a valid partner
-        of it. This keeps every edge a valid pair, propagates a consistent
-        assignment across the whole component, and degrades to `mutate_pair`
-        for a lone pair."""
+        Every edge is a real base pair, so we walk the component's edges in
+        sorted order keeping a position->base assignment: the first edge of a
+        sub-tree is mutated as a free pair; once one endpoint is fixed (e.g. a
+        hub shared between two pairs), the other is chosen as a valid partner of
+        it. This keeps every edge valid and degrades to `mutate_pair` for a lone
+        pair."""
         assigned: Dict[int, str] = {}
         for a, b in sorted(edges):
             a_set, b_set = a in assigned, b in assigned
@@ -381,7 +362,6 @@ class MsaGenerator:
 
     def generate_msa(self, rna_seq: str, pairs: Dict[int, int],
                      multiplets: Optional[List[Dict[str, Any]]] = None) -> List[str]:
-        # Set maximum insertion/deletion lengths.
         self.max_insertion_length = int(len(rna_seq) * self.args.max_insertion_fraction)
         self.max_deletion_length = int(len(rna_seq) * self.args.max_deletion_fraction)
         msa = [rna_seq]
