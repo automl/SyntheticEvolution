@@ -4,6 +4,12 @@ import subprocess
 import sys
 from pathlib import Path
 
+import pytest
+
+# Repo root (SyntheticEvolution/) — spotrna and rnaformer resolve their asset
+# paths relative to the working directory, so they must run from here.
+REPO_ROOT = Path(__file__).resolve().parents[2]
+
 
 ################################## Helper functions for integration tests ##################################
 
@@ -239,4 +245,32 @@ def test_error_unbalanced_structure_recovers(tmp_path):
     assert "Unbalanced structure at position 4" in result.stderr
     output_json = get_output_json(output_dir)
     sanity_check(output_json, 2)
+
+
+@pytest.mark.parametrize("predictor", ["spotrna", "rnaformer"])
+def test_other_predictors_generate_valid_msa(tmp_path, predictor):
+    # spotrna (TensorFlow model) and rnaformer (lookup in data/rnaformer_predictions.pkl)
+    # both resolve asset paths relative to the CWD -> run from the repo root.
+    # They depend on model files / a predictions pkl that may be absent on other
+    # machines, so skip (rather than fail) if no output is produced. The RNA
+    # sequence is one present in the rnaformer predictions table.
+    output_dir = tmp_path / "out"
+    result = run_generator(
+        output_dir,
+        "--rna-seq", "CCUGGUAUUGCAGUACCUCCAGGU", "--protein-seq", "MK",
+        "--pdb_id", "TEST", "-N", "5", "--seed", "42",
+        "--structure_predictor", predictor,
+        cwd=REPO_ROOT,
+    )
+    json_files = list(output_dir.glob("*.json"))
+    if not json_files:
+        last_line = (
+            result.stderr.strip().splitlines()[-1]
+            if result.stderr.strip() else "no output produced"
+        )
+        pytest.skip(f"{predictor} unavailable in this environment: {last_line}")
+    assert len(json_files) == 1, f"Expected exactly one JSON output, found {len(json_files)}"
+    sanity_check(json_files[0], 5)
+    # The predictor actually ran (logs "<predictor> predicted N unique base pairs").
+    assert f"{predictor} predicted" in result.stderr
 

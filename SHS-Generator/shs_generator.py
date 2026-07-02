@@ -16,18 +16,8 @@ if str(HERE_DIR) not in sys.path:
 
 import json_generator
 
-import pandas as pd
-
-import subprocess
-
-import RnaBench
-
 from collections import defaultdict, deque
 from typing import Dict, List, Any, Tuple
-
-from RnaBench.lib.rna_folding_algorithms.rnafold import RNAFold
-from RnaBench.lib.rna_folding_algorithms.DL.spotrna import SpotRna
-from RnaBench.lib.utils import pairs2db
 
 logging.basicConfig(
     level=logging.INFO,
@@ -183,61 +173,27 @@ class MsaGenerator:
     def get_structure(self, sequence: str) -> Tuple[Dict[int, int], List[Dict[str, Any]]]:
         seq = sequence.upper()
         # Use provided structure predictor if available.
-        if self.args.structure_predictor:
-            if self.args.structure:
+        if self.args.structure:
+            if self.args.structure_predictor:
                 logging.warning("Both structure predictor and structure provided. Using provided structure.")
-                logging.info("Provided dot-bracket structure: %s", self.args.structure)
-                pairs = self.pair_indices(self.args.structure)
-                return pairs, self.derive_multiplets(self._pair_list_from_dict(pairs), len(seq))
-            else:
-                predictor = self.args.structure_predictor.lower()
-                pdb_id = self.args.pdb_id.lower()[:4] if self.args.pdb_id else None
-                if predictor == "rnafold":
-                    model = RNAFold()
-                    pred_pairs, _ = model(seq)
-                elif predictor == "spotrna":
-                    model = SpotRna()
-                    pred_pairs = model(seq)
-                elif predictor == "rnaformer":
-                    df = pd.read_pickle('data/rnaformer_predictions.pkl')
-                    d = df[df['pdb_id'].str.lower() == pdb_id]
-                    if d.empty and df[df['sequence'] == seq]['pairs'].empty:
-                        sample = {'Id': pdb_id.upper(), 'sequence': seq}
-                        df = pd.DataFrame([sample])
-                        
-                        import pickle
-                        
-                        with open(Path(f'RNAformer/datasets/{pdb_id.upper()}.pkl'), 'wb') as f:
-                            pickle.dump(df, f)
-                        
-                        subprocess.run(['./RNAformer/run_cpu.sh', 'infer_RNAformer.py', '-c', '1', '-m', 'models/af3_like_finetune', '-p', f'datasets/{pdb_id.upper()}.pkl'])
-                        
-                        pred = pd.read_pickle(f'RNAformer/datasets/{pdb_id.upper()}_processed.pkl')
-                
-                        pred_pairs = sorted(pred['pairs'].values[0], key=lambda x: x[0])
-                    elif not d.empty:
-                        pred_pairs = df[df['pdb_id'].str.lower() == pdb_id]['pairs'].values[0]
-                    else:
-                        pred_pairs = df[df['sequence'] == seq]['pairs'].values[0]
-                    pred_pairs = [[p1, p2, 0] for p1, p2 in pred_pairs]
-                else:
-                    raise ValueError(f"Unknown structure predictor: {self.args.structure_predictor}")
-                # Preserve the raw pair list before the dict conversion: a
-                # position may participate in more than one pair (base
-                # triple/multiplet), which a dict would silently collapse.
-                pair_list = self._extract_pair_list(pred_pairs)
-                # Convert the predicted pairs to a dictionary, if necessary.
-                pred_pairs = convert_pred_pairs(pred_pairs)
-                logging.info("%s predicted %d unique base pairs.",
-                             self.args.structure_predictor,
-                             len({(min(i, j), max(i, j)) for i, j in pred_pairs.items() if i < j}))
-                return pred_pairs, self.derive_multiplets(pair_list, len(seq))
-        elif self.args.structure:
             logging.info("Using provided dot-bracket structure: %s", self.args.structure)
             pairs = self.pair_indices(self.args.structure)
             return pairs, self.derive_multiplets(self._pair_list_from_dict(pairs), len(seq))
-        else:
-            raise ValueError("Either a structure predictor or a structure must be provided.")
+        if self.args.structure_predictor:
+            # Imported lazily so the no-predict path never pays the RnaBench cost.
+            import structure_predictor
+            pdb_id = self.args.pdb_id.lower()[:4] if self.args.pdb_id else None
+            pred_pairs = structure_predictor.predict(self.args.structure_predictor, seq, pdb_id)
+            # Preserve the raw pair list before the dict conversion: a position
+            # may participate in more than one pair (base triple/multiplet),
+            # which a dict would silently collapse.
+            pair_list = self._extract_pair_list(pred_pairs)
+            pred_pairs = convert_pred_pairs(pred_pairs)
+            logging.info("%s predicted %d unique base pairs.",
+                         self.args.structure_predictor,
+                         len({(min(i, j), max(i, j)) for i, j in pred_pairs.items() if i < j}))
+            return pred_pairs, self.derive_multiplets(pair_list, len(seq))
+        raise ValueError("Either a structure predictor or a structure must be provided.")
 
     @staticmethod
     def _normalize_pairs(raw: Any) -> List[Tuple[int, int]]:
