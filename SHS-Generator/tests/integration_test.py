@@ -81,7 +81,7 @@ def test_basic_matches_current_state(tmp_path):
         "--rna-seq", "ACGU", "--protein-seq", "MK", "--structure", "(())",
         "--pdb_id", "TEST", "-N", "2", "--seed", "1",
     )
-    expected_name = "TEST_custom_rnamsa_N2_seed1_insl_0.2_dell_0.8_inss_0.01_dels_0.01_lins_0.05_ldels_0.05_maxinslen_0_maxdellen_0_wobble_0.1_None.json"
+    expected_name = "TEST_custom_rnamsa_N2_seed1_insl_0.2_dell_0.8_inss_0.01_dels_0.01_lins_0.05_ldels_0.05_maxinslen_0_maxdellen_0_wobble_0.1_stemkeep_0.99_None.json"
     check_output_matches(output_dir, 2, expected_name,
                          fixture("test_basic_matches_current_state_out.json"))
 
@@ -95,7 +95,7 @@ def test_advanced_matches_current_state(tmp_path):
         "--pdb_id", "TEST", "-N", "10", "--seed", "42",
         "--structure_predictor", "rnafold",
     )
-    expected_name = "TEST_custom_rnamsa_N10_seed42_insl_0.2_dell_0.8_inss_0.01_dels_0.01_lins_0.05_ldels_0.05_maxinslen_2_maxdellen_2_wobble_0.1_rnafold.json"
+    expected_name = "TEST_custom_rnamsa_N10_seed42_insl_0.2_dell_0.8_inss_0.01_dels_0.01_lins_0.05_ldels_0.05_maxinslen_2_maxdellen_2_wobble_0.1_stemkeep_0.99_rnafold.json"
     check_output_matches(output_dir, 10, expected_name,
                          fixture("test_advanced_matches_current_state_out.json"))
 
@@ -131,7 +131,7 @@ def test_triplet_pseudoknot_matches_current_state(tmp_path):
         "--structure", "(((..[[[)))..]]]",
         "--pdb_id", "TEST", "-N", "5", "--seed", "1", "--triplet-prob", "0.5",
     )
-    expected_name = "TEST_custom_rnamsa_N5_seed1_insl_0.2_dell_0.8_inss_0.01_dels_0.01_lins_0.05_ldels_0.05_maxinslen_1_maxdellen_1_wobble_0.1_triplet_0.5_keep_0.99_None.json"
+    expected_name = "TEST_custom_rnamsa_N5_seed1_insl_0.2_dell_0.8_inss_0.01_dels_0.01_lins_0.05_ldels_0.05_maxinslen_1_maxdellen_1_wobble_0.1_stemkeep_0.99_triplet_0.5_keep_0.99_None.json"
     check_output_matches(output_dir, 5, expected_name,
                          fixture("test_triplet_pseudoknot_matches_current_state_out.json"))
 

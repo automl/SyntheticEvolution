@@ -236,6 +236,28 @@ def test_generate_msa_deletes_all_loop_positions_when_forced(make_gen):
     assert all(row == "----" for row in msa[1:])
 
 
+############################### build_output_name ###############################
+
+def test_build_output_name_always_includes_stem_keep(make_gen):
+    # stem_keep_prob must appear regardless of branch or triplet setting.
+    g = make_gen(pdb_id="X", N=3, seed=7, stem_keep_prob=0.99,
+                 triplet_prob=0.0, structure_predictor=None)
+    g.max_insertion_length = 0
+    g.max_deletion_length = 0
+    name = g.build_output_name()
+    assert "_stemkeep_0.99_" in name
+    assert "_triplet_" not in name  # triplet disabled -> no triplet suffix
+
+
+def test_build_output_name_appends_triplet_suffix_when_enabled(make_gen):
+    g = make_gen(pdb_id="X", triplet_prob=0.5, triplet_keep_prob=0.99)
+    g.max_insertion_length = 1
+    g.max_deletion_length = 1
+    name = g.build_output_name()
+    assert "_stemkeep_" in name
+    assert "_triplet_0.5_keep_0.99" in name
+
+
 ############################### module-level helpers ###############################
 
 def test_pad_lowercase_drops_lowercase_and_pads():

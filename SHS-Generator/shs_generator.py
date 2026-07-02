@@ -583,6 +583,27 @@ class MsaGenerator:
         plt.close()
         logging.info("Final MSA features plot saved to: %s", final_filename)
 
+    def build_output_name(self) -> str:
+        """Construct the output file/JSON name from the run parameters. Used by
+        both the input-JSON and the raw-sequence branches so the naming scheme
+        stays identical. max_insertion/deletion_length are set by generate_msa;
+        the getattr fallback guards the (rare) case where no MSA was generated.
+        stem_keep_prob is always included; the triplet suffix only when enabled."""
+        ins_len = getattr(self, "max_insertion_length", "NA")
+        del_len = getattr(self, "max_deletion_length", "NA")
+        triplet_suffix = (
+            f"_triplet_{self.args.triplet_prob}_keep_{self.args.triplet_keep_prob}"
+            if self.args.triplet_prob > 0 else ""
+        )
+        return (
+            f"{self.args.pdb_id}_custom_rnamsa_N{self.args.N}_seed{self.args.seed}"
+            f"_insl_{self.args.insertion_prob_loop}_dell_{self.args.deletion_prob_loop}"
+            f"_inss_{self.args.insertion_prob_stem}_dels_{self.args.deletion_prob_stem}"
+            f"_lins_{self.args.long_insertion_prob}_ldels_{self.args.long_deletion_prob}"
+            f"_maxinslen_{ins_len}_maxdellen_{del_len}_wobble_{self.args.wobble_prob}"
+            f"_stemkeep_{self.args.stem_keep_prob}{triplet_suffix}_{self.args.structure_predictor}"
+        )
+
     def process(self) -> None:
         json_output: Dict[str, Any] = {}
         if self.args.input_json_path:
@@ -620,13 +641,7 @@ class MsaGenerator:
                 else:
                     json_output[key] = value
             json_output["sequences"] = updated_sequences
-            ins_len = getattr(self, "max_insertion_length", "NA")
-            del_len = getattr(self, "max_deletion_length", "NA")
-            triplet_suffix = (
-                f"_triplet_{self.args.triplet_prob}_keep_{self.args.triplet_keep_prob}"
-                if self.args.triplet_prob > 0 else ""
-            )
-            name = f"{self.args.pdb_id}_custom_rnamsa_N{self.args.N}_seed{self.args.seed}_insl_{self.args.insertion_prob_loop}_dell_{self.args.deletion_prob_loop}_inss_{self.args.insertion_prob_stem}_dels_{self.args.deletion_prob_stem}_lins_{self.args.long_insertion_prob}_ldels_{self.args.long_deletion_prob}_maxinslen_{ins_len}_maxdellen_{del_len}_wobble_{self.args.wobble_prob}_stemkeep_{self.args.stem_keep_prob}{triplet_suffix}_{self.args.structure_predictor}"
+            name = self.build_output_name()
             json_output["name"] = name
         else:
             if not (self.args.rna_seq and self.args.protein_seq):
@@ -648,11 +663,7 @@ class MsaGenerator:
             msa_fasta = [">query\n" + msa[0]]
             msa_fasta += [f">sample_{i}\n{seq}" for i, seq in enumerate(msa[1:])]
             unpaired_msa = "\n".join(msa_fasta)
-            triplet_suffix = (
-                f"_triplet_{self.args.triplet_prob}_keep_{self.args.triplet_keep_prob}"
-                if self.args.triplet_prob > 0 else ""
-            )
-            name = f"{self.args.pdb_id}_custom_rnamsa_N{self.args.N}_seed{self.args.seed}_insl_{self.args.insertion_prob_loop}_dell_{self.args.deletion_prob_loop}_inss_{self.args.insertion_prob_stem}_dels_{self.args.deletion_prob_stem}_lins_{self.args.long_insertion_prob}_ldels_{self.args.long_deletion_prob}_maxinslen_{self.max_insertion_length}_maxdellen_{self.max_deletion_length}_wobble_{self.args.wobble_prob}{triplet_suffix}_{self.args.structure_predictor}"
+            name = self.build_output_name()
             json_output = {
                 "name": name,
                 "modelSeeds": [1],
