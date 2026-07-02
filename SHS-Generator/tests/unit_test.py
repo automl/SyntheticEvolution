@@ -77,11 +77,11 @@ def test_pair_indices_unbalanced_closer_is_skipped():
 
 def test_normalize_pairs_from_list_dedupes_and_drops_self_pairs():
     # list of [i, j, ...] rows -> sorted unique (i<j) tuples, self-pairs dropped.
-    assert shs.MsaGenerator._normalize_pairs([[5, 9, 0], [1, 3, 0], [3, 3], [9, 5]]) == [(1, 3), (5, 9)]
+    assert shs._normalize_pairs([[5, 9, 0], [1, 3, 0], [3, 3], [9, 5]]) == [(1, 3), (5, 9)]
 
 
 def test_normalize_pairs_from_dict():
-    assert shs.MsaGenerator._normalize_pairs({0: 3, 3: 0, 1: 2}) == [(0, 3), (1, 2)]
+    assert shs._normalize_pairs({0: 3, 3: 0, 1: 2}) == [(0, 3), (1, 2)]
 
 
 def test_convert_pred_pairs_list_to_bidirectional_dict():

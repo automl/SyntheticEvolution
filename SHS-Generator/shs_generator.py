@@ -91,6 +91,34 @@ def convert_pred_pairs(pred_pairs: Any) -> Dict[int, int]:
         raise ValueError("Unknown format for predicted pairs: {}".format(type(pred_pairs)))
 
 
+def _normalize_pairs(raw: Any) -> List[Tuple[int, int]]:
+    """Flatten any supported pair representation (dict, list of [i, j],
+    list of [i, j, ...]) into a sorted, de-duplicated list of (i, j) with
+    i < j. Self-pairs are dropped."""
+    out: set = set()
+    if isinstance(raw, dict):
+        items = raw.items()
+    elif isinstance(raw, (list, tuple)):
+        items = [
+            (item[0], item[1])
+            for item in raw
+            if isinstance(item, (list, tuple)) and len(item) >= 2
+        ]
+    else:
+        raise ValueError(f"Unknown pair format: {type(raw)}")
+    for a, b in items:
+        a, b = int(a), int(b)
+        if a == b:
+            continue
+        out.add((a, b) if a < b else (b, a))
+    return sorted(out)
+
+
+def _unique_pairs(pairs: Dict[int, int]) -> set:
+    """The set of unordered base pairs (i, j) with i < j in a pairs dict."""
+    return {(i, j) for i, j in pairs.items() if i < j}
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Generate RNA MSA and AF3-compatible JSON.")
     # I/O and structure parameters.
@@ -178,7 +206,7 @@ class MsaGenerator:
                 logging.warning("Both structure predictor and structure provided. Using provided structure.")
             logging.info("Using provided dot-bracket structure: %s", self.args.structure)
             pairs = self.pair_indices(self.args.structure)
-            return pairs, self.derive_multiplets(self._normalize_pairs(pairs), len(seq))
+            return pairs, self.derive_multiplets(_normalize_pairs(pairs), len(seq))
         if self.args.structure_predictor:
             import structure_predictor  # Imported lazily so the no-predict path never pays the RnaBench cost.
             pdb_id = self.args.pdb_id.lower()[:4] if self.args.pdb_id else None
@@ -186,41 +214,13 @@ class MsaGenerator:
             # Preserve the raw pair list before the dict conversion: a position
             # may participate in more than one pair (base triple/multiplet),
             # which a dict would silently collapse.
-            pair_list = self._normalize_pairs(pred_pairs)
+            pair_list = _normalize_pairs(pred_pairs)
             pred_pairs = convert_pred_pairs(pred_pairs)
             logging.info("%s predicted %d unique base pairs.",
                          self.args.structure_predictor,
-                         len(self._unique_pairs(pred_pairs)))
+                         len(_unique_pairs(pred_pairs)))
             return pred_pairs, self.derive_multiplets(pair_list, len(seq))
         raise ValueError("Either a structure predictor or a structure must be provided.")
-
-    @staticmethod
-    def _normalize_pairs(raw: Any) -> List[Tuple[int, int]]:
-        """Flatten any supported pair representation (dict, list of [i, j],
-        list of [i, j, ...]) into a sorted, de-duplicated list of (i, j) with
-        i < j. Self-pairs are dropped."""
-        out: set = set()
-        if isinstance(raw, dict):
-            items = raw.items()
-        elif isinstance(raw, (list, tuple)):
-            items = [
-                (item[0], item[1])
-                for item in raw
-                if isinstance(item, (list, tuple)) and len(item) >= 2
-            ]
-        else:
-            raise ValueError(f"Unknown pair format: {type(raw)}")
-        for a, b in items:
-            a, b = int(a), int(b)
-            if a == b:
-                continue
-            out.add((a, b) if a < b else (b, a))
-        return sorted(out)
-
-    @staticmethod
-    def _unique_pairs(pairs: Dict[int, int]) -> set:
-        """The set of unordered base pairs (i, j) with i < j in a pairs dict."""
-        return {(i, j) for i, j in pairs.items() if i < j}
 
     def derive_multiplets(self, pair_list: List[Tuple[int, int]],
                           seq_len: int) -> List[Dict[str, Any]]:
@@ -460,7 +460,7 @@ class MsaGenerator:
         logging.info("Processing RNA sequence: %s", rna_seq)
         pairs, multiplets = self.get_structure(rna_seq)
         logging.info("Predicted pairs: %s", pairs)
-        logging.info("Secondary structure has %d unique base pairs.", len(self._unique_pairs(pairs)))
+        logging.info("Secondary structure has %d unique base pairs.", len(_unique_pairs(pairs)))
         if multiplets:
             logging.info("Using %d multiplets: %s", len(multiplets), multiplets)
         msa = self.generate_msa(rna_seq, pairs, multiplets)
