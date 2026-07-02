@@ -17,7 +17,7 @@ if str(HERE_DIR) not in sys.path:
 import json_generator
 
 from collections import defaultdict, deque
-from typing import Dict, List, Any, Tuple
+from typing import Dict, List, Any, Optional, Tuple
 
 logging.basicConfig(
     level=logging.INFO,
@@ -172,26 +172,25 @@ class MsaGenerator:
 
     def get_structure(self, sequence: str) -> Tuple[Dict[int, int], List[Dict[str, Any]]]:
         seq = sequence.upper()
-        # Use provided structure predictor if available.
+        # A provided dot-bracket structure takes precedence over a predictor.
         if self.args.structure:
             if self.args.structure_predictor:
                 logging.warning("Both structure predictor and structure provided. Using provided structure.")
             logging.info("Using provided dot-bracket structure: %s", self.args.structure)
             pairs = self.pair_indices(self.args.structure)
-            return pairs, self.derive_multiplets(self._pair_list_from_dict(pairs), len(seq))
+            return pairs, self.derive_multiplets(self._normalize_pairs(pairs), len(seq))
         if self.args.structure_predictor:
-            # Imported lazily so the no-predict path never pays the RnaBench cost.
-            import structure_predictor
+            import structure_predictor  # Imported lazily so the no-predict path never pays the RnaBench cost.
             pdb_id = self.args.pdb_id.lower()[:4] if self.args.pdb_id else None
             pred_pairs = structure_predictor.predict(self.args.structure_predictor, seq, pdb_id)
             # Preserve the raw pair list before the dict conversion: a position
             # may participate in more than one pair (base triple/multiplet),
             # which a dict would silently collapse.
-            pair_list = self._extract_pair_list(pred_pairs)
+            pair_list = self._normalize_pairs(pred_pairs)
             pred_pairs = convert_pred_pairs(pred_pairs)
             logging.info("%s predicted %d unique base pairs.",
                          self.args.structure_predictor,
-                         len({(min(i, j), max(i, j)) for i, j in pred_pairs.items() if i < j}))
+                         len(self._unique_pairs(pred_pairs)))
             return pred_pairs, self.derive_multiplets(pair_list, len(seq))
         raise ValueError("Either a structure predictor or a structure must be provided.")
 
@@ -210,7 +209,7 @@ class MsaGenerator:
                 if isinstance(item, (list, tuple)) and len(item) >= 2
             ]
         else:
-            raise ValueError("Unknown pair format: {}".format(type(raw)))
+            raise ValueError(f"Unknown pair format: {type(raw)}")
         for a, b in items:
             a, b = int(a), int(b)
             if a == b:
@@ -218,11 +217,10 @@ class MsaGenerator:
             out.add((a, b) if a < b else (b, a))
         return sorted(out)
 
-    def _extract_pair_list(self, pred_pairs: Any) -> List[Tuple[int, int]]:
-        return self._normalize_pairs(pred_pairs)
-
-    def _pair_list_from_dict(self, pairs: Dict[int, int]) -> List[Tuple[int, int]]:
-        return self._normalize_pairs(pairs)
+    @staticmethod
+    def _unique_pairs(pairs: Dict[int, int]) -> set:
+        """The set of unordered base pairs (i, j) with i < j in a pairs dict."""
+        return {(i, j) for i, j in pairs.items() if i < j}
 
     def derive_multiplets(self, pair_list: List[Tuple[int, int]],
                           seq_len: int) -> List[Dict[str, Any]]:
@@ -341,8 +339,7 @@ class MsaGenerator:
         for a, b in sorted(edges):
             a_set, b_set = a in assigned, b in assigned
             if not a_set and not b_set:
-                new_pair = self.mutate_pair(seq[a], seq[b])
-                assigned[a], assigned[b] = new_pair[0], new_pair[1]
+                assigned[a], assigned[b] = self.mutate_pair(seq[a], seq[b])
             elif a_set and not b_set:
                 assigned[b] = self._partner_for(assigned[a])
             elif b_set and not a_set:
@@ -355,8 +352,53 @@ class MsaGenerator:
     def mutate_unpaired(self, nt: str) -> str:
         return random.choice(['A', 'U', 'G', 'C'])
 
+    def _mutate_anchor(self, mutated: List[str], seq: str, m: Dict[str, Any]) -> None:
+        # Multiplet co-mutation: parallel to the pair branch but acts on the
+        # whole connected component via --triplet-keep-prob.
+        if random.random() < self.args.triplet_keep_prob:
+            for p in m["positions"]:
+                mutated[p] = seq[p]
+        else:
+            for p, base in self.mutate_multiplet(seq, m["positions"], m["edges"]).items():
+                mutated[p] = base
+
+    def _mutate_unpaired_position(self, mutated: List[str], seq: str, i: int,
+                                  multiplet_members: set) -> int:
+        # Unpaired (loop) region: allow insertions and deletions. Returns how
+        # far to advance i (a long deletion skips several positions at once).
+        insertion = ''
+        if random.random() < self.args.long_insertion_prob:
+            insertion_len = random.randint(2, self.max_insertion_length) if self.max_insertion_length > 2 else random.randint(2, 5)  # 5 chosen at random
+            insertion = ''.join(random.choice('augc') for _ in range(insertion_len))
+        elif random.random() < self.args.insertion_prob_loop:
+            insertion = random.choice('augc')
+        if random.random() < self.args.long_deletion_prob:
+            del_len = random.randint(2, self.max_deletion_length) if self.max_deletion_length > 2 else random.randint(2, 5)  # 5 chosen at random
+            for j in range(i, min(i + del_len, len(seq))):
+                if j not in multiplet_members:  # keep multiplet geometry intact
+                    mutated[j] = '-'
+            return del_len
+        elif random.random() < self.args.deletion_prob_loop:
+            mutated[i] = '-'
+        elif mutated[i] != '-':
+            mutated[i] = self.mutate_unpaired(seq[i])
+        mutated[i] = insertion + mutated[i]
+        return 1
+
+    def _mutate_stem_pair(self, mutated: List[str], seq: str, i: int, j: int) -> None:
+        # Paired (stem) region: use stem-keep probability. Any pair reaching
+        # here is an ordinary (size-2) base pair; multiplet members are handled
+        # separately by the anchor branch.
+        if random.random() < self.args.stem_keep_prob:
+            mutated[i] = seq[i]
+            mutated[j] = seq[j]
+        else:
+            new_pair = self.mutate_pair(seq[i], seq[j])
+            mutated[i] = new_pair[0]
+            mutated[j] = new_pair[1]
+
     def mutate_sequence(self, seq: str, pairs: Dict[int, int],
-                        multiplets: List[Dict[str, Any]] = None) -> str:
+                        multiplets: Optional[List[Dict[str, Any]]] = None) -> str:
         if multiplets is None:
             multiplets = []
         # Each multiplet is anchored at its smallest position; the remaining
@@ -371,62 +413,19 @@ class MsaGenerator:
         i = 0
         while i < len(seq):
             if i in anchor_to_multiplet:
-                # Multiplet co-mutation: parallel to the pair branch but acts
-                # on the whole connected component via --triplet-keep-prob.
-                m = anchor_to_multiplet[i]
-                if random.random() < self.args.triplet_keep_prob:
-                    for p in m["positions"]:
-                        mutated[p] = seq[p]
-                else:
-                    new_bases = self.mutate_multiplet(seq, m["positions"], m["edges"])
-                    for p, base in new_bases.items():
-                        mutated[p] = base
-                i += 1
+                self._mutate_anchor(mutated, seq, anchor_to_multiplet[i])
+            elif i in multiplet_members:
+                pass  # non-anchor member: already set by its anchor
+            elif i not in pairs:
+                i += self._mutate_unpaired_position(mutated, seq, i, multiplet_members)
                 continue
-            if i in multiplet_members:
-                # Non-anchor member: already set by its anchor above.
-                i += 1
-                continue
-            if i not in pairs:
-                # Unpaired (loop) region: allow insertions and deletions.
-                insertion = ''
-                if random.random() < self.args.long_insertion_prob:
-                    insertion_len = random.randint(2, self.max_insertion_length) if self.max_insertion_length > 2 else random.randint(2, 5)  # 5 chosen at random
-                    insertion = ''.join(random.choice('augc') for _ in range(insertion_len))
-                elif random.random() < self.args.insertion_prob_loop:
-                    insertion = random.choice('augc')
-                if random.random() < self.args.long_deletion_prob:
-                    del_len = random.randint(2, self.max_deletion_length) if self.max_deletion_length > 2 else random.randint(2, 5)  # 5 chosen at random
-                    for j in range(i, min(i + del_len, len(seq))):
-                        if j not in multiplet_members:  # keep multiplet geometry intact
-                            mutated[j] = '-'
-                    i += del_len
-                    continue
-                elif random.random() < self.args.deletion_prob_loop:
-                    mutated[i] = '-'
-                elif mutated[i] != '-':
-                    mutated[i] = self.mutate_unpaired(seq[i])
-                mutated[i] = insertion + mutated[i]
-            elif i < pairs[i]:
-                # Paired (stem) region: use stem-keep probability. Multiplet
-                # members are handled above, so any pair reaching here is an
-                # ordinary (size-2) base pair.
-                j = pairs[i]
-                if j in multiplet_members:
-                    i += 1
-                    continue
-                if random.random() < self.args.stem_keep_prob:
-                    mutated[i] = seq[i]
-                    mutated[j] = seq[j]
-                else:
-                    new_pair = self.mutate_pair(seq[i], seq[j])
-                    mutated[i] = new_pair[0]
-                    mutated[j] = new_pair[1]
+            elif i < pairs[i] and pairs[i] not in multiplet_members:
+                self._mutate_stem_pair(mutated, seq, i, pairs[i])
             i += 1
         return ''.join(mutated)
 
     def generate_msa(self, rna_seq: str, pairs: Dict[int, int],
-                     multiplets: List[Dict[str, Any]] = None) -> List[str]:
+                     multiplets: Optional[List[Dict[str, Any]]] = None) -> List[str]:
         # Set maximum insertion/deletion lengths.
         self.max_insertion_length = int(len(rna_seq) * self.args.max_insertion_fraction)
         self.max_deletion_length = int(len(rna_seq) * self.args.max_deletion_fraction)
@@ -461,8 +460,7 @@ class MsaGenerator:
         logging.info("Processing RNA sequence: %s", rna_seq)
         pairs, multiplets = self.get_structure(rna_seq)
         logging.info("Predicted pairs: %s", pairs)
-        unique_pairs = {(min(i, j), max(i, j)) for i, j in pairs.items() if i < j}
-        logging.info("Secondary structure has %d unique base pairs.", len(unique_pairs))
+        logging.info("Secondary structure has %d unique base pairs.", len(self._unique_pairs(pairs)))
         if multiplets:
             logging.info("Using %d multiplets: %s", len(multiplets), multiplets)
         msa = self.generate_msa(rna_seq, pairs, multiplets)
@@ -482,10 +480,9 @@ class MsaGenerator:
         return updated_chain
 
     def process(self) -> None:
-        data = []
         if self.args.input_json_path:
             data = load_json(self.args.input_json_path)
-        elif (self.args.rna_seq and self.args.protein_seq):
+        elif self.args.rna_seq and self.args.protein_seq:
             data = json_generator.build_input_json(self.args.rna_seq, self.args.protein_seq)
         else:
             raise ValueError("Either --rna-seq and --protein-seq or --input_json_path must be provided.")
