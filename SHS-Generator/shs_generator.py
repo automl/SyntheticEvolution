@@ -51,38 +51,35 @@ def load_json(json_path: str) -> Any:
         raise
 
 
-def convert_pred_pairs(pred_pairs: Any) -> Dict[int, int]:
-    if isinstance(pred_pairs, dict):
-        return pred_pairs
-    elif isinstance(pred_pairs, list):
-        new_dict = {}
-        for item in pred_pairs:
-            if isinstance(item, (list, tuple)) and len(item) >= 2:
-                i, j = int(item[0]), int(item[1])
-                new_dict[i] = j
-                new_dict[j] = i
-        return new_dict
-    else:
-        raise ValueError("Unknown format for predicted pairs: {}".format(type(pred_pairs)))
-
-
-def _normalize_pairs(raw: Any) -> List[Tuple[int, int]]:
-    """Flatten any supported pair representation (dict, list of [i, j],
-    list of [i, j, ...]) into a sorted, de-duplicated list of (i, j) with
-    i < j. Self-pairs are dropped."""
-    out: set = set()
+def _iter_pairs(raw: Any):
+    """Yield (i, j) int tuples from any supported pair representation — a dict,
+    or a list of [i, j, ...] — in input order. Shared by convert_pred_pairs and
+    _normalize_pairs so the two can't diverge on format handling."""
     if isinstance(raw, dict):
         items = raw.items()
     elif isinstance(raw, (list, tuple)):
-        items = [
-            (item[0], item[1])
-            for item in raw
-            if isinstance(item, (list, tuple)) and len(item) >= 2
-        ]
+        items = [(item[0], item[1]) for item in raw if isinstance(item, (list, tuple)) and len(item) >= 2]
     else:
         raise ValueError(f"Unknown pair format: {type(raw)}")
     for a, b in items:
-        a, b = int(a), int(b)
+        yield int(a), int(b)
+
+
+def convert_pred_pairs(pred_pairs: Any) -> Dict[int, int]:
+    """Build a bidirectional {i: j, j: i} dict from predicted pairs, preserving
+    input order (so the last partner wins where a position pairs more than once)."""
+    result: Dict[int, int] = {}
+    for i, j in _iter_pairs(pred_pairs):
+        result[i] = j
+        result[j] = i
+    return result
+
+
+def _normalize_pairs(raw: Any) -> List[Tuple[int, int]]:
+    """Flatten predicted pairs into a sorted, de-duplicated list of (i, j) with
+    i < j. Self-pairs are dropped."""
+    out: set = set()
+    for a, b in _iter_pairs(raw):
         if a == b:
             continue
         out.add((a, b) if a < b else (b, a))

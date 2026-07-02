@@ -88,9 +88,12 @@ def test_convert_pred_pairs_list_to_bidirectional_dict():
     assert shs.convert_pred_pairs([[1, 4], [2, 3]]) == {1: 4, 4: 1, 2: 3, 3: 2}
 
 
-def test_convert_pred_pairs_dict_passthrough():
-    d = {1: 4, 4: 1}
-    assert shs.convert_pred_pairs(d) is d
+def test_convert_pred_pairs_dict_is_rebuilt_and_int_keyed():
+    # A dict input is now rebuilt via the shared parser (no longer passed
+    # through), so a well-formed bidirectional dict is preserved by value and
+    # non-int keys/values are int-converted.
+    assert shs.convert_pred_pairs({1: 4, 4: 1}) == {1: 4, 4: 1}
+    assert shs.convert_pred_pairs({"2": "3"}) == {2: 3, 3: 2}
 
 
 ############################### mutate_pair / _partner_for ###############################
