@@ -35,16 +35,18 @@ def get_output_json(output_dir):
     return json_files[0]
 
 
-def run_generator(output_dir, *cli_args):
+def run_generator(output_dir, *cli_args, cwd=None):
     """Invoke shs_generator.py with the given CLI args plus --output_json_dir.
     Returns the completed process. main() logs-and-swallows exceptions, so the
-    process exits 0 even on failure; callers inspect stderr / the output dir."""
+    process exits 0 even on failure; callers inspect stderr / the output dir.
+    cwd sets the working directory (e.g. to capture the relative plot output)."""
     script = Path(__file__).resolve().parents[1] / "shs_generator.py"
     return subprocess.run(
         [sys.executable, str(script), *cli_args, "--output_json_dir", str(output_dir)],
         check=True,
         capture_output=True,
         text=True,
+        cwd=cwd,
     )
 
 
@@ -149,6 +151,22 @@ def test_max_chains_skips_large_input(tmp_path):
         "Expected no output JSON when chain count exceeds --max_chains"
     )
     assert "max_chains=3" in result.stderr
+
+
+def test_plot_creates_png(tmp_path):
+    # --plot must write msa_final_plots/msa_final_<pdb_id>.png relative to the
+    # working directory. Run with cwd=tmp_path so the plot lands under tmp_path.
+    output_dir = tmp_path / "out"
+    run_generator(
+        output_dir,
+        "--rna-seq", "GGGAACCCGGGAACCC", "--protein-seq", "MK",
+        "--structure", "(((..[[[)))..]]]",
+        "--pdb_id", "PLOTTEST", "-N", "5", "--seed", "1", "--plot",
+        cwd=tmp_path,
+    )
+    png = tmp_path / "msa_final_plots" / "msa_final_PLOTTEST.png"
+    assert png.exists(), f"Expected plot at {png}"
+    assert png.read_bytes()[:8] == b"\x89PNG\r\n\x1a\n", "Output is not a valid PNG"
 
 
 ########################## Error-path regression tests (run only these: pytest -k error) ##########################

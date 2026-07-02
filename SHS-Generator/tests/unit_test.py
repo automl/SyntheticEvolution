@@ -258,11 +258,32 @@ def test_build_output_name_appends_triplet_suffix_when_enabled(make_gen):
     assert "_triplet_0.5_keep_0.99" in name
 
 
-############################### module-level helpers ###############################
+############################### plot_final_features ###############################
+
+def test_plot_final_features_writes_valid_png(make_gen, tmp_path, monkeypatch):
+    # plot_final_features saves to ./msa_final_plots/msa_final_<pdb_id>.png,
+    # relative to the CWD -> chdir into tmp_path so it lands there.
+    import msa_plotting
+    monkeypatch.chdir(tmp_path)
+    g = make_gen(N=5)
+    seq = "GGGAACCCGGGAACCC"
+    pairs = g.pair_indices("(((..[[[)))..]]]")
+    msa = g.generate_msa(seq, pairs)
+    msa_plotting.plot_final_features(msa, seq, pairs, "PLOTTEST")
+    png = tmp_path / "msa_final_plots" / "msa_final_PLOTTEST.png"
+    assert png.exists(), f"Expected plot at {png}"
+    assert png.stat().st_size > 0
+    assert png.read_bytes()[:8] == b"\x89PNG\r\n\x1a\n", "Output is not a valid PNG"
+
+
+############################### msa_plotting helpers ###############################
+# Imported locally so the rest of the unit suite stays matplotlib-free.
 
 def test_pad_lowercase_drops_lowercase_and_pads():
-    assert shs.pad_lowercase("AbCdE", 8) == "ACE-----"
+    import msa_plotting
+    assert msa_plotting.pad_lowercase("AbCdE", 8) == "ACE-----"
 
 
 def test_bool_left_deletion_marks_gaps():
-    assert list(shs.bool_left_deletion("A-G-")) == [False, True, False, True]
+    import msa_plotting
+    assert list(msa_plotting.bool_left_deletion("A-G-")) == [False, True, False, True]
