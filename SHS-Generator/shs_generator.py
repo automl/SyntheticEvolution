@@ -10,6 +10,12 @@ ROOT_DIR = Path(__file__).resolve().parents[1]
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
+HERE_DIR = Path(__file__).resolve().parent
+if str(HERE_DIR) not in sys.path:
+    sys.path.insert(0, str(HERE_DIR))
+
+import json_generator
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -584,11 +590,6 @@ class MsaGenerator:
         logging.info("Final MSA features plot saved to: %s", final_filename)
 
     def build_output_name(self) -> str:
-        """Construct the output file/JSON name from the run parameters. Used by
-        both the input-JSON and the raw-sequence branches so the naming scheme
-        stays identical. max_insertion/deletion_length are set by generate_msa;
-        the getattr fallback guards the (rare) case where no MSA was generated.
-        stem_keep_prob is always included; the triplet suffix only when enabled."""
         ins_len = getattr(self, "max_insertion_length", "NA")
         del_len = getattr(self, "max_deletion_length", "NA")
         triplet_suffix = (
@@ -604,89 +605,61 @@ class MsaGenerator:
             f"_stemkeep_{self.args.stem_keep_prob}{triplet_suffix}_{self.args.structure_predictor}"
         )
 
+
+    def _build_rna_chain(self, chain: Dict[str, Any]) -> Dict[str, Any]:
+        """Return a copy of an RNA chain with a freshly generated custom MSA
+        written into its unpairedMsa field."""
+        updated_chain = chain.copy()
+        rna_seq = chain["rna"]["sequence"]
+        logging.info("Processing RNA sequence: %s", rna_seq)
+        pairs, multiplets = self.get_structure(rna_seq)
+        logging.info("Predicted pairs: %s", pairs)
+        unique_pairs = {(min(i, j), max(i, j)) for i, j in pairs.items() if i < j}
+        logging.info("Secondary structure has %d unique base pairs.", len(unique_pairs))
+        if multiplets:
+            logging.info("Using %d multiplets: %s", len(multiplets), multiplets)
+        msa = self.generate_msa(rna_seq, pairs, multiplets)
+        updated_chain["rna"]["unpairedMsa"] = "\n".join(
+            [">query\n" + msa[0]] +
+            [f">sample_{i}\n{seq}" for i, seq in enumerate(msa[1:])]
+        )
+        if self.args.print_msa:
+            logging.info("MSA:")
+            for row in msa:
+                logging.info(row)
+        if self.args.plot:
+            self.plot_final_features(msa, rna_seq, pairs)
+        return updated_chain
+
     def process(self) -> None:
-        json_output: Dict[str, Any] = {}
+        data = []
         if self.args.input_json_path:
             data = load_json(self.args.input_json_path)
-            if self.args.max_chains is not None and "sequences" in data:
-                if len(data["sequences"]) > self.args.max_chains:
-                    logging.warning("Input JSON contains %d chains, but --max_chains=%d is set. Skipping %s...",
-                                    len(data["sequences"]), self.args.max_chains,
-                                    Path(self.args.input_json_path).name)
-                    return
-            updated_sequences = []
-            for key, value in data.items():
-                if key == "sequences":
-                    for chain in value:
-                        if "rna" in chain:
-                            updated_chain = chain.copy()
-                            rna_seq = chain["rna"]["sequence"]
-                            logging.info("Processing RNA sequence from JSON: %s", rna_seq)
-                            pairs, multiplets = self.get_structure(rna_seq)
-                            logging.info("Predicted pairs: %s", pairs)
-                            unique_pairs = {(min(i, j), max(i, j)) for i, j in pairs.items() if i < j}
-                            logging.info("Secondary structure has %d unique base pairs.", len(unique_pairs))
-                            if multiplets:
-                                logging.info("Using %d multiplets: %s", len(multiplets), multiplets)
-                            msa = self.generate_msa(rna_seq, pairs, multiplets)
-                            updated_chain["rna"]["unpairedMsa"] = "\n".join(
-                                [">query\n" + msa[0]] +
-                                [f">sample_{i}\n{seq}" for i, seq in enumerate(msa[1:])]
-                            )
-                            if self.args.plot:
-                                self.plot_final_features(msa, rna_seq, pairs)
-                            updated_sequences.append(updated_chain)
-                        if "protein" in chain:
-                            updated_sequences.append(chain)
-                else:
-                    json_output[key] = value
-            json_output["sequences"] = updated_sequences
-            name = self.build_output_name()
-            json_output["name"] = name
+        elif (self.args.rna_seq and self.args.protein_seq):
+            data = json_generator.build_input_json(self.args.rna_seq, self.args.protein_seq)
         else:
-            if not (self.args.rna_seq and self.args.protein_seq):
-                raise ValueError("Either --rna-seq and --protein-seq or --input_json_path must be provided.")
-            rna_seq = self.args.rna_seq.upper()
-            logging.info("Input RNA sequence: %s", rna_seq)
-            pairs, multiplets = self.get_structure(rna_seq)
-            unique_pairs = {(min(i, j), max(i, j)) for i, j in pairs.items() if i < j}
-            logging.info("Secondary structure has %d unique base pairs.", len(unique_pairs))
-            if multiplets:
-                logging.info("Using %d multiplets: %s", len(multiplets), multiplets)
-            msa = self.generate_msa(rna_seq, pairs, multiplets)
-            if self.args.print_msa:
-                logging.info("MSA:")
-                for row in msa:
-                    logging.info(row)
-            if self.args.plot:
-                self.plot_final_features(msa, rna_seq, pairs)
-            msa_fasta = [">query\n" + msa[0]]
-            msa_fasta += [f">sample_{i}\n{seq}" for i, seq in enumerate(msa[1:])]
-            unpaired_msa = "\n".join(msa_fasta)
-            name = self.build_output_name()
-            json_output = {
-                "name": name,
-                "modelSeeds": [1],
-                "sequences": [
-                    {
-                        "rna": {
-                            "sequence": rna_seq,
-                            "modifications": [],
-                            "unpairedMsa": unpaired_msa,
-                            "id": "A"
-                        }
-                    },
-                    {
-                        "protein": {
-                            "sequence": self.args.protein_seq,
-                            "modifications": [],
-                            "id": "B"
-                        }
-                    }
-                ],
-                "dialect": "alphafold3",
-                "version": 1
-            }
+            raise ValueError("Either --rna-seq and --protein-seq or --input_json_path must be provided.")
+
+        chains = data.get("sequences", [])
+        if self.args.max_chains is not None and len(chains) > self.args.max_chains:
+            source = Path(self.args.input_json_path).name if self.args.input_json_path else "generated input"
+            logging.warning("Input JSON contains %d chains, but --max_chains=%d is set. Skipping %s...",
+                            len(chains), self.args.max_chains, source)
+            return
+
+        updated_sequences = []
+        for chain in chains:
+            if "rna" in chain:
+                updated_sequences.append(self._build_rna_chain(chain))
+            if "protein" in chain:
+                updated_sequences.append(chain)
+
+        # Preserve any extra top-level keys, then set the processed sequences/name.
+        json_output = {k: v for k, v in data.items() if k != "sequences"}
+        json_output["sequences"] = updated_sequences
+        name = self.build_output_name()
+        json_output["name"] = name
+
         output_path = Path(self.args.output_json_dir, f"{name}.json")
         with open(output_path, "w") as f:
             json.dump(json_output, f, indent=2)
