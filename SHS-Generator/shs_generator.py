@@ -147,7 +147,7 @@ class MsaGenerator:
 
     def pair_indices(self, dotbracket: str) -> Dict[int, int]:
         # Support nested pseudoknot bracket families ()[]{}<> via one stack
-        # per family; any other character is treated as unpaired. Behaviour
+        # per family; any other character is treated as unpaired. Behavior
         # for plain ()-only structures is unchanged.
         openers = {'(': ')', '[': ']', '{': '}', '<': '>'}
         close_to_open = {c: o for o, c in openers.items()}
@@ -228,9 +228,10 @@ class MsaGenerator:
                 continue  # ordinary base pair -> handled via the pairs dict
             if random.random() >= self.args.triplet_prob:
                 continue  # not promoted this run; falls back to pair handling
-            positions = tuple(sorted(comp))
-            comp_edges = sorted(e for e in edges if e[0] in comp and e[1] in comp)
-            multiplets.append({"positions": positions, "edges": comp_edges})
+            multiplets.append({
+                "positions": tuple(sorted(comp)),
+                "edges": sorted(e for e in edges if e[0] in comp and e[1] in comp)
+            })
 
         sizes = [len(m["positions"]) for m in multiplets]
         logging.info(
