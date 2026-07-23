@@ -66,7 +66,8 @@ def compute_cov(input_path: str) -> Tuple[str, np.ndarray, np.ndarray]:
     np.fill_diagonal(covariance, col_means)
     return seq, msa, covariance
 
-def plot_matrix(mat: np.ndarray, title: str = "Recovered (covariation)",
+
+def plot_matrix(seq: str, mat: np.ndarray, title: str = "Recovered (covariation)",
                 show: bool = True, out: Optional[str] = None,
                 vmin: Optional[float] = None, vmax: Optional[float] = None,
                 show_values = False):
@@ -78,7 +79,7 @@ def plot_matrix(mat: np.ndarray, title: str = "Recovered (covariation)",
     if show_values:
         for i in range(mat.shape[0]):
             for j in range(mat.shape[1]):
-                text = ax.text(j, i, round(mat[i, j], 2), ha="center", va="center", color="w")
+                text = ax.text(j, i, f"{round(mat[i, j], 2)}\n{seq[i]+seq[j]}", ha="center", va="center", color="w")
     
     ax.set_title(title)
     # fig.colorbar(im, ax=ax) 
@@ -106,7 +107,7 @@ def main(argv: Optional[List[str]] = None) -> None:
     seq, msa, covariance = compute_cov(args.input)
     print(covariance.shape)
     title = args.title or "Recovered (covariation)"
-    plot_matrix(covariance, title=title, show=args.show, out=args.out)
+    plot_matrix(seq, covariance, title=title, show=args.show, out=args.out)
 
 
 if __name__ == "__main__":

@@ -102,7 +102,9 @@ def parse_args() -> argparse.Namespace:
     mut_group = parser.add_argument_group("Mutation Parameters")
     mut_group.add_argument('-N', type=int, default=20, help="Number of sequences in the MSA")
     mut_group.add_argument('--mutation-rate-unpaired', type=float, default=0.2)
-    mut_group.add_argument('--mutation-rate-paired', type=float, default=0.2)    
+    mut_group.add_argument('--mutation-rate-paired', type=float, default=0.2)
+    mut_group.add_argument('--pair-mutation-approach', type=str, nargs='*', default="watson_crick", 
+                           choices=["watson_crick", "covariance"])
     mut_group.add_argument('--insertion-prob-loop', type=float, default=0.2)
     mut_group.add_argument('--deletion-prob-loop', type=float, default=0.8)
     mut_group.add_argument('--insertion-prob-stem', type=float, default=0.01)
@@ -310,14 +312,29 @@ class MsaGenerator:
         mutated[i] = insertion + mutated[i]
         return 1
 
-    def _mutate_stem_pair(self, mutated: List[str], seq: str, i: int, j: int) -> None:
-        # TODO: make probability fully accurate
-        # If the same pair gets pulled it effectively did not get mutated, 
-        # therefore i increase the chance for mutation if the chance of getting the pair is high
-        pair = seq[i] + seq[j]
-        if random.random() < self.args.mutation_rate_paired + PAIR_MUTATIONS.get(pair, 0):
-            pair = random.choices(list(PAIR_MUTATIONS.keys()), list(PAIR_MUTATIONS.values()))[0]
-        mutated[i], mutated[j] = pair 
+    def mutate_stem_pair(self, mutated: List[str], seq: str, i: int, j: int):
+        if self.args.pair_mutation_approach == "covariance":
+            self._mutate_stem_pair_cov(mutated, seq, i, j)
+        elif self.args.pair_mutation_approach == "watson_crick":
+            self._mutate_stem_pair_wc(mutated, seq, i, j)
+        else:
+            logging.error("Unknown input for --pair-mutation-approach, '%s', please use on of the provided options",self.args.pair_mutation_approach)
+            raise ValueError()
+
+    def _mutate_stem_pair_wc(self, mutated: List[str], seq: str, i: int, j: int) -> None:
+        """Mutate the base pair to a random watson crick base pair based on the probabilities in PAIR_MUTATIONS.
+        This also increases covariance but slightly less then the pure covariance approach"""
+        options = dict(PAIR_MUTATIONS)
+        options.pop(seq[i] + seq[j], 0)
+        if random.random() < self.args.mutation_rate_paired:
+            mutated[i], mutated[j] = random.choices(list(options.keys()), list(options.values()))[0]
+
+    def _mutate_stem_pair_cov(self, mutated: List[str], seq: str, i: int, j: int) -> None:
+        """Mutate the pair in a way that only guarantees, that both partners get mutated
+        and therefore only increases covariance"""
+        if random.random() < self.args.mutation_rate_paired:
+            mutated[i] = random.choice([c for c in 'AUGC' if c != seq[i]])
+            mutated[j] = random.choice([c for c in 'AUGC' if c != seq[j]])
 
     def mutate_sequence(self, seq: str, pairs: Dict[int, int],
                         multiplets: Optional[List[Dict[str, Any]]] = None) -> str:
@@ -342,7 +359,7 @@ class MsaGenerator:
                 i += self._mutate_unpaired_position(mutated, seq, i, multiplet_members)
                 continue
             elif i < pairs[i] and pairs[i] not in multiplet_members:
-                self._mutate_stem_pair(mutated, seq, i, pairs[i])
+                self.mutate_stem_pair(mutated, seq, i, pairs[i])
             i += 1
         return ''.join(mutated)
 
