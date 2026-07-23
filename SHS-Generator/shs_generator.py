@@ -97,7 +97,7 @@ def parse_args() -> argparse.Namespace:
     io_group.add_argument('--structure_predictor', type=str, default=None,
                           help="Predictor for secondary structure (base pairs output). Options: rnafold, spotrna, rnaformer, dssr")
     io_group.add_argument('--structure', type=str, required=False, default=None,
-                          help="Dot-bracket secondary structure (if provided, will be converted to base pairs)")
+                          help="Dot-bracket secondary structure (if provided, will be converted to base pairs) or base pairs")
     io_group.add_argument('--rna-seq', type=str, required=False,
                           help="RNA sequence (used for MSA + JSON)")
     io_group.add_argument('--protein-seq', type=str, required=False,
@@ -141,6 +141,7 @@ def parse_args() -> argparse.Namespace:
 class MsaGenerator:
     def __init__(self, args: argparse.Namespace) -> None:
         self.args = args
+        self.pairs: dict[int, int] = {}
         if self.args.seed is not None:
             random.seed(self.args.seed)
         Path(self.args.output_json_dir).mkdir(parents=True, exist_ok=True)
@@ -172,8 +173,15 @@ class MsaGenerator:
         if self.args.structure:
             if self.args.structure_predictor:
                 logging.warning("Both structure predictor and structure provided. Using provided structure.")
-            logging.info("Using provided dot-bracket structure: %s", self.args.structure)
-            pairs = self.pair_indices(self.args.structure)
+            try:
+                data = json.loads(self.args.structure)
+                if not isinstance(data, dict):
+                    raise json.decoder.JSONDecodeError("not an object", data, 0)
+                logging.info("Using provided pairs as structure: %s", self.args.structure)
+                pairs = {int(k): int(v) for k, v in data.items()}
+            except json.decoder.JSONDecodeError:
+                logging.info("Using provided dot-bracket structure: %s", self.args.structure)
+                pairs = self.pair_indices(self.args.structure)
             return pairs, self.derive_multiplets(_normalize_pairs(pairs))
         if self.args.structure_predictor:
             import structure_predictor  # Imported lazily so the no-predict path never pays the RnaBench cost.
@@ -395,6 +403,8 @@ class MsaGenerator:
         rna_seq = chain["rna"]["sequence"]
         logging.info("Processing RNA sequence: %s", rna_seq)
         pairs, multiplets = self.get_structure(rna_seq)
+        # expose pairs for the analyzer
+        self.pairs = pairs
         logging.info("Predicted pairs: %s", pairs)
         logging.info("Secondary structure has %d unique base pairs.", len(_unique_pairs(pairs)))
         if multiplets:

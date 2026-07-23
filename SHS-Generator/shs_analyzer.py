@@ -44,25 +44,44 @@ def parse_input(path: str) -> Tuple[str, np.ndarray]:
     return (seq, msa_array)
 
 
-def compute_covariation(input_path: str) -> Tuple[str, np.ndarray, np.ndarray]:
+def structure_matrix(pairs: Dict[int, int], seq_len: int,
+                     paired_value, unpaired_value,
+                     paired_diag, unpaired_diag) -> np.ndarray:
+    mat = np.full((seq_len, seq_len), unpaired_value, dtype=float)
+    for i, j in pairs.items():
+        if 0 <= i < seq_len and 0 <= j < seq_len:
+            mat[i, j] = paired_value
+    for i in range(seq_len):
+        mat[i, i] = paired_diag if i in pairs else unpaired_diag
+    return mat
+
+
+def compute_cov(input_path: str, use_corrcoef: bool = False) -> Tuple[str, np.ndarray, np.ndarray]:
     seq, msa = parse_input(input_path)
     seq_array = np.array(list(seq))
     similarities = (msa == seq_array).astype(int)
-    covariance = np.cov(similarities, rowvar=False)
+    if use_corrcoef:
+        covariance = np.corrcoef(similarities, rowvar=False)
+    else:
+        covariance = np.cov(similarities, rowvar=False)
     return seq, msa, covariance
 
-
 def plot_matrix(mat: np.ndarray, title: str = "Recovered (covariation)",
-                show: bool = True, out: Optional[str] = None):
+                show: bool = True, out: Optional[str] = None,
+                vmin: Optional[float] = None, vmax: Optional[float] = None,
+                show_values = False):
     import matplotlib.pyplot as plt
 
-    fig, ax = plt.subplots(figsize=(5, 4.6))
-    im = ax.imshow(mat, cmap="viridis", origin="upper")
-    if mat.shape[0] <= 20:
-        ax.set_xticks(np.arange(mat.shape[1]))
-        ax.set_yticks(np.arange(mat.shape[0]))
+    fig, ax = plt.subplots(figsize=(mat.shape[0], mat.shape[1]))
+    im = ax.imshow(mat, cmap="viridis", vmin=vmin, vmax=vmax)
+
+    if show_values:
+        for i in range(mat.shape[0]):
+            for j in range(mat.shape[1]):
+                text = ax.text(j, i, round(mat[i, j], 2), ha="center", va="center", color="w")
+    
     ax.set_title(title)
-    fig.colorbar(im, ax=ax)  # Add colorbar
+    # fig.colorbar(im, ax=ax) 
     fig.tight_layout()
     if out:
         fig.savefig(out, dpi=150)
@@ -84,7 +103,7 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
 
 def main(argv: Optional[List[str]] = None) -> None:
     args = parse_args(argv)
-    seq, msa, covariance = compute_covariation(args.input)
+    seq, msa, covariance = compute_cov(args.input)
     print(covariance.shape)
     title = args.title or "Recovered (covariation)"
     plot_matrix(covariance, title=title, show=args.show, out=args.out)
