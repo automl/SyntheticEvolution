@@ -138,7 +138,6 @@ class MsaGenerator:
         self.pairs: dict[int, int] = {}
         if self.args.seed is not None:
             random.seed(self.args.seed)
-        Path(self.args.output_json_dir).mkdir(parents=True, exist_ok=True)
 
     def pair_indices(self, dotbracket: str) -> Dict[int, int]:
         # Support nested pseudoknot bracket families ()[]{}<> via one stack
@@ -419,7 +418,7 @@ class MsaGenerator:
                                              self.args.pdb_id, self.args.show_plot)
         return updated_chain
 
-    def process(self) -> None:
+    def process(self, write: bool = True) -> Dict[str, Any]:
         if self.args.input_json_path:
             data = load_json(self.args.input_json_path)
         elif self.args.rna_seq and self.args.protein_seq:
@@ -447,10 +446,12 @@ class MsaGenerator:
         name = self.build_output_name()
         json_output["name"] = name
 
-        output_path = Path(self.args.output_json_dir, f"{name}.json")
-        with open(output_path, "w") as f:
-            json.dump(json_output, f, indent=2)
-        logging.info("✅ JSON written to: %s", output_path)
+        if write:
+            output_path = Path(self.args.output_json_dir, f"{name}.json")
+            with open(output_path, "w") as f:
+                json.dump(json_output, f, indent=2)
+            logging.info("✅ JSON written to: %s", output_path)
+        return json_output
 
 
 def main() -> None:
