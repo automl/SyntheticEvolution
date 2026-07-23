@@ -24,23 +24,14 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
-PAIR_MUTATIONS: Dict[str, List[str]] = {
-    'CU': ['GU', 'AU', 'CG'],
-    'CA': ['UA', 'CG'],
-    'GA': ['UA', 'GC', 'GU'],
-    'CC': ['CG', 'GC'],
-    'AA': ['AU', 'UA'],
-    'UU': ['AU', 'UA'],
-    'GG': ['GC', 'CG', 'GU', 'UG'],
-    'GC': ['AU', 'CG', 'GC'],
-    'CG': ['GC', 'AU'],
-    'AU': ['UA', 'GC'],
-    'UA': ['AU', 'CG'],
-    'GU': ['GC', 'AU', 'UG'],
-    'UG': ['GC', 'AU', 'GU']
+PAIR_MUTATIONS = {
+    "AU" : 0.2,
+    "UA" : 0.2,
+    "GC" : 0.2,
+    "CG" : 0.2,
+    "GU" : 0.1,
+    "UG" : 0.1
 }
-WC_PAIRS: List[str] = ['AU', 'UA', 'GC', 'CG']
-
 
 def load_json(json_path: str) -> Any:
     try:
@@ -100,6 +91,7 @@ def parse_args() -> argparse.Namespace:
                           help="Dot-bracket secondary structure (if provided, will be converted to base pairs) or base pairs")
     io_group.add_argument('--rna-seq', type=str, required=False,
                           help="RNA sequence (used for MSA + JSON)")
+    io_group.add_argument('--pair-mutation', type=str, required=False)
     io_group.add_argument('--protein-seq', type=str, required=False,
                           help="Protein sequence (for JSON)")
     io_group.add_argument('--input_json_path', type=str, required=False,
@@ -109,19 +101,19 @@ def parse_args() -> argparse.Namespace:
     io_group.add_argument('--output_json_dir', type=str, default="custom_msa_json_output")
     mut_group = parser.add_argument_group("Mutation Parameters")
     mut_group.add_argument('-N', type=int, default=20, help="Number of sequences in the MSA")
+    mut_group.add_argument('--mutation-rate-unpaired', type=float, default=0.2)
+    mut_group.add_argument('--mutation-rate-paired', type=float, default=0.2)    
     mut_group.add_argument('--insertion-prob-loop', type=float, default=0.2)
     mut_group.add_argument('--deletion-prob-loop', type=float, default=0.8)
     mut_group.add_argument('--insertion-prob-stem', type=float, default=0.01)
     mut_group.add_argument('--deletion-prob-stem', type=float, default=0.01)
-    mut_group.add_argument('--wobble-prob', type=float, default=0.1)
     mut_group.add_argument('--long-insertion-prob', type=float, default=0.05)
     mut_group.add_argument('--long-deletion-prob', type=float, default=0.05)
+    mut_group.add_argument('--wobble-prob', type=float, default=0.1)
     mut_group.add_argument('--max-insertion-fraction', type=float, default=0.1,
                            help="Max insertion length as fraction of RNA length")
     mut_group.add_argument('--max-deletion-fraction', type=float, default=0.1,
                            help="Max deletion length as fraction of RNA length")
-    mut_group.add_argument('--stem-keep-prob', type=float, default=0.99,
-                           help="Probability of keeping paired (stem) residues unchanged to provide strong structural hints")
     # Triplet co-mutation parameters (extension of the pairwise mutation
     # scheme to three correlated positions). Default --triplet-prob=0.0
     # disables triplets, preserving the original pair-only behavior.
@@ -247,15 +239,6 @@ class MsaGenerator:
             len(multiplets), len(edges), self.args.triplet_prob, sizes)
         return multiplets
 
-    def mutate_pair(self, nt1: str, nt2: str) -> str:
-        """with wobble_prob, overrides the chosen candidate with a G-U/U-G wobble"""
-        original = nt1 + nt2
-        candidates = PAIR_MUTATIONS.get(original, WC_PAIRS)
-        chosen = random.choice(candidates)
-        if random.random() < self.args.wobble_prob:
-            return random.choice(['GU', 'UG'])
-        return chosen
-
     def _partner_for(self, nt: str) -> str:
         """Pick a base that pairs with `nt`: Watson-Crick by default, with a
         --wobble-prob chance of a G-U wobble where chemically valid."""
@@ -284,7 +267,7 @@ class MsaGenerator:
         for a, b in sorted(edges):
             a_set, b_set = a in assigned, b in assigned
             if not a_set and not b_set:
-                assigned[a], assigned[b] = self.mutate_pair(seq[a], seq[b])
+                assigned[a], assigned[b] = self.mutate_pair()
             elif a_set and not b_set:
                 assigned[b] = self._partner_for(assigned[a])
             elif b_set and not a_set:
@@ -293,9 +276,6 @@ class MsaGenerator:
         for p in positions:
             assigned.setdefault(p, seq[p])
         return assigned
-
-    def mutate_unpaired(self) -> str:
-        return random.choice(['A', 'U', 'G', 'C'])
 
     def _mutate_anchor(self, mutated: List[str], seq: str, m: Dict[str, Any]) -> None:
         # Multiplet co-mutation: parallel to the pair branch but acts on the
@@ -317,7 +297,7 @@ class MsaGenerator:
             insertion = ''.join(random.choice('augc') for _ in range(insertion_len))
         elif random.random() < self.args.insertion_prob_loop:
             insertion = random.choice('augc')
-        if random.random() < self.args.long_deletion_prob:
+        elif random.random() < self.args.long_deletion_prob:
             del_len = random.randint(2, self.max_deletion_length) if self.max_deletion_length > 2 else random.randint(2, 5)  # 5 chosen at random
             for j in range(i, min(i + del_len, len(seq))):
                 if j not in multiplet_members:  # keep multiplet geometry intact
@@ -325,22 +305,19 @@ class MsaGenerator:
             return del_len
         elif random.random() < self.args.deletion_prob_loop:
             mutated[i] = '-'
-        elif mutated[i] != '-':
-            mutated[i] = self.mutate_unpaired()
+        elif random.random() < self.args.mutation_rate_unpaired:
+            mutated[i] = random.choice([c for c in 'AUGC' if c != seq[i]])
         mutated[i] = insertion + mutated[i]
         return 1
 
     def _mutate_stem_pair(self, mutated: List[str], seq: str, i: int, j: int) -> None:
-        # Paired (stem) region: use stem-keep probability. Any pair reaching
-        # here is an ordinary (size-2) base pair; multiplet members are handled
-        # separately by the anchor branch.
-        if random.random() < self.args.stem_keep_prob:
-            mutated[i] = seq[i]
-            mutated[j] = seq[j]
-        else:
-            new_pair = self.mutate_pair(seq[i], seq[j])
-            mutated[i] = new_pair[0]
-            mutated[j] = new_pair[1]
+        # TODO: make probability fully accurate
+        # If the same pair gets pulled it effectively did not get mutated, 
+        # therefore i increase the chance for mutation if the chance of getting the pair is high
+        pair = seq[i] + seq[j]
+        if random.random() < self.args.mutation_rate_paired + PAIR_MUTATIONS.get(pair, 0):
+            pair = random.choices(list(PAIR_MUTATIONS.keys()), list(PAIR_MUTATIONS.values()))[0]
+        mutated[i], mutated[j] = pair 
 
     def mutate_sequence(self, seq: str, pairs: Dict[int, int],
                         multiplets: Optional[List[Dict[str, Any]]] = None) -> str:
@@ -392,7 +369,7 @@ class MsaGenerator:
             f"_inss_{self.args.insertion_prob_stem}_dels_{self.args.deletion_prob_stem}"
             f"_lins_{self.args.long_insertion_prob}_ldels_{self.args.long_deletion_prob}"
             f"_maxinslen_{ins_len}_maxdellen_{del_len}_wobble_{self.args.wobble_prob}"
-            f"_stemkeep_{self.args.stem_keep_prob}{triplet_suffix}_{self.args.structure_predictor}"
+            f"{triplet_suffix}_{self.args.structure_predictor}"
         )
 
 

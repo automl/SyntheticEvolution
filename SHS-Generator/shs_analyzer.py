@@ -55,15 +55,15 @@ def structure_matrix(pairs: Dict[int, int], seq_len: int,
         mat[i, i] = paired_diag if i in pairs else unpaired_diag
     return mat
 
-
-def compute_cov(input_path: str, use_corrcoef: bool = False) -> Tuple[str, np.ndarray, np.ndarray]:
+def compute_cov(input_path: str) -> Tuple[str, np.ndarray, np.ndarray]:
     seq, msa = parse_input(input_path)
     seq_array = np.array(list(seq))
-    similarities = (msa == seq_array).astype(int)
-    if use_corrcoef:
-        covariance = np.corrcoef(similarities, rowvar=False)
-    else:
-        covariance = np.cov(similarities, rowvar=False)
+    similarities = (msa != seq_array).astype(int)
+    covariance = np.cov(similarities, rowvar=False)
+
+    # Replace the diagonal with the column means (mutation percentage)
+    col_means = np.mean(similarities, axis=0)
+    np.fill_diagonal(covariance, col_means)
     return seq, msa, covariance
 
 def plot_matrix(mat: np.ndarray, title: str = "Recovered (covariation)",
