@@ -129,6 +129,11 @@ class Features:
         return self.diff_mask & ~self.deletion_mask
 
     @cached_property
+    def col_deletion_rate(self) -> np.ndarray:
+        """Per-column fraction of rows that got deleted"""
+        return self.deletion_mask.mean(axis=0)
+
+    @cached_property
     def col_mut_rate(self) -> np.ndarray:
         """Per-column fraction of rows that differ from the seq"""
         return self.diff_mask.mean(axis=0)
@@ -267,8 +272,37 @@ def plot_covariance_classification(seq: str, cov: np.ndarray, pairs: Optional[Di
     else:
         ax.scatter(x, y, c="black")
 
-    ax.set_ylabel("recovered covariance")
     ax.set_xlabel("base pair")
+    ax.set_ylabel("recovered covariance")
+    ax.set_title(title)
+    fig.tight_layout()
+    if out:
+        fig.savefig(out, dpi=150)
+        logging.info("Figure written to: %s", out)
+    if show:
+        plt.show()
+    return fig
+
+def plot_deletion_rate(seq: str, del_rate: np.ndarray, pairs: Optional[Dict[int, int]] = None,
+                                   title: str = "Deletion rate for each position",
+                                   show: bool = True, out: Optional[str] = None):
+    """Bar plot of the deletion rates for each position, colored by base-pair status."""
+    x = np.arange(len(del_rate))
+    y = np.asarray(del_rate)
+    print(x)
+    print(y)
+
+    fig, ax = plt.subplots()
+    if pairs:
+        paired_mask = np.isin(x, list(pairs.keys()))
+        ax.bar(x[paired_mask], y[paired_mask], color="green", label="paired")
+        ax.bar(x[~paired_mask], y[~paired_mask], color="red", label="unpaired")
+        ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+    else:
+        ax.bar(x, y, color="black")
+
+    ax.set_xlabel("position in the sequence")
+    ax.set_ylabel("deletion rate")
     ax.set_title(title)
     fig.tight_layout()
     if out:
