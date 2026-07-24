@@ -8,6 +8,7 @@ from functools import cached_property
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 logging.basicConfig(
     level=logging.INFO,
@@ -134,7 +135,7 @@ class Features:
 
     @cached_property
     def covariance(self) -> np.ndarray:
-        """Position x position covariance of the difference matrix, with the
+        """Covariance of the mutation mask matrix, with the
         diagonal replaced by each column's mutation rate."""
         cov = np.cov(self.diff_mask.astype(int), rowvar=False)
         np.fill_diagonal(cov, self.col_mut_rate)
@@ -169,7 +170,7 @@ def est_n(feat: Features, results: Dict[str, Estimate]) -> Estimate:
 def est_mutation_rate_unpaired(feat: Features, results: Dict[str, Estimate]) -> Estimate:
     """Mutation rate at unpaired positions -> recovers --mutation-rate-unpaired."""
     pairs = feat.data.pairs or {}
-    unpaired_cols = [i for i in range(len(feat.data.seq)) if i not in pairs]
+    unpaired_cols = [i for i in range(len(feat.data.seq)) if i not in pairs and bool(pairs)]
     mutations = feat.mutation_mask[:, unpaired_cols]
     no_mutation = ~feat.deletion_mask[:, unpaired_cols]
     denom = int(no_mutation.sum())
@@ -180,7 +181,7 @@ def est_mutation_rate_unpaired(feat: Features, results: Dict[str, Estimate]) -> 
 
 def est_mutation_rate_paired(feat: Features, results: Dict[str, Estimate]) -> Estimate:
     """Mutation rate at paired (stem) positions -> recovers --mutation-rate-paired.
-    
+
     Note that mutation rates are underestimated when using the watson-crick pair mutation
     method as one of the bases can stay the same during mutation"""
     pairs = feat.data.pairs or {}
@@ -218,15 +219,14 @@ def analyze_data(data: MsaData,
 # Plotting / CLI
 # ---------------------------------------------------------------------------
 
-def plot_covariance(seq: str, cov: np.ndarray, title: str = "Recovered (covariation)",
+def plot_covariance(seq: str, cov: np.ndarray, title: str = "Recovered covariance and mutation rate",
                     show: bool = True, out: Optional[str] = None,
                     vmin: Optional[float] = None, vmax: Optional[float] = None,
                     show_values=False):
     """Heatmap of the recovered covariance matrix (see Features.covariance).
     
-    Off-diagonal cell (i, j) is the covariation between positions i and j across the 
+    Off-diagonal cell (i, j) is the covariance between positions i and j across the 
     MSA. The main diagonal is NOT a variance but each column's mutation rate"""
-    import matplotlib.pyplot as plt
 
     fig, ax = plt.subplots(figsize=(cov.shape[0], cov.shape[1]))
     im = ax.imshow(cov, cmap="viridis", vmin=vmin, vmax=vmax)
@@ -236,7 +236,39 @@ def plot_covariance(seq: str, cov: np.ndarray, title: str = "Recovered (covariat
             for j in range(cov.shape[1]):
                 ax.text(j, i, f"{round(cov[i, j], 2)}\n{seq[i]+seq[j]}",
                         ha="center", va="center", color="w")
+    ax.set_title(title)
+    fig.tight_layout()
+    if out:
+        fig.savefig(out, dpi=150)
+        logging.info("Figure written to: %s", out)
+    if show:
+        plt.show()
+    return fig
 
+def plot_covariance_classification(seq: str, cov: np.ndarray, pairs: Optional[Dict[int, int]] = None,
+                                   title: str = "Spread of recovered covariance",
+                                   show: bool = True, out: Optional[str] = None):
+    """Scatter of every off-diagonal covariance value, colored by base-pair status.
+
+    Each point is one possible combination of (i, j). If the pairs are known,
+    paired combinations are colored green and unpaired combinations red.
+    """
+    L = cov.shape[0]
+    i, j = np.triu_indices(L, k=1)
+    x = np.array([seq[a] + seq[b] for a, b in zip(i, j)])
+    y = cov[i, j]
+
+    fig, ax = plt.subplots()
+    if pairs:
+        is_pair = np.array([pairs.get(i) == j for i, j in zip(i, j)])
+        ax.scatter(x[~is_pair], y[~is_pair], c="red", label="Unpaired")
+        ax.scatter(x[is_pair], y[is_pair], c="green", label="Paired")
+        ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+    else:
+        ax.scatter(x, y, c="black")
+
+    ax.set_ylabel("recovered covariance")
+    ax.set_xlabel("base pair")
     ax.set_title(title)
     fig.tight_layout()
     if out:
