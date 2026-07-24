@@ -122,7 +122,7 @@ def parse_args() -> argparse.Namespace:
     mut_group.add_argument('--mutation-rate-unpaired', type=float, default=0.2)
     mut_group.add_argument('--mutation-rate-paired', type=float, default=0.2)
     mut_group.add_argument('--pair-mutation-approach', type=str, nargs='*', default="watson_crick", 
-                           choices=["watson_crick", "covariance", "original"]
+                           choices=["watson_crick", "covariance", "original"],
                            help="Choose the method for the mutation of base pairs. 'original' corresponds "
                                 "to the approach we used before the rework has problems. 'watson_crick' chooses"
                                 " a random watson crick base pair with hardcoded probabilities. 'covariance' "
