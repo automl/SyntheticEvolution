@@ -24,7 +24,7 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
-PAIR_MUTATIONS = {
+PAIR_MUTATION_PROBABILITIES = {
     "AU" : 0.2,
     "UA" : 0.2,
     "GC" : 0.2,
@@ -32,6 +32,24 @@ PAIR_MUTATIONS = {
     "GU" : 0.1,
     "UG" : 0.1
 }
+
+PAIR_MUTATIONS: Dict[str, List[str]] = {
+    'CU': ['GU', 'AU', 'CG'],
+    'CA': ['UA', 'CG'],
+    'GA': ['UA', 'GC', 'GU'],
+    'CC': ['CG', 'GC'],
+    'AA': ['AU', 'UA'],
+    'UU': ['AU', 'UA'],
+    'GG': ['GC', 'CG', 'GU', 'UG'],
+    'GC': ['AU', 'CG', 'GC'],
+    'CG': ['GC', 'AU'],
+    'AU': ['UA', 'GC'],
+    'UA': ['AU', 'CG'],
+    'GU': ['GC', 'AU', 'UG'],
+    'UG': ['GC', 'AU', 'GU']
+}
+
+WC_PAIRS: List[str] = ['AU', 'UA', 'GC', 'CG']
 
 def load_json(json_path: str) -> Any:
     try:
@@ -104,7 +122,11 @@ def parse_args() -> argparse.Namespace:
     mut_group.add_argument('--mutation-rate-unpaired', type=float, default=0.2)
     mut_group.add_argument('--mutation-rate-paired', type=float, default=0.2)
     mut_group.add_argument('--pair-mutation-approach', type=str, nargs='*', default="watson_crick", 
-                           choices=["watson_crick", "covariance"])
+                           choices=["watson_crick", "covariance", "original"]
+                           help="Choose the method for the mutation of base pairs. 'original' corresponds "
+                                "to the approach we used before the rework has problems. 'watson_crick' chooses"
+                                " a random watson crick base pair with hardcoded probabilities. 'covariance' "
+                                "chooses random base pairs but ensures both partners are always changing together")
     mut_group.add_argument('--insertion-prob-loop', type=float, default=0.2)
     mut_group.add_argument('--deletion-prob-loop', type=float, default=0.8)
     mut_group.add_argument('--insertion-prob-stem', type=float, default=0.01)
@@ -316,6 +338,8 @@ class MsaGenerator:
             self._mutate_stem_pair_cov(mutated, seq, i, j)
         elif self.args.pair_mutation_approach == "watson_crick":
             self._mutate_stem_pair_wc(mutated, seq, i, j)
+        elif self.args.pair_mutation_approach == "original":
+            self._mutate_pair_original(mutated, seq, i, j)
         else:
             logging.error("Unknown input for --pair-mutation-approach, '%s', please use on of the provided options",self.args.pair_mutation_approach)
             raise ValueError()
@@ -323,10 +347,17 @@ class MsaGenerator:
     def _mutate_stem_pair_wc(self, mutated: List[str], seq: str, i: int, j: int) -> None:
         """Mutate the base pair to a random watson crick base pair based on the probabilities in PAIR_MUTATIONS.
         This also increases covariance but slightly less then the pure covariance approach"""
-        options = dict(PAIR_MUTATIONS)
+        options = dict(PAIR_MUTATION_PROBABILITIES)
         options.pop(seq[i] + seq[j], 0)
         if random.random() < self.args.mutation_rate_paired:
             mutated[i], mutated[j] = random.choices(list(options.keys()), list(options.values()))[0]
+
+    def _mutate_pair_original(self, mutated: List[str], seq: str, i: int, j: int) -> None:
+        if random.random() < self.args.mutation_rate_paired:
+            candidates = PAIR_MUTATIONS.get(seq[i] + seq[j], WC_PAIRS)
+            mutated[i], mutated[j] = random.choice(candidates)
+            if random.random() < self.args.wobble_prob:
+                mutated[i], mutated[j] = random.choice(['GU', 'UG'])
 
     def _mutate_stem_pair_cov(self, mutated: List[str], seq: str, i: int, j: int) -> None:
         """Mutate the pair in a way that only guarantees, that both partners get mutated
