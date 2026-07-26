@@ -15,9 +15,9 @@ if str(HERE_DIR) not in sys.path:
     sys.path.insert(0, str(HERE_DIR))
 
 import json_generator
+from pair_map import PairMap
 
-from collections import defaultdict, deque
-from typing import Dict, List, Any, Optional, Tuple
+from typing import Dict, List, Any, Optional
 
 logging.basicConfig(
     level=logging.INFO,
@@ -51,6 +51,7 @@ PAIR_MUTATIONS: Dict[str, List[str]] = {
 
 WC_PAIRS: List[str] = ['AU', 'UA', 'GC', 'CG']
 
+
 def load_json(json_path: str) -> Any:
     try:
         with open(json_path, "r") as f:
@@ -58,45 +59,6 @@ def load_json(json_path: str) -> Any:
     except Exception as e:
         logging.error("Failed to load JSON from %s: %s", json_path, e)
         raise
-
-def _iter_pairs(raw: Any):
-    """Yield (i, j) int tuples from any supported pair representation — a dict,
-    or a list of [i, j, ...] — in input order. Shared by convert_pred_pairs and
-    _normalize_pairs so the two can't diverge on format handling."""
-    if isinstance(raw, dict):
-        items = raw.items()
-    elif isinstance(raw, (list, tuple)):
-        items = [(item[0], item[1]) for item in raw if isinstance(item, (list, tuple)) and len(item) >= 2]
-    else:
-        raise ValueError(f"Unknown pair format: {type(raw)}")
-    for a, b in items:
-        yield int(a), int(b)
-
-
-def convert_pred_pairs(pred_pairs: Any) -> Dict[int, int]:
-    """Build a bidirectional {i: j, j: i} dict from predicted pairs, preserving
-    input order (so the last partner wins where a position pairs more than once)."""
-    result: Dict[int, int] = {}
-    for i, j in _iter_pairs(pred_pairs):
-        result[i] = j
-        result[j] = i
-    return result
-
-
-def _normalize_pairs(raw: Any) -> List[Tuple[int, int]]:
-    """Flatten predicted pairs into a sorted, de-duplicated list of (i, j) with
-    i < j. Self-pairs are dropped."""
-    out: set = set()
-    for a, b in _iter_pairs(raw):
-        if a == b:
-            continue
-        out.add((a, b) if a < b else (b, a))
-    return sorted(out)
-
-
-def _unique_pairs(pairs: Dict[int, int]) -> set:
-    """The set of unordered base pairs (i, j) with i < j in a pairs dict."""
-    return {(i, j) for i, j in pairs.items() if i < j}
 
 
 def parse_args() -> argparse.Namespace:
@@ -116,11 +78,12 @@ def parse_args() -> argparse.Namespace:
     io_group.add_argument('--pdb_id', type=str, required=False,
                           help="PDB ID (used in JSON name)")
     io_group.add_argument('--output_json_dir', type=str, default="custom_msa_json_output")
+
     mut_group = parser.add_argument_group("Mutation Parameters")
     mut_group.add_argument('-N', type=int, default=20, help="Number of sequences in the MSA")
     mut_group.add_argument('--mutation-rate-unpaired', type=float, default=0.2)
     mut_group.add_argument('--mutation-rate-paired', type=float, default=0.2)
-    mut_group.add_argument('--pair-mutation-approach', type=str, nargs='*', default="watson_crick", 
+    mut_group.add_argument('--pair-mutation-approach', type=str, default="watson_crick",
                            choices=["watson_crick", "covariance", "original"],
                            help="Choose the method for the mutation of base pairs. 'original' corresponds "
                                 "to the approach we used before the rework has problems. 'watson_crick' chooses"
@@ -147,7 +110,8 @@ def parse_args() -> argparse.Namespace:
                                 ">=3 positions in the predicted base-pair graph, e.g. pairs (1,15) and "
                                 "(15,18) -> {1,15,18}) is promoted and co-mutated. Set to 0 to disable.")
     mut_group.add_argument('--triplet-keep-prob', type=float, default=0.99,
-                           help="Probability of keeping a multiplet's residues unchanged (analog of --stem-keep-prob).")
+                           help="Probability of keeping a multiplet's residues unchanged.")
+    
     parser.add_argument('--seed', type=int, default=None)
     parser.add_argument('--max_chains', type=int, default=None)
     parser.add_argument('--plot', action='store_true')
@@ -155,113 +119,31 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument('--show_plot', action='store_true')
     return parser.parse_args()
 
+
 class MsaGenerator:
     def __init__(self, args: argparse.Namespace) -> None:
         self.args = args
-        self.pairs: dict[int, int] = {}
+        self.pair_map: Optional[PairMap] = None
         if self.args.seed is not None:
             random.seed(self.args.seed)
 
-    def pair_indices(self, dotbracket: str) -> Dict[int, int]:
-        # Support nested pseudoknot bracket families ()[]{}<> via one stack
-        # per family; any other character is treated as unpaired. Behavior
-        # for plain ()-only structures is unchanged.
-        openers = {'(': ')', '[': ']', '{': '}', '<': '>'}
-        close_to_open = {c: o for o, c in openers.items()}
-        stacks: Dict[str, list] = {o: [] for o in openers}
-        pairs: Dict[int, int] = {}
-        for i, char in enumerate(dotbracket):
-            if char in openers:
-                stacks[char].append(i)
-            elif char in close_to_open:
-                o = close_to_open[char]
-                if not stacks[o]:
-                    logging.error("Unbalanced structure at position %d", i)
-                    continue
-                j = stacks[o].pop()
-                pairs[i] = j
-                pairs[j] = i
-        return pairs
-
-    def get_structure(self, sequence: str) -> Tuple[Dict[int, int], List[Dict[str, Any]]]:
+    def get_structure(self, sequence: str) -> PairMap:
         seq = sequence.upper()
-        # A provided dot-bracket structure takes precedence over a predictor.
+
         if self.args.structure:
             if self.args.structure_predictor:
                 logging.warning("Both structure predictor and structure provided. Using provided structure.")
-            try:
-                data = json.loads(self.args.structure)
-                if not isinstance(data, dict):
-                    raise json.decoder.JSONDecodeError("not an object", data, 0)
-                logging.info("Using provided pairs as structure: %s", self.args.structure)
-                pairs = {int(k): int(v) for k, v in data.items()}
-            except json.decoder.JSONDecodeError:
-                logging.info("Using provided dot-bracket structure: %s", self.args.structure)
-                pairs = self.pair_indices(self.args.structure)
-            return pairs, self.derive_multiplets(_normalize_pairs(pairs))
+            logging.info("Using provided structure: %s", self.args.structure)
+            return PairMap.from_raw(self.args.structure, triplet_prob=self.args.triplet_prob)
+
         if self.args.structure_predictor:
             import structure_predictor  # Imported lazily so the no-predict path never pays the RnaBench cost.
             pdb_id = self.args.pdb_id.lower()[:4] if self.args.pdb_id else None
             pred_pairs = structure_predictor.predict(self.args.structure_predictor, seq, pdb_id)
-            # Preserve the raw pair list before the dict conversion: a position
-            # may participate in more than one pair (base triple/multiplet),
-            # which a dict would silently collapse.
-            pair_list = _normalize_pairs(pred_pairs)
-            pred_pairs = convert_pred_pairs(pred_pairs)
-            logging.info("%s predicted %d unique base pairs.",
-                         self.args.structure_predictor,
-                         len(_unique_pairs(pred_pairs)))
-            return pred_pairs, self.derive_multiplets(pair_list)
+            logging.info("%s predicted structure.", self.args.structure_predictor)
+            return PairMap.from_predicted_pairs(pred_pairs, triplet_prob=self.args.triplet_prob)
+
         raise ValueError("Either a structure predictor or a structure must be provided.")
-
-    def derive_multiplets(self, pair_list: List[Tuple[int, int]]) -> List[Dict[str, Any]]:
-        """Derive base triples / higher multiplets from the predicted pairs.
-
-        The pairs form a graph (positions = nodes, pairs = edges): any connected
-        component of size >= 3 is a multiplet (e.g. (1,15) and (15,18) share
-        position 15 -> {1,15,18}); size-2 components stay ordinary pairs handled
-        by the existing pair machinery. Each multiplet is kept with probability
-        --triplet-prob, once per run and deterministic given --seed."""
-        if self.args.triplet_prob <= 0.0 or not pair_list:
-            return []
-
-        adj: Dict[int, set] = defaultdict(set)
-        edges: set = set()
-        for a, b in pair_list:
-            adj[a].add(b)
-            adj[b].add(a)
-            edges.add((a, b))
-
-        seen: set = set()
-        multiplets: List[Dict[str, Any]] = []
-        for start in sorted(adj):
-            if start in seen:
-                continue
-            # BFS to collect the connected component.
-            comp: set = set()
-            queue = deque([start])
-            seen.add(start)
-            while queue:
-                u = queue.popleft()
-                comp.add(u)
-                for v in adj[u]:
-                    if v not in seen:
-                        seen.add(v)
-                        queue.append(v)
-            if len(comp) < 3:
-                continue  # ordinary base pair -> handled via the pairs dict
-            if random.random() >= self.args.triplet_prob:
-                continue  # not promoted this run; falls back to pair handling
-            multiplets.append({
-                "positions": tuple(sorted(comp)),
-                "edges": sorted(e for e in edges if e[0] in comp and e[1] in comp)
-            })
-
-        sizes = [len(m["positions"]) for m in multiplets]
-        logging.info(
-            "Derived %d multiplets from %d base pairs (triplet_prob=%.3f); sizes=%s",
-            len(multiplets), len(edges), self.args.triplet_prob, sizes)
-        return multiplets
 
     def _partner_for(self, nt: str) -> str:
         """Pick a base that pairs with `nt`: Watson-Crick by default, with a
@@ -276,8 +158,8 @@ class MsaGenerator:
             return 'G'
         return random.choice(['A', 'U', 'G', 'C'])
 
-    def mutate_multiplet(self, seq: str, positions: Tuple[int, ...],
-                         edges: List[Tuple[int, int]]) -> Dict[int, str]:
+    def mutate_multiplet(self, seq: str, positions: tuple[int, ...],
+                         edges: List[tuple[int, int]]) -> Dict[int, str]:
         """Co-mutate the residues of a base triple / multiplet so that every
         structural contact (graph edge) stays a valid pair.
 
@@ -342,7 +224,7 @@ class MsaGenerator:
         elif self.args.pair_mutation_approach == "original":
             self._mutate_pair_original(mutated, seq, i, j)
         else:
-            logging.error("Unknown input for --pair-mutation-approach, '%s', please use on of the provided options",self.args.pair_mutation_approach)
+            logging.error("Unknown input for --pair-mutation-approach, '%s', please use one of the provided options", self.args.pair_mutation_approach)
             raise ValueError()
 
     def _mutate_stem_pair_wc(self, mutated: List[str], seq: str, i: int, j: int) -> None:
@@ -367,41 +249,28 @@ class MsaGenerator:
             mutated[i] = random.choice([c for c in 'AUGC' if c != seq[i]])
             mutated[j] = random.choice([c for c in 'AUGC' if c != seq[j]])
 
-    def mutate_sequence(self, seq: str, pairs: Dict[int, int],
-                        multiplets: Optional[List[Dict[str, Any]]] = None) -> str:
-        if multiplets is None:
-            multiplets = []
-        # Each multiplet is anchored at its smallest position; the remaining
-        # member positions are co-mutated with the anchor and skipped by the
-        # per-position branches so we never insert/delete/repair inside a
-        # base triple or higher multiplet.
-        anchor_to_multiplet: Dict[int, Dict[str, Any]] = {
-            m["positions"][0]: m for m in multiplets
-        }
-        multiplet_members: set = {p for m in multiplets for p in m["positions"]}
+    def mutate_sequence(self, seq: str) -> str:
         mutated = list(seq)
         i = 0
         while i < len(seq):
-            if i in anchor_to_multiplet:
-                self._mutate_anchor(mutated, seq, anchor_to_multiplet[i])
-            elif i in multiplet_members:
+            if i in self.pair_map.anchor_to_multiplet:
+                self._mutate_anchor(mutated, seq, self.pair_map.anchor_to_multiplet[i])
+            elif i in self.pair_map.multiplet_members:
                 pass  # non-anchor member: already set by its anchor
-            elif i not in pairs:
-                i += self._mutate_unpaired_position(mutated, seq, i, multiplet_members)
+            elif i not in self.pair_map.pairs:
+                i += self._mutate_unpaired_position(mutated, seq, i, self.pair_map.multiplet_members)
                 continue
-            elif i < pairs[i] and pairs[i] not in multiplet_members:
-                self.mutate_stem_pair(mutated, seq, i, pairs[i])
+            elif i < self.pair_map.pairs[i] and self.pair_map.pairs[i] not in self.pair_map.multiplet_members:
+                self.mutate_stem_pair(mutated, seq, i, self.pair_map.pairs[i])
             i += 1
         return ''.join(mutated)
 
-    def generate_msa(self, rna_seq: str, pairs: Dict[int, int],
-                     multiplets: Optional[List[Dict[str, Any]]] = None) -> List[str]:
+    def generate_msa(self, rna_seq: str) -> List[str]:
         self.max_insertion_length = int(len(rna_seq) * self.args.max_insertion_fraction)
         self.max_deletion_length = int(len(rna_seq) * self.args.max_deletion_fraction)
         msa = [rna_seq]
         for _ in range(self.args.N - 1):
-            mutated = self.mutate_sequence(rna_seq, pairs, multiplets)
-            msa.append(mutated)
+            msa.append(self.mutate_sequence(rna_seq))
         return msa
 
     def build_output_name(self) -> str:
@@ -420,33 +289,35 @@ class MsaGenerator:
             f"{triplet_suffix}_{self.args.structure_predictor}"
         )
 
-
     def _build_rna_chain(self, chain: Dict[str, Any]) -> Dict[str, Any]:
         """Return a copy of an RNA chain with a freshly generated custom MSA
         written into its unpairedMsa field."""
         updated_chain = chain.copy()
         rna_seq = chain["rna"]["sequence"]
         logging.info("Processing RNA sequence: %s", rna_seq)
-        pairs, multiplets = self.get_structure(rna_seq)
-        # expose pairs for the analyzer
-        self.pairs = pairs
-        logging.info("Predicted pairs: %s", pairs)
-        logging.info("Secondary structure has %d unique base pairs.", len(_unique_pairs(pairs)))
-        if multiplets:
-            logging.info("Using %d multiplets: %s", len(multiplets), multiplets)
-        msa = self.generate_msa(rna_seq, pairs, multiplets)
+
+        self.pair_map = self.get_structure(rna_seq)
+
+        logging.info("Predicted pairs: %s", self.pair_map.pairs)
+        logging.info("Secondary structure has %d unique base pairs.", len(self.pair_map.unique_pairs))
+        if self.pair_map.multiplets:
+            logging.info("Using %d multiplets: %s", len(self.pair_map.multiplets), self.pair_map.multiplets)
+
+        msa = self.generate_msa(rna_seq)
         updated_chain["rna"]["unpairedMsa"] = "\n".join(
             [">query\n" + msa[0]] +
             [f">sample_{i}\n{seq}" for i, seq in enumerate(msa[1:])]
         )
+
         if self.args.print_msa:
             logging.info("MSA:")
             for row in msa:
                 logging.info(row)
+
         if self.args.plot:
             # Imported lazily so the no-plot path never pays the matplotlib cost.
             import msa_plotting
-            msa_plotting.plot_final_features(msa, rna_seq, pairs,
+            msa_plotting.plot_final_features(msa, rna_seq, self.pair_map.pairs,
                                              self.args.pdb_id, self.args.show_plot)
         return updated_chain
 
