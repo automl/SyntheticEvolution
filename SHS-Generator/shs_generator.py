@@ -59,7 +59,6 @@ def load_json(json_path: str) -> Any:
         logging.error("Failed to load JSON from %s: %s", json_path, e)
         raise
 
-
 def _iter_pairs(raw: Any):
     """Yield (i, j) int tuples from any supported pair representation — a dict,
     or a list of [i, j, ...] — in input order. Shared by convert_pred_pairs and
@@ -127,12 +126,14 @@ def parse_args() -> argparse.Namespace:
                                 "to the approach we used before the rework has problems. 'watson_crick' chooses"
                                 " a random watson crick base pair with hardcoded probabilities. 'covariance' "
                                 "chooses random base pairs but ensures both partners are always changing together")
-    mut_group.add_argument('--insertion-prob-loop', type=float, default=0.2)
-    mut_group.add_argument('--deletion-prob-loop', type=float, default=0.8)
-    mut_group.add_argument('--insertion-prob-stem', type=float, default=0.01)
-    mut_group.add_argument('--deletion-prob-stem', type=float, default=0.01)
-    mut_group.add_argument('--long-insertion-prob', type=float, default=0.05)
-    mut_group.add_argument('--long-deletion-prob', type=float, default=0.05)
+    mut_group.add_argument('--stem_single_insertion_prob', type=float, default=0.05)
+    mut_group.add_argument('--stem_long_insertion_prob', type=float, default=0.01)
+    mut_group.add_argument('--stem_pair_deletion_prob', type=float, default=0.01)
+    mut_group.add_argument('--loop_single_insertion_prob', type=float, default=0.1)
+    mut_group.add_argument('--loop_single_deletion_prob', type=float, default=0.1)
+    mut_group.add_argument('--loop_long_insertion_prob', type=float, default=0.02)
+    mut_group.add_argument('--loop_long_deletion_prob', type=float, default=0.02,
+                           help="Note that long deletions override mutations and single deletions if they appear.")
     mut_group.add_argument('--wobble-prob', type=float, default=0.1)
     mut_group.add_argument('--max-insertion-fraction', type=float, default=0.1,
                            help="Max insertion length as fraction of RNA length")
@@ -315,18 +316,18 @@ class MsaGenerator:
         # Unpaired (loop) region: allow insertions and deletions. Returns how
         # far to advance i (a long deletion skips several positions at once).
         insertion = ''
-        if random.random() < self.args.long_insertion_prob:
+        if random.random() < self.args.loop_long_insertion_prob:
             insertion_len = random.randint(2, self.max_insertion_length) if self.max_insertion_length > 2 else random.randint(2, 5)  # 5 chosen at random
             insertion = ''.join(random.choice('augc') for _ in range(insertion_len))
-        elif random.random() < self.args.insertion_prob_loop:
+        elif random.random() < self.args.loop_single_insertion_prob:
             insertion = random.choice('augc')
-        elif random.random() < self.args.long_deletion_prob:
+        elif random.random() < self.args.loop_long_deletion_prob:
             del_len = random.randint(2, self.max_deletion_length) if self.max_deletion_length > 2 else random.randint(2, 5)  # 5 chosen at random
             for j in range(i, min(i + del_len, len(seq))):
                 if j not in multiplet_members:  # keep multiplet geometry intact
                     mutated[j] = '-'
             return del_len
-        elif random.random() < self.args.deletion_prob_loop:
+        elif random.random() < self.args.loop_single_deletion_prob:
             mutated[i] = '-'
         elif random.random() < self.args.mutation_rate_unpaired:
             mutated[i] = random.choice([c for c in 'AUGC' if c != seq[i]])
@@ -412,9 +413,9 @@ class MsaGenerator:
         )
         return (
             f"{self.args.pdb_id}_custom_rnamsa_N{self.args.N}_seed{self.args.seed}"
-            f"_insl_{self.args.insertion_prob_loop}_dell_{self.args.deletion_prob_loop}"
-            f"_inss_{self.args.insertion_prob_stem}_dels_{self.args.deletion_prob_stem}"
-            f"_lins_{self.args.long_insertion_prob}_ldels_{self.args.long_deletion_prob}"
+            f"_insl_{self.args.loop_single_insertion_prob}_dell_{self.args.loop_single_deletion_prob}"
+            f"_inss_{self.args.stem_single_insertion_prob}_dels_{self.args.stem_pair_deletion_prob}"
+            f"_lins_{self.args.loop_long_insertion_prob}_ldels_{self.args.loop_long_deletion_prob}"
             f"_maxinslen_{ins_len}_maxdellen_{del_len}_wobble_{self.args.wobble_prob}"
             f"{triplet_suffix}_{self.args.structure_predictor}"
         )
