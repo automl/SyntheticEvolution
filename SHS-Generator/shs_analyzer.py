@@ -10,6 +10,8 @@ from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
 import numpy as np
 import matplotlib.pyplot as plt
 
+from pair_map import PairMap
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
@@ -58,18 +60,19 @@ def _extract_fasta(content: str) -> str:
 class MsaData:
     """Immutable parsed MSA."""
     seq: str
+    raw: np.ndarray
     aligned: np.ndarray
-    insertions: Tuple[Tuple[Tuple[int, str], ...], ...]
-    pairs: Optional[Dict[int, int]] = None
+    insertions: np.ndarray
+    pairs: Optional[PairMap] = None
 
     @classmethod
-    def from_path(cls, path: str, pairs: Optional[Dict[int, int]] = None) -> "MsaData":
+    def from_path(cls, path: str, pairs: Optional[PairMap] = None) -> "MsaData":
         with open(path, "r") as f:
             content = f.read()
         return cls.from_text(content, pairs=pairs)
 
     @classmethod
-    def from_text(cls, content: str, pairs: Optional[Dict[int, int]] = None) -> "MsaData":
+    def from_text(cls, content: str, pairs: Optional[PairMap] = None) -> "MsaData":
         fasta = _extract_fasta(content)
         # Sequence lines only (drop headers); first is the seq, rest samples.
         lines = fasta.splitlines()[1::2]
@@ -78,25 +81,26 @@ class MsaData:
             raise ValueError("Invalid Input, aborting.")
         seq_list, *sample_rows = lines
         seq = ''.join(seq_list)
+        raw = np.array(sample_rows)
 
         aligned_rows: List[List[str]] = []
-        insertions: List[Tuple[Tuple[int, str], ...]] = []
+        insertion_rows: List[List[int]] = []
         for row in sample_rows:
             cols, ins = _split_row(row)
             aligned_rows.append(cols)
-            insertions.append(tuple(ins))
+            insertion_rows.append(ins)
 
         if not all(len(r) == len(seq) for r in aligned_rows):
             logging.error("Sequences in MSA have different aligned lengths or the json was invalid")
             raise ValueError("Invalid Input, aborting.")
         aligned = np.array(aligned_rows)
+        insertions = np.array(insertion_rows)
         if not np.all(np.isin(aligned, VALID_BASES)):
             bad = np.unique(aligned[~np.isin(aligned, VALID_BASES)])
             logging.error("Invalid characters in MSA: %s", bad)
             raise ValueError("Invalid Input, aborting.")
 
-        return cls(seq=seq, aligned=aligned,
-                   insertions=tuple(insertions), pairs=pairs)
+        return cls(seq=seq, raw=raw, aligned=aligned, insertions=insertions, pairs=pairs)
 
 
 # ---------------------------------------------------------------------------
@@ -134,15 +138,20 @@ class Features:
         return self.deletion_mask.mean(axis=0)
 
     @cached_property
+    def col_insertion_mean(self) -> np.ndarray:
+        """Per-column average number of insertions in the gap before it"""
+        return self.data.insertions.mean(axis=0)
+
+    @cached_property
     def col_mut_rate(self) -> np.ndarray:
         """Per-column fraction of rows that differ from the seq"""
-        return self.diff_mask.mean(axis=0)
+        return self.mutation_mask.mean(axis=0)
 
     @cached_property
     def covariance(self) -> np.ndarray:
         """Covariance of the mutation mask matrix, with the
         diagonal replaced by each column's mutation rate."""
-        cov = np.cov(self.diff_mask.astype(int), rowvar=False)
+        cov = np.cov(self.mutation_mask.astype(int), rowvar=False)
         np.fill_diagonal(cov, self.col_mut_rate)
         return cov
 
@@ -175,7 +184,7 @@ def est_n(feat: Features, results: Dict[str, Estimate]) -> Estimate:
 def est_mutation_rate_unpaired(feat: Features, results: Dict[str, Estimate]) -> Estimate:
     """Mutation rate at unpaired positions -> recovers --mutation-rate-unpaired."""
     pairs = feat.data.pairs or {}
-    unpaired_cols = [i for i in range(len(feat.data.seq)) if i not in pairs and bool(pairs)]
+    unpaired_cols = [i for i in range(len(feat.data.seq)) if pairs.is_paired(i) and bool(pairs)]
     mutations = feat.mutation_mask[:, unpaired_cols]
     no_mutation = ~feat.deletion_mask[:, unpaired_cols]
     denom = int(no_mutation.sum())
@@ -190,7 +199,7 @@ def est_mutation_rate_paired(feat: Features, results: Dict[str, Estimate]) -> Es
     Note that mutation rates are underestimated when using the watson-crick pair mutation
     method as one of the bases can stay the same during mutation"""
     pairs = feat.data.pairs or {}
-    paired_cols = [i for i in range(len(feat.data.seq)) if i in pairs]
+    paired_cols = [i for i in range(len(feat.data.seq)) if pairs.is_paired(i)]
     mutations = feat.mutation_mask[:, paired_cols]
     not_deleted = ~feat.deletion_mask[:, paired_cols]
     denom = int(not_deleted.sum())
@@ -250,7 +259,7 @@ def plot_covariance(seq: str, cov: np.ndarray, title: str = "Recovered covarianc
         plt.show()
     return fig
 
-def plot_covariance_classification(seq: str, cov: np.ndarray, pairs: Optional[Dict[int, int]] = None,
+def plot_covariance_classification(seq: str, cov: np.ndarray, pairs: Optional[PairMap] = None,
                                    title: str = "Spread of recovered covariance",
                                    show: bool = True, out: Optional[str] = None):
     """Scatter of every off-diagonal covariance value, colored by base-pair status.
@@ -265,7 +274,7 @@ def plot_covariance_classification(seq: str, cov: np.ndarray, pairs: Optional[Di
 
     fig, ax = plt.subplots()
     if pairs:
-        is_pair = np.array([pairs.get(i) == j for i, j in zip(i, j)])
+        is_pair = np.array([pairs.is_pair(i, j) for i, j in zip(i, j)])
         ax.scatter(x[~is_pair], y[~is_pair], c="red", label="Unpaired")
         ax.scatter(x[is_pair], y[is_pair], c="green", label="Paired")
         ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
@@ -283,18 +292,17 @@ def plot_covariance_classification(seq: str, cov: np.ndarray, pairs: Optional[Di
         plt.show()
     return fig
 
-def plot_deletion_rate(seq: str, del_rate: np.ndarray, pairs: Optional[Dict[int, int]] = None,
+def plot_bars_per_col(seq: str, bar_heights: np.ndarray, pairs: Optional[PairMap] = None,
                                    title: str = "Deletion rate for each position",
+                                   ylable: str = "deletion rate",
                                    show: bool = True, out: Optional[str] = None):
     """Bar plot of the deletion rates for each position, colored by base-pair status."""
-    x = np.arange(len(del_rate))
-    y = np.asarray(del_rate)
-    print(x)
-    print(y)
+    x = np.arange(len(bar_heights))
+    y = np.asarray(bar_heights)
 
     fig, ax = plt.subplots()
     if pairs:
-        paired_mask = np.isin(x, list(pairs.keys()))
+        paired_mask = np.array([pairs.is_paired(i) for i, _ in enumerate(seq)])
         ax.bar(x[paired_mask], y[paired_mask], color="green", label="paired")
         ax.bar(x[~paired_mask], y[~paired_mask], color="red", label="unpaired")
         ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
@@ -302,7 +310,7 @@ def plot_deletion_rate(seq: str, del_rate: np.ndarray, pairs: Optional[Dict[int,
         ax.bar(x, y, color="black")
 
     ax.set_xlabel("position in the sequence")
-    ax.set_ylabel("deletion rate")
+    ax.set_ylabel(ylable)
     ax.set_title(title)
     fig.tight_layout()
     if out:

@@ -134,14 +134,14 @@ class MsaGenerator:
             if self.args.structure_predictor:
                 logging.warning("Both structure predictor and structure provided. Using provided structure.")
             logging.info("Using provided structure: %s", self.args.structure)
-            return PairMap.from_raw(self.args.structure, triplet_prob=self.args.triplet_prob)
+            return PairMap.from_raw(self.args.structure, len(seq), self.args.mutation_rate_paired, self.args.mutation_rate_unpaired)
 
         if self.args.structure_predictor:
             import structure_predictor  # Imported lazily so the no-predict path never pays the RnaBench cost.
             pdb_id = self.args.pdb_id.lower()[:4] if self.args.pdb_id else None
             pred_pairs = structure_predictor.predict(self.args.structure_predictor, seq, pdb_id)
             logging.info("%s predicted structure.", self.args.structure_predictor)
-            return PairMap.from_predicted_pairs(pred_pairs, triplet_prob=self.args.triplet_prob)
+            return PairMap.from_raw(pred_pairs, len(seq), self.args.mutation_rate_paired, self.args.mutation_rate_unpaired)
 
         raise ValueError("Either a structure predictor or a structure must be provided.")
 
@@ -193,8 +193,7 @@ class MsaGenerator:
             for p, base in self.mutate_multiplet(seq, m["positions"], m["edges"]).items():
                 mutated[p] = base
 
-    def _mutate_unpaired_position(self, mutated: List[str], seq: str, i: int,
-                                  multiplet_members: set) -> int:
+    def _mutate_unpaired_position(self, mutated: List[str], seq: str, i: int) -> int:
         # Unpaired (loop) region: allow insertions and deletions. Returns how
         # far to advance i (a long deletion skips several positions at once).
         insertion = ''
@@ -206,7 +205,7 @@ class MsaGenerator:
         elif random.random() < self.args.loop_long_deletion_prob:
             del_len = random.randint(2, self.max_deletion_length) if self.max_deletion_length > 2 else random.randint(2, 5)  # 5 chosen at random
             for j in range(i, min(i + del_len, len(seq))):
-                if j not in multiplet_members:  # keep multiplet geometry intact
+                if self.pair_map.is_unpaired(j):  # keep multiplet geometry intact
                     mutated[j] = '-'
             return del_len
         elif random.random() < self.args.loop_single_deletion_prob:
@@ -253,15 +252,15 @@ class MsaGenerator:
         mutated = list(seq)
         i = 0
         while i < len(seq):
-            if i in self.pair_map.anchor_to_multiplet:
-                self._mutate_anchor(mutated, seq, self.pair_map.anchor_to_multiplet[i])
-            elif i in self.pair_map.multiplet_members:
+            if self.pair_map.is_multiplet_anchor(i):
+                self._mutate_anchor(mutated, seq, self.pair_map.partners(i))
+            elif self.pair_map.is_multiplet_member(i):
                 pass  # non-anchor member: already set by its anchor
-            elif i not in self.pair_map.pairs:
-                i += self._mutate_unpaired_position(mutated, seq, i, self.pair_map.multiplet_members)
+            elif self.pair_map.is_unpaired(i):
+                i += self._mutate_unpaired_position(mutated, seq, i)
                 continue
-            elif i < self.pair_map.pairs[i] and self.pair_map.pairs[i] not in self.pair_map.multiplet_members:
-                self.mutate_stem_pair(mutated, seq, i, self.pair_map.pairs[i])
+            elif self.pair_map.is_basic_pair(i) and i < self.pair_map.direct_partners(i)[0]:
+                self.mutate_stem_pair(mutated, seq, i, self.pair_map.direct_partners(i)[0])
             i += 1
         return ''.join(mutated)
 
@@ -298,8 +297,8 @@ class MsaGenerator:
 
         self.pair_map = self.get_structure(rna_seq)
 
-        logging.info("Predicted pairs: %s", self.pair_map.pairs)
-        logging.info("Secondary structure has %d unique base pairs.", len(self.pair_map.unique_pairs))
+        logging.info("Pairs: %s", self.pair_map.pairs)
+        logging.info("Secondary structure has %d unique base pairs.", self.pair_map.unique_pairs)
         if self.pair_map.multiplets:
             logging.info("Using %d multiplets: %s", len(self.pair_map.multiplets), self.pair_map.multiplets)
 
