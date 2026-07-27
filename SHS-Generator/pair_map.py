@@ -1,11 +1,10 @@
 """Normalized RNA base-pair mapping and multiplet derivation."""
-import json
 import logging
-import random
 from dataclasses import dataclass, field
 from typing import Any, Dict, List
 import numpy as np
 from collections import deque
+from functools import cached_property
 
 logging.basicConfig(
     level=logging.INFO,
@@ -28,8 +27,14 @@ class PairMap:
     def __init__(self, pairs_mat: np.ndarray):
         self._pairs_mat = pairs_mat.copy()
         self._pairs_mat.flags.writeable = False
-        self._partners_cache: Dict[int, List[int]] = {}
-        self._direct_partners_cache: Dict[int, List[int]] = {}
+        self._direct_partners_cache: Dict[int, List[int]] = {
+            i : [j for j, val in enumerate(self._pairs_mat[i]) if j != i and val > 0]
+            for i in range(self._pairs_mat.shape[0])
+        }
+        self._partners_cache: Dict[int, List[int]] = {
+            i: sorted(self._compute_partners(i))
+            for i in range(self._pairs_mat.shape[0])
+        }
 
     @classmethod
     def from_interactions(cls, size: int, pairs: list[tuple[int, int, float]], mutation_rates: list[int]):
@@ -66,10 +71,10 @@ class PairMap:
         """
         Input formats:
             Datatype | [Example]
-            str        "((((...))<..))>"
-            dict       "{0: 1, 1: 0}"
-            list       "[[0, 1], [5, 2]]" or "[(0, 1), (5, 2)]"
-            tuple      "([0, 1], [5, 2])" or "((0, 1), (5, 2))"
+            str      | "((((...))<..))>"
+            dict     | "{0: 1, 1: 0}"
+            list     | "[[0, 1], [5, 2]]" or "[(0, 1), (5, 2)]"
+            tuple    | "([0, 1], [5, 2])" or "((0, 1), (5, 2))"
         """
         if isinstance(raw, str):
             pairs, mutation_rates = PairMap._interactions_from_dotbracket(raw, mutation_rate_paired, mutation_rate_unpaired, interaction_strength)
@@ -134,22 +139,21 @@ class PairMap:
             mutation_rates.append(mutation_rate_paired if i in is_paired else mutation_rate_unpaired)
         return [(a, b, interaction_strength) for a, b in unique_pairs], mutation_rates
 
+    def _compute_partners(self, i: int) -> set[int]:
+        partners = set()
+        queue = deque([i])
+        while queue:
+            j = queue.popleft()
+            if j not in partners:
+                partners.add(j)
+                queue.extend(self.direct_partners(j))
+        partners.remove(i)
+        return partners
+
     def direct_partners(self, i: int) -> List[int]:
-        if i not in self._direct_partners_cache:
-            self._direct_partners_cache[i] = [j for j in np.where(self._pairs_mat[i] > 0)[0].tolist() if j != i]
         return self._direct_partners_cache[i]
 
     def partners(self, i: int) -> List[int]:
-        if i not in self._partners_cache:
-            partners = set()
-            queue = deque([i])
-            while queue:
-                j = queue.popleft()
-                if j not in partners:
-                    partners.add(j)
-                    queue.extend(self.direct_partners(j))
-            partners.remove(i)
-            self._partners_cache[i] = sorted(partners)
         return self._partners_cache[i]
 
     def is_multiplet_member(self, i: int):
@@ -170,7 +174,7 @@ class PairMap:
     def is_pair(self, i: int, j: int) -> bool:
         return self._pairs_mat[i][j] > 0
 
-    @property
+    @cached_property
     def multiplets(self) -> dict[int, list[int]]:
         multiplets:  dict[int, list[int]] = dict()
         for i in range(self._pairs_mat.shape[0]):
@@ -181,12 +185,12 @@ class PairMap:
                 multiplets[i] = partners
         return multiplets
 
-    @property
+    @cached_property
     def pairs(self) -> List[tuple[int, int]]:
         i_indices, j_indices = np.where((self._pairs_mat > 0) & (np.eye(self._pairs_mat.shape[0], dtype=bool) == False))
         return list(zip(i_indices, j_indices))
 
-    @property
+    @cached_property
     def unique_pairs(self) -> set:
         return np.sum(self._pairs_mat[np.triu_indices(self._pairs_mat.shape[0], k=1)] > 0)
 
