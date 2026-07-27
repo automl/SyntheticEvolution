@@ -184,7 +184,7 @@ def est_n(feat: Features, results: Dict[str, Estimate]) -> Estimate:
 def est_mutation_rate_unpaired(feat: Features, results: Dict[str, Estimate]) -> Estimate:
     """Mutation rate at unpaired positions -> recovers --mutation-rate-unpaired."""
     pairs = feat.data.pairs or {}
-    unpaired_cols = [i for i in range(len(feat.data.seq)) if pairs.is_paired(i) and bool(pairs)]
+    unpaired_cols = [i for i in range(len(feat.data.seq)) if not pairs.is_paired(i) and bool(pairs)]
     mutations = feat.mutation_mask[:, unpaired_cols]
     no_mutation = ~feat.deletion_mask[:, unpaired_cols]
     denom = int(no_mutation.sum())
@@ -242,7 +242,7 @@ def plot_covariance(seq: str, cov: np.ndarray, title: str = "Recovered covarianc
     Off-diagonal cell (i, j) is the covariance between positions i and j across the 
     MSA. The main diagonal is NOT a variance but each column's mutation rate"""
 
-    fig, ax = plt.subplots(figsize=(cov.shape[0], cov.shape[1]))
+    fig, ax = plt.subplots()
     im = ax.imshow(cov, cmap="viridis", vmin=vmin, vmax=vmax)
 
     if show_values:
@@ -250,6 +250,7 @@ def plot_covariance(seq: str, cov: np.ndarray, title: str = "Recovered covarianc
             for j in range(cov.shape[1]):
                 ax.text(j, i, f"{round(cov[i, j], 2)}\n{seq[i]+seq[j]}",
                         ha="center", va="center", color="w")
+    fig.colorbar(im)
     ax.set_title(title)
     fig.tight_layout()
     if out:
