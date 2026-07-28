@@ -42,6 +42,7 @@ class PairMap:
         for i, j, val in pairs:
             if i >= size or j >= size or i < 0 or j < 0:
                 logging.warning("Skipping invalid pair %s for seq of length %s.", (i, j), size)
+                continue
             if i == j:
                 logging.warning("Self pairs found in pairs at position %s.", i)
                 continue
@@ -79,18 +80,16 @@ class PairMap:
         if isinstance(raw, str):
             pairs, mutation_rates = PairMap._interactions_from_dotbracket(raw, mutation_rate_paired, mutation_rate_unpaired, interaction_strength)
         elif isinstance(raw, (dict, list, tuple)):
-            pairs, mutation_rates = PairMap._interactions_from_iterable(raw, size, mutation_rate_paired, mutation_rate_unpaired, interaction_strength)
+            pairs, mutation_rates = PairMap._interactions_from_iterable(size, raw, mutation_rate_paired, mutation_rate_unpaired, interaction_strength)
         else:
             logging.error("Unknown pair format: %s", type(raw))
             # try the iterable method anyway, maybe it works idk. This is fine as all safety checks are performed later in cls.from_interactions
-            pairs, mutation_rates = PairMap._interactions_from_iterable(raw, size, mutation_rate_paired, mutation_rate_unpaired, interaction_strength)
+            pairs, mutation_rates = PairMap._interactions_from_iterable(size, raw, mutation_rate_paired, mutation_rate_unpaired, interaction_strength)
         return cls.from_interactions(size, pairs, mutation_rates)
 
 
     @staticmethod
-    def _interactions_from_dotbracket(dotbracket: str, 
-                                       mutation_rate_paired: float, 
-                                       mutation_rate_unpaired: float, 
+    def _interactions_from_dotbracket(dotbracket: str, mutation_rate_paired: float, mutation_rate_unpaired: float, 
                                        interaction_strength: float) -> tuple[list[tuple[int, int, float]], list[int]]:
         openers = {'(': ')', '[': ']', '{': '}', '<': '>'}
         close_to_open = {c: o for o, c in openers.items()}
@@ -116,9 +115,7 @@ class PairMap:
         return pairs, mutation_rates
 
     @staticmethod
-    def _interactions_from_iterable(size: int, pairs: dict, 
-                                    mutation_rate_paired: float, 
-                                    mutation_rate_unpaired: float, 
+    def _interactions_from_iterable(size: int, pairs: dict, mutation_rate_paired: float, mutation_rate_unpaired: float, 
                                     interaction_strength: float) -> tuple[list[tuple[int, int, float]], list[int]]:
         unique_pairs: set[tuple[int, int]] = set()
         is_paired: set[int] = set()
@@ -135,9 +132,19 @@ class PairMap:
             unique_pairs.add((a, b) if a < b else (b, a))
             is_paired.add(a)
             is_paired.add(b)
+
         for i in range(size):
             mutation_rates.append(mutation_rate_paired if i in is_paired else mutation_rate_unpaired)
-        return [(a, b, interaction_strength) for a, b in unique_pairs], mutation_rates
+
+        if len(pairs) < 1 or len(pairs[0]) <= 2:
+            return [(a, b, interaction_strength) for a, b in unique_pairs], mutation_rates
+
+        interactions = {
+            (int(elem[0]), int(elem[1])) : float(elem[2])
+            for elem in pairs
+        }
+        return [(a, b, interactions[(a, b)]) for a, b in unique_pairs], mutation_rates
+        
 
     def _compute_partners(self, i: int) -> set[int]:
         partners = set()
@@ -151,10 +158,10 @@ class PairMap:
         return partners
 
     def direct_partners(self, i: int) -> List[int]:
-        return self._direct_partners_cache[i]
+        return self._direct_partners_cache.get(i, [])
 
     def partners(self, i: int) -> List[int]:
-        return self._partners_cache[i]
+        return self._partners_cache.get(i, [])
 
     def is_multiplet_member(self, i: int):
         return len(self.partners(i)) > 1
@@ -189,6 +196,15 @@ class PairMap:
     def pairs(self) -> List[tuple[int, int]]:
         i_indices, j_indices = np.where((self._pairs_mat > 0) & (np.eye(self._pairs_mat.shape[0], dtype=bool) == False))
         return list(zip(i_indices, j_indices))
+
+    @cached_property
+    def basic_pairs(self) -> List[tuple[int, int]]:
+        pairs = set()
+        for i in range(self._pairs_mat.shape[0]):
+            partners = self.partners(i)
+            if len(partners) == 1:
+                pairs.add((min(i, partners[0]), max(i, partners[0])))
+        return sorted(pairs)
 
     @cached_property
     def unique_pairs(self) -> set:

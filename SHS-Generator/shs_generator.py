@@ -5,6 +5,7 @@ import json
 import logging
 import sys
 from pathlib import Path
+import numpy as np
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 if str(ROOT_DIR) not in sys.path:
@@ -25,12 +26,10 @@ logging.basicConfig(
 )
 
 PAIR_MUTATION_PROBABILITIES = {
-    "AU" : 0.2,
-    "UA" : 0.2,
-    "GC" : 0.2,
-    "CG" : 0.2,
-    "GU" : 0.1,
-    "UG" : 0.1
+    "A": {"U": 1.0},
+    "C": {"G": 1.0},
+    "G": {"C": 0.75, "U": 0.25},
+    "U": {"A": 0.75, "G": 0.25},
 }
 
 PAIR_MUTATIONS: Dict[str, List[str]] = {
@@ -51,13 +50,19 @@ PAIR_MUTATIONS: Dict[str, List[str]] = {
 
 WC_PAIRS: List[str] = ['AU', 'UA', 'GC', 'CG']
 
-
 def load_json(json_path: str) -> Any:
     try:
         with open(json_path, "r") as f:
             return json.load(f)
     except Exception as e:
         logging.error("Failed to load JSON from %s: %s", json_path, e)
+        raise
+
+def parse_json(json_string: str) -> Any:
+    try:
+        return json.loads(json_string)
+    except Exception as e:
+        logging.error("Failed to parse JSON from string: %s", e)
         raise
 
 
@@ -68,6 +73,8 @@ def parse_args() -> argparse.Namespace:
                           help="Predictor for secondary structure (base pairs output). Options: rnafold, spotrna, rnaformer, dssr")
     io_group.add_argument('--structure', type=str, required=False, default=None,
                           help="Dot-bracket secondary structure (if provided, will be converted to base pairs) or base pairs")
+    io_group.add_argument('--interactions', type=str, required=False, default=None,
+                              help="List of tuples with interaction rates for every pair. The default is 0 for missing tuples")
     io_group.add_argument('--rna-seq', type=str, required=False,
                           help="RNA sequence (used for MSA + JSON)")
     io_group.add_argument('--pair-mutation', type=str, required=False)
@@ -83,8 +90,11 @@ def parse_args() -> argparse.Namespace:
     mut_group.add_argument('-N', type=int, default=20, help="Number of sequences in the MSA")
     mut_group.add_argument('--mutation-rate-unpaired', type=float, default=0.2)
     mut_group.add_argument('--mutation-rate-paired', type=float, default=0.2)
-    mut_group.add_argument('--pair-mutation-approach', type=str, default="watson_crick",
-                           choices=["watson_crick", "covariance", "original"],
+    mut_group.add_argument('--mutation-rates', type=str, required=False, 
+                        help="Input a list with a mutation rate for every position in the sequence. Overrides mutation-rate-unpaired "
+                        "and mutation-rate-paired if both are provided")
+    mut_group.add_argument('--pair-mutation-approach', type=str, default="watson_crick_cov",
+                           choices=["watson_crick", "covariance", "watson_crick_cov", "original", "none"],
                            help="Choose the method for the mutation of base pairs. 'original' corresponds "
                                 "to the approach we used before the rework has problems. 'watson_crick' chooses"
                                 " a random watson crick base pair with hardcoded probabilities. 'covariance' "
@@ -102,15 +112,6 @@ def parse_args() -> argparse.Namespace:
                            help="Max insertion length as fraction of RNA length")
     mut_group.add_argument('--max-deletion-fraction', type=float, default=0.1,
                            help="Max deletion length as fraction of RNA length")
-    # Triplet co-mutation parameters (extension of the pairwise mutation
-    # scheme to three correlated positions). Default --triplet-prob=0.0
-    # disables triplets, preserving the original pair-only behavior.
-    mut_group.add_argument('--triplet-prob', type=float, default=0.0,
-                           help="Probability that a base triple/multiplet (a connected component of "
-                                ">=3 positions in the predicted base-pair graph, e.g. pairs (1,15) and "
-                                "(15,18) -> {1,15,18}) is promoted and co-mutated. Set to 0 to disable.")
-    mut_group.add_argument('--triplet-keep-prob', type=float, default=0.99,
-                           help="Probability of keeping a multiplet's residues unchanged.")
     
     parser.add_argument('--seed', type=int, default=None)
     parser.add_argument('--max_chains', type=int, default=None)
@@ -130,6 +131,19 @@ class MsaGenerator:
     def get_structure(self, sequence: str) -> PairMap:
         seq = sequence.upper()
 
+        if self.args.interactions:
+            if self.args.structure:
+                logging.warning("Both structure and interactions provided. Using provided interactions.")
+            if self.args.structure_predictor:
+                logging.warning("Both structure predictor and interactions provided. Using provided interactions.")
+            logging.info("Using provided interactions: %s", self.args.interactions)
+            interactions = parse_json(self.args.interactions)
+            if self.args.mutation_rates:
+                interactions = [(int(i), int(j), float(val)) for i, j, val in interactions]
+                mutation_rates = load_json(self.args.mutation_rates)
+                return PairMap.from_interactions(len(seq), interactions, mutation_rates)
+            return PairMap.from_raw(interactions, len(seq), self.args.mutation_rate_paired, self.args.mutation_rate_unpaired)
+
         if self.args.structure:
             if self.args.structure_predictor:
                 logging.warning("Both structure predictor and structure provided. Using provided structure.")
@@ -143,130 +157,123 @@ class MsaGenerator:
             logging.info("%s predicted structure.", self.args.structure_predictor)
             return PairMap.from_raw(pred_pairs, len(seq), self.args.mutation_rate_paired, self.args.mutation_rate_unpaired)
 
-        raise ValueError("Either a structure predictor or a structure must be provided.")
+        raise ValueError("Either a structure predictor a structure or interactions must be provided.")
 
-    def _partner_for(self, nt: str) -> str:
-        """Pick a base that pairs with `nt`: Watson-Crick by default, with a
-        --wobble-prob chance of a G-U wobble where chemically valid."""
-        if nt == 'G':
-            return 'U' if random.random() < self.args.wobble_prob else 'C'
-        if nt == 'U':
-            return 'G' if random.random() < self.args.wobble_prob else 'A'
-        if nt == 'A':
-            return 'U'
-        if nt == 'C':
-            return 'G'
-        return random.choice(['A', 'U', 'G', 'C'])
-
-    def mutate_multiplet(self, seq: str, positions: tuple[int, ...],
-                         edges: List[tuple[int, int]]) -> Dict[int, str]:
-        """Co-mutate the residues of a base triple / multiplet so that every
-        structural contact (graph edge) stays a valid pair.
-
-        Every edge is a real base pair, so we walk the component's edges in
-        sorted order keeping a position->base assignment: the first edge of a
-        sub-tree is mutated as a free pair; once one endpoint is fixed (e.g. a
-        hub shared between two pairs), the other is chosen as a valid partner of
-        it. This keeps every edge valid and degrades to `mutate_pair` for a lone
-        pair."""
-        assigned: Dict[int, str] = {}
-        for a, b in sorted(edges):
-            a_set, b_set = a in assigned, b in assigned
-            if not a_set and not b_set:
-                assigned[a], assigned[b] = self.mutate_pair()
-            elif a_set and not b_set:
-                assigned[b] = self._partner_for(assigned[a])
-            elif b_set and not a_set:
-                assigned[a] = self._partner_for(assigned[b])
-            # else: both already fixed (a cycle's closing edge) -> leave as is.
-        for p in positions:
-            assigned.setdefault(p, seq[p])
-        return assigned
-
-    def _mutate_anchor(self, mutated: List[str], seq: str, m: Dict[str, Any]) -> None:
-        # Multiplet co-mutation: parallel to the pair branch but acts on the
-        # whole connected component via --triplet-keep-prob.
-        if random.random() < self.args.triplet_keep_prob:
-            for p in m["positions"]:
-                mutated[p] = seq[p]
-        else:
-            for p, base in self.mutate_multiplet(seq, m["positions"], m["edges"]).items():
-                mutated[p] = base
-
-    def _mutate_unpaired_position(self, mutated: List[str], seq: str, i: int) -> int:
-        # Unpaired (loop) region: allow insertions and deletions. Returns how
-        # far to advance i (a long deletion skips several positions at once).
-        insertion = ''
+    def loop_insertion(self) -> str:
+        """Long insertions take priority, then single insertions. If all long insertions are disregarded
+        the single insertion rate can be recovered accurately. Any insertion is randomly selected"""
         if random.random() < self.args.loop_long_insertion_prob:
-            insertion_len = random.randint(2, self.max_insertion_length) if self.max_insertion_length > 2 else random.randint(2, 5)  # 5 chosen at random
-            insertion = ''.join(random.choice('augc') for _ in range(insertion_len))
-        elif random.random() < self.args.loop_single_insertion_prob:
-            insertion = random.choice('augc')
-        elif random.random() < self.args.loop_long_deletion_prob:
-            del_len = random.randint(2, self.max_deletion_length) if self.max_deletion_length > 2 else random.randint(2, 5)  # 5 chosen at random
-            for j in range(i, min(i + del_len, len(seq))):
-                if self.pair_map.is_unpaired(j):  # keep multiplet geometry intact
-                    mutated[j] = '-'
-            return del_len
-        elif random.random() < self.args.loop_single_deletion_prob:
-            mutated[i] = '-'
-        elif random.random() < self.args.mutation_rate_unpaired:
-            mutated[i] = random.choice([c for c in 'AUGC' if c != seq[i]])
-        mutated[i] = insertion + mutated[i]
-        return 1
+            insertion_len = random.randint(2, self.max_insertion_length)
+            return ''.join(random.choice('augc') for _ in range(insertion_len))
+        if random.random() < self.args.loop_single_insertion_prob:
+            return random.choice('acgu')
+        return ""
 
-    def mutate_stem_pair(self, mutated: List[str], seq: str, i: int, j: int):
-        if self.args.pair_mutation_approach == "covariance":
-            self._mutate_stem_pair_cov(mutated, seq, i, j)
-        elif self.args.pair_mutation_approach == "watson_crick":
-            self._mutate_stem_pair_wc(mutated, seq, i, j)
-        elif self.args.pair_mutation_approach == "original":
-            self._mutate_pair_original(mutated, seq, i, j)
+    def stem_insertion(self) -> str:
+        """Long insertions take priority, then single insertions. If all long insertions are disregarded
+        the single insertion rate can be recovered accurately. Any insertion is randomly selected"""
+        if random.random() < self.args.stem_long_insertion_prob:
+            insertion_len = random.randint(2, self.max_insertion_length)
+            return ''.join(random.choice('augc') for _ in range(insertion_len))
+        if random.random() < self.args.stem_single_insertion_prob:
+            return random.choice('acgu')
+        return ""
+
+    def mutate_unpaired(self, nt: str, loop_long_del_len: int) -> tuple[str, int]:
+        """Long deletions take priority, then single deletions, then mutations. Therefore
+        the mutation rate is can be recovered accurately if deletions are disregarded."""
+        if random.random() < self.args.loop_long_deletion_prob:
+            loop_long_del_len = random.randint(2, self.max_deletion_length)
+        if loop_long_del_len > 0:
+            return "-", loop_long_del_len - 1
+        if random.random() < self.args.loop_single_deletion_prob:
+            return "-", 0
+        if random.random() < self.args.mutation_rate_unpaired:
+            return random.choice([c for c in 'AUGC' if c != nt]), 0
+        return nt, 0
+
+    def mutate_cov(self, nt: str, partners_original: np.ndarray, partners_mutated: np.ndarray) -> str:
+        """Guarantees that all partners get mutated together but randomly and therefore only increases covariance."""
+        if len(partners_mutated) == 0:
+            mutate = random.random() < self.args.mutation_rate_paired
         else:
-            logging.error("Unknown input for --pair-mutation-approach, '%s', please use one of the provided options", self.args.pair_mutation_approach)
-            raise ValueError()
+            mutate = (partners_original[0] != partners_mutated[0])
+        return random.choice([c for c in 'AUGC' if c != nt]) if mutate else nt
+        
+    def mutate_wc(self, nt: str, partners_original: np.ndarray, partners_mutated: np.ndarray, increase_cov: bool) -> str:
+        """Try to maximize the number of watson crick base pairs while also trying to leave no partner.
+        This uses the probabilities in PAIR_MUTATION_PROBABILITIES."""
+        mutate = random.random() < self.args.mutation_rate_paired
+        if len(partners_original) == 0:
+            return random.choice([c for c in 'AUGC' if c != nt]) if mutate else nt
+        if ((partners_original[0] == partners_mutated[0]) and increase_cov) or (not mutate and not increase_cov):
+            return nt
+        options = {"A": 0.00001, "U": 0.00001, "G": 0.00001, "C": 0.00001}
+        for p in partners_mutated:
+            for opt, prob in PAIR_MUTATION_PROBABILITIES.get(p, {}).items():
+                options[opt] += prob
+        options.pop(nt)
+        return random.choices(list(options.keys()), list(options.values()))[0]
 
-    def _mutate_stem_pair_wc(self, mutated: List[str], seq: str, i: int, j: int) -> None:
-        """Mutate the base pair to a random watson crick base pair based on the probabilities in PAIR_MUTATIONS.
-        This also increases covariance but slightly less then the pure covariance approach"""
-        options = dict(PAIR_MUTATION_PROBABILITIES)
-        options.pop(seq[i] + seq[j], 0)
-        if random.random() < self.args.mutation_rate_paired:
-            mutated[i], mutated[j] = random.choices(list(options.keys()), list(options.values()))[0]
-
-    def _mutate_pair_original(self, mutated: List[str], seq: str, i: int, j: int) -> None:
-        if random.random() < self.args.mutation_rate_paired:
-            candidates = PAIR_MUTATIONS.get(seq[i] + seq[j], WC_PAIRS)
-            mutated[i], mutated[j] = random.choice(candidates)
-            if random.random() < self.args.wobble_prob:
-                mutated[i], mutated[j] = random.choice(['GU', 'UG'])
-
-    def _mutate_stem_pair_cov(self, mutated: List[str], seq: str, i: int, j: int) -> None:
-        """Mutate the pair in a way that only guarantees, that both partners get mutated
-        and therefore only increases covariance"""
-        if random.random() < self.args.mutation_rate_paired:
-            mutated[i] = random.choice([c for c in 'AUGC' if c != seq[i]])
-            mutated[j] = random.choice([c for c in 'AUGC' if c != seq[j]])
+    def mutate_pair_original(self, p_nt: str, nt: str) -> str:
+        if not random.random() < self.args.mutation_rate_paired:
+            return p_nt + nt
+        if random.random() < self.args.wobble_prob:
+            return random.choice(['GU', 'UG'])
+        candidates = PAIR_MUTATIONS.get(p_nt + nt, WC_PAIRS)
+        return random.choice(candidates)
 
     def mutate_sequence(self, seq: str) -> str:
-        mutated = list(seq)
-        i = 0
-        while i < len(seq):
-            if self.pair_map.is_multiplet_anchor(i):
-                self._mutate_anchor(mutated, seq, self.pair_map.partners(i))
-            elif self.pair_map.is_multiplet_member(i):
-                pass  # non-anchor member: already set by its anchor
-            elif self.pair_map.is_unpaired(i):
-                i += self._mutate_unpaired_position(mutated, seq, i)
-                continue
-            elif self.pair_map.is_basic_pair(i) and i < self.pair_map.direct_partners(i)[0]:
-                self.mutate_stem_pair(mutated, seq, i, self.pair_map.direct_partners(i)[0])
-            i += 1
-        return ''.join(mutated)
+        approach = self.args.pair_mutation_approach
+        if approach not in ["covariance", "watson_crick", "watson_crick_cov", "original", "none"]:
+            logging.error("Unknown input for --pair-mutation-approach, '%s', please use one of the provided options", self.args.pair_mutation_approach)
+            raise ValueError()
+        seq = np.array(list(seq))
+        new_seq = np.empty(len(seq), str)
+        insertions = np.empty(len(seq), str)
+        loop_long_del_len = 0
+        for i, nt in enumerate(seq):
+            new_nt = nt
+            new_insertion = ""
+            partners =  np.array(self.pair_map.partners(i), int)
+
+            if self.pair_map.is_unpaired(i):
+                new_nt, loop_long_del_len = self.mutate_unpaired(nt, loop_long_del_len)
+            
+            if self.pair_map.is_paired(i):
+                loop_long_del_len = 0
+                prev = partners[partners < i]
+                if approach == "none":
+                    new_nt = self.mutate_cov(nt, [], [])
+                if approach == "covariance":
+                    new_nt = self.mutate_cov(nt, seq[prev], new_seq[prev])
+                if approach == "watson_crick":
+                    new_nt = self.mutate_wc(nt, seq[prev], new_seq[prev], False)
+                if approach == "watson_crick_cov":
+                    new_nt = self.mutate_wc(nt, seq[prev], new_seq[prev], True)
+                if approach == "original" :
+                    if self.pair_map.is_basic_pair(i) and i > partners[0]:
+                        new_seq[partners[0]], new_nt = self.mutate_pair_original(seq[partners[0]], nt)
+                    if self.pair_map.is_multiplet_member(i):
+                        new_nt = self.mutate_wc(nt, seq[prev], new_seq[prev], True)
+            if self.pair_map.is_basic_pair(i): # override mutation result if basic pair deletion hits
+                if i < partners[0]:
+                    new_nt = "-" if random.random() < self.args.stem_pair_deletion_prob else new_nt
+                else:
+                    new_nt = "-" if new_seq[partners[0]] == "-" else new_nt
+    
+            if self.pair_map.is_paired(i-1) and self.pair_map.is_paired(i):
+                new_insertion = self.stem_insertion()
+            else:
+                new_insertion = self.loop_insertion()
+
+            new_seq[i] = new_nt
+            insertions[i] = new_insertion
+        return ''.join(np.ravel(list(zip(insertions, new_seq))))
 
     def generate_msa(self, rna_seq: str) -> List[str]:
-        self.max_insertion_length = int(len(rna_seq) * self.args.max_insertion_fraction)
-        self.max_deletion_length = int(len(rna_seq) * self.args.max_deletion_fraction)
+        self.max_insertion_length = max(int(len(rna_seq) * self.args.max_insertion_fraction), 2)
+        self.max_deletion_length = max(int(len(rna_seq) * self.args.max_deletion_fraction), 2)
         msa = [rna_seq]
         for _ in range(self.args.N - 1):
             msa.append(self.mutate_sequence(rna_seq))
@@ -275,18 +282,29 @@ class MsaGenerator:
     def build_output_name(self) -> str:
         ins_len = getattr(self, "max_insertion_length", "NA")
         del_len = getattr(self, "max_deletion_length", "NA")
-        triplet_suffix = (
-            f"_triplet_{self.args.triplet_prob}_keep_{self.args.triplet_keep_prob}"
-            if self.args.triplet_prob > 0 else ""
-        )
-        return (
-            f"{self.args.pdb_id}_custom_rnamsa_N{self.args.N}_seed{self.args.seed}"
-            f"_insl_{self.args.loop_single_insertion_prob}_dell_{self.args.loop_single_deletion_prob}"
-            f"_inss_{self.args.stem_single_insertion_prob}_dels_{self.args.stem_pair_deletion_prob}"
-            f"_lins_{self.args.loop_long_insertion_prob}_ldels_{self.args.loop_long_deletion_prob}"
-            f"_maxinslen_{ins_len}_maxdellen_{del_len}_wobble_{self.args.wobble_prob}"
-            f"{triplet_suffix}_{self.args.structure_predictor}"
-        )
+        structure_predictor = self.args.structure_predictor or "none"
+        name_parts = [
+            f"{self.args.pdb_id}_custom_rnamsa",
+            f"N{self.args.N}",
+            f"seed{self.args.seed}",
+            f"mru_{self.args.mutation_rate_unpaired}",
+            f"mrp_{self.args.mutation_rate_paired}",
+            f"pma_{self.args.pair_mutation_approach}",
+            f"ssi_{self.args.stem_single_insertion_prob}",
+            f"sli_{self.args.stem_long_insertion_prob}",
+            f"spd_{self.args.stem_pair_deletion_prob}",
+            f"lsi_{self.args.loop_single_insertion_prob}",
+            f"lsd_{self.args.loop_single_deletion_prob}",
+            f"lli_{self.args.loop_long_insertion_prob}",
+            f"lld_{self.args.loop_long_deletion_prob}",
+            f"mif_{self.args.max_insertion_fraction}",
+            f"mdf_{self.args.max_deletion_fraction}",
+            f"maxinslen_{ins_len}",
+            f"maxdellen_{del_len}",
+            f"wp_{self.args.wobble_prob}",
+            structure_predictor,
+        ]
+        return "_".join(str(part) for part in name_parts if part not in {None, ""})
 
     def _build_rna_chain(self, chain: Dict[str, Any]) -> Dict[str, Any]:
         """Return a copy of an RNA chain with a freshly generated custom MSA
@@ -299,6 +317,8 @@ class MsaGenerator:
 
         logging.info("Pairs: %s", self.pair_map.pairs)
         logging.info("Secondary structure has %d unique base pairs.", self.pair_map.unique_pairs)
+        if self.pair_map.basic_pairs:
+            logging.info("Using %d stem pairs: %s", len(self.pair_map.basic_pairs), self.pair_map.basic_pairs)
         if self.pair_map.multiplets:
             logging.info("Using %d multiplets: %s", len(self.pair_map.multiplets), self.pair_map.multiplets)
 
