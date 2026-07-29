@@ -275,9 +275,12 @@ def plot_covariance_classification(seq: str, cov: np.ndarray, pairs: Optional[Pa
 
     fig, ax = plt.subplots()
     if pairs:
-        is_pair = np.array([pairs.is_pair(i, j) for i, j in zip(i, j)])
-        ax.scatter(x[~is_pair], y[~is_pair], c="red", label="Unpaired")
-        ax.scatter(x[is_pair], y[is_pair], c="green", label="Paired")
+        interactions = np.array([pairs.interaction(i, j) for i, j in zip(i, j)])
+        is_pair = interactions > 0
+        ax.scatter(x[~is_pair], y[~is_pair], c="red", label="Unpaired", s=5)
+        ax.scatter(x[is_pair], y[is_pair], c="green", label="Paired", s=interactions[is_pair] * 200 + 5)
+        for xp, yp, strength in zip(x[is_pair], y[is_pair], interactions[is_pair]):
+            ax.annotate(f"{strength:.2f}", (xp, yp), textcoords="offset points", xytext=(6, 3), fontsize=6)
         ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
     else:
         ax.scatter(x, y, c="black")
