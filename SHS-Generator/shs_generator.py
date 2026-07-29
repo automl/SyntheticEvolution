@@ -210,18 +210,22 @@ class MsaGenerator:
     def mutate_wc(self, i: int, nt: str, partners_original: np.ndarray, partners_mutated: np.ndarray, partner_indices: np.ndarray, increase_cov: bool) -> str:
         """Try to maximize the number of watson crick base pairs while also trying to leave no partner.
         This uses the probabilities in PAIR_MUTATION_PROBABILITIES."""
-        mutate = random.random() < self.args.mutation_rate_paired
-        if len(partners_original) == 0:
-            return random.choice([c for c in 'AUGC' if c != nt]) if mutate else nt
-        if ((partners_original[0] == partners_mutated[0]) and increase_cov) or (not mutate and not increase_cov):
+        # first in the multiplet is random with mutation rate
+        if len(partner_indices) == 0:
+            return self.mutate_random(nt, self.args.mutation_rate_paired)
+        was_mutated = (partners_original == partners_mutated)
+        interaction = [self.pair_map.interaction(i, j) for j in partner_indices]
+        # copy mutation status from random partner for high covariance or decide randomly if nt should mutate for low covariance
+        if (increase_cov and random.choices(was_mutated, interaction)[0]) or (not increase_cov and not random.random() < self.args.mutation_rate_paired):
             return nt
+        # chose with interactions, always mutate
         options = {"A": 0.00001, "U": 0.00001, "G": 0.00001, "C": 0.00001}
-        for j, p in zip(partner_indices, partners_mutated):
-            interaction_strength = self.pair_map.interaction(i, j)
-            for opt, prob in PAIR_MUTATION_PROBABILITIES.get(p, {}).items():
-                options[opt] += prob * interaction_strength
+        for j, mut in enumerate(partners_mutated):
+            for opt, prob in PAIR_MUTATION_PROBABILITIES.get(mut, {}).items():
+                options[opt] += prob * interaction[j]
         options.pop(nt)
         return random.choices(list(options.keys()), list(options.values()))[0]
+        
 
     def mutate_pair_original(self, p_nt: str, nt: str) -> str:
         if not random.random() < self.args.mutation_rate_paired:
