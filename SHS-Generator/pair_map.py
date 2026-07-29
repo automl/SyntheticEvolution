@@ -41,16 +41,16 @@ class PairMap:
         pairs_mat = np.zeros((size, size))
         for i, j, val in pairs:
             if i >= size or j >= size or i < 0 or j < 0:
-                logging.warning("Skipping invalid pair %s for seq of length %s.", (i, j), size)
+                logging.warning("Skipping invalid pair %s for seq of length %s.", (i, j, val), size)
                 continue
             if i == j:
                 logging.warning("Self pairs found in pairs at position %s.", i)
                 continue
             if pairs_mat[i][j] != 0:
                 logging.warning("Tried to reassign interaction strength for pair %s. Using last provided value.", (i, j))
-            if val < 0 or val > 1:
-                logging.warning("Interaction strength for pair %s is %s, using %s instead.", (i, j), val, min(max(0, val), 1))
-                val = min(max(0, val), 1)
+            if val <= 0 or val > 1:
+                logging.warning("Interaction strength for pair %s is %s, using %s instead.", (i, j), val, min(max(0.00001, val), 1))
+                val = min(max(0.00001, val), 1)
             pairs_mat[i][j] = val
             pairs_mat[j][i] = val
         if len(mutation_rates) > size:
@@ -140,11 +140,10 @@ class PairMap:
             return [(a, b, interaction_strength) for a, b in unique_pairs], mutation_rates
 
         interactions = {
-            (int(elem[0]), int(elem[1])) : float(elem[2])
+            (min(x:=int(elem[0]), y:=int(elem[1])), max(x, y)) : float(elem[2])
             for elem in pairs
         }
         return [(a, b, interactions[(a, b)]) for a, b in unique_pairs], mutation_rates
-        
 
     def _compute_partners(self, i: int) -> set[int]:
         partners = set()
@@ -181,6 +180,9 @@ class PairMap:
     def is_pair(self, i: int, j: int) -> bool:
         return self._pairs_mat[i][j] > 0
 
+    def interaction(self, i: int, j: int) -> float:
+        return self._pairs_mat[i][j]
+
     @cached_property
     def multiplets(self) -> dict[int, list[int]]:
         multiplets:  dict[int, list[int]] = dict()
@@ -208,6 +210,7 @@ class PairMap:
 
     @cached_property
     def unique_pairs(self) -> set:
-        return np.sum(self._pairs_mat[np.triu_indices(self._pairs_mat.shape[0], k=1)] > 0)
+        i, j = np.where(np.triu(self._pairs_mat, k=1) > 0)
+        return list(zip(i, j))
 
 

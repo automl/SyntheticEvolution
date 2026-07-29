@@ -36,6 +36,7 @@ def _split_row(row: str) -> Tuple[List[str], List[int]]:
             aligned.append(c)
             insertions.append(sum)
             sum = 0
+    insertions.append(sum)
     return aligned, insertions
 
 
@@ -139,13 +140,13 @@ class Features:
 
     @cached_property
     def col_insertion_mean(self) -> np.ndarray:
-        """Per-column average number of insertions in the gap before it"""
+        """(N + 1) Per-column average number of insertions in the gap before it"""
         return self.data.insertions.mean(axis=0)
 
     @cached_property
     def col_mut_rate(self) -> np.ndarray:
         """Per-column fraction of rows that differ from the seq"""
-        return self.mutation_mask.mean(axis=0)
+        return self.diff_mask.mean(axis=0, where=~self.deletion_mask)
 
     @cached_property
     def covariance(self) -> np.ndarray:
@@ -241,8 +242,7 @@ def plot_covariance(seq: str, cov: np.ndarray, title: str = "Recovered covarianc
     
     Off-diagonal cell (i, j) is the covariance between positions i and j across the 
     MSA. The main diagonal is NOT a variance but each column's mutation rate"""
-
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(20, 20)) if show_values else plt.subplots()
     im = ax.imshow(cov, cmap="viridis", vmin=vmin, vmax=vmax)
 
     if show_values:
@@ -293,23 +293,29 @@ def plot_covariance_classification(seq: str, cov: np.ndarray, pairs: Optional[Pa
         plt.show()
     return fig
 
-def plot_bars_per_col(seq: str, bar_heights: np.ndarray, pairs: Optional[PairMap] = None,
-                                   title: str = "Deletion rate for each position",
-                                   ylable: str = "deletion rate",
+def plot_deletions_and_insertion(deletions: np.ndarray, insertions: np.ndarray,
+                                    pairs: Optional[PairMap] = None,
+                                   title: str = "Deletion rate and average insertion count for each position",
+                                   ylable: str = "deletion rate / average insertion count",
                                    show: bool = True, out: Optional[str] = None):
     """Bar plot of the deletion rates for each position, colored by base-pair status."""
-    x = np.arange(len(bar_heights))
-    y = np.asarray(bar_heights)
+    x_del = np.arange(len(deletions))
+    y_del = np.asarray(deletions)
+    x_ins = np.arange(-0.5, len(insertions)-0.5)
+    y_ins = np.asarray(insertions)
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(8, 4))
+    ax.bar(x_ins, y_ins, color="navy", width=0.3, label="insertions")
     if pairs:
-        paired_mask = np.array([pairs.is_paired(i) for i, _ in enumerate(seq)])
-        ax.bar(x[paired_mask], y[paired_mask], color="green", label="paired")
-        ax.bar(x[~paired_mask], y[~paired_mask], color="red", label="unpaired")
-        ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+        paired_mask = np.array([pairs.is_paired(i) for i, _ in enumerate(deletions)])
+        ax.bar(x_del[paired_mask], y_del[paired_mask], color="tab:orange", width=0.7, label="deletions - paired")
+        ax.bar(x_del[~paired_mask], y_del[~paired_mask], color="crimson", width=0.7, label="deletions - unpaired")
     else:
-        ax.bar(x, y, color="black")
+        ax.bar(x_del, y_del, color="tomato", width=0.7, label="deletions")
 
+    plt.xticks(x_del)
+
+    ax.legend()
     ax.set_xlabel("position in the sequence")
     ax.set_ylabel(ylable)
     ax.set_title(title)

@@ -60,6 +60,8 @@ def load_json(json_path: str) -> Any:
 
 def parse_json(json_string: str) -> Any:
     try:
+        json_string = json_string.replace("(", "[")
+        json_string = json_string.replace(")", "]")
         return json.loads(json_string)
     except Exception as e:
         logging.error("Failed to parse JSON from string: %s", e)
@@ -179,6 +181,11 @@ class MsaGenerator:
             return random.choice('acgu')
         return ""
 
+    def mutate_random(self, nt: str, prob: float):
+        if random.random() < prob:
+             return random.choice([c for c in 'AUGC' if c != nt])
+        return nt
+    
     def mutate_unpaired(self, nt: str, loop_long_del_len: int) -> tuple[str, int]:
         """Long deletions take priority, then single deletions, then mutations. Therefore
         the mutation rate is can be recovered accurately if deletions are disregarded."""
@@ -188,19 +195,19 @@ class MsaGenerator:
             return "-", loop_long_del_len - 1
         if random.random() < self.args.loop_single_deletion_prob:
             return "-", 0
-        if random.random() < self.args.mutation_rate_unpaired:
-            return random.choice([c for c in 'AUGC' if c != nt]), 0
-        return nt, 0
+        return self.mutate_random(nt, self.args.mutation_rate_unpaired), 0
 
-    def mutate_cov(self, nt: str, partners_original: np.ndarray, partners_mutated: np.ndarray) -> str:
+    def mutate_cov(self, i: int, nt: str, partners_original: np.ndarray, partners_mutated: np.ndarray, partner_indices: np.ndarray) -> str:
         """Guarantees that all partners get mutated together but randomly and therefore only increases covariance."""
-        if len(partners_mutated) == 0:
-            mutate = random.random() < self.args.mutation_rate_paired
-        else:
-            mutate = (partners_original[0] != partners_mutated[0])
-        return random.choice([c for c in 'AUGC' if c != nt]) if mutate else nt
-        
-    def mutate_wc(self, nt: str, partners_original: np.ndarray, partners_mutated: np.ndarray, increase_cov: bool) -> str:
+        if len(partner_indices) > 0:
+            opts = list(zip(partner_indices, partners_original, partners_mutated))
+            probs = [self.pair_map.interaction(i, j) for j in partner_indices]
+            j, orig, mut = random.choices(opts, probs)[0]
+            if random.random() < self.pair_map.interaction(i, j):
+                return self.mutate_random(nt, int(orig != mut))
+        return self.mutate_random(nt, self.args.mutation_rate_paired)
+
+    def mutate_wc(self, i: int, nt: str, partners_original: np.ndarray, partners_mutated: np.ndarray, partner_indices: np.ndarray, increase_cov: bool) -> str:
         """Try to maximize the number of watson crick base pairs while also trying to leave no partner.
         This uses the probabilities in PAIR_MUTATION_PROBABILITIES."""
         mutate = random.random() < self.args.mutation_rate_paired
@@ -209,9 +216,10 @@ class MsaGenerator:
         if ((partners_original[0] == partners_mutated[0]) and increase_cov) or (not mutate and not increase_cov):
             return nt
         options = {"A": 0.00001, "U": 0.00001, "G": 0.00001, "C": 0.00001}
-        for p in partners_mutated:
+        for j, p in zip(partner_indices, partners_mutated):
+            interaction_strength = self.pair_map.interaction(i, j)
             for opt, prob in PAIR_MUTATION_PROBABILITIES.get(p, {}).items():
-                options[opt] += prob
+                options[opt] += prob * interaction_strength
         options.pop(nt)
         return random.choices(list(options.keys()), list(options.values()))[0]
 
@@ -230,12 +238,12 @@ class MsaGenerator:
             raise ValueError()
         seq = np.array(list(seq))
         new_seq = np.empty(len(seq), str)
-        insertions = np.empty(len(seq), str)
+        insertions = []
         loop_long_del_len = 0
         for i, nt in enumerate(seq):
             new_nt = nt
             new_insertion = ""
-            partners =  np.array(self.pair_map.partners(i), int)
+            partners =  np.array(self.pair_map.direct_partners(i), int)
 
             if self.pair_map.is_unpaired(i):
                 new_nt, loop_long_del_len = self.mutate_unpaired(nt, loop_long_del_len)
@@ -244,18 +252,18 @@ class MsaGenerator:
                 loop_long_del_len = 0
                 prev = partners[partners < i]
                 if approach == "none":
-                    new_nt = self.mutate_cov(nt, [], [])
+                    new_nt = self.mutate_random(nt)
                 if approach == "covariance":
-                    new_nt = self.mutate_cov(nt, seq[prev], new_seq[prev])
+                    new_nt = self.mutate_cov(i, nt, seq[prev], new_seq[prev], prev)
                 if approach == "watson_crick":
-                    new_nt = self.mutate_wc(nt, seq[prev], new_seq[prev], False)
+                    new_nt = self.mutate_wc(i, nt, seq[prev], new_seq[prev], prev, False)
                 if approach == "watson_crick_cov":
-                    new_nt = self.mutate_wc(nt, seq[prev], new_seq[prev], True)
+                    new_nt = self.mutate_wc(i, nt, seq[prev], new_seq[prev], prev, True)
                 if approach == "original" :
                     if self.pair_map.is_basic_pair(i) and i > partners[0]:
                         new_seq[partners[0]], new_nt = self.mutate_pair_original(seq[partners[0]], nt)
                     if self.pair_map.is_multiplet_member(i):
-                        new_nt = self.mutate_wc(nt, seq[prev], new_seq[prev], True)
+                        new_nt = self.mutate_wc(i, nt, seq[prev], new_seq[prev], prev, True)
             if self.pair_map.is_basic_pair(i): # override mutation result if basic pair deletion hits
                 if i < partners[0]:
                     new_nt = "-" if random.random() < self.args.stem_pair_deletion_prob else new_nt
@@ -268,8 +276,8 @@ class MsaGenerator:
                 new_insertion = self.loop_insertion()
 
             new_seq[i] = new_nt
-            insertions[i] = new_insertion
-        return ''.join(np.ravel(list(zip(insertions, new_seq))))
+            insertions.append(new_insertion)
+        return ''.join(np.ravel(list(zip(insertions, new_seq)))) + self.loop_insertion()
 
     def generate_msa(self, rna_seq: str) -> List[str]:
         self.max_insertion_length = max(int(len(rna_seq) * self.args.max_insertion_fraction), 2)
@@ -316,7 +324,7 @@ class MsaGenerator:
         self.pair_map = self.get_structure(rna_seq)
 
         logging.info("Pairs: %s", self.pair_map.pairs)
-        logging.info("Secondary structure has %d unique base pairs.", self.pair_map.unique_pairs)
+        logging.info("Secondary structure has %d unique base pairs.", len(self.pair_map.unique_pairs))
         if self.pair_map.basic_pairs:
             logging.info("Using %d stem pairs: %s", len(self.pair_map.basic_pairs), self.pair_map.basic_pairs)
         if self.pair_map.multiplets:
