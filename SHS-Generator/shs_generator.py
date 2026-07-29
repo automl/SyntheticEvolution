@@ -266,7 +266,7 @@ class MsaGenerator:
             
             if self.pair_map.is_paired(i):
                 loop_long_del_len = 0
-                prev = partners[partners < i and new_seq[partners] != "-"]
+                prev = partners[partners < i]
                 if approach == "none":
                     new_nt = self.mutate_random(nt)
                 if approach == "covariance":
