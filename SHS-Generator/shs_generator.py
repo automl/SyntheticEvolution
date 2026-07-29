@@ -103,6 +103,7 @@ def parse_args() -> argparse.Namespace:
                                 "chooses random base pairs but ensures both partners are always changing together")
     mut_group.add_argument('--stem_single_insertion_prob', type=float, default=0.05)
     mut_group.add_argument('--stem_long_insertion_prob', type=float, default=0.01)
+    mut_group.add_argument('--stem_single_deletion_prob', type=float, default=0.01)
     mut_group.add_argument('--stem_pair_deletion_prob', type=float, default=0.01)
     mut_group.add_argument('--loop_single_insertion_prob', type=float, default=0.1)
     mut_group.add_argument('--loop_single_deletion_prob', type=float, default=0.1)
@@ -181,9 +182,20 @@ class MsaGenerator:
             return random.choice('acgu')
         return ""
 
+    def paired_deletion(self, i, mutated_partner: str, partner_index: float) -> bool:
+        single_del = self.args.stem_single_deletion_prob
+        pair_del =  self.args.stem_pair_deletion_prob * self.pair_map.interaction(i, partner_index)
+        if self.pair_map.is_multiplet_member(i):
+            return random.random() < single_del
+        if i < partner_index: # P(-)
+            return random.random() < single_del + pair_del
+        if mutated_partner == "-": # P(-|-)
+            return random.random() * (single_del + pair_del) < pair_del
+        return random.random() * (1 - single_del - pair_del) < single_del # P(-|!-)
+
     def mutate_random(self, nt: str, prob: float):
         if random.random() < prob:
-             return random.choice([c for c in 'AUGC' if c != nt])
+            return random.choice([c for c in 'AUGC' if c != nt])
         return nt
     
     def mutate_unpaired(self, nt: str, loop_long_del_len: int) -> tuple[str, int]:
@@ -254,7 +266,7 @@ class MsaGenerator:
             
             if self.pair_map.is_paired(i):
                 loop_long_del_len = 0
-                prev = partners[partners < i]
+                prev = partners[partners < i and new_seq[partners] != "-"]
                 if approach == "none":
                     new_nt = self.mutate_random(nt)
                 if approach == "covariance":
@@ -268,12 +280,10 @@ class MsaGenerator:
                         new_seq[partners[0]], new_nt = self.mutate_pair_original(seq[partners[0]], nt)
                     if self.pair_map.is_multiplet_member(i):
                         new_nt = self.mutate_wc(i, nt, seq[prev], new_seq[prev], prev, True)
-            if self.pair_map.is_basic_pair(i): # override mutation result if basic pair deletion hits
-                if i < partners[0]:
-                    new_nt = "-" if random.random() < self.args.stem_pair_deletion_prob else new_nt
-                else:
-                    new_nt = "-" if new_seq[partners[0]] == "-" else new_nt
-    
+                # optionally override mutation if a deletion happens
+                if self.paired_deletion(i, new_seq[partners[0]], partners[0]):
+                    new_nt = "-"
+
             if self.pair_map.is_paired(i-1) and self.pair_map.is_paired(i):
                 new_insertion = self.stem_insertion()
             else:
