@@ -16,3 +16,6 @@ __pycache__/
 
 # vscode files
 .vscode/
+
+# dev files
+test.py
