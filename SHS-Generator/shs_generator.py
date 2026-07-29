@@ -213,7 +213,7 @@ class MsaGenerator:
         """Guarantees that all partners get mutated together but randomly and therefore only increases covariance."""
         if len(partner_indices) > 0:
             opts = list(zip(partner_indices, partners_original, partners_mutated))
-            probs = [self.pair_map.interaction(i, j) for j in partner_indices]
+            probs = [max(self.pair_map.interaction(i, j), 0.000001) for j in partner_indices]
             j, orig, mut = random.choices(opts, probs)[0]
             if random.random() < self.pair_map.interaction(i, j):
                 return self.mutate_random(nt, int(orig != mut))
@@ -226,7 +226,7 @@ class MsaGenerator:
         if len(partner_indices) == 0:
             return self.mutate_random(nt, self.args.mutation_rate_paired)
         was_mutated = (partners_original == partners_mutated)
-        interaction = [self.pair_map.interaction(i, j) for j in partner_indices]
+        interaction = [max(self.pair_map.interaction(i, j), 0.000001)for j in partner_indices]
         # copy mutation status from random partner for high covariance or decide randomly if nt should mutate for low covariance
         if (increase_cov and random.choices(was_mutated, interaction)[0]) or (not increase_cov and not random.random() < self.args.mutation_rate_paired):
             return nt
@@ -259,7 +259,7 @@ class MsaGenerator:
         for i, nt in enumerate(seq):
             new_nt = nt
             new_insertion = ""
-            partners =  np.array(self.pair_map.direct_partners(i), int)
+            partners =  np.array(self.pair_map.partners(i), int)
 
             if self.pair_map.is_unpaired(i):
                 new_nt, loop_long_del_len = self.mutate_unpaired(nt, loop_long_del_len)
@@ -268,7 +268,7 @@ class MsaGenerator:
                 loop_long_del_len = 0
                 prev = partners[partners < i]
                 if approach == "none":
-                    new_nt = self.mutate_random(nt)
+                    new_nt = self.mutate_random(nt, self.args.mutation_rate_paired)
                 if approach == "covariance":
                     new_nt = self.mutate_cov(i, nt, seq[prev], new_seq[prev], prev)
                 if approach == "watson_crick":
