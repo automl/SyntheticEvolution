@@ -209,32 +209,36 @@ class MsaGenerator:
             return "-", 0
         return self.mutate_random(nt, self.args.mutation_rate_unpaired), 0
 
-    def mutate_cov(self, i: int, nt: str, partners_original: np.ndarray, partners_mutated: np.ndarray, partner_indices: np.ndarray) -> str:
+    def mutate_cov(self, nt: str, partners_original: np.ndarray, partners_mutated: np.ndarray, interactions: np.ndarray) -> str:
         """Guarantees that all partners get mutated together but randomly and therefore only increases covariance."""
-        if len(partner_indices) > 0:
-            opts = list(zip(partner_indices, partners_original, partners_mutated))
-            probs = [max(self.pair_map.interaction(i, j), 0.000001) for j in partner_indices]
-            j, orig, mut = random.choices(opts, probs)[0]
-            if random.random() < self.pair_map.interaction(i, j):
-                return self.mutate_random(nt, int(orig != mut))
-        return self.mutate_random(nt, self.args.mutation_rate_paired)
+        opts = list(zip((partners_original != partners_mutated), interactions))
+        m = self.args.mutation_rate_paired
+        prob = m
+        for mut, inter in opts:
+            if mut:
+                prob += ((m * m) + inter * m * (1 - m)) / m
+            else:
+                prob += ((m * (1 - m)) - inter * m * (1 - m)) / (1 - m)
+        return self.mutate_random(nt, prob / (len(opts)+1))
 
-    def mutate_wc(self, i: int, nt: str, partners_original: np.ndarray, partners_mutated: np.ndarray, partner_indices: np.ndarray, increase_cov: bool) -> str:
+    def mutate_wc(self, nt: str, partners_original: np.ndarray, partners_mutated: np.ndarray, interactions: np.ndarray, increase_cov: bool) -> str:
         """Try to maximize the number of watson crick base pairs while also trying to leave no partner.
         This uses the probabilities in PAIR_MUTATION_PROBABILITIES."""
         # first in the multiplet is random with mutation rate
-        if len(partner_indices) == 0:
+        if len(partners_original) == 0:
             return self.mutate_random(nt, self.args.mutation_rate_paired)
-        was_mutated = (partners_original == partners_mutated)
-        interaction = [max(self.pair_map.interaction(i, j), 0.000001)for j in partner_indices]
-        # copy mutation status from random partner for high covariance or decide randomly if nt should mutate for low covariance
-        if (increase_cov and random.choices(was_mutated, interaction)[0]) or (not increase_cov and not random.random() < self.args.mutation_rate_paired):
+        # use mutate_cov to decide if it should mutate for high covariance or decide randomly if nt should mutate for low covariance
+        if increase_cov:
+            mutate = self.mutate_cov(nt, partners_original, partners_mutated, interactions) != nt
+        else:
+            mutate = self.mutate_random(nt, self.args.mutation_rate_paired) != nt
+        if not mutate:
             return nt
         # chose with interactions, always mutate
         options = {"A": 0.00001, "U": 0.00001, "G": 0.00001, "C": 0.00001}
         for j, mut in enumerate(partners_mutated):
             for opt, prob in PAIR_MUTATION_PROBABILITIES.get(mut, {}).items():
-                options[opt] += prob * interaction[j]
+                options[opt] += prob * interactions[j]
         options.pop(nt)
         return random.choices(list(options.keys()), list(options.values()))[0]
         
@@ -259,27 +263,28 @@ class MsaGenerator:
         for i, nt in enumerate(seq):
             new_nt = nt
             new_insertion = ""
-            partners =  np.array(self.pair_map.partners(i), int)
 
             if self.pair_map.is_unpaired(i):
                 new_nt, loop_long_del_len = self.mutate_unpaired(nt, loop_long_del_len)
             
             if self.pair_map.is_paired(i):
                 loop_long_del_len = 0
+                partners =  np.array(self.pair_map.partners(i), int)
+                interactions = np.array([self.pair_map.interaction(i, j) for j in partners])[partners < i]
                 prev = partners[partners < i]
                 if approach == "none":
                     new_nt = self.mutate_random(nt, self.args.mutation_rate_paired)
                 if approach == "covariance":
-                    new_nt = self.mutate_cov(i, nt, seq[prev], new_seq[prev], prev)
+                    new_nt = self.mutate_cov(nt, seq[prev], new_seq[prev], interactions)
                 if approach == "watson_crick":
-                    new_nt = self.mutate_wc(i, nt, seq[prev], new_seq[prev], prev, False)
+                    new_nt = self.mutate_wc(nt, seq[prev], new_seq[prev], interactions, False)
                 if approach == "watson_crick_cov":
-                    new_nt = self.mutate_wc(i, nt, seq[prev], new_seq[prev], prev, True)
+                    new_nt = self.mutate_wc(nt, seq[prev], new_seq[prev], interactions, True)
                 if approach == "original" :
                     if self.pair_map.is_basic_pair(i) and i > partners[0]:
                         new_seq[partners[0]], new_nt = self.mutate_pair_original(seq[partners[0]], nt)
                     if self.pair_map.is_multiplet_member(i):
-                        new_nt = self.mutate_wc(i, nt, seq[prev], new_seq[prev], prev, True)
+                        new_nt = self.mutate_wc(nt, seq[prev], new_seq[prev], interactions, True)
                 # optionally override mutation if a deletion happens
                 if self.paired_deletion(i, new_seq[partners[0]], partners[0]):
                     new_nt = "-"
