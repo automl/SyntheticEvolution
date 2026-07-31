@@ -331,6 +331,59 @@ def plot_deletions_and_insertion(deletions: np.ndarray, insertions: np.ndarray,
     return fig
 
 
+def plot_mutation_rate_comparison(input_rates: np.ndarray, output_rates: np.ndarray,
+                                  title: str = "Input vs recovered mutation rates",
+                                  show: bool = True, out: Optional[str] = None):
+    """Compare input and recovered per-position mutation rates.
+
+    Returns the figure together with summary accuracy metrics.
+    """
+    input_rates = np.asarray(input_rates, dtype=float)
+    output_rates = np.asarray(output_rates, dtype=float)
+
+    length = min(len(input_rates), len(output_rates))
+    if length == 0:
+        raise ValueError("Need at least one mutation rate to compare.")
+
+    input_rates = input_rates[:length]
+    output_rates = output_rates[:length]
+
+    mae = float(np.mean(np.abs(input_rates - output_rates)))
+    rmse = float(np.sqrt(np.mean((input_rates - output_rates) ** 2)))
+    if length > 1 and np.std(input_rates) > 0 and np.std(output_rates) > 0:
+        pearson_r = float(np.corrcoef(input_rates, output_rates)[0, 1])
+    else:
+        pearson_r = float("nan")
+
+    fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+    positions = np.arange(length)
+
+    axes[0].plot(positions, input_rates, marker="o", label="Input")
+    axes[0].plot(positions, output_rates, marker="o", label="Recovered")
+    axes[0].set_title(title)
+    axes[0].set_xlabel("Position")
+    axes[0].set_ylabel("Mutation rate")
+    axes[0].legend()
+    axes[0].grid(True, alpha=0.3)
+
+    axes[1].scatter(input_rates, output_rates, alpha=0.85)
+    lo = float(min(input_rates.min(), output_rates.min()))
+    hi = float(max(input_rates.max(), output_rates.max()))
+    axes[1].plot([lo, hi], [lo, hi], "k--", linewidth=1)
+    axes[1].set_title("Per-position recovery")
+    axes[1].set_xlabel("Input mutation rate")
+    axes[1].set_ylabel("Recovered mutation rate")
+    axes[1].grid(True, alpha=0.3)
+
+    fig.tight_layout()
+    if out:
+        fig.savefig(out, dpi=150)
+        logging.info("Figure written to: %s", out)
+    if show:
+        plt.show()
+    return fig, {"mae": mae, "rmse": rmse, "pearson_r": pearson_r}
+
+
 def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     p = argparse.ArgumentParser(
         description="Recover generator parameters from a synthetic MSA.")

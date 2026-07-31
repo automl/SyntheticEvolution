@@ -183,6 +183,9 @@ class PairMap:
     def interaction(self, i: int, j: int) -> float:
         return self._pairs_mat[i][j]
 
+    def mutation_rate(self, i: int) -> float:
+        return self._pairs_mat[i][i]
+
     @cached_property
     def multiplets(self) -> dict[int, list[int]]:
         multiplets:  dict[int, list[int]] = dict()

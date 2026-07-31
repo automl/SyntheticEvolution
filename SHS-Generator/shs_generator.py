@@ -142,8 +142,11 @@ class MsaGenerator:
             logging.info("Using provided interactions: %s", self.args.interactions)
             interactions = parse_json(self.args.interactions)
             if self.args.mutation_rates:
+                self.args.mutation_rate_paired = ""
+                self.args.mutation_rate_unpaired = ""
                 interactions = [(int(i), int(j), float(val)) for i, j, val in interactions]
-                mutation_rates = load_json(self.args.mutation_rates)
+                mutation_rates = parse_json(self.args.mutation_rates)
+                self.args.mutation_rates = "custom"
                 return PairMap.from_interactions(len(seq), interactions, mutation_rates)
             return PairMap.from_raw(interactions, len(seq), self.args.mutation_rate_paired, self.args.mutation_rate_unpaired)
 
@@ -198,7 +201,7 @@ class MsaGenerator:
             return random.choice([c for c in 'AUGC' if c != nt])
         return nt
     
-    def mutate_unpaired(self, nt: str, loop_long_del_len: int) -> tuple[str, int]:
+    def mutate_unpaired(self, nt: str, loop_long_del_len: int, mutation_rate: float) -> tuple[str, int]:
         """Long deletions take priority, then single deletions, then mutations. Therefore
         the mutation rate is can be recovered accurately if deletions are disregarded."""
         if random.random() < self.args.loop_long_deletion_prob:
@@ -207,31 +210,33 @@ class MsaGenerator:
             return "-", loop_long_del_len - 1
         if random.random() < self.args.loop_single_deletion_prob:
             return "-", 0
-        return self.mutate_random(nt, self.args.mutation_rate_unpaired), 0
+        return self.mutate_random(nt, mutation_rate), 0
 
-    def mutate_cov(self, nt: str, partners_original: np.ndarray, partners_mutated: np.ndarray, interactions: np.ndarray) -> str:
+    def mutate_cov(self, nt: str, partners_original: np.ndarray, partners_mutated: np.ndarray,
+                    interactions: np.ndarray, partner_mutation_rates: np.ndarray, mutation_rate: float) -> str:
         """Guarantees that all partners get mutated together but randomly and therefore only increases covariance."""
-        opts = list(zip((partners_original != partners_mutated), interactions))
-        m = self.args.mutation_rate_paired
+        opts = list(zip((partners_original != partners_mutated), interactions, partner_mutation_rates))
+        m = mutation_rate
         prob = m
-        for mut, inter in opts:
+        for mut, inter, pm in opts:
             if mut:
-                prob += ((m * m) + inter * m * (1 - m)) / m
+                prob += ((m * pm) + inter * m * (1 - pm)) / max(pm, 0.0001)
             else:
-                prob += ((m * (1 - m)) - inter * m * (1 - m)) / (1 - m)
+                prob += ((m * (1 - pm)) - inter * m * (1 - pm)) / (1 - min(pm, 0.9999))
         return self.mutate_random(nt, prob / (len(opts)+1))
 
-    def mutate_wc(self, nt: str, partners_original: np.ndarray, partners_mutated: np.ndarray, interactions: np.ndarray, increase_cov: bool) -> str:
+    def mutate_wc(self, nt: str, partners_original: np.ndarray, partners_mutated: np.ndarray, 
+                  interactions: np.ndarray, partner_mutation_rates: np.ndarray, mutation_rate: float, increase_cov: bool) -> str:
         """Try to maximize the number of watson crick base pairs while also trying to leave no partner.
         This uses the probabilities in PAIR_MUTATION_PROBABILITIES."""
         # first in the multiplet is random with mutation rate
         if len(partners_original) == 0:
-            return self.mutate_random(nt, self.args.mutation_rate_paired)
+            return self.mutate_random(nt, mutation_rate)
         # use mutate_cov to decide if it should mutate for high covariance or decide randomly if nt should mutate for low covariance
         if increase_cov:
-            mutate = self.mutate_cov(nt, partners_original, partners_mutated, interactions) != nt
+            mutate = self.mutate_cov(nt, partners_original, partners_mutated, interactions, partner_mutation_rates, mutation_rate) != nt
         else:
-            mutate = self.mutate_random(nt, self.args.mutation_rate_paired) != nt
+            mutate = self.mutate_random(nt, mutation_rate) != nt
         if not mutate:
             return nt
         # chose with interactions, always mutate
@@ -243,8 +248,8 @@ class MsaGenerator:
         return random.choices(list(options.keys()), list(options.values()))[0]
         
 
-    def mutate_pair_original(self, p_nt: str, nt: str) -> str:
-        if not random.random() < self.args.mutation_rate_paired:
+    def mutate_pair_original(self, p_nt: str, nt: str, mutation_rate: float, partner_mutation_rate: float) -> str:
+        if not random.random() < (mutation_rate + partner_mutation_rate) / 2:
             return p_nt + nt
         if random.random() < self.args.wobble_prob:
             return random.choice(['GU', 'UG'])
@@ -263,28 +268,30 @@ class MsaGenerator:
         for i, nt in enumerate(seq):
             new_nt = nt
             new_insertion = ""
+            mutation_rate = self.pair_map.mutation_rate(i)
 
             if self.pair_map.is_unpaired(i):
-                new_nt, loop_long_del_len = self.mutate_unpaired(nt, loop_long_del_len)
+                new_nt, loop_long_del_len = self.mutate_unpaired(nt, loop_long_del_len, mutation_rate)
             
             if self.pair_map.is_paired(i):
                 loop_long_del_len = 0
                 partners =  np.array(self.pair_map.partners(i), int)
-                interactions = np.array([self.pair_map.interaction(i, j) for j in partners])[partners < i]
                 prev = partners[partners < i]
+                interactions = np.array([self.pair_map.interaction(i, j) for j in prev])
+                partner_mutation_rates = np.array([self.pair_map.mutation_rate(j) for j in prev])
                 if approach == "none":
-                    new_nt = self.mutate_random(nt, self.args.mutation_rate_paired)
+                    new_nt = self.mutate_random(nt, self.pair_map.mutation_rate(i))
                 if approach == "covariance":
-                    new_nt = self.mutate_cov(nt, seq[prev], new_seq[prev], interactions)
+                    new_nt = self.mutate_cov(nt, seq[prev], new_seq[prev], interactions, partner_mutation_rates,mutation_rate)
                 if approach == "watson_crick":
-                    new_nt = self.mutate_wc(nt, seq[prev], new_seq[prev], interactions, False)
+                    new_nt = self.mutate_wc(nt, seq[prev], new_seq[prev], interactions, partner_mutation_rates, mutation_rate,  False)
                 if approach == "watson_crick_cov":
-                    new_nt = self.mutate_wc(nt, seq[prev], new_seq[prev], interactions, True)
+                    new_nt = self.mutate_wc(nt, seq[prev], new_seq[prev], interactions, partner_mutation_rates, mutation_rate, True)
                 if approach == "original" :
                     if self.pair_map.is_basic_pair(i) and i > partners[0]:
-                        new_seq[partners[0]], new_nt = self.mutate_pair_original(seq[partners[0]], nt)
+                        new_seq[partners[0]], new_nt = self.mutate_pair_original(seq[partners[0]], nt, mutation_rate, partner_mutation_rates[0])
                     if self.pair_map.is_multiplet_member(i):
-                        new_nt = self.mutate_wc(nt, seq[prev], new_seq[prev], interactions, True)
+                        new_nt = self.mutate_wc(nt, seq[prev], new_seq[prev], interactions, partner_mutation_rates, mutation_rate, True)
                 # optionally override mutation if a deletion happens
                 if self.paired_deletion(i, new_seq[partners[0]], partners[0]):
                     new_nt = "-"
@@ -316,6 +323,7 @@ class MsaGenerator:
             f"seed{self.args.seed}",
             f"mru_{self.args.mutation_rate_unpaired}",
             f"mrp_{self.args.mutation_rate_paired}",
+            f"mrs_{self.args.mutation_rates}",
             f"pma_{self.args.pair_mutation_approach}",
             f"ssi_{self.args.stem_single_insertion_prob}",
             f"sli_{self.args.stem_long_insertion_prob}",
