@@ -1,0 +1,11 @@
+# Wires the pipeline to the mock AF3/DSSR stand-ins so the whole flow can be smoke-tested
+# without a cluster. Not for real runs — see ../config.example.yaml for that.
+af3:
+  command: "python shs_eval/tests/mock_af3.py --json_path={input_json} --output_dir={output_dir}"
+  timeout_s: 120
+dssr:
+  command: "python shs_eval/tests/mock_dssr.py -i={cif} -o={out_json}"
+  timeout_s: 60
+scheduler:
+  kind: none
+af3_seeds: [1, 2]

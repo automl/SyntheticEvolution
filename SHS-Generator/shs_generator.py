@@ -96,11 +96,31 @@ def parse_args() -> argparse.Namespace:
                         help="Input a list with a mutation rate for every position in the sequence. Overrides mutation-rate-unpaired "
                         "and mutation-rate-paired if both are provided")
     mut_group.add_argument('--pair-mutation-approach', type=str, default="watson_crick_cov",
-                           choices=["watson_crick", "covariance", "watson_crick_cov", "original", "none"],
+                           choices=["watson_crick", "covariance", "watson_crick_cov", "original", "none", "potts"],
                            help="Choose the method for the mutation of base pairs. 'original' corresponds "
                                 "to the approach we used before the rework has problems. 'watson_crick' chooses"
                                 " a random watson crick base pair with hardcoded probabilities. 'covariance' "
-                                "chooses random base pairs but ensures both partners are always changing together")
+                                "chooses random base pairs but ensures both partners are always changing together. "
+                                "'potts' samples the whole substitution layer jointly from a Potts model whose "
+                                "fields come from the mutation rates and whose couplings come from the "
+                                "interaction map; indels are unaffected")
+
+    potts_group = parser.add_argument_group("Potts Parameters (--pair-mutation-approach potts)")
+    potts_group.add_argument('--potts-coupling', type=float, default=6.0,
+                             help="Coupling strength gamma. 0 removes all covariation, large values force "
+                                  "every substituted pair to stay canonical")
+    potts_group.add_argument('--potts-wobble', type=float, default=0.85,
+                             help="Pairing score of GU/UG relative to a canonical pair. Controls the wobble "
+                                  "fraction among substituted pairs")
+    potts_group.add_argument('--potts-no-rate-matching', action='store_true',
+                             help="Skip solving the fields for the requested mutation rates. Coupling suppresses "
+                                  "substitution, so realised rates then fall below the requested ones")
+    potts_group.add_argument('--potts-max-enumerate', type=int, default=7,
+                             help="Largest coupled component tabulated exactly. Larger components fall back to "
+                                  "Gibbs sampling")
+    potts_group.add_argument('--potts-max-rate-match', type=int, default=4,
+                             help="Largest coupled component for which the fields are solved to hit the requested "
+                                  "mutation rates. Larger components use raw fields and undershoot")
     mut_group.add_argument('--stem_single_insertion_prob', type=float, default=0.05)
     mut_group.add_argument('--stem_long_insertion_prob', type=float, default=0.01)
     mut_group.add_argument('--stem_single_deletion_prob', type=float, default=0.01)
@@ -128,6 +148,7 @@ class MsaGenerator:
     def __init__(self, args: argparse.Namespace) -> None:
         self.args = args
         self.pair_map: Optional[PairMap] = None
+        self.potts = None
         if self.args.seed is not None:
             random.seed(self.args.seed)
 
@@ -201,15 +222,19 @@ class MsaGenerator:
             return random.choice([c for c in 'AUGC' if c != nt])
         return nt
     
-    def mutate_unpaired(self, nt: str, loop_long_del_len: int, mutation_rate: float) -> tuple[str, int]:
+    def mutate_unpaired(self, nt: str, loop_long_del_len: int, mutation_rate: float,
+                        substitute: Optional[str] = None) -> tuple[str, int]:
         """Long deletions take priority, then single deletions, then mutations. Therefore
-        the mutation rate is can be recovered accurately if deletions are disregarded."""
+        the mutation rate is can be recovered accurately if deletions are disregarded.
+        A substitute, if given, replaces the per-position draw but leaves deletions untouched."""
         if random.random() < self.args.loop_long_deletion_prob:
             loop_long_del_len = random.randint(2, self.max_deletion_length)
         if loop_long_del_len > 0:
             return "-", loop_long_del_len - 1
         if random.random() < self.args.loop_single_deletion_prob:
             return "-", 0
+        if substitute is not None:
+            return substitute, 0
         return self.mutate_random(nt, mutation_rate), 0
 
     def mutate_cov(self, nt: str, partners_original: np.ndarray, partners_mutated: np.ndarray,
@@ -258,10 +283,13 @@ class MsaGenerator:
 
     def mutate_sequence(self, seq: str) -> str:
         approach = self.args.pair_mutation_approach
-        if approach not in ["covariance", "watson_crick", "watson_crick_cov", "original", "none"]:
+        if approach not in ["covariance", "watson_crick", "watson_crick_cov", "original", "none", "potts"]:
             logging.error("Unknown input for --pair-mutation-approach, '%s', please use one of the provided options", self.args.pair_mutation_approach)
             raise ValueError()
         seq = np.array(list(seq))
+        # The Potts model couples positions, so its whole substitution layer is drawn up front;
+        # the loop below then applies the unchanged insertion and deletion layers on top.
+        potts_draw = self.potts.sample() if approach == "potts" else None
         new_seq = np.empty(len(seq), str)
         insertions = []
         loop_long_del_len = 0
@@ -271,8 +299,10 @@ class MsaGenerator:
             mutation_rate = self.pair_map.mutation_rate(i)
 
             if self.pair_map.is_unpaired(i):
-                new_nt, loop_long_del_len = self.mutate_unpaired(nt, loop_long_del_len, mutation_rate)
-            
+                new_nt, loop_long_del_len = self.mutate_unpaired(
+                    nt, loop_long_del_len, mutation_rate,
+                    substitute=potts_draw[i] if potts_draw is not None else None)
+
             if self.pair_map.is_paired(i):
                 loop_long_del_len = 0
                 partners =  np.array(self.pair_map.partners(i), int)
@@ -292,6 +322,8 @@ class MsaGenerator:
                         new_seq[partners[0]], new_nt = self.mutate_pair_original(seq[partners[0]], nt, mutation_rate, partner_mutation_rates[0])
                     if self.pair_map.is_multiplet_member(i):
                         new_nt = self.mutate_wc(nt, seq[prev], new_seq[prev], interactions, partner_mutation_rates, mutation_rate, True)
+                if approach == "potts":
+                    new_nt = potts_draw[i]
                 # optionally override mutation if a deletion happens
                 if self.paired_deletion(i, new_seq[partners[0]], partners[0]):
                     new_nt = "-"
@@ -308,6 +340,17 @@ class MsaGenerator:
     def generate_msa(self, rna_seq: str) -> List[str]:
         self.max_insertion_length = max(int(len(rna_seq) * self.args.max_insertion_fraction), 2)
         self.max_deletion_length = max(int(len(rna_seq) * self.args.max_deletion_fraction), 2)
+        if self.args.pair_mutation_approach == "potts":
+            # Imported lazily so the other approaches never pay for it.
+            from potts import PottsModel
+            self.potts = PottsModel(
+                rna_seq, self.pair_map,
+                coupling=self.args.potts_coupling,
+                wobble=self.args.potts_wobble,
+                match_rates=not self.args.potts_no_rate_matching,
+                max_enumerate=self.args.potts_max_enumerate,
+                max_rate_match=self.args.potts_max_rate_match,
+            )
         msa = [rna_seq]
         for _ in range(self.args.N - 1):
             msa.append(self.mutate_sequence(rna_seq))
@@ -337,8 +380,14 @@ class MsaGenerator:
             f"maxinslen_{ins_len}",
             f"maxdellen_{del_len}",
             f"wp_{self.args.wobble_prob}",
-            structure_predictor,
         ]
+        if self.args.pair_mutation_approach == "potts":
+            name_parts += [
+                f"pg_{self.args.potts_coupling}",
+                f"pw_{self.args.potts_wobble}",
+                f"prm_{not self.args.potts_no_rate_matching}",
+            ]
+        name_parts.append(structure_predictor)
         return "_".join(str(part) for part in name_parts if part not in {None, ""})
 
     def _build_rna_chain(self, chain: Dict[str, Any]) -> Dict[str, Any]:
