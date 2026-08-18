@@ -1,0 +1,85 @@
+# Drop-in points for the cluster. Only these two commands are site-specific — edit them to match
+# how AlphaFold 3 and DSSR are actually invoked for you, then nothing else needs changing.
+#
+# Fields available to the af3 template:
+#   {input_json}  absolute path to one AF3 input JSON produced by the plan stage
+#   {input_dir}   directory holding all of them
+#   {output_dir}  the shared AF3 output root; AF3 creates <output_dir>/<lowercased job name>/
+#   {job_output_dir}  that per-job directory, pre-created
+#   {job}         the job name, e.g. 1SJ4_potts_s1_a1
+#   {seed}        the AF3 model seed for this job
+#   {root}        the repository root
+#
+# Fields available to the dssr template:
+#   {cif}  the model CIF found in the job's output directory
+#   {out_json}  where the pipeline expects the DSSR JSON
+#   {out_dir}   its parent directory
+#   {root}      the repository root
+#
+# DSSR is run in a private working directory (it writes fixed-name aux files into its CWD, so
+# concurrent runs otherwise clobber each other), which means a path relative to where you invoked
+# the pipeline will NOT resolve. Use absolute paths, or {root} for anything in the repository.
+# A containerised AF3 must also have every path it touches bound in -- the work-dir included.
+
+af3:
+  # Singularity/Apptainer example. Swap for whatever your cluster provides.
+  command: >-
+    apptainer exec --nv
+    --bind {input_dir}:/input
+    --bind {output_dir}:/output
+    --bind /path/to/af3/models:/models
+    --bind /path/to/af3/databases:/databases
+    /path/to/alphafold3.sif
+    python /app/alphafold3/run_alphafold.py
+    --json_path=/input/{job}.json
+    --output_dir=/output
+    --model_dir=/models
+    --db_dir=/databases
+    --norun_data_pipeline
+  timeout_s: 3600
+
+  # Docker alternative:
+  # command: >-
+  #   docker run --rm --gpus all
+  #   -v {input_dir}:/input -v {output_dir}:/output
+  #   -v /path/to/af3/models:/models
+  #   alphafold3 python run_alphafold.py
+  #   --json_path=/input/{job}.json --output_dir=/output --model_dir=/models
+  #   --norun_data_pipeline
+
+  # Bare install alternative:
+  # command: "python /opt/alphafold3/run_alphafold.py --json_path={input_json} --output_dir={output_dir} --model_dir=/opt/af3/models --norun_data_pipeline"
+
+# IMPORTANT: --norun_data_pipeline (or your build's equivalent) is what makes this cheap. The SHS
+# is already in the input JSON, so the genetic search must be skipped — otherwise AF3 spends most
+# of its wall clock running HMMER against databases whose output it will then ignore for the RNA.
+
+dssr:
+  command: "x3dna-dssr -i={cif} -o={out_json} --json --more"
+  timeout_s: 300
+
+scheduler:
+  kind: none              # none = run serially in this process; slurm = submit a job array
+  sbatch_args:
+    - "-p"
+    - "gpu"
+    - "--gres=gpu:1"
+    - "--mem=48G"
+    - "-t"
+    - "01:00:00"
+  array_throttle: 16      # max concurrent array tasks
+  job_name: "shs-af3"
+
+  # Run on the compute node before the AF3 command. Compute nodes inherit neither your shell
+  # environment nor your working directory, so put module loads and env activation here.
+  setup:
+    - "module load cuda/12.4"
+    - "source ~/miniconda3/bin/activate synthetic-evolution"
+
+  # Slurm rejects arrays larger than MaxArraySize; work is split across several submissions
+  # above this. Check yours with: scontrol show config | grep MaxArraySize
+  max_array_size: 1000
+
+# Model seeds per job. More seeds cost linearly but are the only way to separate a real effect
+# from AF3's diffusion noise — keep at least 2 for any comparison you intend to believe.
+af3_seeds: [1, 2]
