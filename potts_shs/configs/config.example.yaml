@@ -8,11 +8,18 @@
 #   {job_output_dir}  that per-job directory, pre-created
 #   {job}         the job name, e.g. 1SJ4_potts_s1_a1
 #   {seed}        the AF3 model seed for this job
+#   {root}        the repository root
 #
 # Fields available to the dssr template:
 #   {cif}  the model CIF found in the job's output directory
 #   {out_json}  where the pipeline expects the DSSR JSON
 #   {out_dir}   its parent directory
+#   {root}      the repository root
+#
+# DSSR is run in a private working directory (it writes fixed-name aux files into its CWD, so
+# concurrent runs otherwise clobber each other), which means a path relative to where you invoked
+# the pipeline will NOT resolve. Use absolute paths, or {root} for anything in the repository.
+# A containerised AF3 must also have every path it touches bound in -- the work-dir included.
 
 af3:
   # Singularity/Apptainer example. Swap for whatever your cluster provides.

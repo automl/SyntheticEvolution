@@ -44,6 +44,11 @@ class SchedulerSpec:
     # Slurm's MaxArraySize rejects any array larger than this; work is split across several
     # submissions when it exceeds the limit. `scontrol show config | grep MaxArraySize` to check.
     max_array_size: int = 1000
+    # Folds per array task. The binding limit is usually not MaxArraySize but the QOS cap on
+    # submitted jobs (`sacctmgr show qos format=Name,MaxSubmitJobsPerUser`), which counts every
+    # array task: 9190 one-fold tasks against a 1500 cap is rejected outright, while 10 folds per
+    # task is 919 and fits. Walltime must cover the whole batch, not one fold.
+    jobs_per_task: int = 1
 
 
 @dataclass
@@ -85,7 +90,7 @@ def _load_yaml(text: str, path: Path) -> Dict[str, Any]:
 
 
 def run_command(command: str, timeout_s: int, dry_run: bool = False,
-                log_path: Optional[Path] = None) -> int:
+                log_path: Optional[Path] = None, cwd: Optional[Path] = None) -> int:
     """Run one rendered command. Returns its exit code; -1 marks a timeout."""
     if dry_run:
         print(f"  [dry-run] {command}")
@@ -93,7 +98,7 @@ def run_command(command: str, timeout_s: int, dry_run: bool = False,
     logging.debug("exec: %s", command)
     try:
         result = subprocess.run(command, shell=True, capture_output=True, text=True,
-                                timeout=timeout_s)
+                                timeout=timeout_s, cwd=str(cwd) if cwd else None)
     except subprocess.TimeoutExpired:
         logging.error("timed out after %ss: %s", timeout_s, command)
         if log_path:
@@ -124,11 +129,14 @@ def submit_slurm_arrays(config: Config, task_file: Path, n_tasks: int, work_dir:
     change_dir = f"cd {shlex.quote(str(cwd))}\n" if cwd else ""
     setup = "".join(f"{line}\n" for line in config.scheduler.setup)
 
+    batch = max(1, config.scheduler.jobs_per_task)
+    # Array tasks needed once each one runs `batch` folds.
+    n_array_tasks = (n_tasks + batch - 1) // batch
     chunk = max(1, config.scheduler.max_array_size)
     job_ids: List[str] = []
-    for part, start in enumerate(range(0, n_tasks, chunk)):
-        size = min(chunk, n_tasks - start)
-        suffix = "" if n_tasks <= chunk else f"_{part}"
+    for part, start in enumerate(range(0, n_array_tasks, chunk)):
+        size = min(chunk, n_array_tasks - start)
+        suffix = "" if n_array_tasks <= chunk else f"_{part}"
         script_path = work_dir / f"af3_array{suffix}.sbatch"
         script = (
             "#!/usr/bin/env bash\n"
@@ -142,15 +150,30 @@ def submit_slurm_arrays(config: Config, task_file: Path, n_tasks: int, work_dir:
             "set -eo pipefail\n\n"
             f"{change_dir}{setup}"
             "set -u\n\n"
-            f'LINE=$((SLURM_ARRAY_TASK_ID + 1 + {start}))\n'
-            f'CMD=$(sed -n "${{LINE}}p" {task_file})\n'
-            'if [ -z "$CMD" ]; then echo "no command at line $LINE"; exit 1; fi\n'
-            'echo "$CMD"\n'
-            'eval "$CMD"\n'
+            # One array task runs `batch` consecutive lines of the task file. -e is dropped for
+            # the loop so a single failed fold does not discard the rest of the batch; failures
+            # are counted and reported in the task's exit status instead.
+            f'BATCH={batch}\n'
+            f'FIRST=$(( (SLURM_ARRAY_TASK_ID + {start}) * BATCH + 1 ))\n'
+            'LAST=$(( FIRST + BATCH - 1 ))\n'
+            f'TOTAL={n_tasks}\n'
+            'if [ "$LAST" -gt "$TOTAL" ]; then LAST=$TOTAL; fi\n'
+            'set +e\n'
+            'failed=0\n'
+            'for LINE in $(seq "$FIRST" "$LAST"); do\n'
+            f'  CMD=$(sed -n "${{LINE}}p" {task_file})\n'
+            '  if [ -z "$CMD" ]; then continue; fi\n'
+            '  echo "--- line $LINE / $TOTAL ---"\n'
+            '  echo "$CMD"\n'
+            '  eval "$CMD" || { echo "FOLD FAILED at line $LINE"; failed=$((failed + 1)); }\n'
+            'done\n'
+            'echo "batch done: lines $FIRST-$LAST, $failed failed"\n'
+            'exit $(( failed > 0 ))\n'
         )
         script_path.write_text(script)
         script_path.chmod(0o755)
-        logging.info("Wrote array script for tasks %d-%d to %s", start, start + size - 1, script_path)
+        logging.info("Wrote array script: %d array tasks x %d folds each (task-file lines %d-%d) -> %s",
+                     size, batch, start * batch + 1, min((start + size) * batch, n_tasks), script_path)
         if dry_run:
             print(f"  [dry-run] sbatch {script_path}")
             continue

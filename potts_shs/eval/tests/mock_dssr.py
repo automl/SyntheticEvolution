@@ -50,31 +50,38 @@ def main():
     residues = read_mock_cif(cif)
     if not residues:
         raise SystemExit(f"mock_dssr: no ATOM records in {cif}")
-    chain = residues[0]["chain"]
-    sequence = "".join(r["comp"] for r in residues)
 
     truth_path = cif.parent / "_mock_truth.json"
     truth = json.loads(truth_path.read_text()) if truth_path.exists() else {}
-    rng = random.Random(truth.get("seed", 0) ^ len(sequence))
-    pairs = nested_pairs(sequence, rng, truth.get("drop_rate", 0.15))
 
-    nts = [{"nt_id": f"{chain}.{r['comp']}{r['index']}", "nt_name": r["comp"],
-            "nt_code": r["comp"], "chain_name": chain, "index_chain": r["index"]}
-           for r in residues]
-    by_index = {r["index"]: nts[k]["nt_id"] for k, r in enumerate(residues)}
+    by_chain = {}
+    for residue in residues:
+        by_chain.setdefault(residue["chain"], []).append(residue)
 
-    dot = ["."] * len(sequence)
-    for i, j in pairs:
-        dot[i], dot[j] = "(", ")"
+    chains, nts, out_pairs = {}, [], []
+    for chain, rows in by_chain.items():
+        sequence = "".join(r["comp"] for r in rows)
+        rng = random.Random(truth.get("seed", 0) ^ len(sequence) ^ hash(chain) & 0xFFFF)
+        pairs = nested_pairs(sequence, rng, truth.get("drop_rate", 0.15))
+
+        ids = {}
+        for r in rows:
+            nt_id = f"{chain}.{r['comp']}{r['index']}"
+            ids[r["index"]] = nt_id
+            nts.append({"nt_id": nt_id, "nt_name": r["comp"], "nt_code": r["comp"],
+                        "chain_name": chain, "index_chain": r["index"]})
+
+        dot = ["."] * len(sequence)
+        for i, j in pairs:
+            dot[i], dot[j] = "(", ")"
+        # DSSR keys chains by model ("m1_chain_A") while `chain_name` on each nucleotide is the
+        # bare id. Reproduced here because the difference silently empties the pair list.
+        chains[f"m1_chain_{chain}"] = {"bseq": sequence, "sstr": "".join(dot)}
+        out_pairs += [{"nt1": ids[i + 1], "nt2": ids[j + 1], "name": "WC"} for i, j in pairs]
 
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps({
-        "chains": {chain: {"bseq": sequence, "sstr": "".join(dot)}},
-        "nts": nts,
-        "pairs": [{"nt1": by_index[i + 1], "nt2": by_index[j + 1], "name": "WC"}
-                  for i, j in pairs],
-    }, indent=2))
-    print(f"mock_dssr: wrote {out} ({len(pairs)} pairs)")
+    out.write_text(json.dumps({"chains": chains, "nts": nts, "pairs": out_pairs}, indent=2))
+    print(f"mock_dssr: wrote {out} ({len(out_pairs)} pairs over {len(chains)} chains)")
 
 
 if __name__ == "__main__":

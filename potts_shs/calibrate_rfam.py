@@ -1,5 +1,20 @@
 """Calibrate the Potts coupling and wobble weight against Rfam seed alignments, by matching
-covariation statistics at the depth the generator is actually used at."""
+covariation statistics at the depth the generator is actually used at.
+
+On Helix the seed archive is already unpacked at evaluation/data/rfam/Rfam.seed.gz:
+
+    python SHS-Generator/calibrate_rfam.py \
+        --seed-file evaluation/data/rfam/Rfam.seed.gz \
+        --out results/potts_calibration.json
+
+Calibrating at a depth needs families with at least that many seed sequences, which is the
+binding constraint: of the 4227 families in the archive, 706 qualify at depth 20, 314 at 50 and
+164 at 100 within the 15-200 nt window. `--max-families 300` is therefore not reached at depth
+100 -- the run uses every family that qualifies.
+
+Timing at depth 100 (measured): 5s to scan and prepare the archive, then ~15s per grid point over
+all 164 families at --repeats 3. The full default 9x6 grid is about 14 minutes on one core.
+"""
 
 import argparse
 import gzip
@@ -15,8 +30,10 @@ from typing import Dict, Iterator, List, Optional, Sequence, Tuple
 import numpy as np
 
 HERE_DIR = Path(__file__).resolve().parent
-if str(HERE_DIR) not in sys.path:
-    sys.path.insert(0, str(HERE_DIR))
+GENERATOR_DIR = HERE_DIR.parent / "SHS-Generator"
+for _path in (HERE_DIR, GENERATOR_DIR):
+    if str(_path) not in sys.path:
+        sys.path.insert(0, str(_path))
 
 from pair_map import PairMap
 from potts import PottsModel
@@ -270,7 +287,9 @@ def main() -> int:
                         help="Alignment depth to calibrate at; must match the depth you will generate at")
     parser.add_argument("--min-len", type=int, default=15)
     parser.add_argument("--max-len", type=int, default=200)
-    parser.add_argument("--max-families", type=int, default=300)
+    parser.add_argument("--max-families", type=int, default=300,
+                        help="Upper bound only; at depth 100 just 164 families qualify and all "
+                             "of them are used")
     parser.add_argument("--repeats", type=int, default=3, help="Potts draws per family per grid point")
     parser.add_argument("--gamma-grid", type=float, nargs="+",
                         default=[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0, 12.0])

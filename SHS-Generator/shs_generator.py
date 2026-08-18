@@ -342,7 +342,7 @@ class MsaGenerator:
         self.max_deletion_length = max(int(len(rna_seq) * self.args.max_deletion_fraction), 2)
         if self.args.pair_mutation_approach == "potts":
             # Imported lazily so the other approaches never pay for it.
-            from potts import PottsModel
+            from potts_shs.potts import PottsModel
             self.potts = PottsModel(
                 rna_seq, self.pair_map,
                 coupling=self.args.potts_coupling,

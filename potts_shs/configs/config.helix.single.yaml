@@ -1,0 +1,72 @@
+# Helix (bwForCluster, fr_ds595). Real paths, ready to run:
+#
+#   python -m potts_shs.eval.run plan --config potts_shs/configs/config.helix.yaml --limit 4
+#   python -m potts_shs.eval.run fold --config potts_shs/configs/config.helix.yaml --limit 4 --dry-run
+#
+# Everything here was taken from the pipeline that already folds on this cluster,
+# shs-eval-pipeline/shs_af3_dssr_eval/run_af3_dssr_eval_job.sh.
+
+af3:
+  # Everything is bound at its own path so {input_json} and {output_dir} resolve identically
+  # inside and outside the container; no path rewriting is needed.
+  #
+  # {input_dir} and {output_dir} are bound explicitly so that a --work-dir outside the two
+  # workspaces (scratch, for instance) still works. Without them AF3 cannot see its own input.
+  #
+  # run_alphafold.py MUST come from the shared clone: it has to match the package baked into the
+  # .sif (Mar-2027 build). A newer clone dies with "ImportError: cannot import name 'shards'".
+  # The weights stay ours, via --model_dir.
+  command: >-
+    singularity exec --nv
+    --bind /gpfs/bwfor/work/ws/fr_ds595-shs-paper:/gpfs/bwfor/work/ws/fr_ds595-shs-paper
+    --bind /gpfs/bwfor/work/ws/fr_tr1040-dominik_share:/gpfs/bwfor/work/ws/fr_tr1040-dominik_share
+    --bind {input_dir}:{input_dir}
+    --bind {output_dir}:{output_dir}
+    /gpfs/bwfor/work/ws/fr_tr1040-dominik_share/alphafold3.sif
+    python /gpfs/bwfor/work/ws/fr_tr1040-dominik_share/alphafold3/run_alphafold.py
+    --json_path={input_json}
+    --output_dir={output_dir}
+    --model_dir=/gpfs/bwfor/work/ws/fr_ds595-shs-paper/alphafold3/models
+    --norun_data_pipeline
+    --run_inference=True
+  timeout_s: 3600
+
+dssr:
+  # Not on PATH. DSSR mangles paths beyond ~400 characters (and can abort outright), so keep
+  # --work-dir short; the default layout stays well inside that.
+  command: "/gpfs/bwfor/work/ws/fr_ds595-shs-paper/x3dna-dssr -i={cif} -o={out_json} --json --more"
+  timeout_s: 300
+
+scheduler:
+  kind: none
+  sbatch_args:
+    - "--partition=gpu-single"
+    - "--gres=gpu:A100:1"
+    - "--cpus-per-task=8"
+    - "--mem=32gb"
+    - "--time=04:00:00"
+  # QOS 'normal' allows gres/gpu=100 concurrently; 32 leaves room for other work on the account.
+  array_throttle: 32
+  job_name: "shs-af3"
+
+  setup:
+    # `module` reaches the node as an exported bash function, but sourcing it is free insurance.
+    - "[ -z \"$(declare -F module)\" ] && source /etc/profile.d/modules.sh || true"
+    - "module purge"
+    - "module load system/singularity"
+    # synEvo carries numpy/pandas plus the generator's RnaBench dependency.
+    - "export PATH=$HOME/.conda/envs/synEvo/bin:$PATH"
+
+  # Helix reports MaxArraySize = 1001 (scontrol show config). Work above this is split across
+  # several submissions automatically.
+  max_array_size: 1000
+
+  # The binding limit here is not MaxArraySize but QOS 'normal' MaxSubmitPU = 1500, which counts
+  # every array task. The full run is 9190 folds, so one fold per task is rejected outright
+  # ("QOSMaxSubmitJobPerUserLimit"). At 10 folds per task it is 919 tasks -- one array, well
+  # inside both caps. --time above must cover a whole batch: 10 folds at a few minutes each.
+  jobs_per_task: 10
+
+# Two seeds: AF3's diffusion sampling is stochastic and one seed cannot separate a real
+# difference between approaches from sampling noise.
+af3_seeds: [1, 2]

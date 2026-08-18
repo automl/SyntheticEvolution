@@ -12,8 +12,10 @@ from typing import Dict, List, Sequence, Tuple
 import numpy as np
 
 HERE_DIR = Path(__file__).resolve().parent
-if str(HERE_DIR) not in sys.path:
-    sys.path.insert(0, str(HERE_DIR))
+GENERATOR_DIR = HERE_DIR.parent / "SHS-Generator"
+for _path in (HERE_DIR, GENERATOR_DIR):
+    if str(_path) not in sys.path:
+        sys.path.insert(0, str(_path))
 
 import shs_generator
 from pair_map import PairMap

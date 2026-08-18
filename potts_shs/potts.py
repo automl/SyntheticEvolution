@@ -5,7 +5,14 @@ import itertools
 import logging
 import math
 import random
+import sys
+from pathlib import Path
 from typing import Dict, List, Sequence, Tuple
+
+# The pair representation still lives with the generator it belongs to.
+GENERATOR_DIR = Path(__file__).resolve().parents[1] / "SHS-Generator"
+if str(GENERATOR_DIR) not in sys.path:
+    sys.path.insert(0, str(GENERATOR_DIR))
 
 from pair_map import PairMap
 
