@@ -97,6 +97,10 @@ def parse_args() -> argparse.Namespace:
                           help="Predictor for secondary structure (base pairs output). Options: rnafold, spotrna, rnaformer, dssr")
     io_group.add_argument('--structure', type=str, required=False, default=None,
                           help="Dot-bracket secondary structure (if provided, will be converted to base pairs)")
+    io_group.add_argument('--pairs', type=str, required=False, default=None,
+                          help="JSON list of 0-based base pairs, e.g. '[[0, 25], [1, 24]]'. "
+                               "Takes precedence over --structure and --structure_predictor and, "
+                               "unlike dot-bracket, can carry pseudoknots and multiplets.")
     io_group.add_argument('--rna-seq', type=str, required=False,
                           help="RNA sequence (used for MSA + JSON)")
     io_group.add_argument('--protein-seq', type=str, required=False,
@@ -155,6 +159,13 @@ class MsaGenerator:
 
     def get_structure(self, sequence: str) -> Dict[int, int]:
         seq = sequence.upper()
+        # An explicit pair list wins over predictor and dot-bracket alike: it is the
+        # only input that can express pseudoknots and multiplets.
+        if getattr(self.args, 'pairs', None):
+            pairs = convert_pred_pairs(json.loads(self.args.pairs))
+            logging.info("Using %d provided unique base pairs.",
+                         len({(min(i, j), max(i, j)) for i, j in pairs.items() if i < j}))
+            return pairs
         # Use provided structure predictor if available.
         if self.args.structure_predictor:
             if self.args.structure:

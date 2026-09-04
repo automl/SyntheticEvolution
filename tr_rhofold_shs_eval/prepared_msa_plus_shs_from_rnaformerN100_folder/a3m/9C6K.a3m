@@ -1,0 +1,876 @@
+>query
+GUACUCGGGGUGCCCUUCUGCGUGAAGGCUGAGAAAUACCCGUAUCACCUGAUCUGGAUAAUGCCAGCGUAGGGAAGUGC
+>CP000783.1/1094512-1094608/8-83 [subseq from] Cronobacter sakazakii ATCC BAA-894, complete genome.
+--ACUCGGGGUGCCCUUCUGCGUGAAGGCUGAGAAAUACCCGUAUUACCUGAUCUGGAUAAUGCCAGCGUAGGGAAGU--
+>CCYD01002419.1/2332-2428/8-83 [subseq from] Plasmopara halstedii genome assembly, contig: Scaffold_2434
+--ACUCGGGGUGCCCUUCUUUGUGAAGGCUGAGAAAUACCCGUAUUACCUGAUCUGGAUAAUGCCAGCGUAGGGAAGU--
+>FNQS01000003.1/370934-370838/8-83 [subseq from] Lonsdalea quercina strain ATCC 29281 genome assembly, contig: Ga0052894_scaffold00003.3
+--ACUCGGGGUGCCCUUCCACGUGAAGGCUGAGAAAGACCCGUACCACCUGAUCUGGAUAAUGCCAGCGUAGGGAAGU--
+>AJJI01000014.1/170818-170721/8-84 [subseq from] Klebsiella pneumoniae subsp. pneumoniae DSM 30104 Contig00014, whole genome shotgun sequence.
+--ACUCGGGGUGCCCUUCUUCGuUGAAGGCUGAGAAAUACCCGUACCACCUGAUCUGGAUAAUGCCAGCGUAGGGAAGU--
+>MLFQ01000096.1/5187-5093/8-79 [subseq from] Pantoea gaviniae strain LMG 25382 Contig0096_, whole genome shotgun sequence.
+--ACUCGGGGUGCCCUUCUUUGUGAAGGCUGAGAAAUACCCGUAUUACCUGAUCUGGAUAAUGCCAGCGUAGGG------
+>JMTB01000105.1/60465-60561/8-79 [subseq from] Trabulsiella guamensis ATCC 49490 GTGU.assembly.105, whole genome shotgun sequence.
+--ACUCGGGGUGCCCUUCCUUGUGAAGGCUGAGAAAUACCCGUACCACCUGAUCUGGAUAAUGCCAGCGUAGGG------
+>FN543502.1/2338866-2338769/8-84 [subseq from] Citrobacter rodentium ICC168, complete genome
+--ACUCGGGGUGCCCUUCUUUaUUGAAGGCUGAGAAAUACCCGUACCACCUGAUCUGGAUAAUGCCAGCGUAGGGAAGU--
+>AHIE01000019.1/144360-144266/8-78 [subseq from] Pantoea stewartii subsp. stewartii DC283 WGS_Sequence19, whole genome shotgun sequence.
+--ACUCGGGGUGCCCUUCUUUGUGAAGGCUGAGAAAAACCCGUAUUACCUGAUCUGGAUAAUGCCAGCGUAGG-------
+>LN907827.1/2562809-2562713/8-83 [subseq from] Erwinia sp. EM595 isolate E_g_EM595 genome assembly, chromosome: 1
+--ACUCGGGGUGCCCUUUUUUAUAAAGGCUGAGAAAUACCCGUAUUACCUGACCUGGAUAAUGCCAGCGUAGGGAAGU--
+>CP010557.1/4252807-4252711/8-79 [subseq from] Raoultella ornithinolytica strain S12, complete genome.
+--ACUCGGGGUGCCCUUCCUUGUGAAGGCUGAGAAAAACCCGUACCACCUGAUCUGGAUAAUGCCAGCGUAGGG------
+>CGIG01000001.1/3189409-3189504/8-82 [subseq from] Brenneria goodwinii strain OBR1 genome assembly, contig: Contig
+--ACUCGGGGUGCCCUUCCACGUGAAGGCUGAGAAAUACCCGU-UGACCUGAUCUGGAUAAUGCCAGCGUAGGGAAGU--
+>JMTB01000105.1/77571-77668/8-84 [subseq from] Trabulsiella guamensis ATCC 49490 GTGU.assembly.105, whole genome shotgun sequence.
+--ACUCGGGGUGCCCUUCAcACGUGAAGGCUGAGAAAGACCCGUACCACCUGAUCUGGAUAAUGCCAGCGUAGGGAAGU--
+>CP003942.1/3510727-3510627/8-87 [subseq from] Serratia marcescens FGI94, complete genome.
+--ACUCGGGGUGCCCUUCAugagGUGUGAAGGCUGAGAAAUACCCGUAUUACCUGAUCUGGAUAAUACCAGCGUAGGGAAGU--
+>CP011602.1/923666-923763/8-84 [subseq from] Kluyvera intermedia strain CAV1151, complete genome.
+--ACUCGGGGUGCCCCUUUUCACGAAGgGCUGAGAAAUACCCGUAUUACCUGAUCUGGAUAAUGCCAGCGUAGGGAAGU--
+>URS000080E23F_32630/1-87/4-84 [subseq from] synthetic construct TPP riboswitch (THI element)
+--ACUCGGGGUGCCCUCCAUUGcacucCGGAGGCUGAGAAAUACCCGUAUCACCUGAUCUGGAUAAUGCCAGCGUAGGGAAGU--
+>AK119882.1/1-98/8-84 [subseq from] Oryza sativa Japonica Group cDNA clone:002-179-G10, full insert sequence.
+--ACUCGGGGUGCCCCUUUUCACAAAgGGCUGAGAAAUACCCGUACCACCUGAUCUGGAUAAUGCCAGCGUAGGGAAGU--
+>CP000822.1/655531-655628/8-84 [subseq from] Citrobacter koseri ATCC BAA-895, complete genome.
+--ACUCGGGGUGCCCCUUUUCACGAAGgGCUGAGACAUACCCGUAUUACCUGAUCUGGAUAAUGCCAGCGUAGGGAAGU--
+>LMLI01000019.1/237664-237765/8-88 [subseq from] Serratia sp. Leaf50 contig_7, whole genome shotgun sequence.
+--ACUCGGGGUGCCGUUCCUCauagaGGGCUGGCUGAGAAAUACCCGUAAAACCUGAUCUGGAUAAUGCCAGCGUAGGGAAGU--
+>JJMI01000050.1/102924-103020/8-83 [subseq from] Mangrovibacter sp. MFB070 Contig-050, whole genome shotgun sequence.
+--ACUCGGGGUGCCCCAUCAUAGAUGGGCUGAGAAAUACCCGUAAUACCUGAUCUGGAUAAUGCCAGCGUAGGGAAGU--
+>CM001230.1/1355773-1355873/8-87 [subseq from] Brenneria sp. EniD312 chromosome, whole genome shotgun sequence.
+--ACUCGGGGUGCCCUgguuUCAACCACAGGGCUGAGAAAUACCCGCAUUACCUGAUCUGGAUUAUGCCAGCGUAGGGAAGU--
+>CP006569.1/1320623-1320723/8-87 [subseq from] Sodalis praecaptivus strain HS1, complete genome.
+--ACUCGGGGUGCCucgaCCGCCAGGUUAAGGCUGAGAAAUACCCGUAUUACCUGAACUGGAUCAUACCAGCGUAGGGAAGU--
+>JMSP01000206.1/6992-6898/8-81 [subseq from] Bacteria symbiont BFo2 of Frankliniella occidentalis strain BFo2 contig356, whole genome shotgun sequence.
+--ACUCGGGGUGCCUA-CUUA-AUCAGGCUGAGAAAUACCCGUAUUACCUGAACUGGAUAAUGCCAGCGUAGGAAAG---u
+>LGAA01000018.1/152352-152440/8-75 [subseq from] Moellerella wisconsensis ATCC 35017 Sequence00018, whole genome shotgun sequence.
+a---CUCGGGGCGCC--------UUAAGGCUGAGAUGAACCCGUAUUACCUGAUCUGGAUAAUGCCAGCGUAGGGAAGU--
+>AWXH01000003.1/1136832-1136730/8-89 [subseq from] Serratia sp. ATCC 39006 ctg3, whole genome shotgun sequence.
+--ACUCGGGGUGCCUUUgcauuAAUUGCGGUGGCUGAGAAUuUACCCGUAUAACCUGAUCUGGAUAAUGCCAGCGUAGGGAAGU--
+>CP002038.1/3522740-3522636/8-91 [subseq from] Dickeya dadantii 3937, complete genome.
+--ACUCGGGGUGCCGCUUUCCuGUCACggaaaucGGCUGAGAUAGACCCGUAUUACCUGAUCUGGAUUAUGCCAGCGUAGGGAAGU--
+>KB233222.1/1007597-1007687/8-77 [subseq from] Providencia burhodogranariea DSM 19968 genomic scaffold scaffold00001, whole genome shotgun sequence.
+a---CUCGGGGCGUCUAU------UUAGACUGAGAAGCACCCGUAUUACCUGAUCUGGAUAAUGCCAGCGUAGGGAAGU--
+>LT699767.1/954905-954813/9-79 [subseq from] Xenorhabdus innexi strain HGB1681 (deposited as PTA-6826 in the American Type Culture Collection) genome assembly, scaffold: XIS1_scaffold1
+c----UCGGGGCGUUCUUAA--GUGAA--CUGAGAAGCACCCGUAUUACCUGAUCUGGAUAAUGCCAGCGUAGGGAAGU--
+>CP009706.1/3520758-3520657/8-88 [subseq from] Hafnia alvei FB1, complete genome.
+--ACUCGGGGUGCCCACAUGaaaaUGAAAGGGCUGAGAACuUACCCGUAUUACCUGAUCUGGAUUAUGCCAGCGUAGGGAAGU--
+>CU468135.1/1466823-1466921/8-85 [subseq from] Erwinia tasmaniensis strain ET1/99 complete chromosome.
+--ACUCGGGGUGCCAGACcuUAAGGUAUGGCUGAGAAAUACCCGUCGAACCUGAACUGGAUAAUGCCAGCGUAGGGAAGU--
+>LAQT01000038.1/100315-100407/8-79 [subseq from] Amantichitinum ursilacus strain IGB-41 contig38, whole genome shotgun sequence.
+--ACUCGGGGUGCCCGUU----ACAGGGCUGAGACAUACCCGCAUCACCUGAUCCGGAUCAUGCCGGCGUAGGGAAGU--
+>LMLK01000003.1/318684-318585/8-86 [subseq from] Erwinia sp. Leaf53 contig_11, whole genome shotgun sequence.
+--ACUCGGGGUGCCCUUGcuUAACCGCAGGCUGAGAuAAAACCCGUACCACCUGAACUGGAUAAUGCCAGCGGAGGGAAGU--
+>AL590842.1/3197151-3197047/8-91 [subseq from] Yersinia pestis CO92 complete genome
+--ACUCGGGGUGCCUgccacaaUGCGGUGGUAAGGCUGAGAGAUgACCCGUAUUACCUGAUCUGGAUUAUGCCAGCGUAGGGAAGU--
+>CP011254.1/153564-153473/8-78 [subseq from] Serratia fonticola strain DSM 4576, complete genome.
+a---CACGGGGUGCCCUUAGG------GGCUGAGAAAuUACCCGUAUUACCUGAUCUGGAUUAUGCCAGCGUAGGGAUG---u
+>CCSE01000001.1/561903-561993/8-78 [subseq from] Jeotgalicoccus sp. 13MG44_air genome assembly, contig: CONTIG000001
+a---CUGGAGGUGCCCUUAUG------GGCUGAGAAACACUCUUAAUACCUGAUCUGGAUUAUGCCAGCGUAGGGAAGUG-
+>CM001773.1/2489001-2488875/57-113 [subseq from] Providencia sneebia DSM 19967 chromosome, whole genome shotgun sequence.
+gua------------------------CAGACUGAGAAGCACCCGUAUUACCUGAUCUGGAUAAUGCCAGCGUAGGGAAGU--
+>AM942759.1/1702625-1702537/10-75 [subseq from] Proteus mirabilis strain HI4320, complete genome
+ucgggg----------CGCC--------UAUUGGCUGAGAUGAACCCGUAUAACCUGAUCUGGAUAAUGCCAGCGUAGGGAAGU--
+>CP003244.1/1175989-1176087/8-85 [subseq from] Rahnella aquatilis CIP 78.65 = ATCC 33071, complete genome.
+--ACUCGGGGUGCCCG-CUGCAaaGCAGGGCUGAGAUUuUACCCGUAUUACCUGAUCUGGAUUAUGCCAGCGUAGGGAAGU--
+>CP001616.1/247022-246930/14-75 [subseq from] Tolumonas auensis DSM 9187, complete genome.
+ggu----------------GCUGCCUGGCAGCUGAGAAAUACCCGUUGCACCUGAUCUGGAUCAUGCCAGCGUAGGGA-----
+>AOTI010579232.1/860-763/8-84 [subseq from] Triticum urartu cultivar G1812 contig579233, whole genome shotgun sequence.
+a---CUCGGGGUGCCAGACCAaCCGUCCGGCUGAGAAAAACCCGCAUAACCUGAACUGGAUAAUGCCAGCGUAGGGAAGU--
+>JMPN01000007.1/306382-306480/8-85 [subseq from] Leminorella grimontii ATCC 33999 = DSM 5078 strain ATCC 33999 GLGR.assembly.07, whole genome shotgun sequence.
+a---CUCGGGGUGCUUCGCUuaACGCG-CGGCUGAGAUAUcACCCGUAUUACCUGAUCUGGAUUAUGCCAGCGUAGGGAAGU--
+>FP236843.1/3316458-3316356/8-89 [subseq from] Erwinia billingiae strain Eb661 complete chromosome.
+--ACUCGGGGUGCCGUUucuuucCAAAGAAAGGGCUGAGAAAAACCCGUCGAACCUGAACUGGAUAAUGCCAGCGGAGGGAAGU--
+>CP014222.1/1622156-1622061/8-82 [subseq from] Janthinobacterium sp. B9-8, complete genome.
+--ACUCGGGGUGCCGCUUgAAAAAAACGGCUGAGAAAUACCCGU--GACCUGAUCUGGAUCAUGCCAGCGUAGGGAAGU--
+>AALD02000074.1/1030-927/8-90 [subseq from] Yersinia mollaretii ATCC 43969 contig01580, whole genome shotgun sequence.
+--ACUCGGGGUGCCCGCCAcuaaaaGUGGUUUGGCUGAGAUUuUACCCGUAUUACCUGAUCUGGAUUAUGCCAGCGUAGGGAAGU--
+>JRXE01000003.1/147528-147433/8-82 [subseq from] Erwinia iniecta strain B120 contig000003, whole genome shotgun sequence.
+--ACUCGGGGUGCCCCUGGUAAACAGGGCUGAGAUACACCCGC-UGACCUGAUCUGGAUAAUGCCAGCGUAGGGAAGU--
+>AYKS02000030.1/10065-9965/8-87 [subseq from] Serratia sp. DD3 SRDD_contig000030, whole genome shotgun sequence.
+--ACUCGGGGUGCCUGUAccgUUAGUAUUGGCUGAGAUUuUACCCGUAUUACCUGAUCUGGAUUAUGCCAGCGUAGGGAAGU--
+>CP000826.1/3954507-3954416/8-78 [subseq from] Serratia proteamaculans 568, complete genome.
+--ACUCGGGGUGCCUCUAG------GGGCUGAGAUuUUACCCGUAUUACCUGAUCUGGAUUAUGCCAGCGUAGGGAAGU--
+>CP010423.1/3052409-3052301/8-95 [subseq from] Pragia fontium strain 24613, complete genome.
+a---CUCGGGGUGCCCGAUAGUGAUUAacgcuauccguGGCUGAGACAUcACCCGUAUUACCUGAUCUGGAUUAUGCCAGCGUAGGGAAGU--
+>JPFO01000006.1/96610-96714/8-91 [subseq from] Yersinia ruckeri strain 37551 YRO1b0000006, whole genome shotgun sequence.
+a---CUCGGGGUGCCACcgguugaUUAACUUGGUGGCUGAGAUUuUACCCGUAUUACCUGAUCUGGAUUAUGCCAGCGUAGGGAAGU--
+>CBML010000001.1/89806-89720/14-74 [subseq from] Clostridium chauvoei JF4335, WGS project CBML01000000 data, contig: 00016
+gg--------------------UGCGAAAGCUGAGAAUUACCCUUAUAACCUGAUCUAGUUAAUGCUAGCGUAGGGAAGUG-
+>FCON02000037.1/42969-42839/51-116 [subseq from] Burkholderia choica isolate LMG 22940 genome assembly, contig: contig000037
+ugccc-----------------GUGCGUCGUGGGUGAGAAAUACCCUUUGAACCUGAUCUGGAUAAUGCCAGCGCAGGGAAG---c
+>JAIL01000257.1/35938-35843/8-82 [subseq from] Snodgrassella alvi SCGC AB-598-O02 SCG598O02_12239, whole genome shotgun sequence.
+a---CUCGGGGUGUCaCCUAUAGGU---GACUGAGAUAuUACCCGUAAAACCUGAUCUGGAUAAUGCCAGCGUAGGGAAGU--
+>AZEF01000032.1/124118-124030/12-72 [subseq from] Lactobacillus capillatus DSM 19910 NODE_47, whole genome shotgun sequence.
+gg--------GGUGCCUU--------UUGGCUGAGAAAUACCCAUGAGACCUGAUCUGGAUAAUGCCAGCGUAGGGA-----
+>JMHU01000014.1/30979-31067/12-72 [subseq from] Lactobacillus animalis strain 381-IL-28 NODE_17_length_135193_cov_29.770218, whole genome shotgun sequence.
+gg--------GGUGCCGUU--------UGGCUGAGAAAUACCCAUAUCACCUGAUCUGGUUAAUACCAGCGGAGGGA-----
+>JPKR02000003.1/958268-958178/8-77 [subseq from] Tatumella morbirosei strain LMG 23360 Contig3, whole genome shotgun sequence.
+--ACUCGGGGUGCCCUAU---G---UGGCUGAGAAAUACCCGUUGAACCUGAACCGGAUAAUGCCGGCGGAGGGAAGU--
+>CP002433.1/2872161-2872070/8-78 [subseq from] Pantoea sp. At-9b, complete genome.
+a---CUAGGGGUGCCGUU------UACGGCUGAGAAAUACCCUUCGAACCUGAUCUGGAUuAAUGCCAGCGUAGGGAAGU--
+>AOTI010526866.1/951-1051/8-87 [subseq from] Triticum urartu cultivar G1812 contig526867, whole genome shotgun sequence.
+--ACUCGGGGUGCCGCUUUCCacacgGAAAGGGCUGAGAAAAACCCGC-UGACCUGAACUGGAUAAUGCCAGCGUAGGGAAGU--
+>AEXE01002382.1/714-831/41-103 [subseq from] Burkholderia sp. TJI49 contig1024.1, whole genome shotgun sequence.
+acc------------------GGCGUUGUGGGUGAGAAAUACCCUUUGAACCUGAUCUGGAUAAUGCCAGCGCAGGGAAG---c
+>CP017476.1/1285164-1285271/20-90 [subseq from] Hydrogenophaga sp. LPB0072, complete genome.
+cuuuu----------UGCCGUUCGGCAAGAAGcGCUGAGAAAUACCCCUCUCACCUGAUCUGGGUUGUGCCAGCGUAGGGA-----
+>LNZQ01000210.1/40565-40463/12-89 [subseq from] Epulopiscium sp. Nele67-Bin004 Nele67MMBin003_81, whole genome shotgun sequence.
+gggguguuccuugacau-----------------AUGUCAAAGGGCUGAGAAAUACCCUCAUUACUUGAACUGGAUAAUGCCAGCGUAAGGAAG---c
+>CP000267.1/3599248-3599151/12-80 [subseq from] Rhodoferax ferrireducens T118, complete genome.
+g-------GGGUGUCCGU-UGCAAGAUGGuCUGAGAAAUACCCCACUCACCUGAUCUGGAUCAUGCCAGCGUAGGGA-----
+>LNZB01000051.1/397903-397806/8-80 [subseq from] Legionella waltersii strain ATCC 51914 Lwal_ctg051, whole genome shotgun sequence.
+ac----CAGGGGUGCUUUGUUGAUUCAAGGCUGAGAAAAACCCUAAUAACCUGCUCAGGAUAAUGCCUGCGGAGGGA-----
+>LVVZ01000014.1/312795-312889/10-76 [subseq from] Nesiotobacter exalbescens strain WB1-6 contig_21, whole genome shotgun sequence.
+c-----CGGGGUGCCCUUGUU-----GGGCUGAGAUcAUACCCGUAUGACCUGAUCUGGAUAAUGCCAGCGAAGGGA-----
+>AEJF01000192.1/10677-10550/55-113 [subseq from] Burkholderia glathei PML1(12) contig00194, whole genome shotgun sequence.
+guguc------------------------GCGGGUGAGAAAUACCCUUUGAACCUGAUCUGGAUAAUGCCAGCGCAGGGAAG---c
+>AFCE01000163.1/42215-42125/8-77 [subseq from] Caldalkalibacillus thermarum TA2.A1 ctg245, whole genome shotgun sequence.
+a---CUAGGGGUGCCUGUUUG------GGCUGAGAGAGACCCUUAUUACCUGAUCUGGGUAAUACCAGCGCAGGGAAGU--
+>LOWA01000014.1/199097-199213/33-102 [subseq from] Burkholderia sp. TSV85 TSV85_22, whole genome shotgun sequence.
+ucugccgauugc--------------------CGCAGCGGGUGAGAAAUACCCUUUGAACCUGAUCUGGAUAAUGCCAGCGCAGGGAAG---c
+>LNZN01000049.1/1243-1153/9-76 [subseq from] Epulopiscium sp. AS2M-Bin002 AS2M_MBin02_142, whole genome shotgun sequence.
+c----UAGGGGUGCCUUUU------CAGGCUGAGAAAUACCCUUAUUAGUUGAACUGGAUAAUGCCAGCGUAACGAA----g
+>FPKR01000011.1/61017-61115/8-85 [subseq from] Chitinimonas taiwanensis DSM 18899 genome assembly, contig: Ga0002118_scaffold00011.11
+--ACUCGGGGUGCCCCGCCAUugGCCGGGGCUGAGACACACCCGCAUCACCUGAUCCGGAUCAUGCCGGCGUAGGGAAGU--
+>FUWX01000004.1/355754-355660/7-82 [subseq from] Cetobacterium ceti strain ATCC 700028 genome assembly, contig: EI52DRAFT_scaffold00001.1
+u--ACUAGGGGUGCCAACCA-CAU-UAGGCUGAGAAAUACCCUUAGAACCUGAUCUAGGUAAUGCUAGCGAAGGGAAGUG-
+>CBWP010000010.1/75833-75710/47-109 [subseq from] Escherichia coli ISC11, WGS project CBWP01000000 data, contig: c58
+a----------------UCUGCGUAUGGGCUGAGAGAUACCCGUCGAACCUGAUCCGGAUAAUGCCGGCGAAGGGA-----uuu
+>NHIN01000004.1/159949-160046/10-84 [subseq from] Bacterium TMED190 isolate TMED190 53319, whole genome shotgun sequence.
+----UCGGGGUGCUCUUAAGGAUAAGAGCUGAGAuAAAACCCAUUUAACCUGAUCUGGAUAAUACCAGCGUAGGGAGG---u
+>LFMX01000015.1/29991-29850/68-127 [subseq from] Candidatus Burkholderia humilis strain UZHbot5 BHUMctg15, whole genome shotgun sequence.
+ugcgg-----------------------CGUGGGUGAGAAAUACCCUUUGAACCUGAUCUGGAUAAUGCCAGCGCAGGGAAG---c
+>CP001614.2/4335096-4335006/10-75 [subseq from] Teredinibacter turnerae T7901, complete genome.
+----UCGGGGUGCCGUUUU-----ACGGCUGAGAAAUACCCGC-UGACCUGAUCUGGAUAGUACCAGCGUAGGGAA----
+>FCOX02000003.1/293125-292984/68-127 [subseq from] Burkholderia calidae type strain LMG 29321 genome assembly, contig: contig000003
+uguggcg-------------------------UGGGUGAGAAAUACCCUUUGAACCUGAUCUGGAUAAUGCCAGCGCAGGGAAG---c
+>JWHM01000003.1/96818-96958/70-126 [subseq from] Burkholderia sp. MR1 ctg12, whole genome shotgun sequence.
+aucgu--------------------------GGGUGAGAAAUACCCUUUGAACCUGAUCUGGAUAAUGCCAGCGCAGGGAAG---c
+>CP006938.2/4125230-4125328/16-82 [subseq from] Pandoraea pnomenusa strain RB-44, complete genome.
+uccugcaacg------------------UGAGUUGUGGGUGAGAAAUACCCUUAGAACCUGAUCUGGAUAAUGCCAGCGCAGGGA-----
+>JRXE01000003.1/160396-160294/8-84 [subseq from] Erwinia iniecta strain B120 contig000003, whole genome shotgun sequence.
+--ACUCGGGGUGCCGUcUCUUCAUCAgagacCGGCUGAGAAUUACCCGUUGAACCUGAACUGGAUAAUGCCAGCGUAG--------c
+>FRCF01000002.1/589382-589292/8-78 [subseq from] Salinicoccus alkaliphilus DSM 16010 genome assembly, contig: EJ97DRAFT_scaffold00001.1
+a---CUGGGGGUGCCCGU------ACGGGCUGAGAUUCACCCUUAAUACCUGAUCUAGAUCAUGCUAGCGUAGGGAAGUG-
+>AM747720.1/1210646-1210530/44-102 [subseq from] Burkholderia cenocepacia J2315 chromosome 1, complete genome
+gcauug-------------------------CGGGUGAGAAAUACCCUUUGAACCUGAUCUGGAUAAUGCCAGCGCAGGGAAG---c
+>CP011366.1/1216603-1216695/8-80 [subseq from] Salinicoccus halodurans strain H3B36, complete genome.
+a---CUAGGGGUGUCCAUCCGUG----GACUGAGAUUUACCCUUACUACCUGAUCUAGAUCAUACUAGCGUAGGGAAGUG-
+>CP001321.1/1229687-1229783/10-80 [subseq from] Haemophilus parasuis SH0165, complete genome.
+u-----CGGGGUGCU-UUGUAUAGCAAGGCUGAGAAAUACCCAUAGAACCUGAUCUGACUAAUAUCAGCGUAGGGA-----u
+>MEWM01000029.1/3026-3134/41-93 [subseq from] Candidate division Zixibacteria bacterium RBG_16_43_9 RBG_16_scaffold_15259, whole genome shotgun sequence.
+ac-------------------------AGGCUGAGAAAAACCCUUAGAACCUGAUCUGGGUAAUGCCAGCGUAGGGAA----
+>MNZQ01000192.1/7697-7792/12-81 [subseq from] Syntrophaceae bacterium CG2_30_58_14 cg2_3.0_scaffold_3279_c, whole genome shotgun sequence.
+gg--------GGUGCUCG--AUCGUUCGGGCUGAGAAAAaACCCUAAUUACCUGAUCUGGUUAAUGCCAGCGUAGGGAA----a
+>LKHV01000002.1/179290-179393/9-86 [subseq from] Coxiellaceae bacterium CC99 CC99x_contig000002, whole genome shotgun sequence.
+cca------GGGGUGCUUUUUAucACGUGauaaAAGGCUGAGAAAUACCCUUAAAACCUGCUCUGGUUAAUGCCUGCGGAGGGA-----
+>GL637644.1/79078-79166/16-72 [subseq from] Solobacterium moorei F0204 genomic scaffold Scfld15, whole genome shotgun sequence.
+u-------------------GCAUGCAUGCUGAGAAAAACCCUUAUCACCUGAUCUAGGUAAAGCUAGCGUAGGGA-----
+>BBWV01000001.1/2024465-2024370/11-80 [subseq from] Flavihumibacter petaseus NBRC 106054 DNA, contig: FPE01S01.
+ugg--------GGUGG-UUUCUUCG-GAAAUCUGAGAAcAUACCCAAAUCACCUGAUCUGGAUAAUGCCAGCGUAGGAA-----a
+>AFZB01000046.1/12691-12598/24-79 [subseq from] Endosymbiont of Tevnia jerichonana (vent Tica) TevJSymbt, whole genome shotgun sequence.
+uuuc-------------------------AGGCUGAGAGAGACCCUUACCACCUGAUCCGGUUAAUGCCGGCGUAGGGAAG---
+>CP004403.1/1112908-1113005/9-80 [subseq from] Endosymbiont of Acanthamoeba sp. UWC8 chromosome, complete genome.
+ccg------GGGGUGCUGUUAAUAAUGAUAGCUGAGAAAAACCCUUAUAACCUGAUCCGGAUAACGCCGGCGGAGGGA-----
+>MGWU01000074.1/8532-8432/27-86 [subseq from] Gallionellales bacterium RBG_16_56_9 RBG_16_scaffold_177252, whole genome shotgun sequence.
+cg-------------------GCGUUCCGGGUGAGAAAUACCCUCUGAACCUGAUCUGGAUAAUGCCAGCGCAGGGAAG---
+>FRCX01000015.1/22914-22811/26-89 [subseq from] Duganella sacchari strain Sac-22 genome assembly, contig: Ga0075198_115
+cau----------------UGUGCGGCGCGGGUGAGAAAUACCCUCCGAACCUGAUCUGGAUAAUGCCAGCGAAGGGAAG---
+>FQVM01000002.1/20754-20667/9-75 [subseq from] Clostridium fallax strain DSM 2631 genome assembly, contig: Ga0131101_102
+cuaggggu-------------------GCGU-AAUGCUGAGAAUUACCCUUAUAACCUGAUCUAGUUAAUACUAGCGUAGGGAAGUG-
+>LPLU01000077.1/14541-14658/52-103 [subseq from] Burkholderia ubonensis strain MSMB782WGS MSMB782WGS_52, whole genome shotgun sequence.
+g---------------------------GGUGAGAAAUACCCUUUGAACCUGAUCUGGAUAAUGCCAGCGCAGGGAAG---c
+>MGVD01000123.1/4006-4105/35-83 [subseq from] Elusimicrobia bacterium RIFOXYA2_FULL_40_6 rifoxya2_full_scaffold_4371, whole genome shotgun sequence.
+gc----------------------------CUGAGAGAUACCCAUAUAACCUGAUCUGGAUAAUGCCAGCGGAGGGA-----
+>JPXI01000030.1/122423-122526/28-89 [subseq from] Massilia consociata strain BSC265 scf7180000011476, whole genome shotgun sequence.
+aaa------------------UGCGACACGGGUGAGAAAUACCCUCCGAACCUGAUCUGGAUAAUGCCAGCGAAGGGAAG---
+>LVXG01000009.1/192935-192830/9-90 [subseq from] Niastella yeongjuensis strain 17621 contig17, whole genome shotgun sequence.
+cc-----CGGGGUGCUUUUCUGucacuggCAGAAUUGCUGAGAaAAUACCCGUAGAACCUGAUCAGGGUAAUGCCUGCGCAGGGAAG---
+>KV442123.1/25146-25272/58-114 [subseq from] Mortierella elongata AG-77 unplaced genomic scaffold K457scaffold_113, whole genome shotgun sequence.
+aua-------------------------UGGCUGAGAAAUACUCUUAACACCUGAUCAGGGUAAUGCCUGCGAAGGGAAGC--g
+>CP015971.1/262670-262765/8-81 [subseq from] Arachidicoccus sp. BS20, complete genome.
+c---CUCGGGGUGCU-UUCUUCG-GAAGGCUGAGAUuAUACCCGUAAAACCUGAACAGGGUAAUGCCUGCGAAGGGAAG---
+>KB372781.1/102530-102625/8-79 [subseq from] Wohlfahrtiimonas chitiniclastica SH04 genomic scaffold scaffold_00004, whole genome shotgun sequence.
+a---CUGGGGGUGCAUUU-GCUGAGAAGGCUGAGCCUAACCC-UUUUACCUGAUCUGGUUAAUGCCAGCGUAGGGAA----
+>LMHZ01000002.1/53279-53379/35-88 [subseq from] Noviherbaspirillum sp. Root189 contig_10, whole genome shotgun sequence.
+c--------------------------GGGUGAGAAAAACCCUCCGUACCUGAUCUGGAUAAUGCCAGCGUAGGGAAGC--g
+>AWUE01003278.1/442-555/38-99 [subseq from] Corchorus olitorius cultivar O-4 contig03284, whole genome shotgun sequence.
+au-------------------GCGUGACgcGGGUGAGAAAUACCCUCCGAACCUGAUCUGGAUAAUGCCAGCGAAGGGAAG---
+>GL622241.1/644958-644870/16-73 [subseq from] Enterococcus italicus DSM 15952 genomic scaffold SCAFFOLD1, whole genome shotgun sequence.
+u-------------------GCCUGAUGGCUGAGAAUUACCCAUAUUACCUGAUCUAGUUAGUACUAGCGUAGGGA-----g
+>CCSE01000001.1/1494783-1494873/9-78 [subseq from] Jeotgalicoccus sp. 13MG44_air genome assembly, contig: CONTIG000001
+cug------GGGGUGUCC------GUACGGACUGAGAUUGACCCUUAUCACCUGAUCUAGAUCAUACUAGCGUAGGGAAGUG-
+>LJDB01000060.1/58088-58178/10-76 [subseq from] Epulopiscium sp. SCG-B11WGA-EpuloA1 SCGB11WGA_54, whole genome shotgun sequence.
+ugg-------GGGUGCCG------AUGUAGGCUGAGAAUUACCCUUAUUAGUUGAACUGGAUAAUGCCAGCGUAACGAA----g
+>CP019239.1/2892640-2892540/13-83 [subseq from] Rhodoferax saidenbachensis strain DSM 22694, complete genome.
+gggugucuguucuuuug---------------------GAACGGACUGAGAAAUACCCCACUCACCUGAUCUGGGUCAUGCCAGCGUAGG-------aa
+>CP003745.1/1925606-1925702/12-80 [subseq from] Bibersteinia trehalosi USDA-ARS-USMARC-192, complete genome.
+g-------GGGUGCUUUGUAAU-GUAAGGCUGAGAAAUACCCAUAGAACCUGAUCUGACUAAUAUCAGCGUAGGGA-----u
+>CP002006.1/3005963-3006058/12-79 [subseq from] Prevotella ruminicola 23, complete genome.
+g-------GGGUGCC--UACGAGUGUAGGCUGAGAUGAUACCCUCUAACCUGAUCUGGAUUAUGCCAGCGUAGGGA-----u
+>MDTQ01000001.1/1421031-1420938/11-76 [subseq from] Terasakiispira papahanaumokuakeensis strain PH27A scaffold00001, whole genome shotgun sequence.
+c------GGGGUGCCGUG---UAUG-CGGCUGAGAUAAACCCGUAACACCUGAUCUGGGUUGUGCCAGCGUAGGGA-----
+>CP019239.1/1855522-1855418/30-90 [subseq from] Rhodoferax saidenbachensis strain DSM 22694, complete genome.
+uauucca-----------------------GGUGGCUGAGAAAUACUCUUCGAACCUGAUCUGGGUCAUGCCAGCGUAGGGAAG---
+>LNYK01000033.1/272128-272032/9-79 [subseq from] Legionella londiniensis strain ATCC 49505 Llon_ctg033, whole genome shotgun sequence.
+cca------GGGGUGCUUUGUUUUGC-AAAGCUGAGAAAAACCCUUAUAACCUGCACUGGAUAAUGCCUGCGGAGGGA-----
+>LMIC01000051.1/66575-66477/24-85 [subseq from] Duganella sp. Root198D2 contig_9, whole genome shotgun sequence.
+cau-------------------GUGCGCGGGGUGAGAAAUACCCUCCGAACCUGAUCUGGAUAAUGCCAGCGAAGGAAAG---c
+>AZSO01002049.1/519-411/43-91 [subseq from] Hydrogenophaga sp. T4 contig002049, whole genome shotgun sequence.
+--------------------------GGCUGAGAAAUACCCCUCUCACCUGAUCUGGGUUGUGCCAGCGUAGGGA-----
+>CP011568.2/2469499-2469402/24-81 [subseq from] Pandoraea thiooxydans strain DSM 25325, complete genome.
+ccac---------------------GUUGCGGGUGAGACAUACCCUUAGAACCUGAUCUGGAUAAUGCCAGCGCAGGGA-----
+>MQVI01000012.1/43054-42959/12-79 [subseq from] Pasteurellaceae bacterium 15-036681 NODE_12_length_58219_cov_72.2034, whole genome shotgun sequence.
+ggggug--------------CUUGAACUUUCAGGCUGAGAAAUACCCAUAGAACCUGAUCUGAUUAAUAUCAGCGUAGGGA-----u
+>MGVC01000001.1/31696-31796/28-87 [subseq from] Elusimicrobia bacterium RIFOXYA2_FULL_39_19 rifoxya2_full_scaffold_106, whole genome shotgun sequence.
+cc---------------------GUGUGAUCUGAGAGAUACCCGCAGAACCUGAUCUGGCUAAUACCAGCGUAGGGAGGU--g
+>CP011390.1/1585599-1585691/8-78 [subseq from] Flavisolibacter tropicus strain LCS9, complete genome.
+uc----CCGGGGUGCCCAUC-----AAAGGCUGAGAUcAUACCCGUAGAACCUGAUCAGGGUAAUGCCUGCGCAGGGAAG---
+>AMWD01000002.1/2111860-2111958/27-86 [subseq from] Janthinobacterium sp. HH01 Jab_2c, whole genome shotgun sequence.
+ugcug------------------------CCGGGUGAGAGAUACCCUUCGUACCUGAUCUGGAUAAUGCCAGCGAAGGAAAGC--g
+>MHBD01000076.1/1878-1783/13-78 [subseq from] Legionellales bacterium RIFCSPHIGHO2_12_FULL_42_9 rifcsphigho2_12_scaffold_24065, whole genome shotgun sequence.
+gggug--------------CUUUGGCAGCAAAGCUGAGAAAAACCCUUAUAACCUGCUCUGGGUAAUGCCUGCGAAGGGA-----
+>JMPR01000020.1/72249-72158/12-76 [subseq from] Tatumella ptyseos ATCC 33301 GTPT.assembly.020, whole genome shotgun sequence.
+ggggugca--------------------UGUGAAUGCUGAGAGAUACCCGUCGAACCUGAUCCGGUUAAUACCGGCGUAGGGA-----uu
+>MCFF01000032.1/115623-115481/77-129 [subseq from] Lobosporangium transversale strain NRRL 3116 BCR41scaffold_32, whole genome shotgun sequence.
+g--------------------------GGCUGAGAAAUACCCUCACUACCUGAUCAGGAUAAUGCCUGCGAAGGGAAG---c
+>AASG02045953.1/753-852/27-87 [subseq from] Ricinus communis cultivar Hale ctg_1100012325257, whole genome shotgun sequence.
+cgcuucc-------------------------CGGGUGAGAGAUACCCUUCGUACCUGAUCUGGAUAAUGCCAGCGAAGGAAAGC--g
+>JGVW01000131.1/23986-24102/48-102 [subseq from] Burkholderia sp. lig30 ctg91, whole genome shotgun sequence.
+ugc--------------------------GGGUGAGAAAUACCCUUUGAACCUGAUCUGGGUAAUGCCAGCGCAGGGAAG---c
+>CP002347.1/791619-791524/12-80 [subseq from] Calditerrivibrio nitroreducens DSM 19672, complete genome.
+------GGGGUGCUCUUUUAU-AAAGGGCUGAGAAAUACCCCUCGAACCUGAUCCGGGUAAUGCCGGCGAAGGGAA----
+>LMNW01000031.1/708515-708407/35-94 [subseq from] Duganella sp. Leaf126 contig_4, whole genome shotgun sequence.
+cu-------------------GCGGCGCGGGUGAGAAAUACCCUCCGAACCUGAUCUGGAUAAUGCCAGCGAAGGGAAG---
+>CP017668.1/2584825-2584924/9-86 [subseq from] Jeongeupia sp. USM3, complete genome.
+c----UCGGGGCGCCG-CCUGCAUugcaGCCGGCUGAGACGAACCCGUACCACCUGAUCCGGAUCAUGCCGGCGUAGGGAAGU--
+>AZFT01000009.1/66195-66284/12-73 [subseq from] Lactobacillus apodemi DSM 16634 = JCM 16172 strain DSM 16634 NODE_15, whole genome shotgun sequence.
+gg--------GGUGCCAUU--------UGGCUGAGAAAUACCCAUAuUCACCUGAUCUGGUUAAUACCAGCGGAGGGA-----
+>LKTP01000001.1/122067-122154/11-71 [subseq from] Salegentibacter mishustinae strain KCTC 12263 contig1, whole genome shotgun sequence.
+cggggug----------------------CUUAGGCUGAGAAAUACCCGCAAaAACCUGAUCUGGAUAAUCCCAGCGUAGG-------aa
+>LMDJ01000004.1/111060-111162/14-88 [subseq from] Massilia sp. Root351 contig_12, whole genome shotgun sequence.
+gguccugcgucgcgaaagc---------------------GGCGCGGGUGAGAAAUACCCUCCGAACCUGAUCUGGAUAAUGCCAGCGAAGGGAAG---
+>MTJN01000002.1/3227569-3227472/12-84 [subseq from] Rhodoferax fermentans strain JCM 7819 contig02, whole genome shotgun sequence.
+gaggugccacccguuuu----------------------CGGUGGCUGAGAAAUACUCUUAGAACCUGAUCUGGGUCGUGCCAGCGUAGGAAAG---c
+>KI518119.1/9500-9588/7-75 [subseq from] Cetobacterium somerae ATCC BAA-474 genomic scaffold Scaffold202, whole genome shotgun sequence.
+u--ACUAGGGGUGCCCUUU--------GGCUGAGACUUACUCUUAGAACCUGAUCUAGUUAAUACUAGCGUAGGGAAGU--
+>MKTA01000024.1/100315-100224/12-76 [subseq from] Bacteroidetes bacterium 41-46 SCNpilot_bf_inoc_scaffold_46, whole genome shotgun sequence.
+------GGGGUGCCCUUUCG------GGCUGAGAUuACACCCUUUUCACCUGAUCCGGAUAAUGCCGGCGUAGGGAA----
+>LWBP01000215.1/51646-51540/11-92 [subseq from] Niastella populi strain 208 contig54, whole genome shotgun sequence.
+c------GGGGUGCUCCcccgccgugUUGGCGGGGAUGCUGAGAaAAUACCCGUAGAACCUGAUCAGGGUAAUGCCUGCGCAGGGAAG---
+>CP004006.1/1354110-1354209/10-82 [subseq from] Legionella oakridgensis ATCC 33761 = DSM 21215, complete genome.
+cag-------GGGUGCUCUGAaaUUAAUCAGGGCUGAGAAACACCCUUAUAACCUGCACUGGAUAAUGCCUGCGGAGGGA-----
+>JPQD01000040.1/17625-17522/32-89 [subseq from] Massilia sp. JS1662 GAT40, whole genome shotgun sequence.
+acggcg-------------------------UGGGUGAGAAAUACCCUCCGAACCUGAUCUGGAUAAUGCCAGCGAAGGGAAG---
+>FXAH01000004.1/263274-263149/60-111 [subseq from] Paraburkholderia caryophylli strain Ballard 720 genome assembly, contig: Ga0139045_104
+g---------------------------GGUGAGAAACACCCUUUGAACCUGAUCUGGAUAAUGCCAGCGCAGGGAAG---c
+>AFGF01000050.1/50059-49956/12-90 [subseq from] Acetonema longum DSM 6540 Contig00050, whole genome shotgun sequence.
+ggggugcc-----------------------GCAGGCUGAGAAAUgaaagcaauuucauugACCCUCAUCACCUGAUCUGGAUAAUGCCAGUGUAGGGAAG---c
+>CCSB01000002.1/900787-900686/13-84 [subseq from] Legionella massiliensis genome assembly, contig: CONTIG000002
+gggugcuuug-------------CUUUUUGUAGCAAGGCUGAGAAAAACCCUUACAACCUGCUCUGGUUAAUACCUGCGGAGGGA-----
+>MKKD01000021.1/181056-180957/8-86 [subseq from] Rhodococcus sp. CUA-806 NODE_14_length_194583_cov_4.83013_ID_27, whole genome shotgun sequence.
+a---CACGGGGUGCCGCUUUUCAUGAAgcGGCUGAGAAcACACCCGUCGAACCUGAUCUGGUCAACACCAGCGUAGGGAUG---u
+>LMIC01000008.1/57493-57605/47-98 [subseq from] Duganella sp. Root198D2 contig_16, whole genome shotgun sequence.
+c--------------------------GGGUGAGAAAUACCCUCCGAACCUGAUCUGGAUAAUGCCAGCGAAGGGAAG---
+>CP001962.1/374272-374366/9-79 [subseq from] Thermus scotoductus SA-01, complete genome.
+ccg------GGGGUGCCCUCUUAUG---GGGCUGAGAGAUACCCUUGGAACCUGAUCCGGGUAAUGCCGGCGUAGGGAAG---
+>LMDJ01000033.1/149658-149559/33-87 [subseq from] Massilia sp. Root351 contig_6, whole genome shotgun sequence.
+cc--------------------------GGGUGAGAGAUACCCUUCGUACCUGAUCUGGAUAAUGCCAGCGAAGGAAAGC--g
+>CP017258.1/990436-990527/11-75 [subseq from] Campylobacter sp. RM18021, complete genome.
+ug-------GGGUGCUUUU-------AUGGCUGAGAUcAUACCCGUAUAACCUGAUUUGGAUAAUGCCAACGUAGGAA-----a
+>MVDC01000203.1/6595-6711/12-98 [subseq from] Desulfobacteraceae bacterium 4484_190.3 ex4484_190.3_scaffold_35754, whole genome shotgun sequence.
+g-------GGGUGCCCCUAUGGGUuuguuacGAuaaacucugAGGCUGAGAAaAUACCCUUUGAACCUGAUCUGGGUAAUGCCAGCGUAGGGA-----g
+>MKSD01000001.1/835124-835222/30-81 [subseq from] Alphaproteobacteria bacterium 40-19 SCNpilot_bf_inoc_scaffold_3, whole genome shotgun sequence.
+gu-------------------------UGGCUGAGAAAUACCCUUAAAACCUGCUCUGGUUAAUGCCUGCGAAGGGA-----
+>LNYB01000080.1/361684-361776/10-77 [subseq from] Legionella feeleii strain WO-44C Lfee_ctg080, whole genome shotgun sequence.
+a-----CGGGGUGCCGGUUUA----CCGGCUGAGAAAUACUCGUUGAACUUGAACUGGAUAAUACCAGCGUAAGGA-----u
+>CP011774.1/1248723-1248829/30-89 [subseq from] Limnohabitans sp. 63ED37-2, complete genome.
+ucugcggca------------------------GGGGCUGAGACAUACCCCUCUCACCUGAUCUGGGUUGUGCCAGCGUAGGGA-----
+>LFZU01000001.1/1045387-1045491/23-89 [subseq from] Bacillus sp. FJAT-27231 Scaffold1, whole genome shotgun sequence.
+aaaagcugagagagguagauugccu-----------------------------------UAACCCUUAUCACCUGAACUGGAUAAUGCCAGCGUAGGGAAG---
+>MENW01000013.1/332148-332058/12-75 [subseq from] Bacteroidetes bacterium GWE2_39_28 gwe2_scaffold_48, whole genome shotgun sequence.
+------GGGGUGCCCUUUG-------GGCUGAGAuUAUACCCUUUUCACCUGAUCAGGAUAAUGCCUGCGAAGGGAA----
+>AGFR01000007.1/348051-347951/10-84 [subseq from] Commensalibacter intestini A911 74_7, whole genome shotgun sequence.
+cc------GGGGUGUCUCUUUUUucaAAAGAGGCUGAGAAcAUACUCGUAGAACCUGAUCUGGAUCAUGCCAGCGAAGGGA-----
+>LVYD01000086.1/36331-36227/10-90 [subseq from] Niastella vici strain DJ57 contig55, whole genome shotgun sequence.
+cc------GGGGUGCuuucccgCCAUUGGCGGGCCGGCUGAGAuAAUACCCGUAGAACCUGAUCAGGGUAAUGCCUGCGCAGGGAAG---
+>FR687360.1/369589-369695/32-92 [subseq from] Burkholderia rhizoxinica HKI 454 plasmid pBRH01, complete sequence
+ucgucaagc--------------------------GGGUGAGAAACACCCUUUGAACCUGAUCUGGGUAAUGCCAGCGCAGGGAAG---c
+>AZGB01000016.1/362888-362801/16-71 [subseq from] Lactobacillus ghanensis DSM 18630 NODE_35, whole genome shotgun sequence.
+u-------------------GCCUGCGGGCUGAGAAAUACCCAUG-AACCUGAUCUGGAUAAUGCCAGCGGAGGGA-----
+>LUUI01000095.1/101487-101377/38-96 [subseq from] Methylomonas lenta strain R-45370 contig_33_(1..202146), whole genome shotgun sequence.
+gc--------------------CGUGAAAGCUGAGAAAAACCCUUUGAACCUGACCCGGUUAAUGCCGGCGUAGGAAA----g
+>MHAE01000010.1/32071-31973/11-84 [subseq from] Ignavibacteria bacterium RBG_13_36_8 RBG_13_scaffold_1191, whole genome shotgun sequence.
+a------GGGGUGCUCUCUUucAUUUGAGUGCUGAGAUCAAACCCUUGAACCUGAUCUGGGUAAUGCCAGCGUAGGGAA----a
+>FAOP01000012.1/18095-17996/15-84 [subseq from] Bacterium JGI-4 isolate JGI-4 genome assembly, contig: JGI4_Kryptonium_JGI_4_Dewar_Creek_draft_1000249.12
+gugcuucc--------------CUUUU--UGGGAGGCUGAGAGuAUACCCCUUGAACCUGAUCUGGGUAAUGCCAGCGUAGGGAA----a
+>MKSX01000016.1/100677-100778/8-84 [subseq from] Alphaproteobacteria bacterium 33-17 scnpilot_expt_750_p_scaffold_297, whole genome shotgun sequence.
+acca------GGGGUGCCU-GAUGCauuuGCUAAGGCUGAGAAAUACCCUUUuUAACCUGCACUGGAUAAUGCCUGCGGAGGGA-----
+>DS544905.1/1431542-1431446/11-79 [subseq from] Physcomitrella patens subsp. patens PHYPAscaffold_16 genomic scaffold, whole genome shotgun sequence.
+gg-------GGGUG-CUUGCUUCGAGCAGGCUGAGAGAGUCCCUUAAAACCUGAUCAGGAUAAUACCUGCGAAGGGA-----
+>CP010951.1/52283-52180/32-90 [subseq from] Ramlibacter tataouinensis strain 5-10, complete genome.
+gcggu------------------------GGGGCUGAGAAACACUCUUGGUACCUGAUCUGGGUCAUGCCAGCGUAGGGAAG---c
+>MKVI01000271.1/9675-9580/27-78 [subseq from] Legionella sp. 40-6 scnpilot_expt_750_p_scaffold_2763, whole genome shotgun sequence.
+guua---------------------------GCUGAGACAUACCCUUAGUACCUGCUCUGGAUAAUGCCAGCGAAGG-------aa
+>MGML01000096.1/7606-7506/21-88 [subseq from] Chloroflexi bacterium RBG_13_46_14 RBG_13_scaffold_29884, whole genome shotgun sequence.
+ga-------------------------AGGCUGAGAguccugaacaggACGACCCUUAUCACCUGAUCUCGAUAAUGCGAGCGUAGGGAAGUG-
+>CP003156.1/3668489-3668381/38-92 [subseq from] Owenweeksia hongkongensis DSM 17368, complete genome.
+ga---------------------GCGAAGACUGAGAAaAUACCCGCA--ACCUGAUCUGGAUAAUGCCAGCGUAGGGA-----
+>MIAV01000054.1/38576-38674/10-83 [subseq from] Spirochaetes bacterium GWC2_52_13 gwc2_scaffold_506, whole genome shotgun sequence.
+c----UUGGGGUGGCCGUCGUCGAGCGGCCUGAGAUuACACCCGUAGAACCUGAUCUGGGUAAUGCCAGCGAAGGGA-----g
+>FP236843.1/844820-844714/23-92 [subseq from] Erwinia billingiae strain Eb661 complete chromosome.
+gcgguguuucac--------------------UGCCAGCGCUGAGACAAACCCGUCGAACCUGAUCCGGAUAAUGCCGGCGUAGGGA-----uuu
+>LMOJ01000012.1/462334-462231/39-89 [subseq from] Massilia sp. Leaf139 contig_2, whole genome shotgun sequence.
+g---------------------------GGUGAGAAAUACCCUCCGAACCUGAUCUGGAUAAUGCCAGCGAAGGGAAG---
+>DS996844.1/5906-5820/19-70 [subseq from] Eubacterium biforme DSM 3989 Scfld8 genomic scaffold, whole genome shotgun sequence.
+aau--------------------------UGCUGAGAAAAACCCUUAUUACCUGAUCUGGUUAAUUCUAGCGUAGGGA-----
+>KI273145.1/4590239-4590140/7-86 [subseq from] Clostridium intestinale URNW genomic scaffold scaffold1, whole genome shotgun sequence.
+ug---CUAGGGGUGCCUUAAUGGcugaGAGAUGUCUUACA-UUAACCCUUUUACCUGAUCUGGCUAAUACCAGCGUAGGGAAG---c
+>AYYX01000023.1/11915-11828/22-71 [subseq from] Lactobacillus vini DSM 20605 Scaffold23, whole genome shotgun sequence.
+gu--------------------------GGCUGAGAAAUACCCAUAA-ACCUGAUCUGGAUAAUGCCAGCGGAGGGA-----
+>LFVU01000026.1/307000-307097/9-83 [subseq from] Clostridium cylindrosporum DSM 605 CLCY_3c, whole genome shotgun sequence.
+c----UAGGGGUGCCAAUAUGGCUGAgAGGUUUAAUACUAACCCUUGUACCUGAUCUGGAUAAUGCCAGCGUAGGAAA----g
+>LNYO01000019.1/3643-3547/10-79 [subseq from] Legionella nautarum strain ATCC 49506 Lnau_ctg019, whole genome shotgun sequence.
+ca------GGGGUGCU-UUGUUCCUCAAAGCUGAGAAACACCCUUAGAACCUGCACUGGGUAAUGCCUGCGGAGGGA-----
+>CP020814.1/1015418-1015524/8-93 [subseq from] Bacillus krulwichiae strain AM31D, complete genome.
+a---CUAGGGGUGCCCAUUUAAAUG--GGCUGAGAAAaaggagagccuuuUACC-CUUGUACCUGAUCUGGAUAACGCCAGCGUAGGGAAGU--
+>ADEF01000005.1/93391-93292/13-82 [subseq from] Prevotella timonensis CRIS 5C-B1 contig00090, whole genome shotgun sequence.
+gggugcu------------CACUUUUAUUCGUGGGCUGAGAACAAACCUUCUGACCUGAUCUGGAUAAUACCAGCGUAGG-------aa
+>MHAG01000073.1/4757-4857/22-86 [subseq from] Ignavibacteria bacterium RBG_16_35_7 RBG_16_scaffold_162373, whole genome shotgun sequence.
+cccaaucu--------------------CGGGAUAGCUGAGAAAAAACCCUUAAACCUGAUCUGGAUAAUACUAGCGUAGGGAA----a
+>FAOS01000001.1/1889229-1889327/23-86 [subseq from] Janthinobacterium sp. CG23_2 isolate Janthinobacterium sp. CG23_25 genome assembly, contig: Contig_scf7180000000010_quiver
+aguuacuuuc-------------------------CGGGUGAGAGAUACCCUCCGUACCUGAUCUGGAUAAUGCCAGCGAAGGAAAGC--g
+>LBCO01000024.1/149071-148974/33-85 [subseq from] Janthinobacterium sp. KBS0711 VM94_contig000025, whole genome shotgun sequence.
+g---------------------------GGUGAGAGAUACCCUUCGUACCUGAUCUGGAUAAUGCCAGCGAAGGAAAGC--g
+>JMFY01000001.1/35638-35535/11-89 [subseq from] Clostridium sp. HMP27 Clostridium-HMP27_contig_1, whole genome shotgun sequence.
+agaggugccgaacuc--------------------------GGCUGAGAAAUgauuuagucauuaACUCUUAUCACCUGAUCUGGAUAAUACCAGCGUAGGGAAG---
+>KQ758617.1/224437-224541/8-93 [subseq from] Fictibacillus enclensis strain NIO-1003 genomic scaffold Scaffold1, whole genome shotgun sequence.
+a---CUGGGGGAGCCUUCCUGGCUGA-GACUGAacgcauuguUCUAAACCCUUUGAACCUGAUCUGGAUGAUGCCAGCGUAGGGAAGUGC
+>BAUV01000002.1/170209-170315/8-93 [subseq from] Bacillus akibai JCM 9157 DNA, contig:contig_2.
+a---CUAGGGGUGCCUAUGUGAGU--GGGCUGAGAAAAAGGUGUUCCuuuuacccucguACCUGAUCUGGAUCACGCCAGCGUAGGGAAGU--
+>CM000733.1/2114451-2114350/11-89 [subseq from] Bacillus cereus Rock3-44 chromosome, whole genome shotgun sequence.
+aggggagccucuu----------------------UAUAGGCUGAGAucaaAauuugAGACCCUUAGAACCUGAUCUGGAUGAUGCCAGCGUAGGGAAGUG-
+>DF820469.1/414419-414510/12-74 [subseq from] Bacterium UASB270 DNA, scaffold: UASB270_scaffold_7.
+g-------GGGUGCCCU-------CAAGGCUGAGAAACaaACCCUUUGAACCUGAUCUGGGUAAUGCCAGCGUAGG-------a
+>AE016827.1/1517793-1517700/11-77 [subseq from] Mannheimia succiniciproducens MBEL55E, complete genome.
+c------GGGGUGC--UUCUUC--GGAGGCUGAGAGAAACUCGUAGAACCUGAUCUGAUUAAUUACAGCGUAGGGA-----u
+>MGXL01000111.1/2606-2700/10-80 [subseq from] Gammaproteobacteria bacterium RBG_16_57_12 RBG_16_scaffold_61114, whole genome shotgun sequence.
+ua------GGGGUGCCCGUAAUG--GCGGGCUGAGAAAUACCCUUUGAACCUGAUCCGGUUAACCCCGGCGUAGGGAAG---
+>CP009531.1/155724-155634/10-75 [subseq from] Lactobacillus sp. wkB8, complete genome.
+u-----CGGGGUGCC-------GUAUAGGCUGAGAAuAUACCCGUUGAACCUGCUAUGGAUAAUGCCAGCGAAGGGAA----
+>LNYB01000082.1/6844-6950/12-89 [subseq from] Legionella feeleii strain WO-44C Lfee_ctg082, whole genome shotgun sequence.
+gg--------GGUGCUUUGCAGCGauucgUGuugcAAGGCUGAGAAAAACCCUUAAAACCUGCUCUGGUUAAUACCUGCGGAGGGA-----
+>JXLP01000001.1/178153-178257/24-89 [subseq from] Bacillus badius strain MTCC 1458 Contig1, whole genome shotgun sequence.
+aaagcugagagaggcagauggcc----------------------------------UUAACCCUUAUUACCUGACCUGGAUAAUGCCAGCGUAGGGAAG---
+>FWXF01000020.1/38707-38808/44-89 [subseq from] Desulfacinum hydrothermale DSM 13146 genome assembly, contig: EJ40DRAFT_scaffold00020.20
+gaca-------------------------------------ACCCUUAUCACCUGAUCUGGGUAAUACCAGCGUAGGGAAGUG-
+>LNZM01000024.1/71167-71077/11-76 [subseq from] Epulopiscium sp. AS2M-Bin001 AS2M_MBin01_12, whole genome shotgun sequence.
+aggggugcuuuaa------------------------UAAGCUGAGAAAUACCCUUAAUACUUGAACUGGAUAAUACCAGCGUAAGGAAG---
+>AUPA01000191.1/4330-4229/8-89 [subseq from] Clostridium sp. BL8 Contig42, whole genome shotgun sequence.
+gc----UAGGGGUGCCUUUU-GGCUGAGAGAUGAUUAAauucauUAACCCUUUUACCUGAUCUGGCUAAUACCAGCGUAGGGAAGC--g
+>CP002433.1/752739-752642/11-83 [subseq from] Pantoea sp. At-9b, complete genome.
+-----CGGGGUGCCCUGCGUUACAGGGGCUGAGAGAGACCCGUCGAACCUGAUCCGGUUAAUACCGGCGUAGGGA-----uuu
+>AJSX01000022.1/44981-44888/11-77 [subseq from] Pasteurella bettyae CCUG 2042 contig00010, whole genome shotgun sequence.
+cg-------GGGUGCUUC----AUUUGAGGCUGAGAGAAACCCGUAGAACCUGAUCUGAUUAAUCACAGCGUAGGGA-----u
+>JRAR01000047.1/472-565/10-78 [subseq from] Porphyromonas sp. COT-290_OH860 contig_47, whole genome shotgun sequence.
+ug------GGGGUGCCCCACUG--UGGUGGCUGAGAuAAUACCCGUA--ACCUGAUCCAGAUAAUGCUGGCGUAGGGAA----
+>FQYY01000005.1/2684-2778/26-79 [subseq from] Mesonia phycicola strain DSM 21425 genome assembly, contig: Ga0070602_105
+uuuu--------------------------GGCUGAGAAAAACCCUUAGAACCUGAUCUGGUUAAUACCAGCGAAGGGAA----
+>CP003043.1/2042012-2042101/10-73 [subseq from] Lactobacillus buchneri CD034, complete genome.
+cu------GGGGUGCCUUAU-------UGGCUGAGAAAAACCCAUCGAACCUGAUCUGGACAAUUCCAGCGAAGGGA-----
+>BA000016.3/1623314-1623418/8-92 [subseq from] Clostridium perfringens str. 13 DNA, complete genome.
+gc----UAGGGGUGCCUUUAGGC-UGAGAGAUGAUUAUUuuaucauuaACCCUCAACACCUGAUCUGGAAAAUUCCAGCGUAGGGAAGC--g
+>LVWA01000005.1/19966-20070/7-88 [subseq from] Pontibacter sp. S10-8 contig_13, whole genome shotgun sequence.
+u--ACACGGGGUGCUUGACUACGGAAacguugucAGGCUGAGAuGAUACCCGCA--ACCUGAUCUGGAUAAUGCCAGCGUAGGAA-----a
+>JPKR02000003.1/1671602-1671693/11-76 [subseq from] Tatumella morbirosei strain LMG 23360 Contig3, whole genome shotgun sequence.
+c------GGGGUGCCCACUGG------UGCUGAGAUAUACCCGUAGAACCUGAUCCGGUUAACACCGGCGUAGGGA-----uu
+>CP014360.1/183657-183552/30-91 [subseq from] Methylomonas sp. DH-1, complete genome.
+ucc------------------AGUGCGGAAGCUGAGAAAAACCCUUCGAACCUGAUCCGGUUAAUGCCGGCGUAGGAAA----g
+>MGPB01000037.1/43157-43064/12-76 [subseq from] Curvibacter sp. GWA2_63_95 gwa2_scaffold_939, whole genome shotgun sequence.
+g-------GGGUGUCCGUCA----CAGGACUGAGAAAUACCCCAUGUACCUGAUCUGGGUUAUGCCAGCGUAGG-------aa
+>AP012159.1/1983852-1983948/11-81 [subseq from] Komagataeibacter medellinensis NBRC 3288 DNA, complete genome.
+c------GGGGUGC-CUACACCGUGUGGGCUGAGAUcAUACCCGUUGAACCUGAUCUGGGUCAUGCCAGCGAAGGGA-----g
+>GL635750.1/910358-910459/10-90 [subseq from] Bacillus sp. 2_A_57_CT2 genomic scaffold supercont1.1, whole genome shotgun sequence.
+uaggggagc---------------------UUUUAGGCUGAGAAGAacaauccguucugACUCUUAUCACCCGAUCUGGAUAAUACCAGCGUGGGGAAGUGC
+>MKTE01000041.1/70475-70379/12-80 [subseq from] Bacteroidia bacterium 44-10 SCNpilot_bf_inoc_scaffold_253, whole genome shotgun sequence.
+g-------GGGUGCCCAAGUAA--ACGGGCUGAGAUcAUACCCAAAUCACCUGAUCCGGAUAAUGCCGGCGUAGGGAA----
+>LNYC01000063.1/33341-33436/31-78 [subseq from] Legionella geestiana strain ATCC 49504 Lgee_ctg063, whole genome shotgun sequence.
+a----------------------------CUGAGAAAAACCCUUAUAACCUGCUCUGGAUAAUGCCUGCGGAGGGA-----
+>MNUS01000100.1/4097-4197/30-87 [subseq from] Elusimicrobia bacterium CG1_02_63_36 cg1_0.2_scaffold_10019_c, whole genome shotgun sequence.
+cgcuuc--------------------------GGGUGAGAAAAACCCUCUGAACCUGACCUGGAUAAUACCAGCGUAGGGAAG---c
+>CP014230.1/1534183-1534093/24-79 [subseq from] Desulfomicrobium orale DSM 12838, complete genome.
+ggcc-----------------------------UGAGAuGAUACCCGUUGAACCUGAUCUGGAUCAUGCCAGCGAAGGGAAGUGC
+>CP003178.1/392158-392053/8-90 [subseq from] Niastella koreensis GR20-10, complete genome.
+uc----CCGGGGUGCUCUCCCGCuaauggcAGGAUUGCUGAGAAcAGACCCGUAGAACCUGAUCAGGGUAAUGCCUGCGCAGGGAAG---
+>AE002098.2/2161713-2161614/32-83 [subseq from] Neisseria meningitidis MC58, complete genome.
+ggc--------------------------GGCUGAGAAAUACCCUUUACACCCGAUCGGGAUAAUACCUGCGUGGGGA-----
+>MHAG01000023.1/1604-1507/12-82 [subseq from] Ignavibacteria bacterium RBG_16_35_7 RBG_16_scaffold_11467, whole genome shotgun sequence.
+gg--------GGUGCAUUCCGaAAGUGGAAGCUGAGAAAAAACCCUUAAACCUGAUCUGGAUAAUACUAGCGUAGGGAA----
+>AFHG01000053.1/95272-95171/28-87 [subseq from] Methyloversatilis universalis FAM5 contig00071, whole genome shotgun sequence.
+g------------------UGCGCGCCGGCUGAGACACACCCUCAACACCUGAUCCGGAUCAUGCCGGCGUAGGGAA----a
+>CM001773.1/1145974-1145878/11-80 [subseq from] Providencia sneebia DSM 19967 chromosome, whole genome shotgun sequence.
+-----CGGGGUGCCUUUAUU--UUUAGGCUGAGAAUUAaCCCGUAGAACCUGAUCCGGGCAAUACCGGCGUAGGGA-----u
+>JXIQ01000012.1/19093-18986/9-95 [subseq from] Bacillus subterraneus strain MITOT1 contig_12, whole genome shotgun sequence.
+cu-----AGGGGAGCCUU----UGUGAAGGCUGAGAuuagagugaaacuuuAAGACCCUUUGAACCUGAUCUGGAUGAUACCAGCGUAGGGAAGUG-
+>DS544983.1/727073-726977/11-79 [subseq from] Physcomitrella patens subsp. patens PHYPAscaffold_94 genomic scaffold, whole genome shotgun sequence.
+gg-------GGGUGC-UUGCUUUGAGCAGGCUGAGAGAGUCCCUUAAAACCUGAUCAGGAUAAUACCUGCGAAGGGA-----
+>BAMD01000004.1/26956-26863/8-80 [subseq from] Saccharicrinis fermentans DSM 9555 = JCM 21142 DNA, contig: JCM21142.contig00004.
+a---CUAGGGGUGCCUAACU---UCAAGGCUGAGAUUAUACCCUUUAACCUGAACAGGAUAAUGCCUGCGUAGGAAAG---u
+>CBXI010000004.1/14042-14137/9-81 [subseq from] Clostridium tyrobutyricum DIVETGP, WGS project CBXI01000000 data, contig: NODE_21
+cua------GGGGUGCUUU-------UAAAGCUGAGAAAUAUACAUuaacccUUUACCUGAUCUGGAUAAUACCAGCGUAGGGAAG---
+>GG668534.1/863704-863610/13-80 [subseq from] Oribacterium sinus F0268 genomic scaffold SCAFFOLD2, whole genome shotgun sequence.
+gggcgcuguaugc----------------------UGAGAGGUGAAAACCAACCCUUUAACCUGACCUGGAUAAUGCCAGCGUAGGGAAG---
+>JWIZ01000034.1/9263-9168/18-79 [subseq from] [Actinobacillus] muris strain Ackerman80-443D cont34, whole genome shotgun sequence.
+cgugauauauc-------------------------ACGCUGAGAAAUACCCAUAGAACCUGAUCUGACUAAUAUCAGCGUAGGGA-----u
+>LZYV01000029.1/9673-9572/7-87 [subseq from] Clostridium roseum strain DSM 7320 CROST_contig000029, whole genome shotgun sequence.
+ug---CUAGGGGUGCCCUUG--------GGCUGAGAAACAAUUAUAccauguuaacccuUAACCUGAUCUGGAUAAUACCAGCGUAGGGAAG---
+>CP002281.1/1282604-1282700/9-82 [subseq from] Ilyobacter polytropus DSM 2926, complete genome.
+cu-----AGGGGAGCCUUUUGGCUGAGAGG---AGAAUUccgACCCUUAGAACCUGAUCUGGAUAAUACCAGCGUAGGGAAG---
+>MDTQ01000001.1/2019418-2019318/9-85 [subseq from] Terasakiispira papahanaumokuakeensis strain PH27A scaffold00001, whole genome shotgun sequence.
+ca-----CGGGGUGCCUGUUUauaGGUUAUAGGCUGAGAAAaAACCCGCAAUACCUGAUCCGGGUGAUGCCGGCGUAGGGA-----u
+>CP002039.1/462555-462665/44-96 [subseq from] Herbaspirillum seropedicae SmR1, complete genome.
+gcc--------------------------GGGUGAGAAAUACCCUU-GAACCUGAUCUGGAUAAUGCCAGCGAAGGGAAG---
+>LDZF01000011.1/27662-27535/53-113 [subseq from] Pluralibacter gergoviae strain JS81F13 contig_11, whole genome shotgun sequence.
+gc-------------------GCGUACAAGCUGAGAGAUACCCGUCGAACCUGAUCCGGAUAACGCCGGCGAAGGGA-----uuu
+>CP007452.1/2126975-2127082/25-94 [subseq from] Peptoclostridium acidaminophilum DSM 3953 chromosome, complete genome.
+gaccggcugagauaaagauguauuucuu------------------------------------UAACCCUUUAACCUGAUCUGGAUAAUGCCAGCGUAGGGAAGU--
+>CP001629.1/1013664-1013571/18-78 [subseq from] Desulfomicrobium baculatum DSM 4028, complete genome.
+g--------------------CGAGGAGCCUGAGAuGAUACCCGUUGAACCUGAUCUGGAUCAUGCCAGCGAAGGGAAUU--g
+>FQUC01000005.1/29729-29634/11-81 [subseq from] Dysgonomonas macrotermitis strain DSM 27370 genome assembly, contig: Ga0131167_105
+uag-------GGGUGCCUGUAAA---UCGGGCUGAGAuUAUACCCAUACAACCUGAUCCGGAUAAUGCCGGCGUAGGGAA----a
+>CP000673.1/2077534-2077632/9-85 [subseq from] Clostridium kluyveri DSM 555, complete genome.
+cua------GGGGUGCCUU--------GUGGCUGAGAAACACCAGUuguuaacccuUCUACCUGAUCUGGAUAACACCAGCGUAGGGAAG---c
+>JH815222.1/1333397-1333297/8-87 [subseq from] Clostridium sp. 7_2_43FAA genomic scaffold supercont2.3, whole genome shotgun sequence.
+gcu-----AGGGGUGCCU--------UAUGGCUGAGAAAUgauaauucauuaACCCUCUUUACCUGAUCUGGAUAAUACCAGCGUAGGAAAG---u
+>CU207211.1/328955-329062/38-93 [subseq from] Herminiimonas arsenicoxydans chromosome, complete sequence.
+ug----------------------UGCCGGGUGAGAAAAACCCUU-GAACCUGAUCUGGAUAAUGCCAGCGAAGGGAAG---
+>AP012212.1/1305431-1305532/34-87 [subseq from] Clostridium sp. SY8519 DNA, complete genome.
+gggaaggcccg----------------------------------CAUACCCUCAUUACCUGAUCUGGAUAAUUCCAGCGUAGGGAAG---
+>CBML010000006.1/1632822-1632720/9-88 [subseq from] Clostridium chauvoei JF4335, WGS project CBML01000000 data, contig: 00001
+cua------GGGGUGCC--------UUAAGGCUGAGAGAUAgaugaacucuauuaACCCUUAUACCUGAUCUGGAUAAUGCCAGCGUAGGAAA----g
+>FQWU01000002.1/1794675-1794568/42-93 [subseq from] Massilia sp. CF038 genome assembly, contig: Ga0115467_102
+c--------------------------GGGUGAGAAACACCCUCUGAACCUGAUCUGGAUAAUGCCAGCGAAGGGAAG---
+>MUYA01000004.1/329207-329119/23-72 [subseq from] Haemophilus paracuniculus strain CCUG 43573 43573T_ctg_0000004, whole genome shotgun sequence.
+u---------------------------GCUGAGAAAUACCCAUAGAACCUGAUCUGAGUAAUAUCAGCGUAGGGA-----u
+>CP005383.1/2601884-2601741/77-127 [subseq from] Mannheimia haemolytica M42548, complete genome.
+u--------------------------GGCUGAGAAAUACCCAUAGAACCUGAUCUGAUUAAUAUCAGCGUAGGGA-----u
+>LJUX01000071.1/1391-1283/41-93 [subseq from] Candidate division Zixibacteria bacterium SM23_73_3 WORSMTZ_22801, whole genome shotgun sequence.
+ua--------------------------GCCUGAGAuAAUACCCUCAGUACCUGAUCUGGGUAAUGCCAGCGUAGGGAA----
+>KB291620.1/9704-9803/9-85 [subseq from] Clostridium celatum DSM 1785 genomic scaffold Scfld27, whole genome shotgun sequence.
+cua------GGGGUGCCC--------AAAGGCUGAGAGAUgauuuucaucaACCCUUUUAACCUGAUCUGGAUAAUUCCAGCGUAGGAAA----g
+>FQWU01000001.1/1180929-1180832/28-85 [subseq from] Massilia sp. CF038 genome assembly, contig: Ga0115467_101
+guucc--------------------------GGGUGAGAGAUACCCUCCGUACCUGAUCUGGAUAAUGCCAGCGAAGGAAAGC--g
+>FR888943.1/61179-61070/42-96 [subseq from] Firmicutes bacterium CAG:466 genomic scaffold, scf207
+aaga-------------------------GGGCUGA----UACCCUUAuuUCACCUGAUCUGGAUUAUGCCAGCGUAGGGAAG---c
+>GL520142.1/8362-8450/13-72 [subseq from] Erysipelotrichaceae bacterium 3_1_53 genomic scaffold supercont1.11, whole genome shotgun sequence.
+gggugccg-----------------------UUAGGCUGAGACAGUCCCUUAUGACCUGAUCUAGUUAAUGCUAGCGUAGGGA-----
+>LNYB01000080.1/448920-449019/11-82 [subseq from] Legionella feeleii strain WO-44C Lfee_ctg080, whole genome shotgun sequence.
+aggggugcuuugguuuc--------------------UACCAAAGCUGAGAAAGACCCUUAUAACCUGCACUGGGUAAUGCCUGCGGAGGGA-----
+>GG705262.1/1430649-1430746/11-82 [subseq from] Providencia rettgeri DSM 1131 genomic scaffold Scfld0, whole genome shotgun sequence.
+c------GGGGUGCCGAACUUA-UUUCGGCUGAGAAAUAaCCCGUAGAACCUGAUCCGGUUAAUACCGGCGUAGGGA-----uu
+>MICL01000072.1/5169-5077/12-77 [subseq from] Syntrophobacterales bacterium RBG_19FT_COMBO_59_10 rbg_19ft_combo_scaffold_23328, whole genome shotgun sequence.
+g-------GGGUGCCUAUUUG------GGCUGAGAAaACACCCUUUGAACCUGACCUGGGUAAUGCCAGCGUAGGGAA----u
+>HF992240.1/944-1034/10-73 [subseq from] Butyrivibrio crossotus CAG:259 genomic scaffold, scf75
+a-----CGGGGUGCCCUU------GGGGGCUGAGAUuAUACC--CAUAACCUGAUUUGGAUAAUGCCAACGUAGGGA-----
+>JYPE01000008.1/115129-115024/12-87 [subseq from] Chlorobi bacterium OLB4 UZ04_CHB001CONTIG000008, whole genome shotgun sequence.
+g-------GGGUGCUAUUCCGUGUuucacggAUUGGCUGAGAAaAUACCCGAUGAACCUGAUCCGGAUAAUGCCGGCGUAGG-------a
+>AUYT01000001.1/1060936-1060837/12-84 [subseq from] Candidate division Zixibacteria bacterium RBG-1 RBG1_1C00001, whole genome shotgun sequence.
+------GGGGUGCCCCGCUGAAAAGcgGGGCUGAGAUcAAACCCUUGGAACCUGAUCUGGAUAAUGCCAGCGUAGGGAA----
+>BASE01000044.1/129555-129653/21-87 [subseq from] Bacillus selenatarsenatis SF-1 DNA, contig: BSSF00044.
+u-------------------------AGGCUGAGAAGAacuuuguucugACCCUUAUUACCCGAUCUGGAUAAUACCAGCGUGGGGAAGUGC
+>FTOR01000012.1/86387-86493/8-90 [subseq from] Filimonas lacunae strain DSM 21054 genome assembly, contig: Ga0111651_112
+c---CUCGGGGUGCUUUGCGCUGUaacaggcaAAAGGCUGAGAuAAUACCCGUAGAACCUGAACAGGGUAAUGCCUGCGAAGGGAA----
+>LIZX01000071.1/6020-5926/26-81 [subseq from] Candidate division WOR_1 bacterium DG_54_3 WOR1_52_54_6744, whole genome shotgun sequence.
+ggggc----------------------------CUGAGAuCAUACCCUCAAUACCUGAUCUGGGUAAUGCCAGCGUAGGGAA----au
+>AP012157.1/1019588-1019499/7-76 [subseq from] Solibacillus silvestris StLB046 DNA, complete genome.
+u--ACUAGGGGCGCCUGUUU-------GGCUGAGAAGAACCCUUUGCACCUGAUCUAGGUAAUACUAGCGUAGGAAAG---u
+>MEDT01000090.1/16242-16136/37-91 [subseq from] Cytophagaceae bacterium SCN 52-12 ABS46_C0090, whole genome shotgun sequence.
+ggc-------------------------AAGCUGAGAuAAUACCCGUAUAACCUGAUCCGGAUAAUACCGGCGUAGGA------au
+>MEOC01000009.1/2684-2589/12-82 [subseq from] Bacteroidetes bacterium GWE2_42_42 gwe2_scaffold_130, whole genome shotgun sequence.
+g-------GGGUGCUC--CUUCGCAGGGGCUGAGAAcAAACCCUUAUAACCUGAUCCGGGUAAUGCCGGCGAAGGGAGG---u
+>MEOV01000048.1/4331-4234/13-83 [subseq from] Bacteroidetes bacterium RBG_13_46_8 RBG_13_scaffold_15348, whole genome shotgun sequence.
+ggg----------UGCCUUAA--CAUGAcAGGCUGAGAUuAUACCCUUAGCACCUGAUCCGGGUAAUGCCGGCGAAGGGAA----uu
+>MARB01000003.1/241970-241866/39-90 [subseq from] Endosymbiont of Codakia orbicularis strain COS CODIS_contig000003, whole genome shotgun sequence.
+g--------------------------GGCUGAGAAAGACCCUUACUACCUGAUCCGGUUAAUACCGGCGGAGGGAAG---
+>CP003557.1/3010111-3010015/11-82 [subseq from] Melioribacter roseus P3M, complete genome.
+a------GGGGUGCUCCCGUAAGAGGGGGCUGAGAUUAUACCCUUGAACCUGAUCUGGGUAAUGCCAGCGUAGGGAA----a
+>MKTZ01000001.1/202863-202759/8-90 [subseq from] Sphingobacteriales bacterium 50-39 SCNpilot_cont_1000_p_scaffold_0, whole genome shotgun sequence.
+c---CUCGGGGUGCUGUUCCGuucacaaCGGAAUGGCUGAGAuGAUACCCGUAGAACCUGGUCAGGGUAAUGCCUGCGCAGGGAAG---
+>FWXH01000002.1/948797-948896/9-85 [subseq from] Clostridium acidisoli DSM 12555 genome assembly, contig: EJ29DRAFT_scaffold00001.1
+c----UAGGGGUGCCUUUaggCUGAGAGAUGUUUGUGCAUUAACCCUUUAACCUGAUCUAGAUAAUUCUAGCGUAGGGAAG---
+>MZGV01000027.1/8319-8216/8-90 [subseq from] Clostridium oryzae strain DSM 28571 CLORY_contig000027, whole genome shotgun sequence.
+gc----UAGGGGUGCCCUCGGGCUG--AGACGUGGAAUUucauuccuaAACCCUUUUACCUGAUCUGGAUAAUACCAGCGUAGGGAAG---c
+>CP009880.2/1732084-1731989/13-80 [subseq from] Pantoea sp. PSNIH1, complete genome.
+gggugu-----------------CUGCGUcgUCAGGCUGAGAGAAACCCGUCGAACCUGAUCCGGUUAAUACCGGCGUAGGGA-----uu
+>MGRW01000006.1/36659-36746/12-74 [subseq from] Deltaproteobacteria bacterium RIFCSPLOWO2_01_FULL_45_74 rifcsplowo2_01_scaffold_324, whole genome shotgun sequence.
+ggggugccucg--------------------------UGCUGAGAAAUACCCUUAGAACCUGAUCCGGGUAAUACCGGCGGAGGGAAG---c
+>MNVA01000203.1/17867-17761/32-91 [subseq from] Ignavibacteria bacterium CG1_02_37_35 cg1_0.2_scaffold_1703_c, whole genome shotgun sequence.
+cg------------------UGCGUGAUGACUGAGAACAUACCCUUUAACCUGAUCCGGGUAAUUCCGGCGUAGGGAA----
+>LNYT01000003.1/67181-67279/9-81 [subseq from] Legionella rubrilucens strain WA-270A-C2 Lrub_ctg003, whole genome shotgun sequence.
+cca------GGGGUGCUUUGUCCUGACAAAGCUGAGACUUAaCCCUUAUAACCUGCUCUGGAUAAUGCCUGCGGAGGGA-----
+>FRCF01000012.1/68693-68784/27-79 [subseq from] Salinicoccus alkaliphilus DSM 16010 genome assembly, contig: EJ97DRAFT_scaffold00011.11
+gcu-----------------------------UGAGAAGUACCCUUUGAACCUGAUCUGGUUAAUACCAGCGGAGGGAAGUG-
+>CH478305.1/279616-279709/11-79 [subseq from] Aedes aegypti strain Liverpool supercont1.1122 genomic scaffold, whole genome shotgun sequence.
+a------GGGGUGCCCGC---CGUUUGGGCUGAGAGAGACCCUUGGCACCUGAUCCGGUUAAUACCGGCGUAGGGAA----a
+>LGIP01000002.1/149995-149907/10-75 [subseq from] Chryseobacterium sp. Hurlburt 01 HurlbutContig2, whole genome shotgun sequence.
+acgggg----------UG--------CCGAAAGGCUGAGAUUAUACCCGAUGACCUGAUUUGGAUAAUGCCAACGUAGGGAUG---u
+>MNUL01000124.1/4641-4545/13-79 [subseq from] Comamonadaceae bacterium CG1_02_60_18 cg1_0.2_scaffold_13483_c, whole genome shotgun sequence.
+gggugucugu-------------CGUU---CUGGCAGGCUGAGAAAGUCCCC--AUACCUGAUCUGGAUCAUGCCAGCGUAGGGA-----
+>CP001619.1/4183557-4183651/11-79 [subseq from] Dyadobacter fermentans DSM 18053, complete genome.
+a------GGGGUGCCCUACCGAA--CGGGCUGAGAUcAUACCCAUUUAACCUGAUCCGGGUAAUGCCGGCGUAGGGA-----
+>CP006772.1/1543375-1543286/13-74 [subseq from] Bacteroidales bacterium CF, complete genome.
+gggugc--------------------CGUAACGGCUGAGAUUAUACCCUUUAACCUGAUCUGGGUAAUGCCAGCGAAGGGAA----
+>FQZO01000002.1/59268-59366/8-85 [subseq from] Clostridium amylolyticum strain DSM 21864 genome assembly, contig: Ga0131114_102
+gc----UAGGGGUGCCUGU--GGCUGAGAAAUGAGCAAucauUAACCCUUUUACCUGAUCUGGAUAGUACCAGCGUAGGGAAG---c
+>LGHH01000192.1/754-658/30-81 [subseq from] Proteiniphilum sp. 51_7 MPJ_scaffold_7093, whole genome shotgun sequence.
+g--------------------------GGCUGAGAUcAUACCCAUAUCACCUGAUCCGGAUAAUGCCGGCGGAGGGAA----
+>MGQN01000014.1/29016-29109/12-77 [subseq from] Deltaproteobacteria bacterium RBG_16_44_11 RBG_16_scaffold_284, whole genome shotgun sequence.
+ggggugcca---------------------AUGAUGGCUGAGAAuAUACCCUUUGAACCUGACCCGGAUAAUGCCGGCGUAGGGAA----u
+>CP002347.1/506434-506339/12-80 [subseq from] Calditerrivibrio nitroreducens DSM 19672, complete genome.
+------GGGGUGCUCUUUUU-UCAAGGGCUGAGAAAUACCCCUCGAACCUGAUACGGGUAAUGCCGUCGAAGGGAA----
+>CP002028.1/715265-715362/8-85 [subseq from] Thermincola sp. JR, complete genome.
+a---CUAGGGGUGCCUUCGGGCUGAGAGGCUuCAUGCCAACCCUUUGCACCUGACCUGGAUAAUGCCAGCGGAGGGAAGUG-
+>ACVI01000161.1/7564-7668/7-91 [subseq from] Clostridium carboxidivorans P7 ctg00221, whole genome shotgun sequence.
+ug---CUAGGGGUGCCUCUUUG-----AGGCUGAGAGAUAaaauauuuuauuaACCCUUGUACCUGAUCUGGAUAAUACCAGCGUAGGAAAG---c
+>CP000853.1/2929629-2929517/58-100 [subseq from] Alkaliphilus oremlandii OhILAs, complete genome.
+g-------------------------------------ACCCCUAUCACCUGAUCUGGAUUAUGCCAGCGUAGGAAAGUG-
+>AYYP01000024.1/26122-26034/12-71 [subseq from] Lactobacillus agilis DSM 20509 NODE_49, whole genome shotgun sequence.
+g-------GGGUGCCCUG--------UGGCUGAGAAAUACCCAUG-AACCUGAUCUGGAUUAUACCAGCGUAGG-------aa
+>CP001968.1/3192888-3192985/21-83 [subseq from] Denitrovibrio acetiphilus DSM 12809, complete genome.
+ccuuagauag-----------------------GGCGGCUGAGAUAUACCCC-AAGACCUGAUCCGGAUAAUGCCGGCGUAGGGAAG---
+>KK222755.1/24731-24633/9-86 [subseq from] Staphylococcus aureus C0673 genomic scaffold aedLz-supercont1.11, whole genome shotgun sequence.
+c----UAGGGGCGCCAUUCGGCUGAGAuGAaUUAAUUCAGUCCCUUAACACCUGAUUUGGAUAAUGCCAACGUAGGAAAGUG-
+>BAUT01000004.1/63515-63611/9-83 [subseq from] Bacillus wakoensis JCM 9140 DNA, contig:contig_4.
+cua------GGGGUGU-CUGCUAAUAGUGGGCUGAGAAcaUUACCC-UCAUACCUGAUCUGGAUCACGCCAGCGUAGGGAAGU--
+>CP003402.1/330278-330389/42-94 [subseq from] Francisella noatunensis subsp. orientalis str. Toba 04, complete genome.
+uc-----------------------GAAGGCUGAGAAAUACCC-UAAAACCUGCUCUGGUUAAUGCCUGCGGAGGGA-----
+>AE001437.1/3060579-3060679/8-86 [subseq from] Clostridium acetobutylicum ATCC 824, complete genome.
+gcu-----AGGGGUGCCUUU--------AGGCUGAGAAACAguuugucacguuaaCC--CUUAACCUGAUCUGGAUAAUACCAGCGUAGGGAAG---
+>MLPZ01000002.1/98389-98297/26-78 [subseq from] Treponema sp. CETP13 contig35, whole genome shotgun sequence.
+ga---------------------------GCUGAGAAuAUACCCUUUGAACCUGAUCUGGAUAAUGCCAGCGCAGGGAG----g
+>CP002738.1/3678733-3678843/35-96 [subseq from] Methylomonas methanica MC09, complete genome.
+uucgc--------------------CACGAAAGCUGAGAAAAACCCUUUGAACCUGACCCGGUUAAUGCCGGCGUAGGAAA----g
+>CP000478.1/2222264-2222358/26-81 [subseq from] Syntrophobacter fumaroxidans MPOB, complete genome.
+uaga---------------------------GCUGAGAUgAAACCCUGAUUACCUGAUCUGGAUAAUACCAGCGUAGGGAA----au
+>MDTU01000001.1/198994-199082/11-73 [subseq from] Piscirickettsia sp. Y2 scaffold00001, whole genome shotgun sequence.
+aggggug--------------------CCGUAAGGCUGAGAAAUACCCUUUGAACCUGAUUUGGCUUAUACCAACGUAGGAA-----a
+>AEPR01000870.1/1058-1166/45-96 [subseq from] Oxalobacteraceae bacterium IMCC9480 ctg_3118, whole genome shotgun sequence.
+gg-----------------------------UGAGAUUCACCCUUCGAACCUGAUCUGGAUCAUGCCAGCGUAGGGAAGC--g
+>MTBC01000004.1/184846-184753/9-80 [subseq from] Flavobacteriaceae bacterium HSG9 contig4, whole genome shotgun sequence.
+c----UCGGGGUGCUCCUAAU--U-GGUGCUGAGAAuAUACCCGUA-AACCUGAACUGGAUAAUACCAGCGUAGGAAAG---u
+>AURB01000199.1/3675-3773/9-87 [subseq from] Alicyclobacillus acidoterrestris ATCC 49025 contig_91, whole genome shotgun sequence.
+c----UAGGGGUGCCAUAUGGCUGAGAGGCAGAGGAUgcUAACCCUUUCACCCGAUCUGGGUAAUACCAGCGUGGGGAAGUGC
+>CP012643.1/4726832-4726920/17-73 [subseq from] Rufibacter tibetensis strain 1351, complete genome.
+gcug-----------------------AAAGGCUGAGAUAUACCCUUGGAACCUGAACAGGAUAAUGCCUGCGAAGGGAA----
+>AOTI010618351.1/3056-2958/26-84 [subseq from] Triticum urartu cultivar G1812 contig618352, whole genome shotgun sequence.
+guu----------------------UGCAGGCUGAGAUUuUACCCUUUGAACCUGAUCUGGAUCAUACCAGCGUAGGGAA----a
+>KE159519.1/1396878-1396993/45-102 [subseq from] Parabacteroides goldsteinii dnLKV18 genomic scaffold acPFM-supercont1.2, whole genome shotgun sequence.
+cg------------------------CAGGCUGAGAuUAUACCCAUAUUACCUGAUACGGAUAAUGCCGGCGAAGGGAAUU--g
+>FUYS01000010.1/115645-115749/37-89 [subseq from] Parapedobacter luteus strain DSM 22899 genome assembly, contig: LY06DRAFT_scaffold00010.10
+g------------------------GAGGCUGAGAAUAACCCUCAUAACCUGCUCAGGAUAAUGCCUGCGAAGGGAA----
+>AWTT01000013.1/9774-9862/11-72 [subseq from] Lactobacillus wasatchensis strain WDC04 contig00013, whole genome shotgun sequence.
+u------GGGGUGCCAUUC--------GGCUGAGAUAUACCCAUAGAACCUGCUCUGGUUAGUACCAGCGAAGGGA-----
+>LQBH01000003.1/29665-29575/20-74 [subseq from] Delta proteobacterium MLS_D scaffold_10, whole genome shotgun sequence.
+gggg-------------------------CGGCUGAGAAgAUACCCUUUAAACCUGAUCUGGGUAAUGCCAGCGUAGGGA-----
+>MNXY01000096.1/12986-13082/16-79 [subseq from] Comamonadaceae bacterium CG2_30_60_41 cg2_3.0_scaffold_2838_c, whole genome shotgun sequence.
+ugucugc------------------UGCGauGGCAGGCUGAGAAAGUCCCC--AUACCUGAUCUGGAUCAUGCCAGCGUAGGGA-----
+>LGVB01000006.1/11513-11410/8-89 [subseq from] Clostridium sp. DMHC 10 contig_6, whole genome shotgun sequence.
+gc----UAGGGGUGCCUUU--------AGGCUGAGAUAUaaaguuuugcuuuauAACCCUUAUACCUGAUCUGGAUAAUACCAGCGUAGGGAAG---
+>CP015971.1/1580493-1580402/23-75 [subseq from] Arachidicoccus sp. BS20, complete genome.
+a------------------------AAGGCUGAGAAGuUACCCGUUUUACCUGAACAGGAUAAUGCCUGCGUAGG-------aa
+>CM007902.1/7784048-7783885/95-146 [subseq from] Helianthus annuus linkage group 13, whole genome shotgun sequence.
+uu-------------------------AGGCUGAGAAAGUCCCUUAGAACCUGAACAGGAUAAUGCCUGCGUAGGGA-----
+>CP007445.1/2368325-2368427/8-89 [subseq from] Gilliamella apicola strain wkB1, complete genome.
+a---CUCGGGGUGUUUUUUguUGCUUacaAAAAACUGAGAUUuUACCCGUUGAACCUGAUCUGGAUUAUACCAGCGUAGGGAAGU--
+>LUKG01000034.1/12692-12794/9-88 [subseq from] Flavihumibacter sp. CACIAM 22H1 scaffold00148, whole genome shotgun sequence.
+cu-----CGGGGUGCUAaggauGUUUAAUCCAAGGCUGAGAuAAUACCCGUAGAACCUGAACAGGGUAAUGCCUGCGCAGGGAAG---
+>CP003839.1/473366-473277/13-72 [subseq from] Leuconostoc gelidum JB7, complete genome.
+gggugccacg-------------------------UGGCUGAGAAACACCCAUUGAACCUGAUCUGGUUAAUACCAGCGAAGGGA-----
+>KQ758483.1/912903-912795/8-96 [subseq from] Bacillus enclensis strain SGD-1123 genomic scaffold Scaffold2, whole genome shotgun sequence.
+a---CUAGGGGUGCCUUUC---AUGAAGGCUGAGAuuaaagugugacuuuAAGACCCUUUGAACCUGAUCUGGUUGAGACCAGCGUAGGGAAGUG-
+>FAOS01000003.1/1987424-1987529/41-91 [subseq from] Janthinobacterium sp. CG23_2 isolate Janthinobacterium sp. CG23_25 genome assembly, contig: Contig_scf7180000000011_quiver
+g---------------------------GGUGAGAAACACCCUCUGAACCUGAUCUGGAUAAUGCCAGCGAAGGGAAG---
+>CP011390.1/2219895-2219991/19-81 [subseq from] Flavisolibacter tropicus strain LCS9, complete genome.
+uuuagcaau------------------------AAACCUGAGAUcAUACCCAUACUACCUGAUCUGGGUAAUGCCAGCGCAGGGAU----g
+>AVCJ01000004.1/64539-64636/12-82 [subseq from] Arenimonas donghaensis DSM 18148 = HO3-R19 contig12, whole genome shotgun sequence.
+------GGGGUGCCCGGCGGGAUGCGGGCUGAGACAUACCCUUCGAACCUGAUCCGGUUGAUACCGGCGUAGGGAAG---
+>JRNC01000031.1/103724-103821/11-81 [subseq from] Prevotella sp. S7-1-8 contig031, whole genome shotgun sequence.
+a------GGGGUGCUUGUCUGAUUaGACGGCUGAGAACAUACCCUGUAACCUGAUCCGGACAAUGCCGGCGUAGG-------aa
+>CP003418.1/1992332-1992222/32-96 [subseq from] Ignavibacterium album JCM 16511, complete genome.
+ccua----------------UUUGUGGGAUAUCUGAGAUAAUACCCUCAAACCUGAUCUGGGUAAUGCCAGCGUAGGGAA----a
+>CP003837.1/3448157-3448056/12-86 [subseq from] Paraglaciecola psychrophila 170 chromosome, complete genome.
+g-------GGGAGC-CUUUUGGCUGAGAUUUGAGAAAUACUCAUAACccuuauACCUGAUCCGGAUAAUGCCGGCGUAGGA------au
+>AZGF01000004.1/37407-37319/12-72 [subseq from] Lactobacillus suebicus DSM 5007 = KCTC 3549 strain DSM 5007 Scaffold4, whole genome shotgun sequence.
+gg--------GGUGCCUU--------UUGGCUGAGAUAUACCCAUAGAACCUGCUCUGGUUAGUACCAGCGAAGGGA-----
+>AWWH01000175.1/11602-11690/10-74 [subseq from] Lactobacillus equi DPC 6820 NODE_70, whole genome shotgun sequence.
+uu------GGGGUGCC-UUC-------UGGCUGAGAAAUACCCAUUGAACCUGAUCUGAUUAACAUCAGCGGAGGGAA----c
+>AZEH01000025.1/102124-102211/12-71 [subseq from] Lactobacillus oeni DSM 19972 NODE_59, whole genome shotgun sequence.
+gg--------GGUGCCUU--------UUGGCUGAGAAUUACCCAUG-GACCUGAUCUGGACAAUACCAGCGUAGGGA-----
+>LDYG01000025.1/38836-38947/8-99 [subseq from] Bacillus coahuilensis p1.1.43 ABFP000025, whole genome shotgun sequence.
+a---CUAGGGGAGCCCAUAAAUGAUAGGGCUGAGAUcaaagugauucuuugAGACCCUUAGAACCUGAUCUGGAUUAUACCAGCGUAGGGAAGUG-
+>DF820458.1/375319-375224/9-80 [subseq from] Bacterium UASB14 DNA, scaffold: UASB14_scaffold_4.
+uu-----AGGGGUGCCCUUGC-AGAAAGGGCUGAGAGUACACCCUAUAACUUGAUCUGGAUCAUGCCAGCGAAAGGA-----a
+>MKCS01000002.1/161193-161287/11-77 [subseq from] Chromobacterium sp. 37-2 Cmus_37-2.2, whole genome shotgun sequence.
+g------GGGGUGCCCU---GCAAACGGGCUGAGAGACACCCUGAGAACCUGAUCUGGAUCAUGCCAGCGGAGGGA-----
+>LGIT01000017.1/200523-200432/13-77 [subseq from] Klebsiella sp. RIT-PI-d NODE_4_length_351486_cov_39.2173_ID_7, whole genome shotgun sequence.
+gggugcuga-----------------------UAAAGCUGAGAaAAUACCCGUCGAACCUGAUCCGGAUAAUGCCGGCGAAGGGA-----uuu
+>MEOK01000012.1/25683-25589/9-78 [subseq from] Bacteroidetes bacterium GWF2_40_14 gwf2_scaffold_2177, whole genome shotgun sequence.
+cu-----GGGGGUGCCCCAUAA----GGGGCUGAGAUcAUACCCUUUUCACCUGAUCUAGGUAAUGCUAGCGAAGGGAA----
+>CP016761.1/2151555-2151661/8-94 [subseq from] Fictibacillus arsenicus strain G25-54, complete genome.
+a---CUAGGGGUGCCUUU-----UAAAGGCUGAGAucgaaguuugacuucGAGACUCUUAGAACCUGAUCUGGAUUAUACCAGCGUAGGGAAGUG-
+>ALPT02000045.1/23905-23796/8-96 [subseq from] Bacillus alcalophilus ATCC 27647 = CGMCC 1.3604 strain AV1934 contig00045, whole genome shotgun sequence.
+a---CUAGGGGUGCUUAUCUU-GAAUAAGCUGAGAAAaaggugguuccuuuUACCCUUUUAACCUGAUCUGGAUCAUACCAGCGUAGGGAAGU--
+>CP014140.1/1848482-1848380/8-90 [subseq from] Aneurinibacillus sp. XH2, complete genome.
+a---CUAGGGGUGCCGUUU------ACGGCUGAGAUAagguuUuccuugaUCCCUUUGAACCUGAUCUGGAUAAUACCAGCGUAGGGAAGUG-
+>AE006468.2/126801-126702/12-85 [subseq from] Salmonella enterica subsp. enterica serovar Typhimurium str. LT2, complete genome.
+ggggugccg------------CGCUCAUGCGCG--CGCUGAGAaAAUACCCGUCGAACCUGAUCCGGAUAAUGCCGGCGAAGGGA-----uuu
+>MNYQ01000206.1/46949-47047/24-85 [subseq from] Ignavibacteria bacterium CG2_30_36_16 cg2_3.0_scaffold_272_c, whole genome shotgun sequence.
+ccguugucgua---------------------------ACUGAGAUAAUACCCUUUAACCUGAUCUGGAUAAUACCAGCGUAGGGAA----ac
+>JWJG01000028.1/2065879-2065975/28-82 [subseq from] Herbaspirillum sp. TSA66 contig01, whole genome shotgun sequence.
+gaacc--------------------------GGGUGAGAAAUACCCUCA-AACCUGAUCUGGGUAAUGCCAGCGAAGGGAAG---
+>JWHR01000151.1/12871-12971/9-85 [subseq from] Terrisporobacter sp. 08-306576 Contig151, whole genome shotgun sequence.
+c----UAGGGGUGCCCUA------AAAGGCUGAGAGAUggaaacauuAACCCUUAUACCUGAUCUGGAUAAUACCAGCGUAGGAAA----g
+>AORI01000005.1/67883-67796/19-71 [subseq from] Mycoplasma auris 15026 contig00005, whole genome shotgun sequence.
+uu------------------------AAGGCUGAGAAAUACCCUCAUUAGCUGAUCUAGUUAAUACUAGCGUAGUG------a
+>MIBJ01000009.1/9661-9564/20-81 [subseq from] Spirochaetes bacterium RBG_16_49_21 RBG_16_scaffold_1226, whole genome shotgun sequence.
+uccu-------------------GAAGGGAGCCUGAGAuUAUACCCGUUGAACCUGAUCUGGGUAAUGCCAGCGAAGGGAA----
+>LNZC01000029.1/8760-8862/35-85 [subseq from] Legionella worsleiensis strain ATCC 49508 Lwor_ctg029, whole genome shotgun sequence.
+uu--------------------------GGCUGAGACAAACCCUUAGUACCUGAUCUGGGUAAUGCCUGCGAAGG-------aa
+>LGTO01000007.1/988994-988902/8-80 [subseq from] Virgibacillus pantothenticus strain DSM 26 super13, whole genome shotgun sequence.
+ac----UAGGGGGGCCUUCAU------UGGCUGAGAcaACGACCCUUAGAACCUGAUCUGGUUAAUACCAGCGGAGGGAAGUG-
+>MUGK01000025.1/24255-24148/42-95 [subseq from] Chromatiales bacterium USCg_Taylor scaffold_24, whole genome shotgun sequence.
+g--------------------------GGCUGAGAGAUACCCUUCGAACCUGAUCCGGUUAAUACCGGCGUAGGGAAGC--g
+>URS00008DCE63/8-83 [subseq from] ncRNA from 2 species
+--ACUCGGGGUGCCCUUCUACGUGAAGGCUGAGAAAUACCCGUAUUACCUGAUCUGGAUAAUGCCAGCGUAGGGAAGU--
+>URS00004F9B87/8-83 [subseq from] ncRNA from 1 species
+--ACUCGGGGUGCCCUUCGUUGUGAAGGCUGAGAAAUACCCGUACCACCUGAUCUGGAUAAUGCCAGCGUAGGGAAGU--
+>URS0000BECCE8/8-83 [subseq from] ncRNA from 1 species
+--ACUCGGGGUGCCCUUCCUGGUGAAGGCUGAGAAAUACCCGUACCACCUGAUCUGGAUAAUGCCAGCGUAGGGAAGU--
+>URS0000C3DC4A/8-83 [subseq from] ncRNA from 1 species
+--ACUCGGGGUGCCCUUCCUUGCGAAGGCUGAGAAAUACCCGUACCACCUGAUCUGGAUAAUGCCAGCGUAGGGAAGU--
+>URS0000AB74AC/8-77 [subseq from] ncRNA from 1 species
+--ACUCGGGGUGCCCUUCUACGUGAAGGCUGAGAAAUACCCGUAUUACCUGAUCUGGAUAAUGCCAGCGUAG--------
+>URS0000E3AD00/8-79 [subseq from] ncRNA from 1 species
+--ACUCGGGGUGCCCUUCCUGGUGAAGGCUGAGAAAUACCCGUACCACCUGAUCUGGAUAAUGCCAGCGUAGGG------
+>URS000224EC62/8-86 [subseq from] ncRNA from 1 species
+--ACUCGGGGUGCCCUUCaugUAUGUGAAGGCUGAGAAAUACCCGUAUUACCUGAUCUGGAUAAUACCAGCGUAGGGAAGU--
+>URS0000E2C47C/8-83 [subseq from] ncRNA from 1 species
+--ACUCGGGGUGCCCCAUCGCUGAUGGGCUGAGAAAUACCCGUACCACCUGAUCUGGAUAAUGCCAGCGUAGGGAAGU--
+>URS0000DB6A5F/8-78 [subseq from] ncRNA from 1 species
+--ACUCGGGGUGCCCCUUUUUACAaAGGGCUGAGAAAUACCCGUACCACCUGAUCUGGAUAAUGCCAGCGUAG--------
+>URS0000AB250A/14-87 [subseq from] ncRNA from 1 species
+ggcgcccuaaccgc------------------CAGGUGAAGGCUGAGAAAUACCCGUAUUACCUGAACUGGAUCAUGCUAGCGUAGGGAAGU--
+>URS0000150CB6/8-91 [subseq from] ncRNA from 2 species
+a---CUCGGGGUGCCUG-CUacaaaucGUGGUAUGGCUGAGAUAuUACCCGUAUUACCUGAUCUGGAUUAUGCCAGCGUAGGGAAGUG-
+>URS000033D77A/8-79 [subseq from] ncRNA from 1 species
+--ACUCGGGGCGCUCUUAAUUG----AGCUGAGAUGAACCCGUAAUACCUGAUCUGGAUAAUGCCAGCGUAGGGAAGU--
+>URS0000C32C74/8-84 [subseq from] ncRNA from 1 species
+a---CUCGGGGUGCCAGACCAaCCGUCCGGCUGAGAAAAACCCGCAUAACCUGAACUGGGUAAUGCCAGCGUAGGGAAGU--
+>URS0000CFC26C/6-82 [subseq from] ncRNA from 1 species
+GUACUAGGGGCGCCACUAUGCGU---GGCUGAGAAGCACCCUUUGAACCUGAUCUGGUUAACACCAGCGUAGGAAAGUGC
+>URS0000C7E90A/56-115 [subseq from] ncRNA from 1 species
+ugu---------------------GUCGCGGGUGAGAAAUACCCUUUGAACCUGAUCUGGAUAAUGCCAGCGCAGGGAAG---c
+>URS0000554837/13-70 [subseq from] misc_RNA from 1 species
+gua-------------------------UGGCUGAGAUAuUACCCGUAUUACCUGAUCUGGAUCAUACCAGCGUAGGGAAGUG-
+>2HOJ_A/4-79 [subseq from] Chain A, thi-box riboswitch
+--ACUCGGGGUGCCCUUCUGCGUGAAGGCUGAGAAAUACCCGUAUCACCUGAUCUGGAUAAUGCCAGCGUAGGGAAGU--
+>sample_0
+GUACUCGGGGUGCCCUUCUucgguuga--G-GAAGGCU-AGA-A-ACCCGAu---ACCUGA-CUGG-Gu-cgaag-UaGCCAGCG-AGGGAAGUGC
+>sample_1
+GUACUCGGGGUGCCCUUCU--GUGAAGGCUCAGA-AaGACCCGgcu--c-a-ACCUGAACAGG-U-CU-CCUGCG-AGGGAAGUGC
+>sample_2
+GUACUCGGGGUGCCCUUCU--G-GAAGGCUGAGAAA-ACCCG---c-ACCUGAuUCUGGg-U-UUg-CCAGCG-AGGGAAGUGC
+>sample_3
+GUACUCGGGGUGCCCUUCUgGcggcac-GaugcaGGAAGGCU-AGA-A-ACCCG--U-ACCUGAaccuc-CUGGCUG-UCCCAGCG-AGGGAAGUGC
+>sample_4
+GUACUCGGGGUGCCCUUCU--------GCU-AGA-A-ACCCG----ACCUGA-CUGGa-Ua--Uu-CCAGCGccuaUAGGGAAGUGC
+>sample_5
+GUACUCGGGGUGCCCUUCU--GAGAAGGCU-AGA-AAACCCGu--u--GCCUGA-CUGG-U-ucaa-UaACCAGCG-AGGCAAGUGC
+>sample_6
+GUACACGGGGUGCCCUUCU-c-G-GAAGGCU-AGA-A-ACCCG-C-uAGCCUGACCUGGAU--Ug-CCAGCGgCAGGCAUGUGC
+>sample_7
+GUACUCGGGGUGCCCUUCU--Gcggaggcu-GAAGGCUUAGA-------GUgCaucuaG-ACCUGA-CUGG-Uaggg--U-CCAGCG-AGGGAAGUGC
+>sample_8
+GUACUCGGGGUGCACUUCU--------GCUcUAGA-A-ACCCG--uG-ACCUGAu-CUGGa-U-g-Ucgcauaag-CCAGCG-AGGGAAGUGC
+>sample_9
+GUACUCGGGGUGCCCUUCUg--Gg-GAAGGCUuuuguagu-AGA-A----CGcaaccga-------UGA-CUGG-U--U-CCAGCG-AGGGAAGUGC
+>sample_10
+GUACUCGGGGUGCCCUUCU--GgAGAAGGCU-----A-ACCCGu-Aa--ACCUGAc-CUGGc-UA-Ucccg-CCAGCGGAGGGAAGUGC
+>sample_11
+GUACUCGGGGUGCCCUUCUu--G-GAAGGCU-AGA-A-ACCCGa-C-GACCUGU-CUGGUUg-a-UACCAGAG-AGGGAAGUGC
+>sample_12
+GUACUCGGGGUGCCCUUCU--G-GAAGGCU-AGA-AUACCCGc----ACCUGGg-CUGG--uca--Ucauugcag-CCAGCGg-AGGGAAGUGC
+>sample_13
+GUACUCGGGGUGCCCUUCU--G---AGGCUCAGAg-A-ACCCG--c--ACCUGAgcgaacgu-CUGG-U--Uu-CCAGCG-AGGGAAGUGC
+>sample_14
+CGACUCGGGGUGCCCUUCUu--Ga-GAAGGCU-AGAc-A-ACCCG-uUG-ACCUGAACUGG-UC-Uc-CCAGCG-AGGGAAGUCG
+>sample_15
+GUACUCGGGGUGCCCUUCU-cUGgCGAAGGCUcu-AGA-Ac-ACCCGC--gccuuggGACCUGAacga-CUGGucuua-U-AUCCCAGCGGAGGGAAGUGC
+>sample_16
+GUACUCGGGGUGCCCUUCU--Ga-GAAGGCUGAGA-A-ACCCG------CUGA-CUGG-U--U----GCGgCAGGGAAGUGC
+>sample_17
+GUACUCGGGGUGCCCUUCUuAGG-GAAGGCU-AGA-ACACCCG--AAACCUGAu-CUGG-Uauaa-a-UuCCCAGCGCAGGGAAGUGC
+>sample_18
+GUACUCGGGGUGCCCUUCU--Gu-GAAGGCU-AGA-A-ACCCG----ACCUGAc-CUGG-Uc-g-UuuGCCAGCG-AGGGAAGUGC
+>sample_19
+GUACUCGGGGUGCCCUUCU-------GGCU-AGA-A-ACCCGg--aa--ACCUGA------U-UU-CCAGCGc-AGGGAAGUGC
+>sample_20
+GUACUCGGGGUGCCCUUCUG--------CU-AGAucg-A-ACCCGu--ccug--ACCUGA-CUGGccaaa-U-uucuug-UgcgcaCCCAGCGa-AGGGAGGUGC
+>sample_21
+GUACUCGGGGUGCCCUUCU-UG-GAAGGCUCAGA-A-ACCCGCA--ACCUGA-CUGG-Uugggcucg-AUauuu-CCAGCG-AGGGAAGUGC
+>sample_22
+GUACUCGGGGUGCCCUUCU-g-G-GAAGGCUg-AGA-AUACCCG-g---ACCUGA-CUGG-U--UACCAGCG-AGGGAAGUGC
+>sample_23
+GUACUCGGGGUGCCCUUCUUuCG-GAAGGCU-AGA-Aacgacucu-ACCCGG-------GA-CUGGg-U--Ucau-CCAGCGgCAGGGAAGUGC
+>sample_24
+GUACUCGGGGUGCCCUUCU--G-GAAGGCU-AGAg-A-ACCCG-aU--ACCUGA-CUGGuu-U--U-CCAGCG-AGGGAAGUGC
+>sample_25
+GUACUCGGGGUGCCCUUCU--G-GAAGGCU-AGA-A-ACCCGg-acaG---CCUGA-CUGGgagacg-Uu--U-CCAGCG-AGGGAAGUGC
+>sample_26
+GUACUCGGGGUGCCCUUCU-g-GguaugcagAGAAGGCU-AGAaUAAACCCG-cuagaacC-------A-CUGG-U------AGCG-AGGGAAGUGC
+>sample_27
+GUACUCGGGGUGCCCUUCU--G-GAAGGCUCAGAa-Au-UCCCG----ACCUGA-CUGG-U--Uc-CCAGCGAAGGGAAGUGC
+>sample_28
+GUACUCGGGGUGCCCUUCU----GAAGGCU-AGA-------G-g-cuaga--ACCUGA-CUGG-U--U-CCAGCG-AGGGAAGUGC
+>sample_29
+GUACUCGGGGUGCCCUUCGA-U-GAAGGCU-AGA-A-ACCCG-----CCUGAACUGG-U--Ucuauuua-CCAGCGCAGGGAAGUGC
+>sample_30
+GUACUCGGGGUGCCCUUCU-acuuaugg-G-GAAGGCU-AGA-A-ACCCG--C-GCCUCAGCUGGu-U--U-CCAGCGa-AGGCAAGUGC
+>sample_31
+GUACUCCGGGUGCCCUUCUu-------GGCUg-AGAuugguac-Agg-ACCGG-----CCUGA---------U--------AGGGAAGUGC
+>sample_32
+GUACUCGGGGUGCCCUUCU--GaCGAAGGCUaagucg-AGA-A---CCGgGg-C-ACCUGAc-CUGG-Uu--U-CCAGCGAAGGGAAGUGC
+>sample_33
+GUACUCGGGGUGCCCUUCU-a-G-GAAGGCUCAGA-A----CG-uCC-ACCUGAACUGG-Uc--U-CCAGCG-AGGGAAGUGC
+>sample_34
+GUACUCGGGGUGCCCUUCUCCG---AGGCUuggu-AGAcUA-ACCCGCAucug--ACCUGA-CUGGGU-a-UGCCAGCG-AGGGAAGUGC
+>sample_35
+GUACUCGGGGUGCCCUUCU--GaauucaucUGAAGGCUa-AGA-A-------a-a--ACCUGA-CUGGu-U--Uu-CCAGCG-AGGGAAGUGC
+>sample_36
+GGACUCGGGGUGCCCUUCU-ucg-G-GAAGGCUaUAGA-ACACCCG----AACUGAa-CUGG-U--Uu-CCAGCG-AGUGAAGUUC
+>sample_37
+GUACUCGGGGUGCCCUUCU----GAAGGCU-AGAc-A-ACCCGa----ACCUGA-CUGGaCUa-u-UccgacuccACCAGCGAAGGGAAGUGC
+>sample_38
+GUACUCGGGGUGCCCUUCU--G-GAAGGCU-AGA-A-ACCCGa-g-cgauc--ACCUGAagc-CUGGgggu-U-gaggCU-CCAGCG--GGGAAGUGC
+>sample_39
+GUACUCGGGGUGCCCUUCUu--G-GAAGGCU-AGAggcgc-A-ACCCG----ACCUGA-CUGG-UUcGU-CCAGCGCAGGGAAGUGC
+>sample_40
+GUACUCGGGGUGCCCUUCU--G-GAAGGCUuggg-AGA-AUACCCG-caaAaaguaG-ACCUGA-CUGG-U-gcgu-U-CCAGCGcgacg-AGGGAAGUGC
+>sample_41
+GUACUCGGGGUGCCCUUCUu--Gau-GAAGGCUa-AGA-AAACCCG--Uc-ACCUGA-CUGG-U--U-CCAGCG-AGGGAAGUGC
+>sample_42
+GUACUCGGGGUGCCCUUCU--GuGGAAGGCUGAGA-A-ACCCG-u-aC-ACCUGAagcgagaa-CUGGuCU-u-UGCCAGCG-AGGGAAGUGC
+>sample_43
+GUACUCGGGGUGCCCUUCUG-Gguugg-GAAGGCU-AGAAA-ACCCGgg-uA--ACAUGAg-CUGGu-U--Uc-CCAGCG----GAAGUGC
+>sample_44
+GUACUCGGGGUGCCCUUCU--G-GAAGGCU-AGA-AgGACCCGc-g-caa--ACCUGAACUGGc-U--U-CCAGCGCAGGGAAGUGC
+>sample_45
+AUACUCGGGGUGCCCUUCUa--G-GAAGGCUCAGAGA-ACCCGc--cgcaacc--ACCUGA-CUGG-U-u-U-CCAGCGc-AGGGAAGUGU
+>sample_46
+GUACUCGGGGUGCCCUUCU-c-Guuccc-GAAGGCUUAGA--------ggaaac---gggcacag-ACCUGA-CUGG-U--U--------AGGGAAGUGC
+>sample_47
+GUACUCGGGGUGCCCUUCU-cuc-G-GAAGGCU-AGA-A-----G--cG-ACCUGAGCUGG-U--U-CCAGCGgagugu-AGGGAAGUGC
+>sample_48
+GUACUCGGGGUGCCCUUCU-cucgg-GCGAAGGCUcacgccuuGAGA-A-----G--a--ACCUGA-CUGG-U--UuACCAGCG-AGGGAAGUGC
+>sample_49
+GUACUCGGGGUUCCCUUCUg--G-GAAGGCU-UGAucUAcccuccc-AACCGc----ACCUGAagaga-CUGG------CCAGCG-AGGGAAGUGC
+>sample_50
+GUAGUCGGGGUGCCCUUCUGCG-GAAGGCU-AGAc-A-ACCCGA---ACCUGA-CUCGa-U------AGCGuaaaucUAGGGAACUGC
+>sample_51
+GUACUCGGGGUGCCCUUCUC-G-GAAGGCUgcacua-AGA-AAACCCGc--Gguuac-ACCUGAa-CUGGAU-UU-CCAGCGa-AGGGAAGUGC
+>sample_52
+GUACUCGGGGUGCCCUUCUU-G-GAAGGCUa-AGA-A-ACCCG---g-ACCUGA-CUGG-U--------CGuuacaa-AGGGAAGUGC
+>sample_53
+GUACUCGGGGUGCCCUUCUUa-G-GAAGGCUUAGA-A-ACCCGU---ACCUGA-CUGG-U-acgagcg-U-CCAGCGGAGGGAAGUGC
+>sample_54
+GUACUCGGGGUGCCCUUCU-g-GGGAAGGCUAAGAc-Ag-ACCCG-----CCUGA-CUGGg-U----CCAGCG-AGGGAAGUGC
+>sample_55
+GUACUCGGGGUGCCCUUCU--------GCUUAGA-Aa-ACCCG-GcCGACCUGA-CUGG-U-CUgcucuGCCAGCGg-AGGGAAGUGC
+>sample_56
+GUACUCGGGGUGCCCUACUA----UAGGCUcugu-AGAgUAa-ACCCG--u--ACCUGA-CUGG-U-aUUCCCAGCG-AGGGAAGUGC
+>sample_57
+GUACUCGGGGUGCCCUUCU--Gauugua-GAAGGCU-AGAg-A-ACCCG---CACCUGA-CUGGuGU--U-CCAGCG-AGGGAAGUGC
+>sample_58
+GUACUCGGGGUGCCCUUCU--Gacaccgcc-GAAGGCU-AGA-A-ACCCG-Gauggag--ACCUGA---------U-CCAGCG-AGGGAAGUGC
+>sample_59
+GUACUCGGGGUACCCUUCU--G-GAAGGCU-AGAGA-ACCCG-u-U-ACCUGA-CUGG-UG-UUCCAGCG-AGGGAAGUGC
+>sample_60
+GUACUCGGGGUGCCCUUCUg--GcAGAAGGCUa-AGA-Au-ACCCG-uguucgca-GGACCUGAuc-CUGGUU-GUUCCAGCGua-AGGGAAGUGC
+>sample_61
+GUACUCGGGGUGCCCUUCUU-Gg-GAAGGCU-AGA-A-ACCCGu--c--ACCUGAaCCUGG-UU-U----GCGCAGGGAAGUGC
+>sample_62
+GUACUCGGGGUGCCCUUCU--------GCU-AGAccgag-A-ACCCG---UACCUGAUCUGG-U-gcuuca-U-CCAGCG-AGGGAAGUGC
+>sample_63
+GUACUCGGGGUGCCCUUCU-UGg-GAAGGCUau-AGA-ACACCCG---u-ACCUGAc-CUGGaCU--U-CCAGCG-AGGGAAGUGC
+>sample_64
+GUACUCGGGGUGCCCUUCUG-G-GAAGGCUc-AGA-Aa-ACCCG--A-ACCUGAa-CUGG-Uu--Ug-CCAGCG-AGGGAAGUGC
+>sample_65
+GUACUCGGGGUGCCCUUCUuagccgg--G-GAAGGCU-AGAg-A-ACCCG-gugcaagg-acgacguU-ACCUGA-CUGG-U--U-CCAGCGa-AGGGAAGUGC
+>sample_66
+GUACUCGGGGUGCCCUUCU-gaaccgCG-GAAGGCUGAGAGA-ACCCG--a--------a-CUGG-Ua-a-UUCCAGCGuaag-AGGGAAGUGC
+>sample_67
+GUACUCGGGGUGCCCUUCU--G--------AAGA-AGACCCGagacaug-G--ACCUGA-CUGG-U--Ua-CCAGCG-AGGGAAGUGC
+>sample_68
+GUACUCGGGGUGCCCUUCU-ugua-G-GAAGGCUCAGAc-Auagccga-ACCCG-------UGA-CUGG-Ua--Uc-CCAGCG-AGGGAAGUGC
+>sample_69
+GUACUCGGGGUGCCCUUCU--Gg-GAAGGCU-AGA-AuAACCCGu-ccg--UACCUGAACUGG----UUCCAGCGGAGGGAAGUGC
+>sample_70
+GUACUCGGGGUGCCCUUCU--G-GAAGGCU-AGA-A-ACCCG-CU-ACCUGAGCUGGgaAU-UU-CCAGCG----GAAGUGC
+>sample_71
+GUGCUCGGGGUGCCCUUCU----GAAGGCU--------CCCG-----CCUGA-CUGG-U---guuga-CCAGCGccua-AGGGAAGCGC
+>sample_72
+GUACUCGGGGUGCCCUUCU-cggcucu-G-GAGGGCUu-AGA-AAACCCG-----CCUGAucucguu-CUGGg-Uucaacgc--U--CAGCGaUAGGGAAGUGC
+>sample_73
+GUACUCGGGGUGCCCUUCU---UGAAGGCUcuguGAGAa-A-ACCCGG--CACCUGA-CUGG-U-cauauuua-U-CCAGCGu-AGGGAAGUGC
+>sample_74
+GUACUCGGGGUGCCCUUCU--G-GAAGGCUa-AGA-A-ACCCGUG--ACCUGA-CUGG-U-CUACCAGCGGAGGGAAGUGC
+>sample_75
+GUACUCGGGGUGCCCUUCUaU-G-GAAGGCU-AGAa-Aacg-ACCCGG-gaac---CCUGA-CUGGagcu-UcacguA-U-CCAGCG-AGGGAAGUGC
+>sample_76
+GUACUCGGGGUGCCCUUCU--GUGAAGGCUa-AGA-A-ACCCG--a--ACCUGA-AUGGguuuauccUU--A-CCAUCG-AGGGAAGUGC
+>sample_77
+GUACUCGGGGUGCCCUUCUuaagc-u-GcAGAAGGCU-AGAcUAcgaucc-ACCCGgUCauauuacg-g-ACCUGAagcu-CUGGa-U-c-U-CCAGCG-AGGGAAGUGC
+>sample_78
+GUUCUCGGGGUGCCCUUCU-u-GgAGAAGGCU-AGA-A-ACCCG-u---ACCUGA-CUGGu-UC-U-CCAGCGacg-AGGGAAGAGC
+>sample_79
+GUACUCGGGGUGCCCUUCU--G-GAAGGCU-----A-ACCCG------CUGA-CUGG-U-u-U--------AGGGAAGUGC
+>sample_80
+GUACUCGGGGUGCCCUUCU--G-GAAGGCU-AGA-A-ACCCGu-a--agagg-ACCUGA-CUGGugGU--------CGc-AGGGAAGUGC
+>sample_81
+GUACUCGGGGUGCCCUUCU--G-GAAGGCU-AGA-Au-ACCCG----ACCUGA-CUGG-U-acgucug-U-CCAGCG-AGGGAAGUGC
+>sample_82
+GUACUCGGGGUGCCCUUCU-aauuagua-GAGAAGGCU-AGAg-AgCACCCG-----CCUGA-GUGGUU--UACCACCG-AGGGAAGUGC
+>sample_83
+GUACUCGGGGUGCCCUUCU--Gc-GAAGGCU--------CCCGcuaaggUcAu--ACCUGAcuucug-CUGGauuacccGUaU-U-CCAGCG-AGGGAAGUGC
+>sample_84
+GUACUCGGGGUGCCCUUCUacaaga--G-GAAGGCUUAGA-A-ACCCG---gCACCUGAaACUGGggaauc-U-gUU-CCAGCCcgaau-AGGGAAGUGC
+>sample_85
+GUACUCGGGGUGCCCUUCUcuca--GcagccuCGAAGGCUa-AGAUAc-ACCCG-c-u-GACCUGAUCUGGu-U-AU-CCAGCG-AGGGAAGUGC
+>sample_86
+GUACUCGGGGUGCCGUUCUcG-G-GAAUGCU-AGA-AUACCCGaaaug---c-ACCUGA-CUGG-Ua--U-CCAGCG-AGGGAAGUGC
+>sample_87
+GUACUCGGGGUGCCCUUCU--G-GAAGGCUg-AGAg-Auu-ACCCG-GC-ACCUGA-CUGG-UuG-U---AGCG-AGGGAAGUGC
+>sample_88
+GUACUCGGGGUGCCCUUCU--Gg-GAAGGCU-AGA-AAACCCGcG---ACCUGA-CUGG-U--UCCCAGCG-AGGGAAGUGC
+>sample_89
+GUACUCGGGGUGCCCUUCUG-G-GAAGGCU-AGA-A-ACCCGa-a--c-ACCUGA-CUGG-U--U-CCAGCGUAGGGAAGUGC
+>sample_90
+GUACUCGGGGUGCCCUUCUgu-g-G-GAAGGCU-AGA-A-ACCCG-cguaucCGGACCUGA-CUGG-Uacau----CCAGCG-AGGGAAGUGC
+>sample_91
+GUACACGGGGUGCCCUUCU--G-GAAGGCUc-AGACAacaugu-ACCCG-a--a-ACCUGAUCUGG------CCAGCG-AGGGAUGUGC
+>sample_92
+GUACUCGGGGUGCCCUUCU-c-GUGAAGGCU-------ACCCG----ACCUGA-CUGG--------AGCG-AGGGAAGUGC
+>sample_93
+GUACUCGGGGUGCCCUUCUgacU-G-GAAGGCUauauagcGAGA-A-ACCCG---GACCUGA-CUGG-U-AUa-CCAGCGCAGGGAAGUGC
+>sample_94
+GUACUCGGGGUGCCCUUCUcuccuacaG-GucAGAAGGCAa-AGU-A-ACCCG----ACCUGA-CUGG-Ug-cCU-CCAGCG--------UGC
+>sample_95
+GUACUCGGGGUGCCCUUCU--G-GAAGGCU-AGA-A-ACCCG---gg-ACCUGA-CUGGGU-c-U-CCAGCGguagg-AGGGAAGUGC
+>sample_96
+GUACUCGGGGUGCCCUUCU-caa-G-GAAGGCU-AGACACACCCG-u-g--ACCUGA-CUGGc-UG-U-CCAGCG-AGGGAAGUGC
+>sample_97
+GUACUCGGGGUGCCCUUCU--G-GAAGGCU-AGA-AGACCCG-uaG--ACCUGA-CUGG-U-AU-CCAGCG-AGGGAAGUGC
+>sample_98
+GUACUCGGGGUGCCCUUCUG-GGGAAGGCU-AGA-A-ACCCGgCgggccccc---ACCUGAc-CUGG-UG-U-CCAGCGg-AGGGAAGUGC
