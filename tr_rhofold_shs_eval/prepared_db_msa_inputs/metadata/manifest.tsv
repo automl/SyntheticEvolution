@@ -1,0 +1,480 @@
+pdb_id	status	reason	seq_len	msa_nseq	json_file
+1A9N	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1A9N_data.json
+1DFU	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1DFU_data.json
+1EC6	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1EC6_data.json
+1EIY	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1EIY_data.json
+1EUQ	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1EUQ_data.json
+1EUY	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1EUY_data.json
+1EXD	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1EXD_data.json
+1FEU	skipped	filtered_non_single_rna (rna=4,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1FEU_data.json
+1GAX	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1GAX_data.json
+1GTR	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1GTR_data.json
+1GTS	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1GTS_data.json
+1IVS	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1IVS_data.json
+1J1U	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1J1U_data.json
+1JBT	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1JBT_data.json
+1KUQ	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1KUQ_data.json
+1LNG	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1LNG_data.json
+1MMS	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1MMS_data.json
+1O0B	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1O0B_data.json
+1O0C	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1O0C_data.json
+1OOA	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1OOA_data.json
+1P6V	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1P6V_data.json
+1Q9A	exported	rna=1,protein=0,dna=0	27	1	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1Q9A_data.json
+1QA6	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1QA6_data.json
+1QRS	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1QRS_data.json
+1QRT	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1QRT_data.json
+1QRU	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1QRU_data.json
+1QTQ	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1QTQ_data.json
+1RPU	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1RPU_data.json
+1S03	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1S03_data.json
+1SDS	skipped	filtered_non_single_rna (rna=3,protein=3,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1SDS_data.json
+1SJ3	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1SJ3_data.json
+1SJ4	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1SJ4_data.json
+1SJF	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1SJF_data.json
+1U0B	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1U0B_data.json
+1UN6	skipped	filtered_non_single_rna (rna=2,protein=3,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1UN6_data.json
+1VBX	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1VBX_data.json
+1VBY	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1VBY_data.json
+1VBZ	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1VBZ_data.json
+1VC0	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1VC0_data.json
+1VC6	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1VC6_data.json
+1VFG	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1VFG_data.json
+1Z43	exported	rna=1,protein=0,dna=0	101	56	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1Z43_data.json
+1ZBH	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1ZBH_data.json
+1ZDK	skipped	filtered_non_single_rna (rna=2,protein=3,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1ZDK_data.json
+1ZJW	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/1ZJW_data.json
+2A43	exported	rna=1,protein=0,dna=0	26	1	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2A43_data.json
+2AKE	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2AKE_data.json
+2ANN	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2ANN_data.json
+2B2G	skipped	filtered_non_single_rna (rna=2,protein=3,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2B2G_data.json
+2BQ5	skipped	filtered_non_single_rna (rna=2,protein=3,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2BQ5_data.json
+2DER	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2DER_data.json
+2DET	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2DET_data.json
+2DR2	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2DR2_data.json
+2DR5	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2DR5_data.json
+2DR7	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2DR7_data.json
+2DR8	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2DR8_data.json
+2DR9	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2DR9_data.json
+2DRA	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2DRA_data.json
+2DRB	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2DRB_data.json
+2DU4	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2DU4_data.json
+2DU5	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2DU5_data.json
+2DU6	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2DU6_data.json
+2EET	exported	rna=1,protein=0,dna=0	67	36	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2EET_data.json
+2EEV	exported	rna=1,protein=0,dna=0	67	32	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2EEV_data.json
+2EZ6	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2EZ6_data.json
+2F8K	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2F8K_data.json
+2F8S	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2F8S_data.json
+2F8T	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2F8T_data.json
+2G9C	exported	rna=1,protein=0,dna=0	67	66	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2G9C_data.json
+2GIC	skipped	filtered_non_single_rna (rna=1,protein=5,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2GIC_data.json
+2GIS	exported	rna=1,protein=0,dna=0	94	2082	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2GIS_data.json
+2HVY	skipped	filtered_non_single_rna (rna=1,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2HVY_data.json
+2IY5	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2IY5_data.json
+2NUE	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2NUE_data.json
+2NUF	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2NUF_data.json
+2OIH	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2OIH_data.json
+2OJ3	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2OJ3_data.json
+2OZB	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2OZB_data.json
+2PJP	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2PJP_data.json
+2PLY	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2PLY_data.json
+2R8S	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2R8S_data.json
+2RD2	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2RD2_data.json
+2RE8	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2RE8_data.json
+2UWM	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2UWM_data.json
+2V3C	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2V3C_data.json
+2W2H	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2W2H_data.json
+2XNW	exported	rna=1,protein=0,dna=0	65	63	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2XNW_data.json
+2XO0	exported	rna=1,protein=0,dna=0	65	63	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2XO0_data.json
+2XO1	exported	rna=1,protein=0,dna=0	65	63	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2XO1_data.json
+2YGH	exported	rna=1,protein=0,dna=0	95	1648	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2YGH_data.json
+2ZH1	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2ZH1_data.json
+2ZH2	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2ZH2_data.json
+2ZH3	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2ZH3_data.json
+2ZH4	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2ZH4_data.json
+2ZH5	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2ZH5_data.json
+2ZH6	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2ZH6_data.json
+2ZH7	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2ZH7_data.json
+2ZH8	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2ZH8_data.json
+2ZH9	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2ZH9_data.json
+2ZHA	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2ZHA_data.json
+2ZHB	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2ZHB_data.json
+2ZKO	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2ZKO_data.json
+2ZNI	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2ZNI_data.json
+2ZXU	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2ZXU_data.json
+2ZZN	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/2ZZN_data.json
+3A2K	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3A2K_data.json
+3A3A	exported	rna=1,protein=0,dna=0	86	201	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3A3A_data.json
+3AL0	skipped	filtered_non_single_rna (rna=1,protein=3,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3AL0_data.json
+3AMU	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3AMU_data.json
+3BOY	skipped	filtered_non_single_rna (rna=1,protein=3,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3BOY_data.json
+3DVZ	exported	rna=1,protein=0,dna=0	27	1	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3DVZ_data.json
+3EPJ	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3EPJ_data.json
+3FO4	exported	rna=1,protein=0,dna=0	63	58	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3FO4_data.json
+3FOZ	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3FOZ_data.json
+3FTF	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3FTF_data.json
+3GAO	exported	rna=1,protein=0,dna=0	67	80	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3GAO_data.json
+3GOG	exported	rna=1,protein=0,dna=0	65	38	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3GOG_data.json
+3GX2	exported	rna=1,protein=0,dna=0	94	1924	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3GX2_data.json
+3GX5	exported	rna=1,protein=0,dna=0	94	1924	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3GX5_data.json
+3HTX	skipped	filtered_non_single_rna (rna=4,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3HTX_data.json
+3IQN	exported	rna=1,protein=0,dna=0	94	1872	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3IQN_data.json
+3IQP	exported	rna=1,protein=0,dna=0	94	2084	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3IQP_data.json
+3IVK	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3IVK_data.json
+3IWN	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3IWN_data.json
+3K0J	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3K0J_data.json
+3KTW	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3KTW_data.json
+3L0U	exported	rna=1,protein=0,dna=0	73	2122	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3L0U_data.json
+3LA5	exported	rna=1,protein=0,dna=0	71	19	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3LA5_data.json
+3NDB	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3NDB_data.json
+3NVI	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3NVI_data.json
+3OUY	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3OUY_data.json
+3OV7	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3OV7_data.json
+3OVA	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3OVA_data.json
+3OVS	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3OVS_data.json
+3PU4	skipped	filtered_non_single_rna (rna=1,protein=5,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3PU4_data.json
+3R9W	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3R9W_data.json
+3R9X	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3R9X_data.json
+3SD3	exported	rna=1,protein=0,dna=0	89	17	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3SD3_data.json
+3SIU	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3SIU_data.json
+3TUP	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3TUP_data.json
+3U4M	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3U4M_data.json
+3U56	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3U56_data.json
+3UMY	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3UMY_data.json
+3V7E	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3V7E_data.json
+3VJR	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3VJR_data.json
+3WBM	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3WBM_data.json
+3WC2	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3WC2_data.json
+3WQY	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/3WQY_data.json
+483D	exported	rna=1,protein=0,dna=0	27	1	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/483D_data.json
+4AL5	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4AL5_data.json
+4AL6	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4AL6_data.json
+4B5R	exported	rna=1,protein=0,dna=0	94	908	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4B5R_data.json
+4BHH	skipped	filtered_non_single_rna (rna=1,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4BHH_data.json
+4C7O	skipped	filtered_non_single_rna (rna=1,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4C7O_data.json
+4FE5	exported	rna=1,protein=0,dna=0	67	80	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4FE5_data.json
+4FEJ	exported	rna=1,protein=0,dna=0	67	58	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4FEJ_data.json
+4FEN	exported	rna=1,protein=0,dna=0	67	28	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4FEN_data.json
+4FEO	exported	rna=1,protein=0,dna=0	67	25	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4FEO_data.json
+4FEP	exported	rna=1,protein=0,dna=0	67	18	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4FEP_data.json
+4FTS	skipped	filtered_non_single_rna (rna=1,protein=3,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4FTS_data.json
+4GHL	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4GHL_data.json
+4IG8	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4IG8_data.json
+4J1G	skipped	filtered_non_single_rna (rna=1,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4J1G_data.json
+4J39	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4J39_data.json
+4JGN	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4JGN_data.json
+4JK0	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4JK0_data.json
+4JNG	skipped	filtered_non_single_rna (rna=1,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4JNG_data.json
+4KJI	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4KJI_data.json
+4KR6	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4KR6_data.json
+4KR9	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4KR9_data.json
+4L81	exported	rna=1,protein=0,dna=0	96	4	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4L81_data.json
+4L8H	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4L8H_data.json
+4LVV	exported	rna=1,protein=0,dna=0	89	18	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4LVV_data.json
+4LVW	exported	rna=1,protein=0,dna=0	89	18	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4LVW_data.json
+4LVY	exported	rna=1,protein=0,dna=0	89	18	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4LVY_data.json
+4LVZ	exported	rna=1,protein=0,dna=0	89	18	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4LVZ_data.json
+4LW0	exported	rna=1,protein=0,dna=0	89	18	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4LW0_data.json
+4LX5	exported	rna=1,protein=0,dna=0	71	28	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4LX5_data.json
+4LX6	exported	rna=1,protein=0,dna=0	71	22	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4LX6_data.json
+4M2Z	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4M2Z_data.json
+4M30	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4M30_data.json
+4M4O	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4M4O_data.json
+4NGF	skipped	filtered_non_single_rna (rna=4,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4NGF_data.json
+4NH6	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4NH6_data.json
+4OOG	skipped	filtered_non_single_rna (rna=1,protein=3,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4OOG_data.json
+4P3E	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4P3E_data.json
+4PDB	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4PDB_data.json
+4PMI	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4PMI_data.json
+4PRF	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4PRF_data.json
+4QG3	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4QG3_data.json
+4QI2	skipped	filtered_non_single_rna (rna=4,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4QI2_data.json
+4QIL	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4QIL_data.json
+4QOZ	skipped	filtered_non_single_rna (rna=2,protein=3,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4QOZ_data.json
+4QQB	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4QQB_data.json
+4RWN	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4RWN_data.json
+4RWO	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4RWO_data.json
+4RWP	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4RWP_data.json
+4S3N	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4S3N_data.json
+4TUW	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4TUW_data.json
+4TUX	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4TUX_data.json
+4TZX	exported	rna=1,protein=0,dna=0	71	34	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4TZX_data.json
+4TZY	exported	rna=1,protein=0,dna=0	71	34	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4TZY_data.json
+4WC2	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4WC2_data.json
+4WC3	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4WC3_data.json
+4WC4	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4WC4_data.json
+4WC5	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4WC5_data.json
+4WC6	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4WC6_data.json
+4WC7	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4WC7_data.json
+4X0A	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4X0A_data.json
+4X0B	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4X0B_data.json
+4X4O	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4X4O_data.json
+4XCO	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4XCO_data.json
+4XNR	exported	rna=1,protein=0,dna=0	71	34	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4XNR_data.json
+4YB1	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4YB1_data.json
+4YCO	skipped	filtered_non_single_rna (rna=3,protein=3,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4YCO_data.json
+4YVI	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4YVI_data.json
+4YVJ	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4YVJ_data.json
+4YVK	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4YVK_data.json
+4YYE	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4YYE_data.json
+4ZLD	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4ZLD_data.json
+4ZT9	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/4ZT9_data.json
+5CCB	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/5CCB_data.json
+5D6G	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/5D6G_data.json
+5DAR	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/5DAR_data.json
+5DE5	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/5DE5_data.json
+5DV7	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/5DV7_data.json
+5F5F	skipped	filtered_non_single_rna (rna=4,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/5F5F_data.json
+5F5H	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/5F5H_data.json
+5FK2	exported	rna=1,protein=0,dna=0	94	700	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/5FK2_data.json
+5FK3	exported	rna=1,protein=0,dna=0	94	488	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/5FK3_data.json
+5FK5	exported	rna=1,protein=0,dna=0	94	697	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/5FK5_data.json
+5FKE	exported	rna=1,protein=0,dna=0	94	497	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/5FKE_data.json
+5FKF	exported	rna=1,protein=0,dna=0	94	490	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/5FKF_data.json
+5HC9	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/5HC9_data.json
+5JC7	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/5JC7_data.json
+5M0H	exported	rna=1,protein=0,dna=0	42	1	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/5M0H_data.json
+5MSF	skipped	filtered_non_single_rna (rna=2,protein=3,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/5MSF_data.json
+5NPM	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/5NPM_data.json
+5UD5	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/5UD5_data.json
+5UDZ	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/5UDZ_data.json
+5V6X	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/5V6X_data.json
+5VW1	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/5VW1_data.json
+5W0O	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/5W0O_data.json
+5W1H	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/5W1H_data.json
+5WLH	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/5WLH_data.json
+5WT3	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/5WT3_data.json
+5Y7M	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/5Y7M_data.json
+5ZW4	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/5ZW4_data.json
+6AAX	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6AAX_data.json
+6B14	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6B14_data.json
+6B3K	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6B3K_data.json
+6BJG	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6BJG_data.json
+6BJH	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6BJH_data.json
+6BJV	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6BJV_data.json
+6BJY	skipped	filtered_non_single_rna (rna=1,protein=5,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6BJY_data.json
+6CF2	skipped	filtered_non_single_rna (rna=1,protein=3,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6CF2_data.json
+6CMN	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6CMN_data.json
+6D3P	exported	rna=1,protein=0,dna=0	45	3	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6D3P_data.json
+6DB8	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6DB8_data.json
+6DB9	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6DB9_data.json
+6DU4	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6DU4_data.json
+6E9E	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6E9E_data.json
+6E9F	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6E9F_data.json
+6G1S	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6G1S_data.json
+6G1X	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6G1X_data.json
+6GKH	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6GKH_data.json
+6H61	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6H61_data.json
+6H66	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6H66_data.json
+6HTU	skipped	filtered_non_single_rna (rna=2,protein=3,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6HTU_data.json
+6IV6	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6IV6_data.json
+6JXM	exported	rna=1,protein=0,dna=0	97	26	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6JXM_data.json
+6KL9	skipped	filtered_non_single_rna (rna=1,protein=3,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6KL9_data.json
+6KLB	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6KLB_data.json
+6NMA	skipped	filtered_non_single_rna (rna=1,protein=3,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6NMA_data.json
+6NMC	skipped	filtered_non_single_rna (rna=1,protein=3,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6NMC_data.json
+6NMD	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6NMD_data.json
+6O5F	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6O5F_data.json
+6P7M	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6P7M_data.json
+6SX0	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6SX0_data.json
+6SX2	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6SX2_data.json
+6SY6	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6SY6_data.json
+6TQB	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6TQB_data.json
+6U8D	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6U8D_data.json
+6UBU	exported	rna=1,protein=0,dna=0	67	80	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6UBU_data.json
+6UC7	exported	rna=1,protein=0,dna=0	67	80	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6UC7_data.json
+6UC8	exported	rna=1,protein=0,dna=0	67	80	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6UC8_data.json
+6VRB	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6VRB_data.json
+6VRC	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6VRC_data.json
+6VUI	exported	rna=1,protein=0,dna=0	33	1	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6VUI_data.json
+6W62	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6W62_data.json
+6WJS	exported	rna=1,protein=0,dna=0	109	1813	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6WJS_data.json
+6WW6	skipped	filtered_non_single_rna (rna=4,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6WW6_data.json
+6XH1	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6XH1_data.json
+6XH2	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6XH2_data.json
+6XH3	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6XH3_data.json
+6XJQ	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6XJQ_data.json
+6XJW	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6XJW_data.json
+6XJY	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6XJY_data.json
+6XJZ	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6XJZ_data.json
+6Y0Y	exported	rna=1,protein=0,dna=0	27	1	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6Y0Y_data.json
+6ZDQ	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6ZDQ_data.json
+6ZLC	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/6ZLC_data.json
+7BKQ	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7BKQ_data.json
+7CTT	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7CTT_data.json
+7D7V	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7D7V_data.json
+7D81	exported	rna=1,protein=0,dna=0	50	3	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7D81_data.json
+7D82	exported	rna=1,protein=0,dna=0	50	3	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7D82_data.json
+7DLZ	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7DLZ_data.json
+7DMQ	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7DMQ_data.json
+7DOK	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7DOK_data.json
+7DTE	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7DTE_data.json
+7DWH	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7DWH_data.json
+7E9I	exported	rna=1,protein=0,dna=0	33	1	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7E9I_data.json
+7EAF	exported	rna=1,protein=0,dna=0	94	1223	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7EAF_data.json
+7ED5	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7ED5_data.json
+7EEM	exported	rna=1,protein=0,dna=0	26	1	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7EEM_data.json
+7EFG	exported	rna=1,protein=0,dna=0	19	1	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7EFG_data.json
+7EFH	exported	rna=1,protein=0,dna=0	19	1	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7EFH_data.json
+7EOG	exported	rna=1,protein=0,dna=0	48	2	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7EOG_data.json
+7EOI	exported	rna=1,protein=0,dna=0	49	2	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7EOI_data.json
+7EOK	exported	rna=1,protein=0,dna=0	48	2	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7EOK_data.json
+7EOL	exported	rna=1,protein=0,dna=0	48	2	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7EOL_data.json
+7EOM	exported	rna=1,protein=0,dna=0	48	2	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7EOM_data.json
+7EON	exported	rna=1,protein=0,dna=0	48	2	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7EON_data.json
+7EOO	exported	rna=1,protein=0,dna=0	48	2	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7EOO_data.json
+7EOP	exported	rna=1,protein=0,dna=0	48	2	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7EOP_data.json
+7K9M	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7K9M_data.json
+7KA0	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7KA0_data.json
+7KAB	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7KAB_data.json
+7KRP	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7KRP_data.json
+7LYJ	exported	rna=1,protein=0,dna=0	66	8	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7LYJ_data.json
+7MKT	exported	rna=1,protein=0,dna=0	23	1	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7MKT_data.json
+7MKY	exported	rna=1,protein=0,dna=0	66	8	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7MKY_data.json
+7MLX	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7MLX_data.json
+7N0B	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7N0B_data.json
+7N0C	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7N0C_data.json
+7NGA	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7NGA_data.json
+7NIC	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7NIC_data.json
+7NQ4	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7NQ4_data.json
+7ORN	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7ORN_data.json
+7OS0	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7OS0_data.json
+7OZQ	skipped	filtered_non_single_rna (rna=4,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7OZQ_data.json
+7P0V	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7P0V_data.json
+7PMQ	skipped	filtered_non_single_rna (rna=4,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7PMQ_data.json
+7QR3	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7QR3_data.json
+7QR4	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7QR4_data.json
+7QSH	exported	rna=1,protein=0,dna=0	25	1	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7QSH_data.json
+7R97	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7R97_data.json
+7RE2	skipped	filtered_non_single_rna (rna=2,protein=5,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7RE2_data.json
+7SAM	exported	rna=1,protein=0,dna=0	169	24	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7SAM_data.json
+7SLP	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7SLP_data.json
+7SWF	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7SWF_data.json
+7SXP	exported	rna=1,protein=0,dna=0	21	1	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7SXP_data.json
+7TZT	exported	rna=1,protein=0,dna=0	79	338	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7TZT_data.json
+7U2A	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7U2A_data.json
+7UO4	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7UO4_data.json
+7UO7	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7UO7_data.json
+7UOB	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7UOB_data.json
+7UOE	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7UOE_data.json
+7URI	exported	rna=1,protein=0,dna=0	90	1	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7URI_data.json
+7URM	exported	rna=1,protein=0,dna=0	90	1	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7URM_data.json
+7VFT	exported	rna=1,protein=0,dna=0	23	1	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7VFT_data.json
+7VG2	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7VG2_data.json
+7VG3	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7VG3_data.json
+7VTN	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7VTN_data.json
+7W0C	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7W0C_data.json
+7W0D	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7W0D_data.json
+7W0E	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7W0E_data.json
+7WAH	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7WAH_data.json
+7WKP	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7WKP_data.json
+7X34	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7X34_data.json
+7X7A	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7X7A_data.json
+7X7R	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7X7R_data.json
+7X8A	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7X8A_data.json
+7XC7	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7XC7_data.json
+7XSP	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7XSP_data.json
+7XSQ	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7XSQ_data.json
+7XSR	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7XSR_data.json
+7XSS	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7XSS_data.json
+7XT4	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7XT4_data.json
+7XW2	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7XW2_data.json
+7Y80	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7Y80_data.json
+7Y81	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7Y81_data.json
+7Y82	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7Y82_data.json
+7Y84	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7Y84_data.json
+7Y85	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7Y85_data.json
+7Y8T	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7Y8T_data.json
+7Y8Y	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7Y8Y_data.json
+7Y9X	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7Y9X_data.json
+7Y9Y	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7Y9Y_data.json
+7YN9	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7YN9_data.json
+7YNA	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7YNA_data.json
+7YNB	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7YNB_data.json
+7YNC	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7YNC_data.json
+7YND	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7YND_data.json
+7ZOL	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7ZOL_data.json
+7ZOQ	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/7ZOQ_data.json
+8AF0	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8AF0_data.json
+8ASW	skipped	filtered_non_single_rna (rna=1,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8ASW_data.json
+8AW3	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8AW3_data.json
+8AXF	skipped	filtered_non_single_rna (rna=1,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8AXF_data.json
+8BGU	skipped	filtered_non_single_rna (rna=1,protein=3,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8BGU_data.json
+8C4U	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8C4U_data.json
+8CTI	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8CTI_data.json
+8D1V	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8D1V_data.json
+8D4B	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8D4B_data.json
+8D8N	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8D8N_data.json
+8D97	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8D97_data.json
+8D9E	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8D9E_data.json
+8D9F	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8D9F_data.json
+8D9G	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8D9G_data.json
+8D9H	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8D9H_data.json
+8D9I	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8D9I_data.json
+8DFV	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8DFV_data.json
+8DG7	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8DG7_data.json
+8DGA	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8DGA_data.json
+8DVS	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8DVS_data.json
+8E28	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8E28_data.json
+8E29	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8E29_data.json
+8E40	skipped	filtered_non_single_rna (rna=2,protein=3,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8E40_data.json
+8EEX	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8EEX_data.json
+8EEY	skipped	filtered_non_single_rna (rna=2,protein=3,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8EEY_data.json
+8FZR	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8FZR_data.json
+8G6R	skipped	filtered_non_single_rna (rna=2,protein=3,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8G6R_data.json
+8GNA	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8GNA_data.json
+8GS2	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8GS2_data.json
+8GU6	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8GU6_data.json
+8H0S	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8H0S_data.json
+8H69	skipped	filtered_non_single_rna (rna=2,protein=3,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8H69_data.json
+8HB8	exported	rna=1,protein=0,dna=0	55	1	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8HB8_data.json
+8HIO	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8HIO_data.json
+8HKE	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8HKE_data.json
+8HMY	skipped	filtered_non_single_rna (rna=1,protein=5,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8HMY_data.json
+8IDF	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8IDF_data.json
+8ISS	skipped	filtered_non_single_rna (rna=1,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8ISS_data.json
+8IUO	skipped	filtered_non_single_rna (rna=1,protein=5,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8IUO_data.json
+8JTR	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8JTR_data.json
+8KEB	exported	rna=1,protein=0,dna=0	71	2	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8KEB_data.json
+8KED	exported	rna=1,protein=0,dna=0	71	2	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8KED_data.json
+8OMR	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8OMR_data.json
+8OPS	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8OPS_data.json
+8OPT	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8OPT_data.json
+8OST	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8OST_data.json
+8PTX	skipped	filtered_non_single_rna (rna=1,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8PTX_data.json
+8PTZ	skipped	filtered_non_single_rna (rna=1,protein=3,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8PTZ_data.json
+8Q6N	exported	rna=1,protein=0,dna=0	46	4	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8Q6N_data.json
+8R3L	skipped	filtered_non_single_rna (rna=2,protein=3,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8R3L_data.json
+8S9T	skipped	filtered_non_single_rna (rna=1,protein=5,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8S9T_data.json
+8S9U	skipped	filtered_non_single_rna (rna=2,protein=5,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8S9U_data.json
+8S9V	skipped	filtered_non_single_rna (rna=2,protein=5,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8S9V_data.json
+8S9X	skipped	filtered_non_single_rna (rna=2,protein=5,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8S9X_data.json
+8SQ9	skipped	filtered_non_single_rna (rna=2,protein=5,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8SQ9_data.json
+8SSW	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8SSW_data.json
+8T5S	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8T5S_data.json
+8TKK	exported	rna=1,protein=0,dna=0	107	1	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8TKK_data.json
+8U5J	exported	rna=1,protein=0,dna=0	36	1	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8U5J_data.json
+8UPT	exported	rna=1,protein=0,dna=0	71	4	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8UPT_data.json
+8UPY	exported	rna=1,protein=0,dna=0	72	10	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8UPY_data.json
+8URB	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8URB_data.json
+8WM4	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8WM4_data.json
+8WMC	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8WMC_data.json
+8WMI	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8WMI_data.json
+8WML	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8WML_data.json
+8YE6	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8YE6_data.json
+8Z8X	skipped	filtered_non_single_rna (rna=2,protein=3,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8Z8X_data.json
+8Z90	skipped	filtered_non_single_rna (rna=2,protein=3,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/8Z90_data.json
+9C6K	exported	rna=1,protein=0,dna=0	80	339	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/9C6K_data.json
+9CMP	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/9CMP_data.json
+9CPO	skipped	filtered_non_single_rna (rna=2,protein=4,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/9CPO_data.json
+9CXF	exported	rna=1,protein=0,dna=0	200	374	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/9CXF_data.json
+9DE8	exported	rna=1,protein=0,dna=0	56	7	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/9DE8_data.json
+9DTT	skipped	filtered_non_single_rna (rna=1,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/9DTT_data.json
+9ENB	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/9ENB_data.json
+9ENC	skipped	filtered_non_single_rna (rna=1,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/9ENC_data.json
+9ENE	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/9ENE_data.json
+9ENF	skipped	filtered_non_single_rna (rna=2,protein=2,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/9ENF_data.json
+9IIY	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/9IIY_data.json
+9IIZ	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/9IIZ_data.json
+9IJ2	skipped	filtered_non_single_rna (rna=2,protein=1,dna=0)	0	0	/gpfs/bwfor/work/ws/fr_ds595-shs-paper/SyntheticEvolution/data/datafiles/alphafold3/9IJ2_data.json

@@ -17,3 +17,10 @@ We also provide an examle script for the evaluation of all RNAformer seeded SHS 
 ./evaluate_all.sh
 ```
 from the project root to redo all evaluations of RNAformer seeded SHS predictions.
+
+## Evaluating other predictors than AlphaFold 3
+
+The ```tr_rhofold_shs_eval``` folder contains a self-contained pipeline that folds our synthetic homologous sequences with [trRosettaRNA](https://yanglab.qd.sdu.edu.cn/trRosettaRNA/) and [RhoFold+](https://github.com/ml4bio/RhoFold), converts their predictions to mmCIF and scores them with the same ```run_evaluation.sh``` stack described above.
+It also covers the SHS versus natural-database-MSA ablation and a multi-seed SHS sweep.
+
+Please find the requirements (conda environments, the two external predictors, and the data files needed) and all usage instructions in [tr_rhofold_shs_eval/README.md](/tr_rhofold_shs_eval/README.md).

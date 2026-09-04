@@ -39,6 +39,14 @@ For structure prediction, we currently natively support ```rnafold```, ```rnafor
 Please see RnaBench at ```https://github.com/automl/RnaBench``` for more information and guidelines on the installation and usage of several other folding engines.
 
 
+If you already have base pairs for a sequence, you can pass them directly with ```--pairs``` instead of predicting a structure:
+```
+python rna_msa_generator_base_pair.py --input_json_path data/datafiles/alphafold3/1SJ4_data.json --pairs "[[0, 25], [1, 24], [2, 23]]" --pdb_id 1SJ4
+```
+The pairs are 0-based ```[i, j]``` index pairs and take precedence over ```--structure``` and ```--structure_predictor```.
+Unlike a dot-bracket string, this input can carry pseudoknots and multiplets.
+This is what our [trRosettaRNA/RhoFold+ evaluation](/tr_rhofold_shs_eval/README.md) uses to regenerate synthetic homologs from stored base-pair annotations.
+
 All figures will be saved to the ```paper_figures``` directory.
 
 Please find more usage information for our [evaluation](/docs/EVALUATION.md) and [visualization](/docs/VISUALIZATION.md) in [the docs](/docs/).
