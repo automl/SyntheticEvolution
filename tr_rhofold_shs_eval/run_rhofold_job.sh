@@ -27,7 +27,7 @@
 
 # ── Optional: email notifications ─────────────────────────────────────────────
 ##SBATCH --mail-type=BEGIN,END,FAIL
-##SBATCH --mail-user=dom.scheuer@gmail.com
+##SBATCH --mail-user=you@example.org
 
 # =============================================================================
 #  USER CONFIGURATION — edit these paths before submitting

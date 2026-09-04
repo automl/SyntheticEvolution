@@ -126,4 +126,3 @@ dependencies:
       - torch==2.5.1+cu121
       - torchvision==0.20.1+cu121
       - triton==3.1.0
-prefix: /home/fr/fr_fr/fr_ds595/.conda/envs/rhofold

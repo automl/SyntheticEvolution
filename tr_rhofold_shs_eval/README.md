@@ -87,6 +87,29 @@ ln -s evaluation/USalign USalign      # so ./USalign/USalign resolves
 DSSR is **not** needed: `run_evaluation.sh` invokes the evaluator with `-dssr`
 (see [docs/EVALUATION.md](../docs/EVALUATION.md)).
 
+### 1.5 Site-specific settings you will want to change
+
+The SLURM scripts are the ones that produced the paper runs, on a
+[bwForCluster Helix](https://wiki.bwhpc.de/e/Helix)-style setup. Nothing below is
+required for the Python drivers — those run anywhere — but check these before your first
+`sbatch`:
+
+| assumption | where | how to change |
+| --- | --- | --- |
+| `--partition=gpu-single` / `cpu-single` | `#SBATCH` lines in every job script | `sbatch --partition=<yours> ...` overrides the directive, or edit the file |
+| `--gres=gpu:A100:1` (some jobs `gpu:A40:1`) | `#SBATCH` lines | `sbatch --gres=gpu:<type>:1 ...`, or drop the type if your site does not use one |
+| `module purge && module load devel/cuda` | top of every GPU job script | replace with your site's CUDA module, or delete both lines if CUDA comes from the conda env |
+| conda env names `rhofold`, `trRNA` | `CONDA_ENV="${CONDA_ENV:-...}"` | `sbatch --export=ALL,CONDA_ENV=<name> ...` |
+| conda base fallback `$HOME/miniconda3` | `CONDA_BASE=$(conda info --base ...)` | only used if `conda info --base` fails; install path is otherwise auto-detected |
+| `synEvo` interpreter at `~/.conda/envs/synEvo/bin/python` | `SYNEVO_PY` in `run_rhofold_shs_seeds_job.sh`, `DEFAULT_GEN_PYTHON` in `generate_shs_seed_inputs.py` | `SYNEVO_PY=/path/to/python` / `--gen-python /path/to/python` |
+| walltimes, `--mem`, `--cpus-per-task` | `#SBATCH` lines | tuned for ~90 RNA monomers; scale to your queue limits |
+| RhoFold+ / trRosettaRNA at `../../` | script defaults | see §1.2 |
+
+No account or project directives (`--account`, `--qos`) are set anywhere, so add yours if
+your scheduler requires them. Three scripts carry a disabled mail block
+(`##SBATCH --mail-user=you@example.org`) — put your address in and drop one `#` to enable
+it.
+
 ---
 
 ## 2. What is in this folder
@@ -401,3 +424,7 @@ moving it in:
   evaluation stage.
 - Prediction outputs (~270 MB) and run logs were not migrated; they are reproduced by the
   job scripts, and this repo distributes predictions through `download.sh` instead.
+- Machine-specific strings were scrubbed: the `prefix:` line of both `envs/*.yml` exports
+  (conda ignores it when creating an environment) and the absolute cluster workspace paths
+  in the `json_file` column of every `prepared_*/metadata/manifest.tsv`, which are now
+  written relative to the repo (`../data/datafiles/...`) or to this folder (`./...`).

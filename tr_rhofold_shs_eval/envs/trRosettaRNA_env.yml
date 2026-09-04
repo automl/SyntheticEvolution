@@ -296,4 +296,3 @@ dependencies:
       - mkl==2024.0.0
       - tbb==2021.13.1
       - torch==1.11.0+cpu
-prefix: /home/fr/fr_fr/fr_ds595/.conda/envs/trRNA
