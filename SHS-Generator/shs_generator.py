@@ -376,12 +376,15 @@ class MsaGenerator:
         return updated_chain
 
     def process(self, write: bool = True) -> Dict[str, Any]:
+        if self.args.protein_seq:
+            logging.warning("Please note that protein seq support is not currently implemented")
+
         if self.args.input_json_path:
             data = load_json(self.args.input_json_path)
-        elif self.args.rna_seq and self.args.protein_seq:
-            data = json_generator.build_input_json(self.args.rna_seq, self.args.protein_seq)
+        elif self.args.rna_seq:
+            data = json_generator.build_input_json(self.args.rna_seq)
         else:
-            raise ValueError("Either --rna-seq and --protein-seq or --input_json_path must be provided.")
+            raise ValueError("Either --rna-seq or --input_json_path must be provided.")
 
         chains = data.get("sequences", [])
         if self.args.max_chains is not None and len(chains) > self.args.max_chains:
