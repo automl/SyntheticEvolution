@@ -1,0 +1,49 @@
+# Repository paths resolve from SyntheticEvolution/, never the caller's cwd.
+input: hpo/example_input.csv
+run_name: smoke-v1
+workspace_name: alphafold
+workspace_path: null  # Optional absolute override; otherwise ws_find workspace_name.
+generator_dir: SHS-Generator
+shs_python: /home/fr/fr_fr/fr_km324/.conda/envs/shs/bin/python
+neps_python: /home/fr/fr_fr/fr_km324/.conda/envs/neps/bin/python
+model_dir: ~/af3/models
+module: bio/alphafold/3.0.1
+dssr: x3dna-dssr
+shs_seed: 42
+af3_seed: 1
+evaluations: 2
+optimizer: bayesian_optimization
+poll_seconds: 30
+wait_timeout_seconds: 14000
+generator_timeout_seconds: 600
+dssr_timeout_seconds: 300
+controller:
+  partition: cpu-single
+  cpus: 1
+  memory: 4G
+  time: '04:00:00'
+gpu:
+  partition: gpu-single
+  cpus: 8
+  memory: 20G
+  gres: gpu:A100:1
+  time: '00:15:00'
+  concurrency: 2
+# Conservative first search. Extend only after the smoke test.
+search:
+  N: {type: integer, lower: 2, upper: 128, log: true}
+  mutation_rate_unpaired: {type: float, lower: 0.0, upper: 1.0}
+  mutation_rate_paired: {type: float, lower: 0.0, upper: 1.0}
+  pair_mutation_approach:
+    type: categorical
+    choices: [covariance, watson_crick, watson_crick_cov, none]
+# Disable indels initially; avoids unresolved paired-deletion semantics.
+fixed:
+  stem_single_insertion_prob: 0.0
+  stem_long_insertion_prob: 0.0
+  stem_single_deletion_prob: 0.0
+  stem_pair_deletion_prob: 0.0
+  loop_single_insertion_prob: 0.0
+  loop_long_insertion_prob: 0.0
+  loop_single_deletion_prob: 0.0
+  loop_long_deletion_prob: 0.0

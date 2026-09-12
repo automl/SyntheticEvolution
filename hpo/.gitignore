@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+configs/helix.yaml
+reports/
+
+TODO.md
+README.md
