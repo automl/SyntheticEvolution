@@ -1,14 +1,14 @@
 # Repository paths resolve from SyntheticEvolution/, never the caller's cwd.
 input: hpo/example_input.csv
-run_name: smoke-v1
-workspace_name: alphafold
+run_name: # used to identify files belonging to the run
+workspace_name: # name of the workspace used for all working files and results
 workspace_path: null  # Optional absolute override; otherwise ws_find workspace_name.
 generator_dir: SHS-Generator
-shs_python: /home/fr/fr_fr/fr_km324/.conda/envs/shs/bin/python
-neps_python: /home/fr/fr_fr/fr_km324/.conda/envs/neps/bin/python
-model_dir: ~/af3/models
+shs_python: # path for python to run the generator
+neps_python: # path for python to run neps
+model_dir: # dir to af3 model parameters
 module: bio/alphafold/3.0.1
-dssr: x3dna-dssr
+dssr: # path to dssr bin
 shs_seed: 42
 af3_seed: 1
 evaluations: 2
