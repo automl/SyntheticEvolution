@@ -1,0 +1,542 @@
+[
+  {
+    "id": "none-pairs",
+    "sequence": "AGUAGUAGUAGUAGA",
+    "pairs": [
+      [
+        0,
+        14
+      ],
+      [
+        1,
+        13
+      ],
+      [
+        7,
+        12
+      ]
+    ],
+    "mutation_rate_paired": 0.3,
+    "mutation_rate_unpaired": 0.1,
+    "parameters": {
+      "N": 12,
+      "pair_mutation_approach": "none",
+      "stem_single_insertion_prob": 0.05,
+      "stem_long_insertion_prob": 0.01,
+      "stem_single_deletion_prob": 0.01,
+      "stem_pair_deletion_prob": 0.01,
+      "loop_single_insertion_prob": 0.1,
+      "loop_single_deletion_prob": 0.1,
+      "loop_long_insertion_prob": 0.02,
+      "loop_long_deletion_prob": 0.02,
+      "wobble_prob": 0.1,
+      "max_insertion_fraction": 0.1,
+      "max_deletion_fraction": 0.1
+    },
+    "seed": 42,
+    "msa": [
+      "AGUAGUAGUAGUAGA",
+      "AG-AAgUAGU-GUAGA",
+      "AGUaAGUAG--GUGCC",
+      "AGUaAGUuAaGUAG-G-A",
+      "aAGUAGUAcUUAGUGGAgu",
+      "aAgGUAGU-GUA-UAGG",
+      "AGUAGUAGUAuGUAGA",
+      "AGUAGUAuGcaUAGUAGG",
+      "AaGUAGUAGUAGUAGA",
+      "GGUu-G-AGUAGaCAGA",
+      "cAGUAc-aAAUUgAGUAAA",
+      "AGUAGUAC-GGUCGAcu"
+    ]
+  },
+  {
+    "id": "none-multiplets",
+    "sequence": "AGUAGUAGUAGUAGA",
+    "pairs": [
+      [
+        0,
+        14,
+        0.4
+      ],
+      [
+        0,
+        13,
+        0.4
+      ],
+      [
+        13,
+        14,
+        0.4
+      ],
+      [
+        7,
+        12,
+        1
+      ]
+    ],
+    "mutation_rate_paired": 0.3,
+    "mutation_rate_unpaired": 0.1,
+    "parameters": {
+      "N": 12,
+      "pair_mutation_approach": "none",
+      "stem_single_insertion_prob": 0.05,
+      "stem_long_insertion_prob": 0.01,
+      "stem_single_deletion_prob": 0.01,
+      "stem_pair_deletion_prob": 0.01,
+      "loop_single_insertion_prob": 0.1,
+      "loop_single_deletion_prob": 0.1,
+      "loop_long_insertion_prob": 0.02,
+      "loop_long_deletion_prob": 0.02,
+      "wobble_prob": 0.1,
+      "max_insertion_fraction": 0.1,
+      "max_deletion_fraction": 0.1
+    },
+    "seed": 42,
+    "msa": [
+      "AGUAGUAGUAGUAGA",
+      "AGUA---GUUGUCGA",
+      "UGUAGUAG-AGUGCC",
+      "AGUAGUuAaGUAG-G-A",
+      "aA-UAGUAcUUAGUGGAgu",
+      "aAGGAGUAGUcAUUCGAc",
+      "AGUA-UgAAuUAGUAGA",
+      "AGU-GU-UU-GUGGAg",
+      "UAUAGUAGu-AGUUUA",
+      "AGucUAGUAGgaUAG-AAC",
+      "AGU-GUAGUaAGUAGA",
+      "UGUAGUAAUAGUCGA"
+    ]
+  },
+  {
+    "id": "covariance-pairs",
+    "sequence": "AGUAGUAGUAGUAGA",
+    "pairs": [
+      [
+        0,
+        14
+      ],
+      [
+        1,
+        13
+      ],
+      [
+        7,
+        12
+      ]
+    ],
+    "mutation_rate_paired": 0.3,
+    "mutation_rate_unpaired": 0.1,
+    "parameters": {
+      "N": 12,
+      "pair_mutation_approach": "covariance",
+      "stem_single_insertion_prob": 0.05,
+      "stem_long_insertion_prob": 0.01,
+      "stem_single_deletion_prob": 0.01,
+      "stem_pair_deletion_prob": 0.01,
+      "loop_single_insertion_prob": 0.1,
+      "loop_single_deletion_prob": 0.1,
+      "loop_long_insertion_prob": 0.02,
+      "loop_long_deletion_prob": 0.02,
+      "wobble_prob": 0.1,
+      "max_insertion_fraction": 0.1,
+      "max_deletion_fraction": 0.1
+    },
+    "seed": 42,
+    "msa": [
+      "AGUAGUAGUAGUAGA",
+      "AG-AAgUAGU-GUAGA",
+      "AGUaAGUAG--GUGCC",
+      "AGUaAGUuAaGUAG-AgcGA",
+      "UGUAGUAcUUAGUGGAgu",
+      "aAgGUAGU-GUA-UAGG",
+      "AGUAGUAGUAuGUAGA",
+      "AGUAGUAuGcaUAGUAGG",
+      "AaGUAGUAGUAGUAGA",
+      "GGUu-G-AGUAGaCAGUu",
+      "CGUAAUGGUAGUUAA",
+      "AGUAGUAC-GGUCGAcu"
+    ]
+  },
+  {
+    "id": "covariance-multiplets",
+    "sequence": "AGUAGUAGUAGUAGA",
+    "pairs": [
+      [
+        0,
+        14,
+        0.4
+      ],
+      [
+        0,
+        13,
+        0.4
+      ],
+      [
+        13,
+        14,
+        0.4
+      ],
+      [
+        7,
+        12,
+        1
+      ]
+    ],
+    "mutation_rate_paired": 0.3,
+    "mutation_rate_unpaired": 0.1,
+    "parameters": {
+      "N": 12,
+      "pair_mutation_approach": "covariance",
+      "stem_single_insertion_prob": 0.05,
+      "stem_long_insertion_prob": 0.01,
+      "stem_single_deletion_prob": 0.01,
+      "stem_pair_deletion_prob": 0.01,
+      "loop_single_insertion_prob": 0.1,
+      "loop_single_deletion_prob": 0.1,
+      "loop_long_insertion_prob": 0.02,
+      "loop_long_deletion_prob": 0.02,
+      "wobble_prob": 0.1,
+      "max_insertion_fraction": 0.1,
+      "max_deletion_fraction": 0.1
+    },
+    "seed": 42,
+    "msa": [
+      "AGUAGUAGUAGUAGA",
+      "AGUA---GUUGUCGA",
+      "UGUAGUAG-AGUGCC",
+      "AGUAGUuAaGUAG-AgcGA",
+      "U-UAGUAcUUAGUGGAgu",
+      "aAGGAGUAGUcAUUuAGC",
+      "AGUAGUAG-AGUACA",
+      "AGUAGGAgcCUgAGUuGGA",
+      "G-UAGUAG-GGUAGG",
+      "AGUGGUAAUaAGUGGA",
+      "AaGUcg-cGUAAUAAUUCA",
+      "A-caUAGUUGUAGUAGC"
+    ]
+  },
+  {
+    "id": "watson_crick-pairs",
+    "sequence": "AGUAGUAGUAGUAGA",
+    "pairs": [
+      [
+        0,
+        14
+      ],
+      [
+        1,
+        13
+      ],
+      [
+        7,
+        12
+      ]
+    ],
+    "mutation_rate_paired": 0.3,
+    "mutation_rate_unpaired": 0.1,
+    "parameters": {
+      "N": 12,
+      "pair_mutation_approach": "watson_crick",
+      "stem_single_insertion_prob": 0.05,
+      "stem_long_insertion_prob": 0.01,
+      "stem_single_deletion_prob": 0.01,
+      "stem_pair_deletion_prob": 0.01,
+      "loop_single_insertion_prob": 0.1,
+      "loop_single_deletion_prob": 0.1,
+      "loop_long_insertion_prob": 0.02,
+      "loop_long_deletion_prob": 0.02,
+      "wobble_prob": 0.1,
+      "max_insertion_fraction": 0.1,
+      "max_deletion_fraction": 0.1
+    },
+    "seed": 42,
+    "msa": [
+      "AGUAGUAGUAGUAGA",
+      "AG-AAgUAGU-GUAGA",
+      "AGUaAGUAG--GUaCCA",
+      "AGA-AUCGUAaGUgcCCUu",
+      "AAaUAGGAAgUAGUguUaGgA",
+      "GUUAGUAcGGAGUAGA",
+      "AGUAGUAcUUAGUAGA",
+      "GCcUAGU-GUAG-CGC",
+      "cUUUgAGUuAuGUAGUCGG",
+      "AGUAGUAA-ccAuUAUCA",
+      "AG--GgUAGUAGUAGAa",
+      "AGUAGUAGUAGUAGuA"
+    ]
+  },
+  {
+    "id": "watson_crick-multiplets",
+    "sequence": "AGUAGUAGUAGUAGA",
+    "pairs": [
+      [
+        0,
+        14,
+        0.4
+      ],
+      [
+        0,
+        13,
+        0.4
+      ],
+      [
+        13,
+        14,
+        0.4
+      ],
+      [
+        7,
+        12,
+        1
+      ]
+    ],
+    "mutation_rate_paired": 0.3,
+    "mutation_rate_unpaired": 0.1,
+    "parameters": {
+      "N": 12,
+      "pair_mutation_approach": "watson_crick",
+      "stem_single_insertion_prob": 0.05,
+      "stem_long_insertion_prob": 0.01,
+      "stem_single_deletion_prob": 0.01,
+      "stem_pair_deletion_prob": 0.01,
+      "loop_single_insertion_prob": 0.1,
+      "loop_single_deletion_prob": 0.1,
+      "loop_long_insertion_prob": 0.02,
+      "loop_long_deletion_prob": 0.02,
+      "wobble_prob": 0.1,
+      "max_insertion_fraction": 0.1,
+      "max_deletion_fraction": 0.1
+    },
+    "seed": 42,
+    "msa": [
+      "AGUAGUAGUAGUAGA",
+      "AGUA---GUUGUUGgAg",
+      "GGU-UUAAUAUUAGA",
+      "AG---UuAaGUAG-uCUA",
+      "AG-AGUuAGUAGUCUA",
+      "AGGAGUAGUcAUUCGAgc",
+      "CGUAGUAAuUAGUAGA",
+      "AGU-GU-UU-GUGGA",
+      "UAUAGUAGu-AGUCgGG",
+      "AG--GUAGcUAGuGCUU",
+      "C-gUAGcUAGU-CUAGC",
+      "AGUAGAAGUAGUAGU"
+    ]
+  },
+  {
+    "id": "watson_crick_cov-pairs",
+    "sequence": "AGUAGUAGUAGUAGA",
+    "pairs": [
+      [
+        0,
+        14
+      ],
+      [
+        1,
+        13
+      ],
+      [
+        7,
+        12
+      ]
+    ],
+    "mutation_rate_paired": 0.3,
+    "mutation_rate_unpaired": 0.1,
+    "parameters": {
+      "N": 12,
+      "pair_mutation_approach": "watson_crick_cov",
+      "stem_single_insertion_prob": 0.05,
+      "stem_long_insertion_prob": 0.01,
+      "stem_single_deletion_prob": 0.01,
+      "stem_pair_deletion_prob": 0.01,
+      "loop_single_insertion_prob": 0.1,
+      "loop_single_deletion_prob": 0.1,
+      "loop_long_insertion_prob": 0.02,
+      "loop_long_deletion_prob": 0.02,
+      "wobble_prob": 0.1,
+      "max_insertion_fraction": 0.1,
+      "max_deletion_fraction": 0.1
+    },
+    "seed": 42,
+    "msa": [
+      "AGUAGUAGUAGUAGA",
+      "AG-AAgUAGU-GUAGA",
+      "AGUaAGUAG--GUaCCA",
+      "AGA-AUCGUAaGUAGA",
+      "UCcUaAGUGCUgAGUAGG",
+      "UUUAGUACU-GUGuAG",
+      "AGUAGUAAuUAGUUGA",
+      "AGUuAU-AGUAGUAGAa",
+      "cAUUgAGUuAuGUAGUAAcA",
+      "AGUAGUAA-ccAuUAUGA",
+      "AAGAGAAGcUAAUCUA",
+      "AUU-UUACG-GUAAA"
+    ]
+  },
+  {
+    "id": "watson_crick_cov-multiplets",
+    "sequence": "AGUAGUAGUAGUAGA",
+    "pairs": [
+      [
+        0,
+        14,
+        0.4
+      ],
+      [
+        0,
+        13,
+        0.4
+      ],
+      [
+        13,
+        14,
+        0.4
+      ],
+      [
+        7,
+        12,
+        1
+      ]
+    ],
+    "mutation_rate_paired": 0.3,
+    "mutation_rate_unpaired": 0.1,
+    "parameters": {
+      "N": 12,
+      "pair_mutation_approach": "watson_crick_cov",
+      "stem_single_insertion_prob": 0.05,
+      "stem_long_insertion_prob": 0.01,
+      "stem_single_deletion_prob": 0.01,
+      "stem_pair_deletion_prob": 0.01,
+      "loop_single_insertion_prob": 0.1,
+      "loop_single_deletion_prob": 0.1,
+      "loop_long_insertion_prob": 0.02,
+      "loop_long_deletion_prob": 0.02,
+      "wobble_prob": 0.1,
+      "max_insertion_fraction": 0.1,
+      "max_deletion_fraction": 0.1
+    },
+    "seed": 42,
+    "msa": [
+      "AGUAGUAGUAGUAGA",
+      "AGUA---GUUGUUGgAg",
+      "GGU-UUAAUAUUUGC",
+      "AG-UGCuAGUA-U-GAa",
+      "AGUAGUcAcGUCGUAUA",
+      "gAGUAG-AGU-GUAGAc",
+      "AGUA-UgAAuUAGUUGA",
+      "AgGUA-gCAGUAGUAGaU",
+      "UGUAGU-CUAGGGAU",
+      "AGUAGUaCGU-CAAGA",
+      "CgGUAcGUAG-CGUAAUu",
+      "AGUaAGUAGUAGUCGUc"
+    ]
+  },
+  {
+    "id": "original-pairs",
+    "sequence": "AGUAGUAGUAGUAGA",
+    "pairs": [
+      [
+        0,
+        14
+      ],
+      [
+        1,
+        13
+      ],
+      [
+        7,
+        12
+      ]
+    ],
+    "mutation_rate_paired": 0.3,
+    "mutation_rate_unpaired": 0.1,
+    "parameters": {
+      "N": 12,
+      "pair_mutation_approach": "original",
+      "stem_single_insertion_prob": 0.05,
+      "stem_long_insertion_prob": 0.01,
+      "stem_single_deletion_prob": 0.01,
+      "stem_pair_deletion_prob": 0.01,
+      "loop_single_insertion_prob": 0.1,
+      "loop_single_deletion_prob": 0.1,
+      "loop_long_insertion_prob": 0.02,
+      "loop_long_deletion_prob": 0.02,
+      "wobble_prob": 0.1,
+      "max_insertion_fraction": 0.1,
+      "max_deletion_fraction": 0.1
+    },
+    "seed": 42,
+    "msa": [
+      "AGUAGUAGUAGUAGA",
+      "AGc-AGUAG-AGUAGAa",
+      "gAGUAGUAGgUAGUCCA",
+      "UGaUAGUuAGUAG-UGA",
+      "UC---gUAG--GUCGA",
+      "AGUGGUAG-AGUCGA",
+      "AGUAGUAUUAGUAGA",
+      "AGUAGUAGUA-gCCGA",
+      "AGUAgGa-UGUAGUAuUA",
+      "AGU-GUUGUAGUAGUa",
+      "UCuU-cGUAGUU--AGA",
+      "UCUAGUAG-caAGUUGA"
+    ]
+  },
+  {
+    "id": "original-multiplets",
+    "sequence": "AGUAGUAGUAGUAGA",
+    "pairs": [
+      [
+        0,
+        14,
+        0.4
+      ],
+      [
+        0,
+        13,
+        0.4
+      ],
+      [
+        13,
+        14,
+        0.4
+      ],
+      [
+        7,
+        12,
+        1
+      ]
+    ],
+    "mutation_rate_paired": 0.3,
+    "mutation_rate_unpaired": 0.1,
+    "parameters": {
+      "N": 12,
+      "pair_mutation_approach": "original",
+      "stem_single_insertion_prob": 0.05,
+      "stem_long_insertion_prob": 0.01,
+      "stem_single_deletion_prob": 0.01,
+      "stem_pair_deletion_prob": 0.01,
+      "loop_single_insertion_prob": 0.1,
+      "loop_single_deletion_prob": 0.1,
+      "loop_long_insertion_prob": 0.02,
+      "loop_long_deletion_prob": 0.02,
+      "wobble_prob": 0.1,
+      "max_insertion_fraction": 0.1,
+      "max_deletion_fraction": 0.1
+    },
+    "seed": 42,
+    "msa": [
+      "AGUAGUAGUAGUAGA",
+      "AGUA---GUA-UUGA",
+      "AGUAGUAGgUAGUCUG",
+      "AG---UuAGUAG-UGA",
+      "AuGcU-gGUuAcUUAGUAGC",
+      "AGGAGUAGUAGUAGA",
+      "CGUAGUAGU-GUAGA",
+      "AGUAGcUAGUGGUAGA",
+      "GaG-UGUAGUAGUUCC",
+      "AGUAgGUAGUAG-AGA",
+      "cAAUAGuUGGUcAGUAGA",
+      "AGUA-caUAGUaAGUAGA"
+    ]
+  }
+]

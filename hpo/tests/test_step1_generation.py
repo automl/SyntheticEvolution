@@ -3,7 +3,7 @@
 Place in SyntheticEvolution/hpo/tests/. Run with pytest; subprocesses use
 SHS_PYTHON when set, otherwise the Python running pytest. Optional SHS_GENERATOR
 can point at a checkout elsewhere. No Slurm, AF3 inference or DSSR is called.
-These tests are expected to fail until --request-json/--output-json are implemented.
+Includes request/legacy CLI checks, pure API checks, and seeded regression fixtures.
 """
 import copy
 import json
@@ -172,3 +172,138 @@ def test_invalid_request_fails_without_output(invoke, request_data, problem):
     assert result.returncode != 0, 'Invalid request was accepted'
     assert not output.exists(), 'Failure left an output that could look successful'
     assert (result.stdout + result.stderr).strip(), 'Failure needs a diagnostic'
+
+# Tests below cover the pure Python API and coexistence with the legacy CLI.
+# All generator code still runs in SHS_PYTHON, not in pytest's environment.
+
+@pytest.fixture
+def run_api(generator_cli, tmp_path):
+    def run(code, *arguments):
+        preamble = (
+            'import sys, json, random\n'
+            'sys.path.insert(0, ' + repr(str(Path(generator_cli[1]).parent)) + ')\n'
+            'from shs_generator import MsaGenerator\n'
+            'from generator_config import MutationParameters, build_pair_map\n'
+        )
+        return subprocess.run([generator_cli[0], '-c', preamble + code, *arguments],
+                              cwd=tmp_path, text=True, capture_output=True, timeout=60)
+    return run
+
+
+def test_python_api_has_no_file_or_global_rng_side_effects(run_api, tmp_path):
+    result = run_api('''
+sequence = 'AGUAGUAGUAGUAGA'
+parameters = MutationParameters(N=10)
+pairs = build_pair_map(sequence, [[0,14],[1,13]], .3, .1)
+state = random.getstate()
+first = MsaGenerator(parameters, seed=42).generate(sequence, pairs)
+assert random.getstate() == state
+assert first == MsaGenerator(parameters, seed=42).generate(sequence, pairs)
+assert len(first) == 10 and first[0] == sequence
+''')
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert list(tmp_path.iterdir()) == []
+
+
+@pytest.mark.parametrize('case_index', range(10))
+def test_seeded_output_matches_original_generator(run_api, case_index):
+    fixture = Path(__file__).with_name('fixtures') / 'generator_regression.json'
+    result = run_api('''
+from pathlib import Path
+case = json.loads(Path(sys.argv[1]).read_text())[int(sys.argv[2])]
+parameters = MutationParameters(**case['parameters'])
+pairs = build_pair_map(case['sequence'], case['pairs'],
+                      case['mutation_rate_paired'], case['mutation_rate_unpaired'])
+msa = MsaGenerator(parameters, seed=case['seed']).generate(case['sequence'], pairs)
+assert msa == case['msa'], case['id']
+''', str(fixture.resolve()), str(case_index))
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_per_position_rates_and_parameter_validation(run_api):
+    result = run_api('''
+parameters = MutationParameters(N=4, pair_mutation_approach='none',
+    stem_single_insertion_prob=0, stem_long_insertion_prob=0,
+    stem_single_deletion_prob=0, stem_pair_deletion_prob=0,
+    loop_single_insertion_prob=0, loop_long_insertion_prob=0,
+    loop_single_deletion_prob=0, loop_long_deletion_prob=0)
+sequence = 'ACGU'
+pairs = build_pair_map(sequence, [], mutation_rates=[0,1,0,1])
+msa = MsaGenerator(parameters, seed=3).generate(sequence, pairs)
+for row in msa[1:]:
+    assert [a != b for a,b in zip(sequence,row)] == [False,True,False,True]
+for kwargs in ({'N':0}, {'N':True}, {'wobble_prob':float('nan')},
+               {'max_insertion_fraction':-1}, {'pair_mutation_approach':'typo'}):
+    try: MutationParameters(**kwargs)
+    except ValueError: pass
+    else: raise AssertionError(kwargs)
+''')
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
+@pytest.mark.parametrize('input_args', [
+    ['--structure', '((.....(....)))'],
+    ['--structure', '[[0,14],[1,13],[7,12]]'],
+    ['--interactions', '[]'],
+])
+def test_legacy_direct_input_with_explicit_output(generator_cli, tmp_path, input_args):
+    path = tmp_path / 'nested' / 'short.json'
+    result = subprocess.run(generator_cli + ['--rna-seq', SEQUENCE, '-N', '1',
+        '--seed', '42', '--output-json', str(path)] + input_args,
+        cwd=tmp_path, capture_output=True, text=True, timeout=60)
+    data = read_success(result, path)
+    assert data['name'] == 'short'
+    assert msa_sequences(data) == [SEQUENCE]
+
+
+def test_legacy_output_directory(generator_cli, tmp_path):
+    folder = tmp_path / 'old output'
+    result = subprocess.run(generator_cli + ['--rna-seq', SEQUENCE, '--interactions', '[]',
+        '-N', '1', '--output-json-dir', str(folder)],
+        cwd=tmp_path, capture_output=True, text=True, timeout=60)
+    assert result.returncode == 0, result.stdout + result.stderr
+    files = list(folder.glob('*.json'))
+    assert len(files) == 1
+    assert '_custom_rnamsa_N1_' in files[0].name
+
+
+def test_existing_af3_input_preserves_other_entities(generator_cli, tmp_path):
+    data = dict(name='old', dialect='alphafold3',version=1, modelSeeds=[9],
+        sequences=[{'rna':dict(id='A',sequence=SEQUENCE,modifications=[],
+                               unpairedMsaPath='unused.a3m')},
+                   {'ligand':dict(id='B',ccdCodes=['MG'])}])
+    source, output = tmp_path / 'source.json', tmp_path / 'out.json'
+    source.write_text(json.dumps(data))
+    result = subprocess.run(generator_cli + ['--input-json-path',str(source),
+        '--interactions','[]','-N','1','--output-json',str(output)],
+        cwd=tmp_path,capture_output=True,text=True,timeout=60)
+    out = read_success(result,output)
+    assert out['sequences'][1] == data['sequences'][1]
+    assert out['modelSeeds'] == [9]
+    assert 'unpairedMsaPath' not in out['sequences'][0]['rna']
+    assert json.loads(source.read_text()) == data
+
+
+@pytest.mark.parametrize('extra', [
+    ['--rna-seq', SEQUENCE], ['-N', '3'], ['--seed', '9'],
+    ['--output_json_dir', 'other-output'],
+])
+def test_request_rejects_conflicting_cli_options(generator_cli, tmp_path, request_data, extra):
+    request = tmp_path / 'request.json'
+    output = tmp_path / 'out.json'
+    request.write_text(json.dumps(request_data))
+    result = subprocess.run(generator_cli + ['--request-json',str(request),
+        '--output-json',str(output)] + extra, cwd=tmp_path,
+        capture_output=True,text=True,timeout=60)
+    assert result.returncode != 0
+    assert not output.exists()
+
+
+@pytest.mark.parametrize('structure', ['((...', '((.............', '..............)', '[[0,15]]'])
+def test_invalid_structure_fails_before_writing(generator_cli, tmp_path, structure):
+    output = tmp_path / 'out.json'
+    result = subprocess.run(generator_cli + ['--rna-seq', SEQUENCE,
+        '--structure', structure,'--output-json',str(output)],
+        cwd=tmp_path,capture_output=True,text=True,timeout=60)
+    assert result.returncode != 0
+    assert not output.exists()
