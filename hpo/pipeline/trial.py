@@ -47,7 +47,22 @@ def repo_path(value):
 
 
 def command(args):
-    return subprocess.run(args, check=True, capture_output=True, text=True, timeout=60).stdout.strip()
+    try:
+        result = subprocess.run(
+            args,
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+    except subprocess.CalledProcessError as exc:
+        logger.error(
+            'Command failed: %s\n%s',
+            args,
+            (exc.stderr or exc.stdout or 'No error output').strip(),
+        )
+        raise
+    return result.stdout.strip()
 
 
 def load_config(path, *, mode, submitting_controller=False):
@@ -403,8 +418,8 @@ def run_pipeline(
         array_range = f'0-{len(rows) - 1}%{gpu_node_settings["concurrency"]}'
         output_log = logs_directory / '%A_%a.out'
         error_log = logs_directory / '%A_%a.err'
-        slurm_script = HPO_DIR / 'slurm/af3-inference-array.slurm'
-        af3_task_script = HPO_DIR / 'af3_task.py'
+        slurm_script = PIPELINE_DIR / 'slurm' / 'af3-inference-array.slurm'
+        af3_task_script = PIPELINE_DIR / 'af3_task.py'
 
         args = [
             'sbatch',
