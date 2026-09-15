@@ -8,8 +8,8 @@ flowchart TD
 
 subgraph LoginNode["Login node"]
     User(["Choose execution mode"])
-    SubmitNeps["hpo/submit_neps_hpo.py"]
     SubmitStandalone["hpo/submit_standalone_trial.py"]
+    SubmitNeps["hpo/submit_neps_hpo.py"]
     Export["hpo/export_results.py"]
 end
 
@@ -23,7 +23,6 @@ subgraph CpuNode["CPU allocation"]
     end
 
     subgraph Step1["Step 1: SHS generation"]
-        GenerateInput["hpo/pipeline/generate_input.py"]
         SHSGenerator["SHS-Generator"]
     end
 
@@ -48,7 +47,7 @@ end
 Workspace[("Workspace")]
 
 %% Three login-node execution paths.
-User -.- SubmitNeps & SubmitStandalone & Export
+User -.- SubmitStandalone & SubmitNeps & Export
 SubmitNeps --> RunNeps
 SubmitNeps --"sbatch"--> CpuNode
 SubmitStandalone --> RunStandalone
@@ -60,13 +59,12 @@ RunNeps --> NePS --"for every sampled config"--> Trial
 Trial -."aggregated loss".-> NePS
 
 %% trial.py executes the four stages in order.
-Trial --"1"--> GenerateInput 
+Trial --"1"--> SHSGenerator 
 Trial --"2"--> AF3Slurm
 Trial --"2 sbatch"--> GpuNode
 Trial --"3"--> DSSR 
 Trial --"4"--> Scoring
 %% Step 1
-GenerateInput --- SHSGenerator
 %% Step 2
 AF3Slurm --> AF3Task --> AF3
 %% Step 3
@@ -75,11 +73,11 @@ DSSR --> DSSRTool
 Scoring -."loss".-> Trial
 
 %% Workspace access 
-Export -."read results".- Workspace
+SHSGenerator -."save af3 input".- Workspace
 Trial -."save results".- Workspace
-GenerateInput -."save af3 input".- Workspace
 AF3 -."read af3 input\n save predicted model".- Workspace
 DSSRTool -."save predicted pairs".- Workspace
+Export -."read results".- Workspace
 
 style User color:#FFFFFF, stroke:#00C853, fill:#003215
 

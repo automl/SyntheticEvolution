@@ -51,11 +51,11 @@ def main():
 
         def evaluate_pipeline(pipeline_directory, **parameters):
             return run_pipeline(
-                parameters,
                 config,
                 dataset,
                 pipeline_directory / 'artifacts',
-                fingerprint
+                fingerprint,
+                parameters,
             )
 
         # Persist optimization state under the run workspace for resumption.

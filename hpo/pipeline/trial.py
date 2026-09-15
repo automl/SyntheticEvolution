@@ -375,16 +375,19 @@ def run_pipeline(
                            af3_seed=config['af3_seed']
             )
             write_json(shs_generation_request_path, shs_generation_request)
-            # execute shs generator based on request
+            # Run the generator directly in its SHS environment.
             with (task_dir / 'shs_generation.log').open('w') as log:
-                subprocess.run([config['shs_python'], 
-                                str(HPO_DIR / 'generate_input.py'), 
-                                str(GENERATOR_DIR), 
-                                str(shs_generation_request_path), str(af3_input_path)],
-                               stdout=log, 
-                               stderr=subprocess.STDOUT, 
-                               check=True,
-                               timeout=config['generator_timeout_seconds']
+                subprocess.run(
+                    [
+                        config['shs_python'],
+                        str((GENERATOR_DIR / 'shs_generator.py').resolve()),
+                        '--request-json', str(shs_generation_request_path.resolve()),
+                        '--output-json', str(af3_input_path.resolve()),
+                    ],
+                    stdout=log,
+                    stderr=subprocess.STDOUT,
+                    check=True,
+                    timeout=config['generator_timeout_seconds'],
                 )
             af3_tasks.append(dict(input=str(af3_input_path), 
                                   output=str(task_dir / 'af3'),

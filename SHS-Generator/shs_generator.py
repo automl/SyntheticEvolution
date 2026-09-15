@@ -1,28 +1,29 @@
 #!/usr/bin/env python
+"""Generate synthetic RNA MSAs with a small explicit Python API.
+
+MsaGenerator only operates on sequences, PairMap and MutationParameters.
+CLI helpers below the class handle requests, AF3 JSON and files.
+"""
 import argparse
-import random
+from dataclasses import fields
 import json
 import logging
+import random
 import sys
 from pathlib import Path
+from typing import Dict, List
 import numpy as np
+from typing import Optional
 
+# Retain the repository import path for optional structure predictors.
 ROOT_DIR = Path(__file__).resolve().parents[1]
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
-HERE_DIR = Path(__file__).resolve().parent
-if str(HERE_DIR) not in sys.path:
-    sys.path.insert(0, str(HERE_DIR))
-
-import json_generator
 from pair_map import PairMap
-
-from typing import Dict, List, Any, Optional
-
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
+from generator_config import (
+    MutationParameters, APPROACHES, build_pair_map, split_parameters,
+    validate_seed, validate_sequence,
 )
 
 PAIR_MUTATION_PROBABILITIES = {
@@ -50,165 +51,84 @@ PAIR_MUTATIONS: Dict[str, List[str]] = {
 
 WC_PAIRS: List[str] = ['AU', 'UA', 'GC', 'CG']
 
-def load_json(json_path: str) -> Any:
-    try:
-        with open(json_path, "r") as f:
-            return json.load(f)
-    except Exception as e:
-        logging.error("Failed to load JSON from %s: %s", json_path, e)
-        raise
-
-def parse_json(json_string: str) -> Any:
-    try:
-        json_string = json_string.replace("(", "[")
-        json_string = json_string.replace(")", "]")
-        return json.loads(json_string)
-    except Exception as e:
-        logging.error("Failed to parse JSON from string: %s", e)
-        raise
-
-
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Generate RNA MSA and AF3-compatible JSON.")
-    io_group = parser.add_argument_group("I/O and Structure")
-    io_group.add_argument('--structure_predictor', type=str, default=None,
-                          help="Predictor for secondary structure (base pairs output). Options: rnafold, spotrna, rnaformer, dssr")
-    io_group.add_argument('--structure', type=str, required=False, default=None,
-                          help="Dot-bracket secondary structure (if provided, will be converted to base pairs) or base pairs")
-    io_group.add_argument('--interactions', type=str, required=False, default=None,
-                              help="List of tuples with interaction rates for every pair. The default is 0 for missing tuples")
-    io_group.add_argument('--rna-seq', type=str, required=False,
-                          help="RNA sequence (used for MSA + JSON)")
-    io_group.add_argument('--pair-mutation', type=str, required=False)
-    io_group.add_argument('--protein-seq', type=str, required=False,
-                          help="Protein sequence (for JSON)")
-    io_group.add_argument('--input_json_path', type=str, required=False,
-                          help="A JSON file in Alphafold webservice format that will be adapted for custom RNA MSA")
-    io_group.add_argument('--pdb_id', type=str, required=False,
-                          help="PDB ID (used in JSON name)")
-    io_group.add_argument('--output_json_dir', type=str, default="custom_msa_json_output")
-
-    mut_group = parser.add_argument_group("Mutation Parameters")
-    mut_group.add_argument('-N', type=int, default=20, help="Number of sequences in the MSA")
-    mut_group.add_argument('--mutation-rate-unpaired', type=float, default=0.2)
-    mut_group.add_argument('--mutation-rate-paired', type=float, default=0.2)
-    mut_group.add_argument('--mutation-rates', type=str, required=False, 
-                        help="Input a list with a mutation rate for every position in the sequence. Overrides mutation-rate-unpaired "
-                        "and mutation-rate-paired if both are provided")
-    mut_group.add_argument('--pair-mutation-approach', type=str, default="watson_crick_cov",
-                           choices=["watson_crick", "covariance", "watson_crick_cov", "original", "none"],
-                           help="Choose the method for the mutation of base pairs. 'original' corresponds "
-                                "to the approach we used before the rework has problems. 'watson_crick' chooses"
-                                " a random watson crick base pair with hardcoded probabilities. 'covariance' "
-                                "chooses random base pairs but ensures both partners are always changing together")
-    mut_group.add_argument('--stem_single_insertion_prob', type=float, default=0.05)
-    mut_group.add_argument('--stem_long_insertion_prob', type=float, default=0.01)
-    mut_group.add_argument('--stem_single_deletion_prob', type=float, default=0.01)
-    mut_group.add_argument('--stem_pair_deletion_prob', type=float, default=0.01)
-    mut_group.add_argument('--loop_single_insertion_prob', type=float, default=0.1)
-    mut_group.add_argument('--loop_single_deletion_prob', type=float, default=0.1)
-    mut_group.add_argument('--loop_long_insertion_prob', type=float, default=0.02)
-    mut_group.add_argument('--loop_long_deletion_prob', type=float, default=0.02,
-                           help="Note that long deletions override mutations and single deletions if they appear.")
-    mut_group.add_argument('--wobble-prob', type=float, default=0.1)
-    mut_group.add_argument('--max-insertion-fraction', type=float, default=0.1,
-                           help="Max insertion length as fraction of RNA length")
-    mut_group.add_argument('--max-deletion-fraction', type=float, default=0.1,
-                           help="Max deletion length as fraction of RNA length")
-    
-    parser.add_argument('--seed', type=int, default=None)
-    parser.add_argument('--max_chains', type=int, default=None)
-    parser.add_argument('--plot', action='store_true')
-    parser.add_argument('--print_msa', action='store_true')
-    parser.add_argument('--show_plot', action='store_true')
-    return parser.parse_args()
-
-
 class MsaGenerator:
-    def __init__(self, args: argparse.Namespace) -> None:
-        self.args = args
-        self.pair_map: Optional[PairMap] = None
-        if self.args.seed is not None:
-            random.seed(self.args.seed)
+    """Generate MSAs with an instance-local random stream and no file I/O.
 
-    def get_structure(self, sequence: str) -> PairMap:
-        seq = sequence.upper()
+    Make a new instance with the same seed to reproduce the same MSA. Consecutive
+    generate() calls on one instance advance its stream (also useful for chains).
+    PairMap contains per-position rates; parameters contains the remaining settings.
+    """
+    def __init__(self, parameters: Optional[MutationParameters] = None, seed=1):
+        self.parameters = MutationParameters() if parameters is None else parameters
+        if not isinstance(self.parameters, MutationParameters):
+            raise TypeError('parameters must be MutationParameters, not argparse.Namespace')
+        validate_seed(seed)
+        self.rng = random.Random(None if seed is None else int(seed))
+        self.pair_map = None
 
-        if self.args.interactions:
-            if self.args.structure:
-                logging.warning("Both structure and interactions provided. Using provided interactions.")
-            if self.args.structure_predictor:
-                logging.warning("Both structure predictor and interactions provided. Using provided interactions.")
-            logging.info("Using provided interactions: %s", self.args.interactions)
-            interactions = parse_json(self.args.interactions)
-            if self.args.mutation_rates:
-                self.args.mutation_rate_paired = ""
-                self.args.mutation_rate_unpaired = ""
-                interactions = [(int(i), int(j), float(val)) for i, j, val in interactions]
-                mutation_rates = parse_json(self.args.mutation_rates)
-                self.args.mutation_rates = "custom"
-                return PairMap.from_interactions(len(seq), interactions, mutation_rates)
-            return PairMap.from_raw(interactions, len(seq), self.args.mutation_rate_paired, self.args.mutation_rate_unpaired)
-
-        if self.args.structure:
-            if self.args.structure_predictor:
-                logging.warning("Both structure predictor and structure provided. Using provided structure.")
-            logging.info("Using provided structure: %s", self.args.structure)
-            return PairMap.from_raw(self.args.structure, len(seq), self.args.mutation_rate_paired, self.args.mutation_rate_unpaired)
-
-        if self.args.structure_predictor:
-            import structure_predictor  # Imported lazily so the no-predict path never pays the RnaBench cost.
-            pdb_id = self.args.pdb_id.lower()[:4] if self.args.pdb_id else None
-            pred_pairs = structure_predictor.predict(self.args.structure_predictor, seq, pdb_id)
-            logging.info("%s predicted structure.", self.args.structure_predictor)
-            return PairMap.from_raw(pred_pairs, len(seq), self.args.mutation_rate_paired, self.args.mutation_rate_unpaired)
-
-        raise ValueError("Either a structure predictor a structure or interactions must be provided.")
+    def generate(self, rna_sequence: str, pair_map: PairMap) -> List[str]:
+        """Return query followed by N-1 synthetic A3M sequence rows (no headers)."""
+        sequence = validate_sequence(rna_sequence)
+        if not isinstance(pair_map, PairMap):
+            raise TypeError('pair_map must be a PairMap')
+        matrix = pair_map._pairs_mat
+        if matrix.shape != (len(sequence), len(sequence)):
+            raise ValueError('PairMap size must match RNA length')
+        if not np.all(np.isfinite(matrix)) or np.any(matrix < 0) or np.any(matrix > 1):
+            raise ValueError('PairMap rates and interactions must be finite and in [0,1]')
+        if not np.array_equal(matrix, matrix.T):
+            raise ValueError('PairMap must be symmetric')
+        self.pair_map = pair_map
+        self.max_insertion_length = max(int(len(sequence) * self.parameters.max_insertion_fraction), 2)
+        self.max_deletion_length = max(int(len(sequence) * self.parameters.max_deletion_fraction), 2)
+        msa = [sequence] + [self.mutate_sequence(sequence) for _ in range(self.parameters.N - 1)]
+        validate_msa(msa, sequence, self.parameters.N)
+        return msa
 
     def loop_insertion(self) -> str:
         """Long insertions take priority, then single insertions. If all long insertions are disregarded
         the single insertion rate can be recovered accurately. Any insertion is randomly selected"""
-        if random.random() < self.args.loop_long_insertion_prob:
-            insertion_len = random.randint(2, self.max_insertion_length)
-            return ''.join(random.choice('augc') for _ in range(insertion_len))
-        if random.random() < self.args.loop_single_insertion_prob:
-            return random.choice('acgu')
+        if self.rng.random() < self.parameters.loop_long_insertion_prob:
+            insertion_len = self.rng.randint(2, self.max_insertion_length)
+            return ''.join(self.rng.choice('augc') for _ in range(insertion_len))
+        if self.rng.random() < self.parameters.loop_single_insertion_prob:
+            return self.rng.choice('acgu')
         return ""
 
     def stem_insertion(self) -> str:
         """Long insertions take priority, then single insertions. If all long insertions are disregarded
         the single insertion rate can be recovered accurately. Any insertion is randomly selected"""
-        if random.random() < self.args.stem_long_insertion_prob:
-            insertion_len = random.randint(2, self.max_insertion_length)
-            return ''.join(random.choice('augc') for _ in range(insertion_len))
-        if random.random() < self.args.stem_single_insertion_prob:
-            return random.choice('acgu')
+        if self.rng.random() < self.parameters.stem_long_insertion_prob:
+            insertion_len = self.rng.randint(2, self.max_insertion_length)
+            return ''.join(self.rng.choice('augc') for _ in range(insertion_len))
+        if self.rng.random() < self.parameters.stem_single_insertion_prob:
+            return self.rng.choice('acgu')
         return ""
 
     def paired_deletion(self, i, mutated_partner: str, partner_index: float) -> bool:
-        single_del = self.args.stem_single_deletion_prob
-        pair_del =  self.args.stem_pair_deletion_prob * self.pair_map.interaction(i, partner_index)
+        single_del = self.parameters.stem_single_deletion_prob
+        pair_del =  self.parameters.stem_pair_deletion_prob * self.pair_map.interaction(i, partner_index)
         if self.pair_map.is_multiplet_member(i):
-            return random.random() < single_del
+            return self.rng.random() < single_del
         if i < partner_index: # P(-)
-            return random.random() < single_del + pair_del
+            return self.rng.random() < single_del + pair_del
         if mutated_partner == "-": # P(-|-)
-            return random.random() * (single_del + pair_del) < pair_del
-        return random.random() * (1 - single_del - pair_del) < single_del # P(-|!-)
+            return self.rng.random() * (single_del + pair_del) < pair_del
+        return self.rng.random() * (1 - single_del - pair_del) < single_del # P(-|!-)
 
     def mutate_random(self, nt: str, prob: float):
-        if random.random() < prob:
-            return random.choice([c for c in 'AUGC' if c != nt])
+        if self.rng.random() < prob:
+            return self.rng.choice([c for c in 'AUGC' if c != nt])
         return nt
     
     def mutate_unpaired(self, nt: str, loop_long_del_len: int, mutation_rate: float) -> tuple[str, int]:
         """Long deletions take priority, then single deletions, then mutations. Therefore
         the mutation rate is can be recovered accurately if deletions are disregarded."""
-        if random.random() < self.args.loop_long_deletion_prob:
-            loop_long_del_len = random.randint(2, self.max_deletion_length)
+        if self.rng.random() < self.parameters.loop_long_deletion_prob:
+            loop_long_del_len = self.rng.randint(2, self.max_deletion_length)
         if loop_long_del_len > 0:
             return "-", loop_long_del_len - 1
-        if random.random() < self.args.loop_single_deletion_prob:
+        if self.rng.random() < self.parameters.loop_single_deletion_prob:
             return "-", 0
         return self.mutate_random(nt, mutation_rate), 0
 
@@ -245,21 +165,21 @@ class MsaGenerator:
             for opt, prob in PAIR_MUTATION_PROBABILITIES.get(mut, {}).items():
                 options[opt] += prob * interactions[j]
         options.pop(nt)
-        return random.choices(list(options.keys()), list(options.values()))[0]
+        return self.rng.choices(list(options.keys()), list(options.values()))[0]
         
 
     def mutate_pair_original(self, p_nt: str, nt: str, mutation_rate: float, partner_mutation_rate: float) -> str:
-        if not random.random() < (mutation_rate + partner_mutation_rate) / 2:
+        if not self.rng.random() < (mutation_rate + partner_mutation_rate) / 2:
             return p_nt + nt
-        if random.random() < self.args.wobble_prob:
-            return random.choice(['GU', 'UG'])
+        if self.rng.random() < self.parameters.wobble_prob:
+            return self.rng.choice(['GU', 'UG'])
         candidates = PAIR_MUTATIONS.get(p_nt + nt, WC_PAIRS)
-        return random.choice(candidates)
+        return self.rng.choice(candidates)
 
     def mutate_sequence(self, seq: str) -> str:
-        approach = self.args.pair_mutation_approach
+        approach = self.parameters.pair_mutation_approach
         if approach not in ["covariance", "watson_crick", "watson_crick_cov", "original", "none"]:
-            logging.error("Unknown input for --pair-mutation-approach, '%s', please use one of the provided options", self.args.pair_mutation_approach)
+            logging.error("Unknown input for --pair-mutation-approach, '%s', please use one of the provided options", self.parameters.pair_mutation_approach)
             raise ValueError()
         seq = np.array(list(seq))
         new_seq = np.empty(len(seq), str)
@@ -305,123 +225,238 @@ class MsaGenerator:
             insertions.append(new_insertion)
         return ''.join(np.ravel(list(zip(insertions, new_seq)))) + self.loop_insertion()
 
-    def generate_msa(self, rna_seq: str) -> List[str]:
-        self.max_insertion_length = max(int(len(rna_seq) * self.args.max_insertion_fraction), 2)
-        self.max_deletion_length = max(int(len(rna_seq) * self.args.max_deletion_fraction), 2)
-        msa = [rna_seq]
-        for _ in range(self.args.N - 1):
-            msa.append(self.mutate_sequence(rna_seq))
-        return msa
 
-    def build_output_name(self) -> str:
-        ins_len = getattr(self, "max_insertion_length", "NA")
-        del_len = getattr(self, "max_deletion_length", "NA")
-        structure_predictor = self.args.structure_predictor or "none"
-        name_parts = [
-            f"{self.args.pdb_id}_custom_rnamsa",
-            f"N{self.args.N}",
-            f"seed{self.args.seed}",
-            f"mru_{self.args.mutation_rate_unpaired}",
-            f"mrp_{self.args.mutation_rate_paired}",
-            f"mrs_{self.args.mutation_rates}",
-            f"pma_{self.args.pair_mutation_approach}",
-            f"ssi_{self.args.stem_single_insertion_prob}",
-            f"sli_{self.args.stem_long_insertion_prob}",
-            f"spd_{self.args.stem_pair_deletion_prob}",
-            f"lsi_{self.args.loop_single_insertion_prob}",
-            f"lsd_{self.args.loop_single_deletion_prob}",
-            f"lli_{self.args.loop_long_insertion_prob}",
-            f"lld_{self.args.loop_long_deletion_prob}",
-            f"mif_{self.args.max_insertion_fraction}",
-            f"mdf_{self.args.max_deletion_fraction}",
-            f"maxinslen_{ins_len}",
-            f"maxdellen_{del_len}",
-            f"wp_{self.args.wobble_prob}",
-            structure_predictor,
-        ]
-        return "_".join(str(part) for part in name_parts if part not in {None, ""})
+# Input/output helpers: used by main(), never by MsaGenerator.
 
-    def _build_rna_chain(self, chain: Dict[str, Any]) -> Dict[str, Any]:
-        """Return a copy of an RNA chain with a freshly generated custom MSA
-        written into its unpairedMsa field."""
-        updated_chain = chain.copy()
-        rna_seq = chain["rna"]["sequence"]
-        logging.info("Processing RNA sequence: %s", rna_seq)
+def validate_msa(msa, sequence, count):
+    """Validate the emitted A3M representation before writing an AF3 input."""
+    if len(msa) != count or not msa or msa[0] != sequence:
+        raise ValueError('MSA query or sequence count mismatch')
+    for row in msa:
+        if set(row) - set('ACGUacgu-'):
+            raise ValueError('MSA contains invalid characters')
+        if len(''.join(c for c in row if not c.islower())) != len(sequence):
+            raise ValueError('MSA aligned lengths differ')
 
-        self.pair_map = self.get_structure(rna_seq)
 
-        logging.info("Pairs: %s", self.pair_map.pairs)
-        logging.info("Secondary structure has %d unique base pairs.", len(self.pair_map.unique_pairs))
-        if self.pair_map.basic_pairs:
-            logging.info("Using %d stem pairs: %s", len(self.pair_map.basic_pairs), self.pair_map.basic_pairs)
-        if self.pair_map.multiplets:
-            logging.info("Using %d multiplets: %s", len(self.pair_map.multiplets), self.pair_map.multiplets)
+def parse_json(text):
+    """Accept JSON arrays and the legacy tuple-style CLI syntax."""
+    return json.loads(text.replace('(', '[').replace(')', ']'))
 
-        msa = self.generate_msa(rna_seq)
-        updated_chain["rna"]["unpairedMsa"] = "\n".join(
-            [">query\n" + msa[0]] +
-            [f">sample_{i}\n{seq}" for i, seq in enumerate(msa[1:])]
-        )
 
-        if self.args.print_msa:
-            logging.info("MSA:")
-            for row in msa:
-                logging.info(row)
-
-        if self.args.plot:
-            # Imported lazily so the no-plot path never pays the matplotlib cost.
-            import msa_plotting
-            msa_plotting.plot_final_features(msa, rna_seq, self.pair_map.pairs,
-                                             self.args.pdb_id, self.args.show_plot)
-        return updated_chain
-
-    def process(self, write: bool = True) -> Dict[str, Any]:
-        if self.args.protein_seq:
-            logging.warning("Please note that protein seq support is not currently implemented")
-
-        if self.args.input_json_path:
-            data = load_json(self.args.input_json_path)
-        elif self.args.rna_seq:
-            data = json_generator.build_input_json(self.args.rna_seq)
+def parse_args(argv=None):
+    # SUPPRESS lets us distinguish explicit options from absent defaults.
+    parser = argparse.ArgumentParser(
+        description='Generate an RNA MSA and native AF3 input JSON.',
+        argument_default=argparse.SUPPRESS,
+    )
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument('--request-json', help='Pipeline request with sequence, pairs, parameters and seeds')
+    source.add_argument('--rna-seq', help='RNA sequence; supply structure/interactions/predictor too')
+    source.add_argument('--input-json-path', help='Existing native AF3 JSON to adapt')
+    output = parser.add_mutually_exclusive_group()
+    output.add_argument('--output-json', help='Exact output path; parent directories are created')
+    output.add_argument('--output-json-dir', help='Output directory; defaults to custom_msa_json_output')
+    parser.add_argument('--structure', help='Dot-bracket or zero-based JSON pair list')
+    parser.add_argument('--interactions', help='JSON pairs with optional interaction strengths')
+    parser.add_argument('--structure-predictor', choices=('rnafold', 'spotrna', 'rnaformer', 'dssr'))
+    parser.add_argument('--mutation-rate-paired', type=float)
+    parser.add_argument('--mutation-rate-unpaired', type=float)
+    parser.add_argument('--mutation-rates', help='JSON per-position mutation rates')
+    for field in fields(MutationParameters):
+        name = field.name
+        if name == 'N':
+            parser.add_argument('-N', type=int)
+        elif name == 'pair_mutation_approach':
+            parser.add_argument('--pair-mutation-approach', choices=APPROACHES)
         else:
-            raise ValueError("Either --rna-seq or --input_json_path must be provided.")
-
-        chains = data.get("sequences", [])
-        if self.args.max_chains is not None and len(chains) > self.args.max_chains:
-            source = Path(self.args.input_json_path).name if self.args.input_json_path else "generated input"
-            logging.warning("Input JSON contains %d chains, but --max_chains=%d is set. Skipping %s...",
-                            len(chains), self.args.max_chains, source)
-            return
-
-        updated_sequences = []
-        for chain in chains:
-            if "rna" in chain:
-                updated_sequences.append(self._build_rna_chain(chain))
-            if "protein" in chain:
-                updated_sequences.append(chain)
-
-        # Preserve any extra top-level keys, then set the processed sequences/name.
-        json_output = {k: v for k, v in data.items() if k != "sequences"}
-        json_output["sequences"] = updated_sequences
-        name = self.build_output_name()
-        json_output["name"] = name
-
-        if write:
-            output_path = Path(self.args.output_json_dir, f"{name}.json")
-            with open(output_path, "w") as f:
-                json.dump(json_output, f, indent=2)
-            logging.info("✅ JSON written to: %s", output_path)
-        return json_output
+            flag = name.replace('_', '-')
+            parser.add_argument('--' + flag, type=float)
+    parser.add_argument('--seed', type=int, help='SHS seed; default None for legacy CLI')
+    parser.add_argument('--af3-seed', type=int, help='Override AF3 model seed; default 1 for new inputs')
+    parser.add_argument('--task-name', help='Short output/model name; overrides legacy parameter-based name')
+    parser.add_argument('--pdb-id')
+    parser.add_argument('--protein-seq', help='Deprecated; ignored (new direct inputs are RNA-only)')
+    parser.add_argument('--pair-mutation', help='Deprecated unused option; retained for CLI compatibility')
+    parser.add_argument('--max-chains', type=int)
+    
+    parser.add_argument('--plot', action='store_true')      # deprecated; will be moved to analyse
+    parser.add_argument('--print-msa', action='store_true') # deprecated; will be moved to analyse
+    parser.add_argument('--show-plot', action='store_true') # deprecated; will be moved to analyse
+    args = parser.parse_args(argv)
+    if hasattr(args, 'request_json'):
+        permitted = {'request_json', 'output_json', 'output_json_dir'}
+        conflicts = set(vars(args)) - permitted
+        if conflicts:
+            parser.error('--request-json cannot be combined with generation options: ' + ', '.join(sorted(conflicts)))
+    return args
 
 
-def main() -> None:
-    args = parse_args()
-    generator = MsaGenerator(args)
+def valid_task_name(name):
+    # This name may become a filename when output-json is omitted.
+    if not isinstance(name, str) or not name or any(c not in 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-' for c in name):
+        raise ValueError('task_name must contain only letters, digits, underscore or hyphen')
+    return name
+
+
+def load_request(path):
+    """Validate the pipeline request and produce explicit generator inputs."""
+    request = json.loads(Path(path).read_text())
+    if not isinstance(request, dict):
+        raise ValueError('Request must be a JSON object')
+    required = {'task_name', 'sequence', 'pairs', 'parameters', 'shs_seed', 'af3_seed'}
+    if required - request.keys():
+        raise ValueError(f'Missing request fields: {sorted(required - request.keys())}')
+    if request.keys() - required - {'id'}:
+        raise ValueError(f'Unknown request fields: {sorted(request.keys() - required - {"id"})}')
+    valid_task_name(request['task_name'])
+    validate_seed(request['shs_seed'], 'shs_seed', allow_none=False)
+    validate_seed(request['af3_seed'], 'af3_seed', allow_none=False)
+    sequence = validate_sequence(request['sequence'])
+    pairs = request['pairs']
+    if not isinstance(pairs, list) or any(not isinstance(p, list) or len(p) != 2 for p in pairs):
+        raise ValueError('Request pairs must be a list of two-element lists')
+    parameters, paired, unpaired = split_parameters(request['parameters'])
+    pair_map = build_pair_map(sequence, pairs, paired, unpaired)
+    return request, sequence, pair_map, parameters
+
+
+def prepare_structure(sequence, options, paired, unpaired):
+    """Resolve legacy CLI structure selection into the same PairMap used by requests."""
+    if 'interactions' in options:
+        if 'structure' in options or 'structure_predictor' in options:
+            logging.warning('Using interactions instead of structure/predictor')
+        raw = parse_json(options['interactions'])
+    elif 'structure' in options:
+        if 'structure_predictor' in options:
+            logging.warning('Using provided structure instead of predictor')
+        text = options['structure']
+        try:
+            raw = parse_json(text)
+        except json.JSONDecodeError:
+            raw = text
+    elif 'structure_predictor' in options:
+        import structure_predictor
+        pdb = options.get('pdb_id')
+        raw = structure_predictor.predict(options['structure_predictor'], sequence, pdb.lower()[:4] if pdb else None)
+    else:
+        raise ValueError('Provide --structure, --interactions or --structure_predictor')
+    rates = parse_json(options['mutation_rates']) if 'mutation_rates' in options else None
+    return build_pair_map(sequence, raw, paired, unpaired, rates)
+
+
+def legacy_output_name(options, parameters, sequence, paired, unpaired):
+    """Preserve the old CLI naming convention; explicit output-json avoids it."""
+    p = parameters
+    rates = 'custom' if 'mutation_rates' in options else None
+    parts = [
+        f'{options.get("pdb_id")}_custom_rnamsa', f'N{p.N}', f'seed{options.get("seed")}',
+        f'mru_{unpaired}', f'mrp_{paired}', f'mrs_{rates}', f'pma_{p.pair_mutation_approach}',
+        f'ssi_{p.stem_single_insertion_prob}', f'sli_{p.stem_long_insertion_prob}',
+        f'spd_{p.stem_pair_deletion_prob}', f'lsi_{p.loop_single_insertion_prob}',
+        f'lsd_{p.loop_single_deletion_prob}', f'lli_{p.loop_long_insertion_prob}',
+        f'lld_{p.loop_long_deletion_prob}', f'mif_{p.max_insertion_fraction}',
+        f'mdf_{p.max_deletion_fraction}', f'maxinslen_{max(int(len(sequence)*p.max_insertion_fraction),2)}',
+        f'maxdellen_{max(int(len(sequence)*p.max_deletion_fraction),2)}',
+        f'wp_{p.wobble_prob}', options.get('structure_predictor') or 'none',
+    ]
+    return '_'.join(parts)
+
+
+def show_generation(msa, pair_map, options):
+    if options.get('print_msa'):
+        for row in msa:
+            logging.info('%s', row)
+    if options.get('plot'):
+        import msa_plotting
+        msa_plotting.plot_final_features(msa, msa[0], pair_map.pairs,
+                                        options.get('pdb_id'), options.get('show_plot', False))
+
+
+def prepare_af3_json(args):
+    """Read one input mode, run the pure generator, and build JSON in memory."""
+    import json_generator
+    options = vars(args)
+    if 'request_json' in options:
+        request, sequence, pair_map, parameters = load_request(options['request_json'])
+        msa = MsaGenerator(parameters, seed=request['shs_seed']).generate(sequence, pair_map)
+        show_generation(msa, pair_map, options)
+        return json_generator.build_input_json(sequence, msa, name=request['task_name'],
+                                              model_seeds=[request['af3_seed']])
+
+    if options.get('protein_seq'):
+        logging.warning('Custom protein sequences are not supported; direct input is RNA-only')
+    parameter_names = {f.name for f in fields(MutationParameters)} | {'mutation_rate_paired', 'mutation_rate_unpaired'}
+    parameters, paired, unpaired = split_parameters({k:v for k,v in options.items() if k in parameter_names})
+    seed = options.get('seed')
+    validate_seed(seed)
+    af3_seed = options.get('af3_seed')
+    if af3_seed is not None:
+        validate_seed(af3_seed, 'af3_seed', allow_none=False)
+    if 'rna_seq' in options:
+        data = json_generator.build_input_json(validate_sequence(options['rna_seq']))
+    else:
+        data = json.loads(Path(options['input_json_path']).read_text())
+        if not isinstance(data, dict) or data.get('dialect') != 'alphafold3' or not isinstance(data.get('sequences'), list):
+            raise ValueError('input_json_path must contain native AF3 JSON with sequences')
+    if 'max_chains' in options:
+        if options['max_chains'] < 1 or len(data['sequences']) > options['max_chains']:
+            raise ValueError('Input exceeds --max_chains or limit is invalid')
+    generator = MsaGenerator(parameters, seed=seed)
+    msas = {}
+    for i, chain in enumerate(data['sequences']):
+        if 'rna' not in chain:
+            continue
+        sequence = validate_sequence(chain['rna']['sequence'])
+        pair_map = prepare_structure(sequence, options, paired, unpaired)
+        msas[i] = generator.generate(sequence, pair_map)
+        show_generation(msas[i], pair_map, options)
+    if not msas:
+        raise ValueError('Input contains no RNA chains')
+    if 'task_name' in options:
+        name = valid_task_name(options['task_name'])
+    elif 'output_json' in options:
+        # Short explicit filename also supplies the name for non-request CLI mode.
+        name = Path(options['output_json']).stem
+    else:
+        name = legacy_output_name(options, parameters, sequence, paired, unpaired)
+    return json_generator.attach_rna_msas(data, msas, name=name,
+                                         model_seeds=[af3_seed] if af3_seed is not None else None)
+
+
+def write_output(data, args):
+    """Write exactly one final AF3 JSON; no intermediate base JSON is needed."""
+    options = vars(args)
+    if 'output_json' in options:
+        path = Path(options['output_json'])
+    else:
+        path = Path(options.get('output_json_dir', 'custom_msa_json_output')) / (data['name'] + '.json')
+    for name in ('request_json', 'input_json_path'):
+        if name in options and path.resolve() == Path(options[name]).resolve():
+            raise ValueError('Output must not overwrite the input/request file')
+    path.parent.mkdir(parents=True, exist_ok=True)
+    # On failure, no partially written final output appears as a successful result.
+    temporary = path.with_suffix(path.suffix + '.tmp')
     try:
-        generator.process()
-    except Exception as e:
-        logging.error("Error during processing: %s", e)
+        temporary.write_text(json.dumps(data, indent=2, allow_nan=False))
+        temporary.replace(path)
+    finally:
+        temporary.unlink(missing_ok=True)
+    logging.info('JSON written to: %s', path)
+    return path
+
+
+def main(argv=None):
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+    args = parse_args(argv)
+    try:
+        data = prepare_af3_json(args)
+        write_output(data, args)
+    except Exception as exc:
+        logging.error('Generation failed: %s', exc)
+        return 1
+    return 0
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())
