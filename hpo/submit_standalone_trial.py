@@ -20,7 +20,7 @@ def main():
     # Command executed on the allocated CPU node.
     # shlex.join quotes each argument safely for the shell used by --wrap.
     controller_command = shlex.join([
-        config['shs_python'],                       # Python to use
+        config['controller_python'],               # Python to use
         '-u',                                      # Write log output without buffering
         '-m',
         'hpo.run_standalone_trial',                # Standalone module
