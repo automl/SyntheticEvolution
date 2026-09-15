@@ -1,0 +1,76 @@
+
+# ---- Notice ----------------------------------------------------
+# Fill all REQUIRED values before running the relevant entry point.
+# Use absolute paths for external executables and AF3 model parameters.
+
+
+# ---- Run config ------------------------------------------------
+# Run directory: <workspace>/shs_hpo/<run_name>/
+# Use a new name for a new experiment. Existing compatible trial 
+# files can be reused; NePS search recovery is separate.
+run_name: test-run
+input: hpo/examples/example_input.csv # CSV file or directory of CSVs; see example for format
+workspace_name:                       # REQUIRED: Existing Helix workspace name for the run folder
+controller_python:                    # REQUIRED for controller submission
+
+
+# ---- Neps config -----------------------------------------------
+neps_python:   # REQUIRED only for NePS controller submission
+evaluations: 2 # Max number of configs neps will try
+optimizer: bayesian_optimization
+
+
+# ---- Generator config ------------------------------------------
+shs_python: # REQUIRED: SHS Python executable
+# NePS: combine sampled search values with fixed values.
+# Standalone: ignore search with a warning; use fixed values.
+# Both modes: use generator defaults for parameters not supplied.
+search:
+  N: {type: integer, lower: 2, upper: 128, log: true}
+  mutation_rate_unpaired: {type: float, lower: 0.0, upper: 1.0}
+  mutation_rate_paired: {type: float, lower: 0.0, upper: 1.0}
+  pair_mutation_approach:
+    type: categorical
+    choices: [covariance, watson_crick, watson_crick_cov, none]
+fixed:
+  stem_single_insertion_prob: 0.0
+  stem_long_insertion_prob: 0.0
+  stem_single_deletion_prob: 0.0
+  stem_pair_deletion_prob: 0.0
+  loop_single_insertion_prob: 0.0
+  loop_long_insertion_prob: 0.0
+  loop_single_deletion_prob: 0.0
+  loop_long_deletion_prob: 0.0
+shs_seed: 42
+generator_timeout_seconds: 600 # Per RNA input-generation process
+
+
+# ---- AF3 config ------------------------------------------------
+module: bio/alphafold/3.0.1
+model_dir:                  # REQUIRED: AF3 model parameters directory
+poll_seconds: 30            # Interval between AF3 job-status checks
+wait_timeout_seconds: 14000 # Maximum controller wait for an AF3 array
+af3_seed: 42
+
+
+# ---- DSSR config -----------------------------------------------
+dssr:                     # REQUIRED: DSSR executable
+dssr_timeout_seconds: 300 # Per DSSR invocation
+
+
+# ---- Slurm resource requests ------------------------------------
+# CPU controller; remains allocated while waiting for AF3 jobs.
+controller:
+  partition: cpu-single
+  cpus: 1
+  memory: 4G
+  time: '04:00:00' # Total controller wall time, including all trials and waits
+
+# Resources per AF3 array task, one task per RNA.
+gpu:
+  partition: gpu-single
+  cpus: 8
+  memory: 20G
+  gres: gpu:A100:1
+  time: '00:15:00' # Wall time per AF3 task
+  concurrency: 2   # Maximum simultaneously running tasks in each array
