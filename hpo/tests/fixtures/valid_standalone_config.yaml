@@ -3,6 +3,7 @@ run_name: test-run
 workspace_name: alphafold
 input: hpo/example_input.csv
 shs_python: /example/shs/bin/python
+ignore_errors: false
 module: bio/alphafold/3.0.1
 model_dir: /example/models
 dssr: /example/x3dna-dssr

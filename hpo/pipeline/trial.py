@@ -161,7 +161,10 @@ def load_config(path, *, mode, submitting_controller=False):
         if not search:
             raise ValueError('NePS mode requires a nonempty search section')
         require_positive(config, 'evaluations', integer=True)
-        require_text(config, 'optimizer')
+        if config.get('optimizer') is not None:
+            require_text(config, 'optimizer')
+        if not isinstance(config.get('ignore_errors'), bool):
+            raise ValueError('ignore_errors must be a YAML boolean: true or false')
 
     # These settings are used to launch the controller through Slurm.
     if submitting_controller:

@@ -12,7 +12,7 @@ def neps_case(tmp_path, monkeypatch):
     config = dict(search={'N': dict(type='integer', lower=1, upper=30),
                           'rate': dict(type='float', lower=0.0, upper=1.0),
                           'approach': dict(type='categorical', choices=['a', 'b'])},
-                  evaluations=2, optimizer='random_search')
+                  evaluations=2, ignore_errors=False, optimizer='random_search')
     rows = [dict(id='rna', sequence='ACGU', pairs=[[0, 3]])]
     fake = SimpleNamespace(Integer=Mock(return_value='integer-space'),
                            Float=Mock(return_value='float-space'),

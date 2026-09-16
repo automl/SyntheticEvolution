@@ -17,7 +17,8 @@ controller_python:  # REQUIRED
 # ---- Neps config -----------------------------------------------
 neps_python:        # REQUIRED
 evaluations: 2 # Max number of configs neps will try
-optimizer: bayesian_optimization
+optimizer:     # optional custon optimizer selection
+ignore_errors: false
 
 
 # ---- Generator config ------------------------------------------

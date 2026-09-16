@@ -85,8 +85,8 @@ def test_fresh_trial_wires_two_rnas_and_averages_scores(trial_case):
     for flag in ['--parsable', '--array=0-1%1', '--partition=gpu-single',
                  '--cpus-per-task=8', '--mem=20G', '--gres=gpu:A100:1', '--time=00:15:00']:
         assert flag in args
-    assert args[-4:] == [str(trial.HPO_DIR / 'slurm/af3-inference-array.slurm'),
-                         str(trial.HPO_DIR / 'af3_task.py'), str(directory / 'af3_tasks.json'), config['module']]
+    assert args[-4:] == [str(trial.PIPELINE_DIR / 'slurm' / 'af3-inference-array.slurm'),
+                         str(trial.PIPELINE_DIR / 'af3_task.py'), str(directory / 'af3_tasks.json'), config['module']]
     assert dssr.call_count == 2
     for index, call in enumerate(dssr.call_args_list):
         assert call.args[1:] == (directory / f'rna_{index:05d}' / 'dssr', rows[index]['sequence'], 'test-dssr', 10)

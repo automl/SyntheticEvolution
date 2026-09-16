@@ -8,7 +8,7 @@ import pytest
 
 
 @pytest.mark.parametrize('mode,python_key,job_name', [
-    ('neps', 'neps_python', 'shs-hpo'), ('standalone', 'shs_python', 'shs-standalone')])
+    ('neps', 'neps_python', 'shs-hpo'), ('standalone', 'controller_python', 'shs-standalone')])
 def test_controller_submission_resources_and_wrapped_command(tmp_path, monkeypatch, capsys, mode, python_key, job_name):
     suffix = 'neps_hpo' if mode == 'neps' else 'standalone_trial'
     module = importlib.import_module('hpo.submit_' + suffix)
@@ -16,6 +16,7 @@ def test_controller_submission_resources_and_wrapped_command(tmp_path, monkeypat
     root = tmp_path / 'repo with spaces'
     workspace = tmp_path / 'workspace'
     config = dict(neps_python='/env/neps space/bin/python', shs_python='/env/shs space/bin/python',
+                  controller_python='/env/controller space/bin/python',
                   controller=dict(partition='cpu-single', cpus=2, memory='5G', time='03:00:00'))
     load = Mock(return_value=config)
     command = Mock(return_value='123')

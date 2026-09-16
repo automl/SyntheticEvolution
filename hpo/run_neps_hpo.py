@@ -58,14 +58,17 @@ def main():
                 parameters,
             )
 
-        # Persist optimization state under the run workspace for resumption.
+        optimizer_kwargs = {}
+        if config.get('optimizer') is not None:
+            optimizer_kwargs['optimizer'] = config['optimizer']
+
         neps.run(
             evaluate_pipeline= evaluate_pipeline,
             pipeline_space= space,
             root_directory= run_root / 'neps',
             evaluations_to_spend= config['evaluations'],
-            optimizer= config['optimizer'],
-            ignore_errors= False
+            ignore_errors= config['ignore_errors'],
+            **optimizer_kwargs,
         )
 
 
