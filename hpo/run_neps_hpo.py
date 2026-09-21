@@ -58,16 +58,22 @@ def main():
                 parameters,
             )
 
+        neps_root = run_root / "neps"
+        if (neps_root / "pipeline_space.pkl").is_file():
+            space_kwargs = {}
+        else:
+            space_kwargs = {"pipeline_space": space}
+
         optimizer_kwargs = {}
         if config.get('optimizer') is not None:
             optimizer_kwargs['optimizer'] = config['optimizer']
 
         neps.run(
             evaluate_pipeline= evaluate_pipeline,
-            pipeline_space= space,
             root_directory= run_root / 'neps',
             evaluations_to_spend= config['evaluations'],
             ignore_errors= config['ignore_errors'],
+            **space_kwargs,
             **optimizer_kwargs,
         )
 
