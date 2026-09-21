@@ -411,7 +411,7 @@ def run_pipeline(
         if json.loads(trial_metadata_path.read_text()) != trial_signature:
             raise ValueError('Trial parameters changed; choose a fresh trial directory')
     else:
-        logger.info('New run initialized: %s', trial_directory)
+        logger.info('New trial initialized')
         write_json(trial_metadata_path, trial_signature)
 
     if trial_result_path.exists():
