@@ -23,7 +23,7 @@ def main():
     args = parser.parse_args()
 
     ### Make folder 
-    config = load_config(args.config)
+    config = load_config(args.config, mode='export')
     root = get_workspace_path(config)
     destination = ROOT / 'hpo/reports' / config['run_name']
     destination.mkdir(parents=True, exist_ok=True)
