@@ -17,7 +17,7 @@ controller_python:                    # REQUIRED for controller submission
 # ---- Neps config -----------------------------------------------
 neps_python:   # REQUIRED only for NePS controller submission
 evaluations: 2 # Max number of configs neps will try
-optimizer:     # optional custon optimizer selection
+optimizer:     # optional custom optimizer selection
 ignore_errors: false
 
 
@@ -49,8 +49,7 @@ generator_timeout_seconds: 600 # Per RNA input-generation process
 # ---- AF3 config ------------------------------------------------
 module: bio/alphafold/3.0.1
 model_dir:                  # REQUIRED: AF3 model parameters directory
-poll_seconds: 30            # Interval between AF3 job-status checks
-wait_timeout_seconds: 14000 # Maximum controller wait for an AF3 array
+af3_timeout_seconds: 9000
 af3_seed: 42
 
 
@@ -60,19 +59,11 @@ dssr_timeout_seconds: 300 # Per DSSR invocation
 
 
 # ---- Slurm resource requests ------------------------------------
-# CPU controller; remains allocated while waiting for AF3 jobs.
 controller:
-  partition: cpu-single
-  cpus: 1
-  memory: 4G
-  time: '04:00:00' # Total controller wall time, including all trials and waits
-
-# Resources per AF3 array task, one task per RNA.
-gpu:
+  count: 4           # number of controllers to submit
   partition: gpu-single
-  cpus: 8
+  cpus: 1
   memory: 20G
   gres: gpu:A100:1
-  time: '00:15:00' # Wall time per AF3 task
-  concurrency: 2   # Maximum simultaneously running tasks in each array
+  time: '24:00:00'   # total wall time
 

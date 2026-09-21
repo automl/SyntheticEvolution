@@ -16,34 +16,35 @@ def main():
     logs = get_workspace_path(config) / 'controller_logs'
     logs.mkdir(parents=True, exist_ok=True)
     resources = config['controller']
+    count = resources.get('count', 1)
+    log_name = '%A_%a' if count > 1 else '%j'
 
-    # Command executed on the allocated CPU node.
-    # shlex.join quotes each argument safely for the shell used by --wrap.
-    controller_command = shlex.join([
-        config['neps_python'],          # Python to use
-        '-u',                           # Write log output without buffering
-        '-m',
-        'hpo.run_neps_hpo',             # NePS controller module
-        '--config',
-        str(repo_path(args.config)),    # Absolute path to config file
-    ])
-
-    print(command([
+    submission = [
         'sbatch',
         '--parsable',
         '--job-name=shs-hpo',
         '--chdir=' + str(ROOT),
-        '--nodes=1',                    # Previously set in controller.slurm
-        '--ntasks=1',                   # Previously set in controller.slurm
+        '--nodes=1',
+        '--ntasks=1',
         '--partition=' + resources['partition'],
         '--time=' + resources['time'],
         '--cpus-per-task=' + str(resources['cpus']),
         '--mem=' + resources['memory'],
-        '--output=' + str(logs / '%j.out'),
-        '--error=' + str(logs / '%j.err'),
-        # Slurm creates the shell wrapper; exec replaces that shell with Python.
-        '--wrap=exec ' + controller_command,
-    ]))
+        '--gres=' + resources['gres'],
+        '--output=' + str(logs / (log_name + '.out')),
+        '--error=' + str(logs / (log_name + '.err')),
+    ]
+    if count > 1:
+        submission.append(f'--array=0-{count - 1}')
+
+    submission.extend([
+        str(ROOT / 'hpo/slurm/controller.slurm'),
+        config['module'],
+        config['neps_python'],
+        'hpo.run_neps_hpo',
+        str(repo_path(args.config)),
+    ])
+    print(command(submission))
 
 
 if __name__ == '__main__':

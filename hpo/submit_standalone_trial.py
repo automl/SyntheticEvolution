@@ -39,10 +39,14 @@ def main():
         '--time=' + resources['time'],
         '--cpus-per-task=' + str(resources['cpus']),
         '--mem=' + resources['memory'],
+        '--gres=' + resources['gres'],
         '--output=' + str(logs / '%j.out'),
         '--error=' + str(logs / '%j.err'),
-        # Slurm creates the shell wrapper; exec replaces that shell with Python.
-        '--wrap=exec ' + controller_command,
+        str(ROOT / 'hpo/slurm/controller.slurm'),
+        config['module'],
+        config['controller_python'],
+        'hpo.run_standalone_trial',
+        str(repo_path(args.config)),
     ]))
 
 

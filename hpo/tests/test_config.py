@@ -87,15 +87,38 @@ class TestLoadConfig(unittest.TestCase):
             self.load(config, mode='neps', submitting_controller=True)
 
         config['controller'] = {
-            'partition': 'cpu-single',
+            'count': 1,
+            'partition': 'gpu-single',
             'cpus': 1,
-            'memory': '4G',
+            'memory': '20G',
+            'gres': 'gpu:A100:1',
             'time': '04:00:00',
         }
         self.assertEqual(
             self.load(config, mode='neps', submitting_controller=True),
             config,
         )
+
+    def test_controller_submission_requires_gpu_request(self):
+        config = self.neps_config()
+        config['neps_python'] = '/example/neps/bin/python'
+        config['controller'] = {
+            'count': 1,
+            'partition': 'gpu-single',
+            'cpus': 1,
+            'memory': '20G',
+            'time': '04:00:00',
+        }
+
+        with self.assertRaisesRegex(ValueError, r'controller\.gres'):
+            self.load(config, mode='neps', submitting_controller=True)
+
+        for value in ('', None, 1):
+            with self.subTest(value=value):
+                invalid = copy.deepcopy(config)
+                invalid['controller']['gres'] = value
+                with self.assertRaisesRegex(ValueError, r'controller\.gres'):
+                    self.load(invalid, mode='neps', submitting_controller=True)
 
     def test_export_only_requires_run_location(self):
         config = {
@@ -123,22 +146,14 @@ class TestLoadConfig(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, 'run_name'):
                     self.load(config)
 
-    def test_rejects_invalid_concurrency(self):
+    def test_rejects_invalid_count(self):
         for value in (0, -1, 1.5, True, '2'):
             with self.subTest(value=value):
-                config = copy.deepcopy(self.config)
-                config['gpu']['concurrency'] = value
-                with self.assertRaisesRegex(ValueError, r'gpu\.concurrency'):
-                    self.load(config)
-
-    def test_rejects_invalid_timeout(self):
-        for value in (0, -1, True, float('inf'), float('nan')):
-            with self.subTest(value=value):
-                config = {**self.config, 'wait_timeout_seconds': value}
-                with self.assertRaisesRegex(
-                    ValueError, 'wait_timeout_seconds'
-                ):
-                    self.load(config)
+                config = self.neps_config()
+                config['controller']['count'] = value
+                config['neps_python'] = '/example/neps/bin/python'
+                with self.assertRaisesRegex(ValueError, r'controller\.count'):
+                    self.load(config, mode='neps', submitting_controller=True)
 
     def test_rejects_overlapping_fixed_and_search_parameters(self):
         config = self.neps_config()

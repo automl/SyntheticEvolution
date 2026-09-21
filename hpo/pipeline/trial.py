@@ -3,18 +3,18 @@
 Only one controller may use a run directory. Job IDs and submission intent are
 persisted before waiting. On ambiguous submission, stop rather than duplicate work.
 """
-import argparse
 import csv
 import hashlib
 import json
 import math
 import re
 import subprocess
-import time
 from pathlib import Path
 from typing import Any, Optional, Union
 import yaml
 import logging
+import os
+import shutil
 logger = logging.getLogger(__name__)
 
 import hpo.pipeline.dssr as dssr
@@ -119,8 +119,7 @@ def load_config(path, *, mode, submitting_controller=False):
         require_text(config, key)
 
     for key in (
-        'generator_timeout_seconds', 'poll_seconds',
-        'wait_timeout_seconds', 'dssr_timeout_seconds',
+        'generator_timeout_seconds', 'dssr_timeout_seconds', 'af3_timeout_seconds'
     ):
         require_positive(config, key)
 
@@ -128,12 +127,6 @@ def load_config(path, *, mode, submitting_controller=False):
         value = config.get(key)
         if isinstance(value, bool) or not isinstance(value, int) or value < 0:
             raise ValueError(f'{key} must be a nonnegative integer')
-
-    gpu = require_mapping('gpu')
-    for key in ('partition', 'memory', 'gres', 'time'):
-        require_text(gpu, key, 'gpu.')
-    for key in ('cpus', 'concurrency'):
-        require_positive(gpu, key, 'gpu.', integer=True)
 
     # Optional parameter sections must have the expected structure.
     for key in ('fixed', 'search'):
@@ -157,7 +150,7 @@ def load_config(path, *, mode, submitting_controller=False):
                 "Standalone mode: ignoring 'search'. Using 'fixed' values "
                 "and generator defaults for all remaining parameters."
             )
-    else:
+    elif mode == 'neps':
         if not search:
             raise ValueError('NePS mode requires a nonempty search section')
         require_positive(config, 'evaluations', integer=True)
@@ -165,19 +158,25 @@ def load_config(path, *, mode, submitting_controller=False):
             require_text(config, 'optimizer')
         if not isinstance(config.get('ignore_errors'), bool):
             raise ValueError('ignore_errors must be a YAML boolean: true or false')
+        require_positive
 
     # These settings are used to launch the controller through Slurm.
     if submitting_controller:
         if mode == 'export':
             raise ValueError('Cannot submit an export as a controller job')
 
+        controller = require_mapping('controller')
+
         if mode == 'neps':
             require_text(config, 'neps_python')
+            require_positive(controller, "count", "controller.", integer=True)
 
-        controller = require_mapping('controller')
-        for key in ('partition', 'memory', 'time'):
-            require_text(controller, key, 'controller.')
-        require_positive(controller, 'cpus', 'controller.', integer=True)
+        if mode == 'standalone' and "count" in controller:
+            logger.warning("Standalone mode: ignoring 'controller.count")
+
+        for key in ("partition", "memory", "gres", "time"):
+            require_text(controller, key, "controller.")
+        require_positive(controller, "cpus", "controller.", integer=True)
     return config
 
 
@@ -238,10 +237,10 @@ def fingerprint(config, rows):
 
     - Dataset rows
     - Scientific configuration (everything but 'evaluations', 'controller', 'poll_seconds', 'wait_timeout_seconds')
-    - Relevant source code ('PIPELINE_DIR/*.py', 'HPO_DIR/slurm/*.slurm', 'generator/*.py')
+    - Relevant source code ('PIPELINE_DIR/*.py', 'generator/*.py')
     """
     code = {}
-    for file in sorted(PIPELINE_DIR.glob('*.py')) + sorted((HPO_DIR / 'slurm').glob('*.slurm')):
+    for file in sorted(PIPELINE_DIR.glob('*.py')):
         code[str(file.relative_to(ROOT))] = hashlib.sha256(file.read_bytes()).hexdigest()
     for file in sorted(repo_path(GENERATOR_DIR).glob('*.py')):
         code[str(file)] = hashlib.sha256(file.read_bytes()).hexdigest()
@@ -283,47 +282,107 @@ def prepare_run(config) -> tuple[Path, Dataset, str]:
     return ws_root, rows, identity
 
 
-def parse_accounting(accounting: str) -> dict[str, tuple[str, str]]:
-    """Parse ``sacct`` output into job IDs mapped to state and exit code."""
-    records = {}
-    for line in accounting.splitlines():
-        fields = line.split('|')
-        if len(fields) < 3 or not fields[1].split():
+def completed_af3_model(output_directory: Union[str, Path]) -> Optional[Path]:
+    """Return the validated AF3 model recorded by a success marker."""
+
+    output_directory = Path(output_directory).resolve()
+    marker = output_directory / "af3_success.json"
+
+    if not marker.is_file():
+        return None
+
+    try:
+        marker_data = json.loads(marker.read_text())
+        model = Path(marker_data["model"]).resolve()
+    except (
+        OSError,
+        KeyError,
+        TypeError,
+        json.JSONDecodeError,
+    ):
+        return None
+
+    try:
+        model.relative_to(output_directory)
+    except ValueError:
+        return None
+
+    if not model.is_file() or model.stat().st_size == 0:
+        return None
+
+    return model
+
+
+def run_af3_tasks(tasks: list[dict[str, str]], config: dict[str, Any]) -> None:
+    """Run all incomplete AF3 tasks inside the controller allocation."""
+
+    af3_python = os.environ.get("AF3_PYTHON")
+    if not af3_python:
+        raise RuntimeError("AF3_PYTHON is not set. Submit the pipeline through the controller SLURM script that loads the AF3 module.")
+
+    af3_python_path = Path(af3_python)
+    if not af3_python_path.is_file():
+        raise FileNotFoundError(f"AF3 Python does not exist: {af3_python_path}")
+
+    if not tasks:
+        raise ValueError("No AF3 tasks were generated")
+
+    af3_task_script = PIPELINE_DIR / "af3_task.py"
+    if not af3_task_script.is_file():
+        raise FileNotFoundError(af3_task_script)
+
+    completed = 0
+    reused = 0
+
+    for index, task in enumerate(tasks, start=1):
+        input_path = Path(task["input"]).resolve()
+        output_directory = Path(task["output"]).resolve()
+        model_directory = Path(task["model_dir"]).expanduser().resolve()
+
+        if completed_af3_model(output_directory) is not None:
+            reused += 1
+            logger.info("Reusing AF3 prediction %d/%d", index, len(tasks))
             continue
-        records[fields[0].strip()] = (
-            fields[1].split()[0].rstrip('+'),
-            fields[2].strip(),
-        )
-    return records
 
+        # An output without a valid success marker is incomplete or stale.
+        # Remove only this task's AF3 output, never the complete task directory.
+        if output_directory.exists():
+            shutil.rmtree(output_directory)
 
-def wait_job(job: int, count: int, config):
-    """Wait until every task in a Slurm array completes successfully.
+        output_directory.parent.mkdir(parents=True, exist_ok=True)
+        log_path = output_directory.parent / "af3.log"
 
-    Polls ``sacct`` for all expected array elements and returns when each task
-    has state ``COMPLETED`` with exit code ``0:0``. Raises ``RuntimeError`` if
-    a task fails or completes with a non-zero exit code, and raises
-    ``TimeoutError`` when the configured wait limit is exceeded.
-    """
-    started = time.monotonic()
-    while True:
-        # sacct must list every array element with successful state AND exit code.
-        accounting = command(['sacct', '-j', job, '--noheader', '--parsable2', '--format=JobID%64,State%40,ExitCode'])
-        records = parse_accounting(accounting)
-        expected = [records.get(f'{job}_{i}') for i in range(count)]
-        failed = [x for x in expected if x and x[0] in ('FAILED','CANCELLED','TIMEOUT','OUT_OF_MEMORY','NODE_FAIL','PREEMPTED','BOOT_FAIL','DEADLINE')]
-        if any(x and x[0] == 'COMPLETED' and x[1] != '0:0' for x in expected):
-            raise RuntimeError(f'Array {job} has a nonzero completed-task exit code')
-        if failed:
-            raise RuntimeError(f'Array {job} failed: {failed}; inspect logs. No partial score returned.')
-        if all(x == ('COMPLETED','0:0') for x in expected):
-            logger.info('AF3 array %s finished: %d/%d tasks completed successfully.', job, count, count)
-            return
-        if time.monotonic() - started > config['wait_timeout_seconds']:
-            raise TimeoutError(f'Waiting for array {job} timed out; job may still run. Saved ID permits reattachment.')
-        completed_count = sum(x == ('COMPLETED', '0:0') for x in expected)
-        logger.info('Waiting for AF3 array %s: %d/%d tasks completed.', job, completed_count, count)
-        time.sleep(config['poll_seconds'])
+        logger.info("Running AF3 prediction %d/%d for %s", index, len(tasks), input_path)
+
+        with log_path.open("w") as log:
+            subprocess.run(
+                [
+                    str(af3_python_path),
+                    str(af3_task_script),
+                    "--input",
+                    str(input_path),
+                    "--output",
+                    str(output_directory),
+                    "--model-dir",
+                    str(model_directory),
+                ],
+                stdout=log,
+                stderr=subprocess.STDOUT,
+                check=True,
+                timeout=config["af3_timeout_seconds"],
+            )
+
+        model = completed_af3_model(output_directory)
+        if model is None:
+            raise RuntimeError(f"AF3 exited successfully but did not publish a valid success marker for {input_path}. Inspect {log_path}.")
+        completed += 1
+        
+    logger.info(
+        "All %d AF3 tasks are ready: %d executed, %d reused",
+        len(tasks),
+        completed,
+        reused,
+    )
 
 
 def run_pipeline(
@@ -342,10 +401,7 @@ def run_pipeline(
     # Stable files and directories used throughout this trial.
     trial_metadata_path = trial_directory / 'trial_metadata.json'
     trial_result_path = trial_directory / 'trial_result.json'
-    af3_job_id_path = trial_directory / 'af3_job_id.json'
     af3_tasks_path = trial_directory / 'af3_tasks.json'
-    af3_submission_intent_path = trial_directory / 'af3_submission_intent.json'
-    logs_directory = trial_directory / 'logs'
 
     trial_parameters = {**config.get('fixed', {}), **(parameters or {})}
     trial_signature = dict(fingerprint=identity, parameters=trial_parameters)
@@ -363,43 +419,35 @@ def run_pipeline(
         return json.loads(trial_result_path.read_text())['loss']
 
     logger.info('Trial contains %d RNA rows', len(rows))
-    if af3_job_id_path.exists():
-        job = json.loads(af3_job_id_path.read_text())['job_id']
-        logger.info('Found saved AF3 array job ID %s. Skipping shs generation and AF3 job submission.', job)
-    elif af3_submission_intent_path.exists():
-        raise RuntimeError(
-            f'Found AF3 submission-intent file at "{af3_submission_intent_path}", '
-            f'but the AF3 job ID file was not found at "{af3_job_id_path}". '
-            f'Check the sbatch command in "{af3_submission_intent_path}", '
-            f'AF3 stdout/stderr logs in "{logs_directory}", and the job status in Slurm.'
+    ############################# 1. - generate SHS ###########################
+    logger.info('Generating AF3 inputs and request for %d RNA rows', len(rows))
+    af3_tasks = []
+    for index, row in enumerate(rows):
+        task_dir = trial_directory / f"rna_{index:05d}"
+        task_dir.mkdir(exist_ok=True)
+        request_path = task_dir / "shs_generation_request.json"
+        af3_input_path = task_dir / "af3_input.json"
+        af3_output_directory = task_dir / "af3"
+
+        shs_generation_request = dict(
+            **row,   # contains (id=, sequence=, pairs=)
+            task_name=f'rna_{index:05d}', 
+            parameters=trial_parameters,
+            shs_seed=config['shs_seed'],
+            af3_seed=config['af3_seed']
         )
-    else:
-        ###################### 1. - generate SHS (and AF3 request) ######################
-        logger.info('Generating AF3 inputs and request for %d RNA rows', len(rows))
-        af3_tasks = []
-        for index, row in enumerate(rows):
-            logger.debug('Generating input for %s (%d/%d)', row['id'], index + 1, len(rows))
+        write_json(request_path, shs_generation_request)
 
-            # Each single RNA chain with its structure is a task with its own files.
-            task_dir = trial_directory / f'rna_{index:05d}'
-            task_dir.mkdir(exist_ok=True)
-            shs_generation_request_path = task_dir / 'shs_generation_request.json'
-            af3_input_path = task_dir / 'af3_input.json'
+        # Run the generator directly in its SHS environment.
+        if not af3_input_path.is_file():
+            logger.info("Generating AF3 input %d/%d for %s", index + 1, len(rows), row["id"])
 
-            shs_generation_request = dict(**row,   # contains (id=, sequence=, pairs=)
-                           task_name=f'rna_{index:05d}', 
-                           parameters=trial_parameters,
-                           shs_seed=config['shs_seed'],
-                           af3_seed=config['af3_seed']
-            )
-            write_json(shs_generation_request_path, shs_generation_request)
-            # Run the generator directly in its SHS environment.
             with (task_dir / 'shs_generation.log').open('w') as log:
                 subprocess.run(
                     [
                         config['shs_python'],
                         str((GENERATOR_DIR / 'shs_generator.py').resolve()),
-                        '--request-json', str(shs_generation_request_path.resolve()),
+                        '--request-json', str(request_path.resolve()),
                         '--output-json', str(af3_input_path.resolve()),
                     ],
                     stdout=log,
@@ -407,62 +455,27 @@ def run_pipeline(
                     check=True,
                     timeout=config['generator_timeout_seconds'],
                 )
-            af3_tasks.append(dict(input=str(af3_input_path), 
-                                  output=str(task_dir / 'af3'),
-                                  model_dir=str(Path(config['model_dir']).expanduser())
-                                  ))
-        write_json(af3_tasks_path, af3_tasks)
-        logger.info('Wrote Slurm task list with %d tasks to %s', len(af3_tasks), af3_tasks_path)
+    ################################# 2. - AF3 #################################
+        if not af3_input_path.is_file():
+            raise RuntimeError(f"SHS generation completed without creating {af3_input_path}")
+        af3_tasks.append(
+            {   "input": str(af3_input_path.resolve()),
+                "output": str(af3_output_directory.resolve()),
+                "model_dir": str(
+                    Path(config["model_dir"]).expanduser().resolve()),
+            })
 
-        ################################# 2. - AF3 #################################
-        gpu_node_settings = config['gpu']
-        logs_directory.mkdir(exist_ok=True)
-        job_name = 'shs-' + trial_directory.name
-        array_range = f'0-{len(rows) - 1}%{gpu_node_settings["concurrency"]}'
-        output_log = logs_directory / '%A_%a.out'
-        error_log = logs_directory / '%A_%a.err'
-        slurm_script = PIPELINE_DIR / 'slurm' / 'af3-inference-array.slurm'
-        af3_task_script = PIPELINE_DIR / 'af3_task.py'
-
-        args = [
-            'sbatch',
-            '--parsable',
-            '--job-name=' + job_name,
-            '--array=' + array_range,
-            '--partition=' + gpu_node_settings['partition'],
-            '--cpus-per-task=' + str(gpu_node_settings['cpus']),
-            '--mem=' + gpu_node_settings['memory'],
-            '--gres=' + gpu_node_settings['gres'],
-            '--time=' + gpu_node_settings['time'],
-            '--output=' + str(output_log),
-            '--error=' + str(error_log),
-            str(slurm_script),
-            str(af3_task_script),
-            str(af3_tasks_path),
-            config['module'],
-        ]
-        write_json(af3_submission_intent_path, dict(command=args))
-
-        logger.info('Submitting AF3 array for %d tasks', len(af3_tasks))
-        job = command(args).split(';')[0]
-        if not job.isdigit():
-            raise RuntimeError('Unrecognized sbatch job ID; inspect submission intent')
-        write_json(af3_job_id_path, dict(job_id=job))
-        logger.info('Submitted AF3 array with job ID %s', job)
-
-    job = json.loads(af3_job_id_path.read_text())['job_id']
-
-    logger.info('Waiting for AF3 array job with ID %s to complete', job)
-    wait_job(job, len(rows), config)
+    write_json(af3_tasks_path, af3_tasks)
+    run_af3_tasks(af3_tasks, config)
 
     ################################ 3. - DSSR #################################
     logger.info('Scoring %d predicted structures', len(rows))
     task_evaluations = []
     for index, row in enumerate(rows):
         task_dir = trial_directory / f'rna_{index:05d}'
-        predicted_model = json.loads((task_dir / 'af3/af3_success.json').read_text())['model']
-        if not Path(predicted_model).is_file():
-            raise FileNotFoundError(predicted_model)
+        predicted_model = completed_af3_model(task_dir / "af3")
+        if predicted_model is None:
+            raise RuntimeError(f"No valid AF3 prediction found for {row['id']}")
         
         dssr_predicted_pairs = dssr.run_dssr(
             predicted_model,
@@ -478,16 +491,24 @@ def run_pipeline(
         metrics = scoring.score_pairs(target_pairs, normalized_pairs)
 
         task_evaluation = dict(
-            id=row['id'], **metrics, 
+            id=row['id'], 
+            **metrics, 
             target_pairs=row['pairs'], 
             predicted_pairs=sorted(normalized_pairs), 
-            model=predicted_model
+            model=str(predicted_model)
         )
         write_json(task_dir / 'base_pair_evaluation.json', task_evaluation)
 
         task_evaluations.append(task_evaluation)
         logger.info('Scored %s: loss=%.6f, f1=%.6f', row['id'], metrics['loss'], metrics['f1'])
     loss = scoring.aggregate(task_evaluations)
-    write_json(trial_result_path, dict(loss=loss, scores=task_evaluations, parameters=trial_parameters, job_id=job))
+    write_json(
+        trial_result_path, 
+        dict(
+            loss=loss, 
+            scores=task_evaluations, 
+            parameters=trial_parameters
+            )
+        )
     logger.info('Completed trial %s with aggregate loss %.6f', trial_directory.name, loss)
     return loss
