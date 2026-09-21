@@ -7,6 +7,77 @@ from unittest.mock import Mock
 import pytest
 
 
+import os
+from pathlib import Path
+import subprocess
+
+from hpo.pipeline.trial import ROOT
+
+
+def test_controller_script_starts_requested_module(tmp_path):
+    script = ROOT / "hpo/slurm/controller.slurm"
+    assert script.is_file(), f"Missing controller script: {script}"
+
+    # Bash reads BASH_ENV before executing the script.
+    # Provide a fake module command without loading cluster software.
+    bash_env = tmp_path / "bash_env.sh"
+    bash_env.write_text(
+        'module() {\n'
+        '    [[ "$#" -eq 2 && "$1" == "load" '
+        '&& "$2" == "bio/alphafold/3.0.1" ]] || return 1\n'
+        '    export TEST_MODULE_LOADED=1\n'
+        '}\n'
+    )
+
+    controller_python = tmp_path / "controller python"
+    controller_python.write_text(
+        "#!/bin/bash\n"
+        "set -euo pipefail\n"
+        '[[ "${TEST_MODULE_LOADED:-}" == "1" ]]\n'
+        '[[ -n "${AF3_PYTHON:-}" ]]\n'
+        'printf "%s\\n" "$@"\n'
+    )
+    controller_python.chmod(0o755)
+
+    config_path = tmp_path / "config space 'quote' $literal.yaml"
+    config_path.write_text("{}\n")
+
+    env = os.environ.copy()
+    env["BASH_ENV"] = str(bash_env)
+
+    # Do not let an inherited variable mask a missing shell assignment.
+    env.pop("controller_module", None)
+    env.pop("AF3_PYTHON", None)
+    env.pop("TEST_MODULE_LOADED", None)
+
+    result = subprocess.run(
+        [
+            "bash",
+            str(script),
+            "bio/alphafold/3.0.1",
+            str(controller_python),
+            "hpo.run_standalone_trial",
+            str(config_path),
+        ],
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=10,
+    )
+
+    assert result.returncode == 0, (
+        f"Controller script failed:\n"
+        f"stdout:\n{result.stdout}\n"
+        f"stderr:\n{result.stderr}"
+    )
+    assert result.stdout.splitlines() == [
+        "-u",
+        "-m",
+        "hpo.run_standalone_trial",
+        "--config",
+        str(config_path),
+    ]
+
 @pytest.mark.parametrize(
     "mode,python_key,job_name",
     [

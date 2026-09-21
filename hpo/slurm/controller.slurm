@@ -1,15 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
-# Arguments:
-#   1: AF3 module
-#   2: controller Python
-#   3: controller script
-#   4: configuration path
-
 af3_module="$1"
 controller_python="$2"
-controller_script="$3"
+controller_module="$3"
 config_path="$4"
 
 module load "$af3_module"
