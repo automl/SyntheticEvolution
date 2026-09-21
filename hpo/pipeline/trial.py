@@ -172,7 +172,7 @@ def load_config(path, *, mode, submitting_controller=False):
             require_positive(controller, "count", "controller.", integer=True)
 
         if mode == 'standalone' and "count" in controller:
-            logger.warning("Standalone mode: ignoring 'controller.count")
+            logger.warning("Standalone mode: ignoring 'controller.count'")
 
         for key in ("partition", "memory", "gres", "time"):
             require_text(controller, key, "controller.")
