@@ -236,15 +236,21 @@ def fingerprint(config, rows):
     reusing old results for a meaningfully different experiment. It includes:
 
     - Dataset rows
-    - Scientific configuration (everything but 'evaluations', 'controller', 'poll_seconds', 'wait_timeout_seconds')
+    - Scientific configuration
     - Relevant source code ('PIPELINE_DIR/*.py', 'generator/*.py')
     """
+    non_scientific_configurations = (
+        'controller', 'evaluations', 'ignore_errors',
+        'dssr_timeout_seconds', 'af3_timeout_seconds', 'generator_timeout_seconds',
+        'controller_python', 'neps_python', 'shs_python', 
+    )
+
     code = {}
     for file in sorted(PIPELINE_DIR.glob('*.py')):
         code[str(file.relative_to(ROOT))] = hashlib.sha256(file.read_bytes()).hexdigest()
     for file in sorted(repo_path(GENERATOR_DIR).glob('*.py')):
         code[str(file)] = hashlib.sha256(file.read_bytes()).hexdigest()
-    scientific = {k:v for k,v in config.items() if k not in ('evaluations', 'controller', 'poll_seconds', 'wait_timeout_seconds')}
+    scientific = {k:v for k,v in config.items() if k not in non_scientific_configurations}
     return hashlib.sha256(json.dumps([scientific, rows, code], sort_keys=True).encode()).hexdigest()
 
 
