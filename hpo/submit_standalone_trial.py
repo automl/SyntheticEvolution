@@ -1,6 +1,5 @@
 """Submit a standalone trial with YAML resources and workspace logs; run from any cwd."""
 import argparse
-import shlex
 from hpo.pipeline.trial import ROOT, repo_path, load_config, get_workspace_path, command
 
 
@@ -16,17 +15,6 @@ def main():
     logs = get_workspace_path(config) / 'controller_logs'
     logs.mkdir(parents=True, exist_ok=True)
     resources = config['controller']
-
-    # Command executed on the allocated CPU node.
-    # shlex.join quotes each argument safely for the shell used by --wrap.
-    controller_command = shlex.join([
-        config['controller_python'],               # Python to use
-        '-u',                                      # Write log output without buffering
-        '-m',
-        'hpo.run_standalone_trial',                # Standalone module
-        '--config',
-        str(repo_path(args.config)),                # Absolute path to config file
-    ])
 
     print(command([
         'sbatch',
