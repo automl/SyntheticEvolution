@@ -236,6 +236,41 @@ def test_changed_identity_rejects_cached_result(trial_case):
                            {'mutation_rate_paired': 0.3})
 
 
+@pytest.mark.parametrize(
+    'parameters',
+    [{}, {'mutation_rate_paired': 0.3}],
+    ids=['generator-defaults', 'sampled-parameters'],
+)
+def test_pipeline_works_without_fixed(trial_case, parameters):
+    config, rows, directory, requests, generation, af3, dssr = trial_case
+    del config['fixed']
+
+    if parameters:
+        loss = trial.run_pipeline(
+            config, rows, directory, 'identity', parameters
+        )
+    else:
+        loss = trial.run_pipeline(
+            config, rows, directory, 'identity'
+        )
+
+    assert loss == pytest.approx(0.5)
+    assert generation.call_count == len(rows)
+    assert len(requests) == len(rows)
+    assert all(
+        request['parameters'] == parameters
+        for request in requests
+    )
+    af3.assert_called_once()
+    assert dssr.call_count == len(rows)
+
+    result = json.loads(
+        (directory / 'trial_result.json').read_text()
+    )
+    assert result['parameters'] == parameters
+    assert result['loss'] == pytest.approx(0.5)
+
+
 class DSSRTests(unittest.TestCase):
     def test_dssr_json_parser(self):
         predicted = parse_pairs(FIXTURE, SEQ)

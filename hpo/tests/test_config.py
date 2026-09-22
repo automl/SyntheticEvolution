@@ -168,6 +168,25 @@ class TestLoadConfig(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, 'YAML mapping'):
                     self.load(value)
 
+    def test_fixed_is_optional(self):
+        for mode in ('standalone', 'neps'):
+            with self.subTest(mode=mode):
+                config = (
+                    self.neps_config()
+                    if mode == 'neps'
+                    else copy.deepcopy(self.config)
+                )
+                config.pop('fixed', None)
+
+                loaded = self.load(config, mode=mode)
+
+                self.assertEqual(loaded.get('fixed', {}), {})
+                self.assertEqual(
+                    {key: value for key, value in loaded.items()
+                     if key != 'fixed'},
+                    config,
+                )
+
 
 if __name__ == '__main__':
     unittest.main()
