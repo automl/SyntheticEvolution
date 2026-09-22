@@ -7,6 +7,7 @@
 /synEvo.egg-info/
 /USalign/
 /external_algorithms/
+.trace.lock
 
 # Python cache files
 __pycache__/
