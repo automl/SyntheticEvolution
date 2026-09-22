@@ -6,8 +6,8 @@ import unittest
 from unittest.mock import patch
 
 import yaml
-import hpo.pipeline.trial as pipeline
-
+import hpo.pipeline.run as run_pipeline
+from hpo.pipeline.run import load_config
 
 class TestLoadConfig(unittest.TestCase):
     def setUp(self):
@@ -17,7 +17,7 @@ class TestLoadConfig(unittest.TestCase):
 
         # Resolve test configs locally, independently of the repository layout.
         resolver = patch.object(
-            pipeline, 'repo_path', side_effect=lambda value: Path(value)
+            run_pipeline, 'repo_path', side_effect=lambda value: Path(value)
         )
         resolver.start()
         self.addCleanup(resolver.stop)
@@ -31,7 +31,7 @@ class TestLoadConfig(unittest.TestCase):
 
     def load(self, config, mode='standalone', **kwargs):
         self.config_path.write_text(yaml.safe_dump(config))
-        return pipeline.load_config(
+        return load_config(
             self.config_path, mode=mode, **kwargs
         )
 
@@ -54,7 +54,7 @@ class TestLoadConfig(unittest.TestCase):
         config = self.neps_config()
         config['fixed'] = {'mutation_rate_paired': 0.2}
 
-        with self.assertLogs(pipeline.logger, level='WARNING') as logs:
+        with self.assertLogs(run_pipeline.logger, level='WARNING') as logs:
             loaded = self.load(config)
 
         self.assertIn("ignoring 'search'", '\n'.join(logs.output))

@@ -3,7 +3,8 @@ import argparse
 import fcntl
 from importlib.metadata import version
 
-from hpo.pipeline.trial import load_config, prepare_run, run_pipeline
+from hpo.pipeline.run import load_config, prepare_run
+from hpo.pipeline.trial import run_pipeline
 
 import logging
 logging.basicConfig(

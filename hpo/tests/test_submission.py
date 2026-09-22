@@ -8,10 +8,9 @@ import pytest
 
 
 import os
-from pathlib import Path
 import subprocess
 
-from hpo.pipeline.trial import ROOT
+from hpo.pipeline.run import ROOT
 
 
 def test_controller_script_starts_requested_module(tmp_path):

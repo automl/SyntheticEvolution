@@ -1,7 +1,7 @@
 import argparse
 import csv
 import json
-from hpo.pipeline.trial import ROOT, load_config, get_workspace_path, write_json
+from hpo.pipeline.run import ROOT, load_config, get_workspace_path, write_json
 
 
 def main():

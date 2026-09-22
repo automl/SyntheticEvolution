@@ -1,7 +1,7 @@
 """CSV boundary cases beyond the existing pair-normalization tests."""
 import csv
 import pytest
-from hpo.pipeline.trial import create_dataset
+from hpo.pipeline.run import create_dataset
 
 
 def write_csv(path, rows, columns=('id', 'sequence', 'pairs')):

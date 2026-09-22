@@ -2,7 +2,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from hpo.pipeline.trial import create_dataset, normalize_pairs
+from hpo.pipeline.run import create_dataset, normalize_pairs
 
 
 class InputTests(unittest.TestCase):

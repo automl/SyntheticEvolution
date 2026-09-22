@@ -1,6 +1,6 @@
 """Submit a standalone trial with YAML resources and workspace logs; run from any cwd."""
 import argparse
-from hpo.pipeline.trial import ROOT, repo_path, load_config, get_workspace_path, command
+from hpo.pipeline.run import ROOT, repo_path, load_config, get_workspace_path, command
 
 
 def main():

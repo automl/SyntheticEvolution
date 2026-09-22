@@ -3,7 +3,8 @@ import json
 import logging
 logger = logging.getLogger(__name__)
 
-from hpo.pipeline.trial import load_config, create_dataset, prepare_run, run_pipeline
+from hpo.pipeline.run import load_config, create_dataset, prepare_run
+from hpo.pipeline.trial import run_pipeline
 
 def main():
     logging.basicConfig(

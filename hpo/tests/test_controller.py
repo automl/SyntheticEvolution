@@ -7,7 +7,8 @@ import unittest
 import pytest
 from unittest.mock import Mock, patch
 
-from hpo.pipeline import trial
+import hpo.pipeline.trial as trial
+import hpo.pipeline.run as run
 from hpo.pipeline.dssr import parse_pairs
 
 
@@ -61,7 +62,7 @@ def trial_case(tmp_path, monkeypatch):
             config["shs_python"],
             str(
                 (
-                    trial.GENERATOR_DIR / "shs_generator.py"
+                    run.GENERATOR_DIR / "shs_generator.py"
                 ).resolve()
             ),
         ]
@@ -111,7 +112,7 @@ def trial_case(tmp_path, monkeypatch):
             model.parent.mkdir(parents=True, exist_ok=True)
             model.write_text("test model")
 
-            trial.write_json(
+            run.write_json(
                 output_directory / "af3_success.json",
                 {"model": str(model.resolve())},
             )
@@ -140,14 +141,14 @@ def trial_case(tmp_path, monkeypatch):
     )
 
 
-def run(case):
+def run_pipeline(case):
     config, rows, directory, *_ = case
     return trial.run_pipeline(config, rows, directory, 'identity', {'mutation_rate_paired': 0.3})
 
 
 def test_fresh_trial_wires_two_rnas_and_averages_scores(trial_case):
     config, rows, directory, requests, generation, af3, dssr = trial_case
-    assert run(trial_case) == pytest.approx(0.5)
+    assert run_pipeline(trial_case) == pytest.approx(0.5)
     assert generation.call_count == 2
     for index, request in enumerate(requests):
         assert request == dict(rows[index], task_name=f'rna_{index:05d}',
@@ -175,7 +176,7 @@ def test_fresh_trial_wires_two_rnas_and_averages_scores(trial_case):
     assert [s['loss'] for s in result['scores']] == [0, 1]
     assert result['loss'] == 0.5
     # Cached completion performs no further external work.
-    assert run(trial_case) == 0.5
+    assert run_pipeline(trial_case) == 0.5
     assert (generation.call_count, af3.call_count, dssr.call_count) == (2, 1, 2)
 
 
@@ -184,7 +185,7 @@ def test_fresh_trial_wires_two_rnas_and_averages_scores(trial_case):
 def test_generation_failure_never_submits(trial_case, failure):
     trial_case[4].side_effect = failure
     with pytest.raises(type(failure)):
-        run(trial_case)
+        run_pipeline(trial_case)
     trial_case[5].assert_not_called()
     assert not (trial_case[2] / 'trial_result.json').exists()
 
@@ -195,7 +196,7 @@ def test_second_rna_failure_does_not_publish_partial_loss(trial_case, failure):
     (config, rows, directory, requests, generation, af3, dssr) = trial_case
     dssr.side_effect = [[(0, 3)], failure]
     with pytest.raises(type(failure)):
-        run(trial_case)
+        run_pipeline(trial_case)
     assert (trial_case[2] / 'rna_00000/base_pair_evaluation.json').exists()
     assert not (trial_case[2] / 'trial_result.json').exists()
 
@@ -224,12 +225,12 @@ def test_invalid_prediction_cannot_be_scored_as_success(trial_case, broken, expe
         dssr.side_effect = None
         dssr.return_value = [(0, 99)]
     with pytest.raises(expected_exception):
-        run(trial_case)
+        run_pipeline(trial_case)
     assert not (directory / 'trial_result.json').exists()
 
 
 def test_changed_identity_rejects_cached_result(trial_case):
-    run(trial_case)
+    run_pipeline(trial_case)
     with pytest.raises(ValueError):
         trial.run_pipeline(trial_case[0], trial_case[1], trial_case[2], 'different',
                            {'mutation_rate_paired': 0.3})
@@ -278,7 +279,7 @@ class DSSRTests(unittest.TestCase):
                 }
             ]
 
-            trial.write_json(
+            run.write_json(
                 directory / "trial_metadata.json",
                 {
                     "fingerprint": "abc",
@@ -300,7 +301,7 @@ class DSSRTests(unittest.TestCase):
             model.parent.mkdir(parents=True)
             model.write_text("mock model")
 
-            trial.write_json(
+            run.write_json(
                 af3_output / "af3_success.json",
                 {"model": str(model.resolve())},
             )
