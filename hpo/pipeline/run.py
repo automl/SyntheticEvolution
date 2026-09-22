@@ -7,7 +7,7 @@ import subprocess
 import math
 import re
 import yaml
-from typing import Union
+from typing import Union, Any
 from pathlib import Path
 
 import logging
@@ -18,7 +18,7 @@ HPO_DIR = PIPELINE_DIR.parent                   # SyntheticEvolution/hpo
 ROOT = HPO_DIR.parent                           # SyntheticEvolution
 GENERATOR_DIR = ROOT / 'SHS-Generator'
 
-Dataset = list[dict[str, Union[str, list[tuple[int, int]]]]]
+Dataset = list[dict[str, Any]]
 
 def repo_path(value):
     """Convert path to a global path. 
@@ -176,13 +176,36 @@ def normalize_pairs(pairs: list[list[int]], size: int) -> set[tuple[int, int]]:
     """Validate RNA base pairs and return unique pairs in canonical order."""
     result = set()
     for pair in pairs:
-        if len(pair) != 2 or any(type(x) is not int for x in pair):
+        if not isinstance(pair, (list, tuple)) or len(pair) != 2 or any(type(x) is not int for x in pair):
             raise ValueError('Pairs must contain exactly two integer positions')
         a, b = pair
         if not (0 <= a < size and 0 <= b < size) or a == b:
             raise ValueError(f'Invalid pair {pair} for length {size}')
         result.add(tuple(sorted((a, b))))
     return result
+
+
+def normalize_interactions(raw, size):
+    """Validate and retain strengths, including explicit zero-strength entries."""
+    if not isinstance(raw, list):
+        raise ValueError('interactions must be a JSON list')
+    result = {}
+    for entry in raw:
+        if not isinstance(entry, list) or len(entry) not in (2, 3):
+            raise ValueError('Interactions require two indices and optional strength')
+        key = next(iter(normalize_pairs([entry[:2]], size)))
+        strength = entry[2] if len(entry) == 3 else 1.0
+        validate_probability(strength, 'interaction strength')
+        if key in result and result[key] != strength:
+            raise ValueError(f'Conflicting interaction strengths for pair {key}')
+        result[key] = float(strength)
+    return [[a, b, strength] for (a, b), strength in sorted(result.items())]
+
+
+def validate_probability(value, name):
+    # Keep submission validation independent of the SHS environment (NumPy).
+    if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or not 0 <= value <= 1:
+        raise ValueError(f'{name} must be a finite number between 0 and 1')
 
 
 def create_dataset(path) -> Dataset:
@@ -194,7 +217,8 @@ def create_dataset(path) -> Dataset:
 
         id : identifying string
         sequence : RNA sequence str containing only ACGU
-        pairs : sorted list of unique base pairs in canonical order
+        pairs : sorted scoring targets; derived from positive interactions if absent
+        interactions, mutation_rates : optional validated generator inputs
     ### Raises
     ValueError for empty dataset or duplicate ids or invalid sequences
     """
@@ -208,8 +232,30 @@ def create_dataset(path) -> Dataset:
                 if not name or name in seen or not seq or set(seq) - set('ACGU'):
                     raise ValueError(f'Invalid/duplicate ID or RNA sequence in {file}: {name}')
                 seen.add(name)
-                pairs = sorted(normalize_pairs(json.loads(row['pairs']), len(seq)))
-                rows.append(dict(id=name, sequence=seq, pairs=pairs))
+                item = dict(id=name, sequence=seq)
+                interaction_text = (row.get('interactions') or '').strip()
+                pair_text = (row.get('pairs') or '').strip()
+                if interaction_text:
+                    item['interactions'] = normalize_interactions(json.loads(interaction_text), len(seq))
+                if pair_text:
+                    raw_pairs = json.loads(pair_text)
+                    if not isinstance(raw_pairs, list):
+                        raise ValueError('pairs must be a JSON list')
+                    pairs = sorted(normalize_pairs(raw_pairs, len(seq)))
+                elif interaction_text:
+                    pairs = [(a, b) for a, b, strength in item['interactions'] if strength > 0]
+                else:
+                    raise ValueError(f'Provide pairs or interactions for {name}; use [] for no pairs')
+                item['pairs'] = pairs
+                rates_text = (row.get('mutation_rates') or '').strip()
+                if rates_text:
+                    rates = json.loads(rates_text)
+                    if not isinstance(rates, list) or len(rates) != len(seq):
+                        raise ValueError('mutation_rates must have exactly one rate per RNA position')
+                    for rate in rates:
+                        validate_probability(rate, 'mutation rate')
+                    item['mutation_rates'] = rates
+                rows.append(item)
     if not rows:
         raise ValueError('Dataset is empty')
     return rows

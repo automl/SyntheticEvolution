@@ -19,6 +19,23 @@ search:
   loop_long_insertion_prob:   {type: float, lower: 0.0, upper: 1.0}
   loop_single_deletion_prob:  {type: float, lower: 0.0, upper: 1.0}
   loop_long_deletion_prob:    {type: float, lower: 0.0, upper: 1.0}
+  # Weights are normalized per partner-base row. All-zero rows are invalid.
+  pair_weight_A_A: {type: float, lower: 0.0, upper: 1.0}
+  pair_weight_A_C: {type: float, lower: 0.0, upper: 1.0}
+  pair_weight_A_G: {type: float, lower: 0.0, upper: 1.0}
+  pair_weight_A_U: {type: float, lower: 0.0, upper: 1.0}
+  pair_weight_C_A: {type: float, lower: 0.0, upper: 1.0}
+  pair_weight_C_C: {type: float, lower: 0.0, upper: 1.0}
+  pair_weight_C_G: {type: float, lower: 0.0, upper: 1.0}
+  pair_weight_C_U: {type: float, lower: 0.0, upper: 1.0}
+  pair_weight_G_A: {type: float, lower: 0.0, upper: 1.0}
+  pair_weight_G_C: {type: float, lower: 0.0, upper: 1.0}
+  pair_weight_G_G: {type: float, lower: 0.0, upper: 1.0}
+  pair_weight_G_U: {type: float, lower: 0.0, upper: 1.0}
+  pair_weight_U_A: {type: float, lower: 0.0, upper: 1.0}
+  pair_weight_U_C: {type: float, lower: 0.0, upper: 1.0}
+  pair_weight_U_G: {type: float, lower: 0.0, upper: 1.0}
+  pair_weight_U_U: {type: float, lower: 0.0, upper: 1.0}
   wobble_prob:                {type: float, lower: 0.0, upper: 1.0}
   max_insertion_fraction:     {type: float, lower: 0.0, upper: 1.0}
   max_deletion_fraction:      {type: float, lower: 0.0, upper: 1.0}

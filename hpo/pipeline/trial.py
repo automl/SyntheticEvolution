@@ -220,13 +220,13 @@ def run_pipeline(
         normalized_pairs = normalize_pairs(dssr_predicted_pairs, len(row['sequence']))
     
         ################################ 4. - SCORE #################################
-        target_pairs = map(tuple,row['pairs'])
-        metrics = scoring.score_pairs(target_pairs, normalized_pairs)
+        metrics = scoring.score_row(row, normalized_pairs)
 
         task_evaluation = dict(
             id=row['id'], 
             **metrics, 
-            target_pairs=row['pairs'], 
+            target_pairs=row['pairs'],
+            **{key: row[key] for key in ('interactions', 'mutation_rates') if key in row}, 
             predicted_pairs=sorted(normalized_pairs), 
             model=str(predicted_model)
         )

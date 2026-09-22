@@ -47,3 +47,12 @@ def aggregate(scores):
     # Equal weighting prevents RNAs with more base pairs from dominating the
     # dataset-level objective.
     return sum(values) / len(values)
+
+
+def score_row(row, predicted):
+    """Score a complete dataset row, retaining access to optional interactions.
+
+    The current objective uses unweighted pairs. Future objectives can inspect
+    row['interactions'] without changing the trial-to-scoring interface.
+    """
+    return score_pairs(map(tuple, row['pairs']), predicted)
