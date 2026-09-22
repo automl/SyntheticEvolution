@@ -5,6 +5,11 @@ from importlib.metadata import version
 
 from hpo.pipeline.trial import load_config, prepare_run, run_pipeline
 
+import logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+)
 
 NEPS_PACKAGE = 'neural-pipeline-search'
 NEPS_VERSION = '0.16.0'
