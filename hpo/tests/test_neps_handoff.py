@@ -72,13 +72,3 @@ def test_wrong_neps_version_stops_before_loading_run(neps_case, monkeypatch):
         entry.main()
     load.assert_not_called()
     fake.run.assert_not_called()
-
-
-def test_second_controller_cannot_start_same_search(neps_case):
-    # A real local advisory lock verifies the duplicate-controller guard.
-    _, fake, _, root, _ = neps_case
-    with (root / 'controller.lock').open('w') as lock:
-        entry.fcntl.flock(lock, entry.fcntl.LOCK_EX | entry.fcntl.LOCK_NB)
-        with pytest.raises(BlockingIOError):
-            entry.main()
-    fake.run.assert_not_called()

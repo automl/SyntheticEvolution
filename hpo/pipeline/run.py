@@ -271,11 +271,41 @@ def prepare_run(config) -> tuple[Path, Dataset, str]:
     identity = fingerprint(config, rows)
 
     guard_path = ws_root / 'run_metadata.json'
-    if guard_path.exists():
+
+    if check_existing_run(ws_root, identity):
         logger.info('Existing run verified: %s', ws_root)
-        if json.loads(guard_path.read_text())['fingerprint'] != identity:
-            raise ValueError('Run inputs/code/config changed. Choose a new run_name.')
     else:
+        write_json(
+            guard_path,
+            dict(fingerprint=identity, config=config, dataset=rows),
+        )
         logger.info('New run initialized: %s', ws_root)
-        write_json(guard_path, dict(fingerprint=identity, config=config, dataset=rows))
+
     return ws_root, rows, identity
+
+
+def check_existing_run(ws_root: Path, identity: str) -> bool:
+    """Validate an existing run's fingerprint without modifying files.
+
+    Returns True if run metadata exists and matches, otherwise False.
+    Raises ValueError if metadata is invalid or the fingerprint differs.
+    """
+    guard_path = ws_root / 'run_metadata.json'
+    if not guard_path.exists():
+        return False
+
+    try:
+        metadata = json.loads(guard_path.read_text())
+    except (json.JSONDecodeError, UnicodeDecodeError) as exc:
+        raise ValueError(f'Invalid run metadata: {guard_path}') from exc
+
+    if not isinstance(metadata, dict) or 'fingerprint' not in metadata:
+        raise ValueError(f'Missing fingerprint in run metadata: {guard_path}')
+
+    if metadata['fingerprint'] != identity:
+        raise ValueError(
+            f'Run inputs/code/config changed for {ws_root}. '
+            'Choose a new run_name.'
+        )
+
+    return True

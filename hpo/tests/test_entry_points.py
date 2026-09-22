@@ -10,6 +10,7 @@ ENTRY_POINTS = (
     'hpo.run_neps_hpo',
     'hpo.submit_standalone_trial',
     'hpo.submit_neps_hpo',
+    'hpo.export_results'
 )
 
 

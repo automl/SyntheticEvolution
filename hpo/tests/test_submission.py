@@ -3,15 +3,48 @@
 import importlib
 import sys
 from unittest.mock import Mock
+import os
+import subprocess
+import json
+
+from hpo.pipeline.run import ROOT, check_existing_run
 
 import pytest
 
+def test_check_existing_run_missing_metadata(tmp_path):
+    assert check_existing_run(tmp_path, "expected") is False
+    assert not (tmp_path / "run_metadata.json").exists()
 
-import os
-import subprocess
 
-from hpo.pipeline.run import ROOT
+def test_check_existing_run_matching_fingerprint(tmp_path):
+    metadata = tmp_path / "run_metadata.json"
+    metadata.write_text(json.dumps({"fingerprint": "expected"}))
+    before = metadata.read_bytes()
 
+    assert check_existing_run(tmp_path, "expected") is True
+    assert metadata.read_bytes() == before
+
+
+@pytest.mark.parametrize(
+    "contents",
+    [
+        '{"fingerprint": "different"}',
+        '{}',
+        '[]',
+        'invalid json',
+    ],
+)
+def test_check_existing_run_rejects_invalid_metadata(
+    tmp_path, contents,
+):
+    metadata = tmp_path / "run_metadata.json"
+    metadata.write_text(contents)
+    before = metadata.read_bytes()
+
+    with pytest.raises(ValueError):
+        check_existing_run(tmp_path, "expected")
+
+    assert metadata.read_bytes() == before
 
 def test_controller_script_starts_requested_module(tmp_path):
     script = ROOT / "hpo/slurm/controller.slurm"
@@ -81,11 +114,7 @@ def test_controller_script_starts_requested_module(tmp_path):
     "mode,python_key,job_name",
     [
         ("neps", "neps_python", "shs-hpo"),
-        (
-            "standalone",
-            "controller_python",
-            "shs-standalone",
-        ),
+        ("standalone", "controller_python", "shs-standalone"),
     ],
 )
 def test_controller_submission_resources_and_command(
@@ -115,6 +144,7 @@ def test_controller_submission_resources_and_command(
         "module": "bio/alphafold/3.0.1",
         "neps_python": "/env/neps space/bin/python",
         "shs_python": "/env/shs space/bin/python",
+        "input": {"test": "placeholder"},
         "controller_python": (
             "/env/controller space/bin/python"
         ),
@@ -129,33 +159,22 @@ def test_controller_submission_resources_and_command(
 
     load_config = Mock(return_value=config)
     command = Mock(return_value="123")
+    rows = [{"test": "dataset-row"}]
+    identity = "test-fingerprint"
 
-    monkeypatch.setattr(
-        submission_module,
-        "load_config",
-        load_config,
-    )
-    monkeypatch.setattr(
-        submission_module,
-        "get_workspace_path",
-        lambda cfg: workspace,
-    )
-    monkeypatch.setattr(
-        submission_module,
-        "repo_path",
-        lambda path: config_path,
-    )
+    create_dataset = Mock(return_value=rows)
+    fingerprint = Mock(return_value=identity)
+    check_existing_run = Mock(return_value=False)
+
+    monkeypatch.setattr(submission_module, "create_dataset", create_dataset)
+    monkeypatch.setattr(submission_module, "fingerprint", fingerprint)
+    monkeypatch.setattr(submission_module, "check_existing_run", check_existing_run)
+    monkeypatch.setattr(submission_module, "load_config", load_config)
+    monkeypatch.setattr(submission_module, "get_workspace_path", lambda cfg: workspace)
+    monkeypatch.setattr(submission_module, "repo_path", lambda path: config_path)
     monkeypatch.setattr(submission_module, "ROOT", root)
-    monkeypatch.setattr(
-        submission_module,
-        "command",
-        command,
-    )
-    monkeypatch.setattr(
-        sys,
-        "argv",
-        ["submit", "--config", str(config_path)],
-    )
+    monkeypatch.setattr(submission_module, "command", command)
+    monkeypatch.setattr(sys, "argv", ["submit", "--config", str(config_path)])
 
     submission_module.main()
 

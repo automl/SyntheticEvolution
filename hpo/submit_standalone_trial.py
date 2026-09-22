@@ -1,6 +1,15 @@
 """Submit a standalone trial with YAML resources and workspace logs; run from any cwd."""
 import argparse
-from hpo.pipeline.run import ROOT, repo_path, load_config, get_workspace_path, command
+from hpo.pipeline.run import (
+    ROOT,
+    repo_path,
+    load_config,
+    get_workspace_path,
+    command,
+    create_dataset,
+    fingerprint,
+    check_existing_run,
+)
 
 
 def main():
@@ -12,7 +21,24 @@ def main():
         mode='standalone',
         submitting_controller=True,
     )
-    logs = get_workspace_path(config) / 'controller_logs'
+    ws_root = get_workspace_path(config)
+    rows = create_dataset(config['input'])
+    identity = fingerprint(config, rows)
+
+    try:
+        existing_run = check_existing_run(ws_root, identity)
+    except ValueError as exc:
+        raise SystemExit(f'Submission cancelled: {exc}') from exc
+
+    if existing_run:
+        answer = input(
+            "A run with matching inputs/code/config already exists. "
+            "Resume it? [y/N] "
+        )
+        if answer.strip().lower() not in {'y', 'yes'}:
+            raise SystemExit('Submission cancelled.')
+
+    logs = ws_root / 'controller_logs'
     logs.mkdir(parents=True, exist_ok=True)
     resources = config['controller']
 
