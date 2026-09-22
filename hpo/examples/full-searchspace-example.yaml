@@ -1,0 +1,27 @@
+
+# This is an example for generator settings if all parameters should be searched fully
+# to use it paste it into your config file as the generator settings.
+
+# ---- Generator config ------------------------------------------
+shs_python:         # REQUIRED
+search:
+  N: {type: integer, lower: 2, upper: 512, log: true}
+  mutation_rate_paired:   {type: float, lower: 0.0, upper: 1.0}
+  mutation_rate_unpaired: {type: float, lower: 0.0, upper: 1.0}
+  pair_mutation_approach:
+    type: categorical
+    choices: [covariance, watson_crick, watson_crick_cov, original, none]
+  stem_single_insertion_prob: {type: float, lower: 0.0, upper: 1.0}
+  stem_long_insertion_prob:   {type: float, lower: 0.0, upper: 1.0}
+  stem_single_deletion_prob:  {type: float, lower: 0.0, upper: 0.49}
+  stem_pair_deletion_prob:    {type: float, lower: 0.0, upper: 0.49}
+  loop_single_insertion_prob: {type: float, lower: 0.0, upper: 1.0}
+  loop_long_insertion_prob:   {type: float, lower: 0.0, upper: 1.0}
+  loop_single_deletion_prob:  {type: float, lower: 0.0, upper: 1.0}
+  loop_long_deletion_prob:    {type: float, lower: 0.0, upper: 1.0}
+  wobble_prob:                {type: float, lower: 0.0, upper: 1.0}
+  max_insertion_fraction:     {type: float, lower: 0.0, upper: 1.0}
+  max_deletion_fraction:      {type: float, lower: 0.0, upper: 1.0}
+
+shs_seed: 42
+generator_timeout_seconds: 600 # Per RNA input-generation process

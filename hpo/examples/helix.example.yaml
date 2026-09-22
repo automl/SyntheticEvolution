@@ -13,8 +13,16 @@ input: hpo/examples/example_input.csv # CSV file or directory of CSVs; see examp
 workspace_name:                       # REQUIRED: Existing Helix workspace name for the run folder
 controller_python:                    # REQUIRED for controller submission
 
+# Slurm resource requests
+controller:
+  count: 4           # number of controllers to submit
+  partition: gpu-single
+  cpus: 1
+  memory: 20G
+  gres: gpu:A100:1
+  time: '24:00:00'   # total wall time
 
-# ---- Neps config -----------------------------------------------
+# Neps config
 neps_python:   # REQUIRED only for NePS controller submission
 evaluations: 2 # Max number of configs neps will try
 optimizer:     # optional custom optimizer selection
@@ -58,12 +66,6 @@ dssr:                     # REQUIRED: DSSR executable
 dssr_timeout_seconds: 300 # Per DSSR invocation
 
 
-# ---- Slurm resource requests ------------------------------------
-controller:
-  count: 4           # number of controllers to submit
-  partition: gpu-single
-  cpus: 1
-  memory: 20G
-  gres: gpu:A100:1
-  time: '24:00:00'   # total wall time
-
+# ---- scoring config -----------------------------------------------
+# this will later include different scoring objectives but they 
+# are not implemented jet.
