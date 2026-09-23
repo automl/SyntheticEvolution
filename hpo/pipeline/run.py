@@ -9,6 +9,7 @@ import re
 import yaml
 from typing import Union, Any
 from pathlib import Path
+import tempfile
 
 import logging
 logger = logging.getLogger(__name__)
@@ -146,11 +147,27 @@ def load_config(path, *, mode, submitting_controller=False):
 
 
 def write_json(path, value):
+    """Atomically publish JSON using a unique temporary file per writer."""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    temporary = path.with_suffix(path.suffix + '.tmp')
-    temporary.write_text(json.dumps(value, indent=2, sort_keys=True))
-    temporary.replace(path)
+
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode='w',
+            encoding='utf-8',
+            dir=path.parent,
+            prefix=f'.{path.name}.',
+            suffix='.tmp',
+            delete=False,
+        ) as stream:
+            temporary = Path(stream.name)
+            json.dump(value, stream, indent=2, sort_keys=True)
+
+        temporary.replace(path)
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
 
 
 def command(args):
