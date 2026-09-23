@@ -10,10 +10,11 @@ subgraph LoginNode["Login node"]
     User(["Choose execution mode"])
     SubmitStandalone["hpo/submit_standalone_trial.py"]
     SubmitNeps["hpo/submit_neps_hpo.py"]
+    Slurm["hpo/slurm/controller.slurm"]
     Export["hpo/export_results.py"]
 end
 
-subgraph CpuNode["CPU allocation"]
+subgraph CpuNode["Controller allocation"]
 
     subgraph StepController["Controller"]
         Trial["hpo/pipeline/trial.py"]
@@ -26,31 +27,29 @@ subgraph CpuNode["CPU allocation"]
         SHSGenerator["SHS-Generator"]
     end
 
+    subgraph Step2["Step 2: AF3"]
+        AF3Task["hpo/pipeline/af3_task.py"]
+        AF3[/"AlphaFold 3"/]
+    end
+
     subgraph Step3["Step 3: DSSR interpretation"]
         DSSR["hpo/pipeline/dssr.py"]
         DSSRTool[/"x3dna-dssr"/]
     end
+
     subgraph Step4["Step 4: scoring"]
         Scoring["hpo/pipeline/scoring.py"]
     end
-end
 
-subgraph GpuNode["GPU allocation"]
-    subgraph Step2["Step 2: AF3"]
-        AF3Slurm["hpo/pipeline/slurm/af3-inference-array.slurm"]
-        AF3Task["hpo/pipeline/af3_task.py"]
-        AF3[/"AlphaFold 3"/]
-    end
 end
 
 Workspace[("Workspace")]
 
 %% Three login-node execution paths.
 User -.- SubmitStandalone & SubmitNeps & Export
-SubmitNeps --> RunNeps
-SubmitNeps --"sbatch"--> CpuNode
-SubmitStandalone --> RunStandalone
-SubmitStandalone --"sbatch"--> CpuNode
+SubmitNeps --> RunNeps & Slurm
+SubmitStandalone --> RunStandalone & Slurm
+Slurm --"sbatch"--> CpuNode
 
 %% Controller startup and trial ownership.
 RunStandalone --> Trial
@@ -59,13 +58,12 @@ Trial -."aggregated loss".-> NePS
 
 %% trial.py executes the four stages in order.
 Trial --"1"--> SHSGenerator 
-Trial --"2"--> AF3Slurm
-Trial --"2 sbatch"--> GpuNode
+Trial --"2"--> AF3Task
 Trial --"3"--> DSSR 
 Trial --"4"--> Scoring
 %% Step 1
 %% Step 2
-AF3Slurm --> AF3Task --> AF3
+AF3Task --> AF3
 %% Step 3
 DSSR --> DSSRTool
 %% Step 4
@@ -82,7 +80,6 @@ style User color:#FFFFFF, stroke:#00C853, fill:#003215
 
 style CpuNode fill:#2f2437
 style LoginNode fill:#2f2437
-style GpuNode fill:#2f2437
 style Workspace fill:#2f2437
 
 style StepController fill:#202060
