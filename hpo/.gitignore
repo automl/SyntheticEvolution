@@ -3,6 +3,7 @@ __pycache__/
 *.tmp
 configs/
 reports/
+datasets/
 
 README.md
 devel/
