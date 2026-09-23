@@ -26,13 +26,6 @@ from generator_config import (
     validate_seed, validate_sequence,
 )
 
-PAIR_MUTATION_PROBABILITIES = {
-    "A": {"U": 1.0},
-    "C": {"G": 1.0},
-    "G": {"C": 0.75, "U": 0.25},
-    "U": {"A": 0.75, "G": 0.25},
-}
-
 PAIR_MUTATIONS: Dict[str, List[str]] = {
     'CU': ['GU', 'AU', 'CG'],
     'CA': ['UA', 'CG'],
@@ -64,6 +57,7 @@ class MsaGenerator:
             raise TypeError('parameters must be MutationParameters, not argparse.Namespace')
         validate_seed(seed)
         self.rng = random.Random(None if seed is None else int(seed))
+        self.pair_mutation_probabilities = self.parameters.pair_mutation_probabilities()
         self.pair_map = None
 
     def generate(self, rna_sequence: str, pair_map: PairMap) -> List[str]:
@@ -148,7 +142,7 @@ class MsaGenerator:
     def mutate_wc(self, nt: str, partners_original: np.ndarray, partners_mutated: np.ndarray, 
                   interactions: np.ndarray, partner_mutation_rates: np.ndarray, mutation_rate: float, increase_cov: bool) -> str:
         """Try to maximize the number of watson crick base pairs while also trying to leave no partner.
-        This uses the probabilities in PAIR_MUTATION_PROBABILITIES."""
+        This uses the normalized partner-conditioned weights in the parameters."""
         # first in the multiplet is random with mutation rate
         if len(partners_original) == 0:
             return self.mutate_random(nt, mutation_rate)
@@ -162,7 +156,7 @@ class MsaGenerator:
         # chose with interactions, always mutate
         options = {"A": 0.00001, "U": 0.00001, "G": 0.00001, "C": 0.00001}
         for j, mut in enumerate(partners_mutated):
-            for opt, prob in PAIR_MUTATION_PROBABILITIES.get(mut, {}).items():
+            for opt, prob in self.pair_mutation_probabilities.get(mut, {}).items():
                 options[opt] += prob * interactions[j]
         options.pop(nt)
         return self.rng.choices(list(options.keys()), list(options.values()))[0]
@@ -307,8 +301,9 @@ def load_request(path):
     required = {'task_name', 'sequence', 'pairs', 'parameters', 'shs_seed', 'af3_seed'}
     if required - request.keys():
         raise ValueError(f'Missing request fields: {sorted(required - request.keys())}')
-    if request.keys() - required - {'id'}:
-        raise ValueError(f'Unknown request fields: {sorted(request.keys() - required - {"id"})}')
+    optional = {'id', 'interactions', 'mutation_rates'}
+    if request.keys() - required - optional:
+        raise ValueError(f'Unknown request fields: {sorted(request.keys() - required - optional)}')
     valid_task_name(request['task_name'])
     validate_seed(request['shs_seed'], 'shs_seed', allow_none=False)
     validate_seed(request['af3_seed'], 'af3_seed', allow_none=False)
@@ -316,8 +311,12 @@ def load_request(path):
     pairs = request['pairs']
     if not isinstance(pairs, list) or any(not isinstance(p, list) or len(p) != 2 for p in pairs):
         raise ValueError('Request pairs must be a list of two-element lists')
+    for a, b in pairs:
+        if any(type(index) is not int or not 0 <= index < len(sequence) for index in (a, b)) or a == b:
+            raise ValueError(f'Invalid request pair: {(a, b)}')
     parameters, paired, unpaired = split_parameters(request['parameters'])
-    pair_map = build_pair_map(sequence, pairs, paired, unpaired)
+    structure = request.get('interactions', pairs)
+    pair_map = build_pair_map(sequence, structure, paired, unpaired, request.get('mutation_rates'))
     return request, sequence, pair_map, parameters
 
 
@@ -379,6 +378,12 @@ def prepare_af3_json(args):
     options = vars(args)
     if 'request_json' in options:
         request, sequence, pair_map, parameters = load_request(options['request_json'])
+        resolved_path = Path(options['request_json']).with_name('shs_effective_parameters.json')
+        resolved_path.write_text(json.dumps({
+            'parameters': {field.name: getattr(parameters, field.name) for field in fields(parameters)},
+            'pair_mutation_probabilities': parameters.pair_mutation_probabilities(),
+            'mutation_rates': [pair_map.mutation_rate(i) for i in range(len(sequence))],
+        }, indent=2, allow_nan=False))
         msa = MsaGenerator(parameters, seed=request['shs_seed']).generate(sequence, pair_map)
         show_generation(msa, pair_map, options)
         return json_generator.build_input_json(sequence, msa, name=request['task_name'],

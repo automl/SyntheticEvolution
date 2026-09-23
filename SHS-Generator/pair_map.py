@@ -1,5 +1,7 @@
 """Normalized RNA base-pair mapping and multiplet derivation."""
 import logging
+import math
+from numbers import Integral, Real
 from dataclasses import dataclass, field
 from typing import Any, Dict, List
 import numpy as np
@@ -217,3 +219,88 @@ class PairMap:
         return list(zip(i, j))
 
 
+
+
+# Strict raw-input construction used by the generator and request reader.
+
+DEFAULT_MUTATION_RATE_PAIRED = 0.2
+DEFAULT_MUTATION_RATE_UNPAIRED = 0.2
+
+def probability(value, name):
+    if isinstance(value, bool) or not isinstance(value, Real) or not math.isfinite(value) or not 0 <= value <= 1:
+        raise ValueError(f'{name} must be a finite number between 0 and 1')
+    return float(value)
+
+
+def validate_sequence(sequence):
+    if not isinstance(sequence, str) or not sequence:
+        raise ValueError('RNA sequence must be a nonempty string')
+    sequence = sequence.upper()
+    if set(sequence) - set('ACGU'):
+        raise ValueError('RNA sequence must contain only A, C, G and U')
+    return sequence
+
+
+def build_pair_map(sequence, structure, mutation_rate_paired=DEFAULT_MUTATION_RATE_PAIRED,
+                   mutation_rate_unpaired=DEFAULT_MUTATION_RATE_UNPAIRED,
+                   mutation_rates=None):
+    """Validate raw structure and build PairMap without silently dropping bad pairs.
+
+    Accept dot-bracket notation, two-element pairs, or three-element weighted
+    interactions. Positions are zero-based. Empty lists mean no interactions.
+    A supplied per-position rate list overrides the two scalar rates.
+    """
+    sequence = validate_sequence(sequence)
+    size = len(sequence)
+    paired = probability(mutation_rate_paired, 'mutation_rate_paired')
+    unpaired = probability(mutation_rate_unpaired, 'mutation_rate_unpaired')
+    if isinstance(structure, str):
+        if len(structure) != size:
+            raise ValueError('Dot-bracket length must equal RNA length')
+        stacks = {c: [] for c in '([{<'}
+        closing = dict(zip(')]}>', '([{<'))
+        raw = []
+        for i, char in enumerate(structure):
+            if char in stacks:
+                stacks[char].append(i)
+            elif char in closing:
+                stack = stacks[closing[char]]
+                if not stack:
+                    raise ValueError(f'Unmatched closing bracket at position {i}')
+                raw.append((stack.pop(), i))
+            elif char != '.':
+                raise ValueError(f'Invalid dot-bracket character: {char}')
+        if any(stacks.values()):
+            raise ValueError('Unmatched opening bracket in structure')
+    elif isinstance(structure, dict):
+        raw = list(structure.items())
+    elif isinstance(structure, (list, tuple, np.ndarray)):
+        raw = structure
+    else:
+        raise ValueError('Structure must be dot-bracket text or a list of pairs')
+
+    interactions = {}
+    for pair in raw:
+        if not isinstance(pair, (list, tuple, np.ndarray)) or len(pair) not in (2, 3):
+            raise ValueError('Each pair must contain two indices and optional strength')
+        a, b = pair[:2]
+        if any(isinstance(x, bool) or not isinstance(x, Integral) for x in (a, b)):
+            raise ValueError('Pair indices must be integers')
+        if not (0 <= a < size and 0 <= b < size) or a == b:
+            raise ValueError(f'Invalid pair {(a, b)} for sequence length {size}')
+        strength = probability(pair[2], 'interaction strength') if len(pair) == 3 else 1.0
+        key = tuple(sorted((int(a), int(b))))
+        if key in interactions and interactions[key] != strength:
+            raise ValueError(f'Conflicting interaction strengths for pair {key}')
+        interactions[key] = strength
+
+    # A zero strength explicitly means no interaction; do not let PairMap clamp it.
+    triples = [(a, b, strength) for (a, b), strength in interactions.items() if strength > 0]
+    if mutation_rates is None:
+        paired_positions = {i for a, b, _ in triples for i in (a, b)}
+        rates = [paired if i in paired_positions else unpaired for i in range(size)]
+    else:
+        if not isinstance(mutation_rates, (list, tuple, np.ndarray)) or len(mutation_rates) != size:
+            raise ValueError('mutation_rates must have exactly one rate per RNA position')
+        rates = [probability(rate, f'mutation_rates[{i}]') for i, rate in enumerate(mutation_rates)]
+    return PairMap.from_interactions(size, triples, rates)
