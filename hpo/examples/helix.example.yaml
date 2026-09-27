@@ -67,6 +67,5 @@ dssr_timeout_seconds: 300 # Per DSSR invocation
 
 
 # ---- scoring config -----------------------------------------------
-# this will later include different scoring objectives but they 
-# are not implemented jet.
-
+scoring_objective: f1     # Optional; Options: f1 (f1 score, default), wl (weisfeiler-lehman graph kernel) 
+wl_iterations: 5          # Optional

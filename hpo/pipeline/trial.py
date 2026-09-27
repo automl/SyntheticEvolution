@@ -220,7 +220,12 @@ def run_pipeline(
         normalized_pairs = normalize_pairs(dssr_predicted_pairs, len(row['sequence']))
     
         ################################ 4. - SCORE #################################
-        metrics = scoring.score_row(row, normalized_pairs)
+        metrics = scoring.score_row(
+            row,
+            normalized_pairs,
+            objective=config.get('scoring_objective', 'f1'),
+            wl_iterations=config.get('wl_iterations', 5),
+        )   
 
         task_evaluation = dict(
             id=row['id'], 
@@ -233,7 +238,13 @@ def run_pipeline(
         write_json(task_dir / 'base_pair_evaluation.json', task_evaluation)
 
         task_evaluations.append(task_evaluation)
-        logger.info('Scored %s: loss=%.6f, f1=%.6f', row['id'], metrics['loss'], metrics['f1'])
+        
+        logger.info(
+            'Scored %s: loss=%.6f, objective=%s',
+            row['id'],
+            metrics['loss'],
+            config.get('scoring_objective', 'f1'),
+        )
     loss = scoring.aggregate(task_evaluations)
     write_json(
         trial_result_path, 

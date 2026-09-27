@@ -94,6 +94,13 @@ def load_config(path, *, mode, submitting_controller=False):
         if isinstance(value, bool) or not isinstance(value, int) or value < 0:
             raise ValueError(f'{key} must be a nonnegative integer')
 
+    scoring_objective = config.get('scoring_objective', 'f1')
+    if scoring_objective not in {'f1', 'wl'}:
+        raise ValueError("scoring_objective must be 'f1' or 'wl'")
+
+    if 'wl_iterations' in config:
+        require_positive(config, 'wl_iterations', integer=True)
+
     # Optional parameter sections must have the expected structure.
     for key in ('fixed', 'search'):
         if key in config and not isinstance(config[key], dict):
