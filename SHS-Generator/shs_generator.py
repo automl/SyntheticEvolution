@@ -73,8 +73,9 @@ class MsaGenerator:
         if not np.array_equal(matrix, matrix.T):
             raise ValueError('PairMap must be symmetric')
         self.pair_map = pair_map
-        self.max_insertion_length = max(int(len(sequence) * self.parameters.max_insertion_fraction), 2)
-        self.max_deletion_length = max(int(len(sequence) * self.parameters.max_deletion_fraction), 2)
+        self.loop_max_insertion_length = max(int(len(sequence) * self.parameters.loop_max_insertion_fraction), 2)
+        self.loop_max_deletion_length = max(int(len(sequence) * self.parameters.loop_max_deletion_fraction), 2)
+        self.stem_max_insertion_length = max(int(len(sequence) * self.parameters.stem_max_insertion_fraction), 2)
         msa = [sequence] + [self.mutate_sequence(sequence) for _ in range(self.parameters.N - 1)]
         validate_msa(msa, sequence, self.parameters.N)
         return msa
@@ -83,7 +84,7 @@ class MsaGenerator:
         """Long insertions take priority, then single insertions. If all long insertions are disregarded
         the single insertion rate can be recovered accurately. Any insertion is randomly selected"""
         if self.rng.random() < self.parameters.loop_long_insertion_prob:
-            insertion_len = self.rng.randint(2, self.max_insertion_length)
+            insertion_len = self.rng.randint(2, self.loop_max_insertion_length)
             return ''.join(self.rng.choice('augc') for _ in range(insertion_len))
         if self.rng.random() < self.parameters.loop_single_insertion_prob:
             return self.rng.choice('acgu')
@@ -93,7 +94,7 @@ class MsaGenerator:
         """Long insertions take priority, then single insertions. If all long insertions are disregarded
         the single insertion rate can be recovered accurately. Any insertion is randomly selected"""
         if self.rng.random() < self.parameters.stem_long_insertion_prob:
-            insertion_len = self.rng.randint(2, self.max_insertion_length)
+            insertion_len = self.rng.randint(2, self.stem_max_insertion_length)
             return ''.join(self.rng.choice('augc') for _ in range(insertion_len))
         if self.rng.random() < self.parameters.stem_single_insertion_prob:
             return self.rng.choice('acgu')
@@ -119,7 +120,7 @@ class MsaGenerator:
         """Long deletions take priority, then single deletions, then mutations. Therefore
         the mutation rate is can be recovered accurately if deletions are disregarded."""
         if self.rng.random() < self.parameters.loop_long_deletion_prob:
-            loop_long_del_len = self.rng.randint(2, self.max_deletion_length)
+            loop_long_del_len = self.rng.randint(2, self.loop_max_deletion_length)
         if loop_long_del_len > 0:
             return "-", loop_long_del_len - 1
         if self.rng.random() < self.parameters.loop_single_deletion_prob:
@@ -354,9 +355,11 @@ def legacy_output_name(options, parameters, sequence, paired, unpaired):
         f'ssi_{p.stem_single_insertion_prob}', f'sli_{p.stem_long_insertion_prob}',
         f'spd_{p.stem_pair_deletion_prob}', f'lsi_{p.loop_single_insertion_prob}',
         f'lsd_{p.loop_single_deletion_prob}', f'lli_{p.loop_long_insertion_prob}',
-        f'lld_{p.loop_long_deletion_prob}', f'mif_{p.max_insertion_fraction}',
-        f'mdf_{p.max_deletion_fraction}', f'maxinslen_{max(int(len(sequence)*p.max_insertion_fraction),2)}',
-        f'maxdellen_{max(int(len(sequence)*p.max_deletion_fraction),2)}',
+        f'lld_{p.loop_long_deletion_prob}', f'lmif_{p.loop_max_insertion_fraction}', 
+        f'mif_{p.stem_max_insertion_fraction}',f'lmdf_{p.loop_max_deletion_fraction}', 
+        f'lmaxinslen_{max(int(len(sequence)*p.loop_max_insertion_fraction),2)}',
+        f'smaxinslen_{max(int(len(sequence)*p.stem_max_insertion_fraction),2)}',
+        f'lmaxdellen_{max(int(len(sequence)*p.loop_max_deletion_fraction),2)}',
         f'wp_{p.wobble_prob}', options.get('structure_predictor') or 'none',
     ]
     return '_'.join(parts)

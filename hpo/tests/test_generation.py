@@ -232,8 +232,8 @@ pairs = build_pair_map(sequence, [], mutation_rates=[0,1,0,1])
 msa = MsaGenerator(parameters, seed=3).generate(sequence, pairs)
 for row in msa[1:]:
     assert [a != b for a,b in zip(sequence,row)] == [False,True,False,True]
-for kwargs in ({'N':0}, {'N':True}, {'wobble_prob':float('nan')},
-               {'max_insertion_fraction':-1}, {'pair_mutation_approach':'typo'}):
+for kwargs in ({'N':0}, {'N':True}, {'wobble_prob':float('nan')}, {'pair_mutation_approach':'typo'},
+               {'loop_max_insertion_fraction':-1}, {'stem_max_insertion_fraction':-1}):
     try: MutationParameters(**kwargs)
     except ValueError: pass
     else: raise AssertionError(kwargs)

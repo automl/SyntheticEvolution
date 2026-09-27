@@ -40,8 +40,9 @@ class MutationParameters:
     loop_long_insertion_prob: float = 0.02
     loop_long_deletion_prob: float = 0.02
     wobble_prob: float = 0.1
-    max_insertion_fraction: float = 0.1
-    max_deletion_fraction: float = 0.1
+    loop_max_insertion_fraction: float = 0.1
+    loop_max_deletion_fraction: float = 0.1
+    stem_max_insertion_fraction: float = 0.1
 
 
     # Partner base -> candidate base weights; normalized separately for each row.

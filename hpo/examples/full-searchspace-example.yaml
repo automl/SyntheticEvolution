@@ -36,9 +36,10 @@ search:
   pair_weight_U_C: {type: float, lower: 0.0, upper: 1.0}
   pair_weight_U_G: {type: float, lower: 0.0, upper: 1.0}
   pair_weight_U_U: {type: float, lower: 0.0, upper: 1.0}
-  wobble_prob:                {type: float, lower: 0.0, upper: 1.0}
-  max_insertion_fraction:     {type: float, lower: 0.0, upper: 1.0}
-  max_deletion_fraction:      {type: float, lower: 0.0, upper: 1.0}
+  wobble_prob:                 {type: float, lower: 0.0, upper: 1.0}
+  loop_max_insertion_fraction: {type: float, lower: 0.0, upper: 1.0}
+  loop_max_deletion_fraction:       {type: float, lower: 0.0, upper: 1.0}
+  stem_max_insertion_fraction: {type: float, lower: 0.0, upper: 1.0}
 
 shs_seed: 42
 generator_timeout_seconds: 600 # Per RNA input-generation process

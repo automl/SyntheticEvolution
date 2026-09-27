@@ -30,8 +30,9 @@
       "loop_long_insertion_prob": 0.02,
       "loop_long_deletion_prob": 0.02,
       "wobble_prob": 0.1,
-      "max_insertion_fraction": 0.1,
-      "max_deletion_fraction": 0.1
+      "loop_max_insertion_fraction": 0.1,
+      "loop_max_deletion_fraction": 0.1,
+      "stem_max_insertion_fraction": 0.1
     },
     "seed": 42,
     "msa": [
@@ -88,8 +89,9 @@
       "loop_long_insertion_prob": 0.02,
       "loop_long_deletion_prob": 0.02,
       "wobble_prob": 0.1,
-      "max_insertion_fraction": 0.1,
-      "max_deletion_fraction": 0.1
+      "loop_max_insertion_fraction": 0.1,
+      "loop_max_deletion_fraction": 0.1,
+      "stem_max_insertion_fraction": 0.1
     },
     "seed": 42,
     "msa": [
@@ -138,8 +140,9 @@
       "loop_long_insertion_prob": 0.02,
       "loop_long_deletion_prob": 0.02,
       "wobble_prob": 0.1,
-      "max_insertion_fraction": 0.1,
-      "max_deletion_fraction": 0.1
+      "loop_max_insertion_fraction": 0.1,
+      "loop_max_deletion_fraction": 0.1,
+      "stem_max_insertion_fraction": 0.1
     },
     "seed": 42,
     "msa": [
@@ -196,8 +199,9 @@
       "loop_long_insertion_prob": 0.02,
       "loop_long_deletion_prob": 0.02,
       "wobble_prob": 0.1,
-      "max_insertion_fraction": 0.1,
-      "max_deletion_fraction": 0.1
+      "loop_max_insertion_fraction": 0.1,
+      "loop_max_deletion_fraction": 0.1,
+      "stem_max_insertion_fraction": 0.1
     },
     "seed": 42,
     "msa": [
@@ -246,8 +250,9 @@
       "loop_long_insertion_prob": 0.02,
       "loop_long_deletion_prob": 0.02,
       "wobble_prob": 0.1,
-      "max_insertion_fraction": 0.1,
-      "max_deletion_fraction": 0.1
+      "loop_max_insertion_fraction": 0.1,
+      "loop_max_deletion_fraction": 0.1,
+      "stem_max_insertion_fraction": 0.1
     },
     "seed": 42,
     "msa": [
@@ -304,8 +309,9 @@
       "loop_long_insertion_prob": 0.02,
       "loop_long_deletion_prob": 0.02,
       "wobble_prob": 0.1,
-      "max_insertion_fraction": 0.1,
-      "max_deletion_fraction": 0.1
+      "loop_max_insertion_fraction": 0.1,
+      "loop_max_deletion_fraction": 0.1,
+      "stem_max_insertion_fraction": 0.1
     },
     "seed": 42,
     "msa": [
@@ -354,8 +360,9 @@
       "loop_long_insertion_prob": 0.02,
       "loop_long_deletion_prob": 0.02,
       "wobble_prob": 0.1,
-      "max_insertion_fraction": 0.1,
-      "max_deletion_fraction": 0.1
+      "loop_max_insertion_fraction": 0.1,
+      "loop_max_deletion_fraction": 0.1,
+      "stem_max_insertion_fraction": 0.1
     },
     "seed": 42,
     "msa": [
@@ -412,8 +419,9 @@
       "loop_long_insertion_prob": 0.02,
       "loop_long_deletion_prob": 0.02,
       "wobble_prob": 0.1,
-      "max_insertion_fraction": 0.1,
-      "max_deletion_fraction": 0.1
+      "loop_max_insertion_fraction": 0.1,
+      "loop_max_deletion_fraction": 0.1,
+      "stem_max_insertion_fraction": 0.1
     },
     "seed": 42,
     "msa": [
@@ -462,8 +470,9 @@
       "loop_long_insertion_prob": 0.02,
       "loop_long_deletion_prob": 0.02,
       "wobble_prob": 0.1,
-      "max_insertion_fraction": 0.1,
-      "max_deletion_fraction": 0.1
+      "loop_max_insertion_fraction": 0.1,
+      "loop_max_deletion_fraction": 0.1,
+      "stem_max_insertion_fraction": 0.1
     },
     "seed": 42,
     "msa": [
@@ -520,8 +529,9 @@
       "loop_long_insertion_prob": 0.02,
       "loop_long_deletion_prob": 0.02,
       "wobble_prob": 0.1,
-      "max_insertion_fraction": 0.1,
-      "max_deletion_fraction": 0.1
+      "loop_max_insertion_fraction": 0.1,
+      "loop_max_deletion_fraction": 0.1,
+      "stem_max_insertion_fraction": 0.1
     },
     "seed": 42,
     "msa": [
