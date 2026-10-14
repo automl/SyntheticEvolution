@@ -38,15 +38,31 @@ def main():
 
     ############################## scores.csv ##############################
     scores_path = destination / 'scores.csv'
-    score_fields = ['trial', 'id', 'loss', 'f1', 'tp', 'fp', 'fn']
+
+    # Collect every metric present in any score.
+    metric_fields = sorted({
+        key
+        for _, result in results
+        for score in result['scores']
+        for key in score
+        if key != 'id'
+    })
+
+    score_fields = ['trial', 'id', *metric_fields]
+
     with scores_path.open('w', newline='') as stream:
-        writer = csv.DictWriter(stream, fieldnames=score_fields)
+        writer = csv.DictWriter(
+        stream,
+        fieldnames=score_fields,
+        extrasaction='ignore',
+    )
         writer.writeheader()
+
         for path, result in results:
             for score in result['scores']:
                 writer.writerow({
                     'trial': str(path.relative_to(root)),
-                    **{key: score[key] for key in score_fields[1:]},
+                    **score,
                 })
 
     ############################## best.json ##############################
