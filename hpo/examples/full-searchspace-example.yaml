@@ -13,8 +13,8 @@ search:
     choices: [covariance, watson_crick, watson_crick_cov, original, none]
   stem_single_insertion_prob: {type: float, lower: 0.0, upper: 1.0}
   stem_long_insertion_prob:   {type: float, lower: 0.0, upper: 1.0}
-  stem_single_deletion_prob:  {type: float, lower: 0.0, upper: 0.49}
-  stem_pair_deletion_prob:    {type: float, lower: 0.0, upper: 0.49}
+  stem_single_deletion_prob:  {type: float, lower: 0.0, upper: 1.0}
+  stem_pair_deletion_prob:    {type: float, lower: 0.0, upper: 1.0}
   loop_single_insertion_prob: {type: float, lower: 0.0, upper: 1.0}
   loop_long_insertion_prob:   {type: float, lower: 0.0, upper: 1.0}
   loop_single_deletion_prob:  {type: float, lower: 0.0, upper: 1.0}
