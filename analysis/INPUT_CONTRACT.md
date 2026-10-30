@@ -17,6 +17,10 @@ results/
 └── configs/
     └── config_<id>/
         └── trial_result.json
+        └── shs/
+            └── rna_<index>/
+                ├── af3_input.json
+                └── shs_generation_request.json
 ```
 
 ## File ownership
@@ -24,6 +28,8 @@ results/
 - `run_metadata.json` is created by the HPO pipeline and copied unchanged.
 - The three files in `summary/` are created by NePS and copied unchanged.
 - Each `trial_result.json` is created by the HPO pipeline and copied unchanged.
+- The SHS files are created by the HPO pipeline and copied unchanged for each
+  exported trajectory configuration.
 - `manifest.json` is created by `hpo/export_results.py`; it is not produced by
   the HPO pipeline.
 
@@ -65,12 +71,17 @@ results/
 - The trajectory dot-bracket analysis uses each exported
   `configs/config_<id>/trial_result.json` and writes its combined output under
   the module's analysis directory.
+- SHS analysis uses the exported `shs/rna_<index>/` files and never reads the
+  original HPO workspace.
 
 ## Output directory behavior
 
 - By default, analysis output is the sibling directory `analysis/` beside
   `results/`.
 - An optional output argument may select another destination.
+- An optional JSON analysis configuration can be passed with `--config`.
+- The SHS module reads `shs.top_n` from that file; when omitted, it analyzes
+  only the authoritative best configuration.
 - If the output directory already exists, the program asks whether it should be
   recreated.
 - An empty response, `y`, or `yes` recreates the directory.

@@ -4,7 +4,7 @@ import json
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 
 _CONFIG_ID_PATTERN = re.compile(r"^Config ID:\s*(\d+)\s*$", re.MULTILINE)
@@ -28,6 +28,7 @@ class ResultsContext:
     best_config_text: str
     trajectory_text: str
     short_csv_text: str
+    analysis_config: dict[str, Any]
 
 
 def _read_json(path: Path) -> dict[str, Any]:
@@ -56,7 +57,11 @@ def _parse_config_ids(trajectory_text: str, trajectory_path: Path) -> list[int]:
     return config_ids
 
 
-def load_results(results_dir: Path, output_dir: Path) -> ResultsContext:
+def load_results(
+    results_dir: Path,
+    output_dir: Path,
+    analysis_config_path: Optional[Path] = None,
+) -> ResultsContext:
     """Load the exported result contract without accessing the HPO workspace."""
     results_dir = results_dir.expanduser().resolve()
     output_dir = output_dir.expanduser().resolve()
@@ -70,6 +75,10 @@ def load_results(results_dir: Path, output_dir: Path) -> ResultsContext:
     )
     best_config_path = _required_file(results_dir, "summary/best_config.txt")
     short_csv_path = _required_file(results_dir, "summary/short.csv")
+    if analysis_config_path is None:
+        analysis_config = {}
+    else:
+        analysis_config = _read_json(analysis_config_path)
 
     trajectory_text = trajectory_path.read_text()
     config_ids = _parse_config_ids(trajectory_text, trajectory_path)
@@ -96,4 +105,5 @@ def load_results(results_dir: Path, output_dir: Path) -> ResultsContext:
         best_config_text=best_config_path.read_text(),
         trajectory_text=trajectory_text,
         short_csv_text=short_csv_path.read_text(),
+        analysis_config=analysis_config,
     )

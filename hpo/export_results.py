@@ -16,12 +16,28 @@ from hpo.pipeline.run import get_workspace_path, load_config
 EXPORT_DIR_NAME = "results"
 
 
+def _confirm_recreate(destination: Path) -> None:
+    answer = input(
+        f"Export results already exists at {destination}. "
+        "Recreate it? [Y/n] "
+    ).strip().lower()
+    if answer not in {"", "y", "yes"}:
+        raise SystemExit("Export cancelled.")
+    shutil.rmtree(destination)
+
+
 def export_results(config_path: Path) -> Path:
     """Copy the selected run summaries and trajectory trial results."""
     config_path = config_path.expanduser().resolve()
     config = load_config(config_path, mode="export")
     workspace = get_workspace_path(config)
     destination = config_path.parent / EXPORT_DIR_NAME
+    if destination.exists():
+        if not destination.is_dir():
+            raise NotADirectoryError(
+                f"Export output is not a directory: {destination}"
+            )
+        _confirm_recreate(destination)
     destination.mkdir(parents=True, exist_ok=True)
 
     neps_dir = workspace / "neps"
@@ -62,13 +78,33 @@ def export_results(config_path: Path) -> Path:
         )
 
     for config_id in config_ids:
-        source = neps_dir / "configs" / f"config_{config_id}" / "artifacts" / "trial_result.json"
+        source_dir = neps_dir / "configs" / f"config_{config_id}" / "artifacts"
+        source = source_dir / "trial_result.json"
         if not source.is_file():
             raise FileNotFoundError(f"Expected trial result does not exist: {source}")
         target = destination / "configs" / f"config_{config_id}" / "trial_result.json"
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, target)
         copied.append(target.relative_to(destination).as_posix())
+
+        for task_dir in sorted(source_dir.glob("rna_*")):
+            if not task_dir.is_dir():
+                continue
+            for filename in ("af3_input.json", "shs_generation_request.json"):
+                artifact = task_dir / filename
+                if not artifact.is_file():
+                    raise FileNotFoundError(f"Expected SHS artifact does not exist: {artifact}")
+                artifact_target = (
+                    destination
+                    / "configs"
+                    / f"config_{config_id}"
+                    / "shs"
+                    / task_dir.name
+                    / filename
+                )
+                artifact_target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(artifact, artifact_target)
+                copied.append(artifact_target.relative_to(destination).as_posix())
 
     manifest = {
         "config": str(config_path),

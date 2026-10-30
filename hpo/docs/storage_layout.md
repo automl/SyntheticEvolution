@@ -105,5 +105,9 @@ writing to a `results/` folder next to the selected config:
 - `run_metadata.json`: copied run metadata.
 - `summary/`: `best_config_trajectory.txt`, `best_config.txt`, and `short.csv`.
 - `configs/config_<id>/trial_result.json`: result for each trajectory configuration.
+- `configs/config_<id>/shs/rna_<index>/af3_input.json`: generated AF3 input
+  containing the synthetic MSA.
+- `configs/config_<id>/shs/rna_<index>/shs_generation_request.json`: SHS
+  request containing the sequence and target pairs.
 
 Raw predictions remain in the workspace; exported model paths still refer there.

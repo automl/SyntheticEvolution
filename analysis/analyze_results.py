@@ -8,6 +8,7 @@ import shutil
 import sys
 from pathlib import Path
 from types import ModuleType
+from typing import Optional
 
 if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -93,10 +94,14 @@ def discover_modules() -> list[ModuleType]:
     return modules
 
 
-def run_analysis(results_dir: Path, output_dir: Path) -> None:
+def run_analysis(
+    results_dir: Path,
+    output_dir: Path,
+    analysis_config_path: Optional[Path] = None,
+) -> None:
     _ensure_separate_directories(results_dir, output_dir)
     LOGGER.info("Loading exported results from %s", results_dir)
-    context = load_results(results_dir, output_dir)
+    context = load_results(results_dir, output_dir, analysis_config_path)
     LOGGER.info("Loaded %d trajectory configurations", len(context.config_ids))
 
     modules = discover_modules()
@@ -132,6 +137,11 @@ def main() -> None:
         type=Path,
         help="Analysis output directory (default: sibling analysis directory)",
     )
+    parser.add_argument(
+        "--config",
+        type=Path,
+        help="JSON analysis configuration file, used by configurable modules",
+    )
     args = parser.parse_args()
     _configure_logging()
 
@@ -143,7 +153,10 @@ def main() -> None:
     )
     LOGGER.info("Preparing analysis output directory: %s", output_dir)
     prepare_output_directory(output_dir)
-    run_analysis(results_dir, output_dir)
+    analysis_config_path = (
+        args.config.expanduser().resolve() if args.config is not None else None
+    )
+    run_analysis(results_dir, output_dir, analysis_config_path)
     LOGGER.info("All analyses completed successfully.")
 
 
