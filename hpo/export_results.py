@@ -1,82 +1,103 @@
+#!/usr/bin/env python3
+"""Copy the first portable snapshot of a completed HPO run.
+
+The export directory is always ``<config directory>/results``. Keep this
+script intentionally small while the exported result contract is evolving.
+"""
 import argparse
-import csv
 import json
-from hpo.pipeline.run import ROOT, load_config, get_workspace_path, write_json
+import re
+import shutil
+from datetime import datetime, timezone
+from pathlib import Path
+
+from hpo.pipeline.run import get_workspace_path, load_config
+
+EXPORT_DIR_NAME = "results"
 
 
-def main():
+def export_results(config_path: Path) -> Path:
+    """Copy the selected run summaries and trajectory trial results."""
+    config_path = config_path.expanduser().resolve()
+    config = load_config(config_path, mode="export")
+    workspace = get_workspace_path(config)
+    destination = config_path.parent / EXPORT_DIR_NAME
+    destination.mkdir(parents=True, exist_ok=True)
+
+    neps_dir = workspace / "neps"
+    summary_dir = neps_dir / "summary"
+    summary_files = (
+        "best_config_trajectory.txt",
+        "best_config.txt",
+        "short.csv",
+    )
+    copied: list[str] = []
+
+    for filename in summary_files:
+        source = summary_dir / filename
+        if not source.is_file():
+            raise FileNotFoundError(f"Expected summary file does not exist: {source}")
+        target = destination / "summary" / filename
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, target)
+        copied.append(target.relative_to(destination).as_posix())
+
+    run_metadata = workspace / "run_metadata.json"
+    if not run_metadata.is_file():
+        raise FileNotFoundError(f"Expected run metadata does not exist: {run_metadata}")
+    shutil.copy2(run_metadata, destination / run_metadata.name)
+    copied.append(run_metadata.name)
+
+    config_ids = [
+        int(match)
+        for match in re.findall(
+            r"^Config ID:\s*(\d+)\s*$",
+            (summary_dir / "best_config_trajectory.txt").read_text(),
+            re.MULTILINE,
+        )
+    ]
+    if not config_ids:
+        raise ValueError(
+            f"No Config IDs found in {summary_dir / 'best_config_trajectory.txt'}"
+        )
+
+    for config_id in config_ids:
+        source = neps_dir / "configs" / f"config_{config_id}" / "artifacts" / "trial_result.json"
+        if not source.is_file():
+            raise FileNotFoundError(f"Expected trial result does not exist: {source}")
+        target = destination / "configs" / f"config_{config_id}" / "trial_result.json"
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, target)
+        copied.append(target.relative_to(destination).as_posix())
+
+    manifest = {
+        "config": str(config_path),
+        "workspace": str(workspace),
+        "exported_at": datetime.now(timezone.utc).isoformat(),
+        "config_ids": config_ids,
+        "files": copied,
+    }
+    (destination / "manifest.json").write_text(
+        json.dumps(manifest, indent=2) + "\n"
+    )
+    return destination
+
+
+def main() -> None:
     parser = argparse.ArgumentParser(
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=(
-            'Export completed NePS trial summaries for a configured run.\n\n'
-            'The following files are written to hpo/reports/<run_name>/:\n'
-            '  scores.csv        Per-RNA scores from every completed trial\n'
-            '  best.json         Parameters and scores from the best trial\n'
-            '  run_metadata.json Fingerprint, dataset, and run configuration'
-        ),
+        description="Copy a compact result snapshot next to the selected config."
     )
     parser.add_argument(
-        '--config',
+        "--config",
         required=True,
-        help='YAML configuration file identifying the run workspace to export',
+        type=Path,
+        help="YAML configuration file identifying the completed HPO run",
     )
     args = parser.parse_args()
 
-    ### Make folder 
-    config = load_config(args.config, mode='export')
-    root = get_workspace_path(config)
-    destination = ROOT / 'hpo/reports' / config['run_name']
-    destination.mkdir(parents=True, exist_ok=True)
-
-    ### read results
-    results = [
-        (path, json.loads(path.read_text()))
-        for path in (root / 'neps').rglob('artifacts/trial_result.json')
-    ]
-    if not results:
-        raise ValueError('No completed NePS trials to export')
-
-    ############################## scores.csv ##############################
-    scores_path = destination / 'scores.csv'
-
-    # Collect every metric present in any score.
-    metric_fields = sorted({
-        key
-        for _, result in results
-        for score in result['scores']
-        for key in score
-        if key != 'id'
-    })
-
-    score_fields = ['trial', 'id', *metric_fields]
-
-    with scores_path.open('w', newline='') as stream:
-        writer = csv.DictWriter(
-        stream,
-        fieldnames=score_fields,
-        extrasaction='ignore',
-    )
-        writer.writeheader()
-
-        for path, result in results:
-            for score in result['scores']:
-                writer.writerow({
-                    'trial': str(path.relative_to(root)),
-                    **score,
-                })
-
-    ############################## best.json ##############################
-    best_path, best_result = min(results, key=lambda item: item[1]['loss'])
-    write_json(destination / 'best.json', {
-        'source': str(best_path),
-        **best_result,
-    })
-
-    ########################## run_metadata.json ##########################
-    run_metadata = json.loads((root / 'run_metadata.json').read_text())
-    write_json(destination / 'run_metadata.json', run_metadata)
+    destination = export_results(args.config)
     print(destination)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

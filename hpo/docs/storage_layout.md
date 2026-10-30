@@ -99,10 +99,11 @@ Logs capture process output. AF3 sample/confidence files and DSSR auxiliary file
 
 After metadata checks, an existing trial result returns immediately. Otherwise, a saved job ID skips generation/submission; submission intent without a job ID stops for inspection. Without either, a new array is submitted. Task evaluations are not checkpoints: without a trial result, DSSR/scoring repeats. This does not itself recover the NePS search.
 
-`export_results.py` targets completed **NePS trials only**, writing to `hpo/reports/<run_name>/`:
+`export_results.py` targets the configurations in the best-config trajectory,
+writing to a `results/` folder next to the selected config:
 
-- `scores.csv`: per-RNA metrics for every completed trial.
-- `best.json`: lowest-loss trial result and its source path.
 - `run_metadata.json`: copied run metadata.
+- `summary/`: `best_config_trajectory.txt`, `best_config.txt`, and `short.csv`.
+- `configs/config_<id>/trial_result.json`: result for each trajectory configuration.
 
 Raw predictions remain in the workspace; exported model paths still refer there.
