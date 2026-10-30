@@ -1,24 +1,32 @@
 #!/usr/bin/env python3
 
-import argparse
 import json
 import logging
 import re
-import sys
+from collections import Counter
 from pathlib import Path
 
 
-logger = logging.getLogger("extract_dotbracket")
+logger = logging.getLogger("analysis.dotbracket")
 
 
-def configure_logging(verbose=False):
-    level = logging.DEBUG if verbose else logging.INFO
-
-    logging.basicConfig(
-        level=level,
-        format="%(asctime)s [%(levelname)s] %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
+def run(context, output_dir):
+    """Create dot-bracket output for every exported trajectory configuration."""
+    trajectory_path = context.results_dir / "summary" / "best_config_trajectory.txt"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    warning_count = write_trajectory(
+        trajectory_path,
+        output_dir / "dotbracket_trajectory.txt",
+        config_results={
+            config_id: context.trial_results[config_id]
+            for config_id in context.config_ids
+        },
     )
+    if warning_count:
+        logger.warning(
+            "Dot-bracket conversion skipped %d invalid or conflicting pairs.",
+            warning_count,
+        )
 
 
 def pairs_to_dotbracket(pairs, size):
@@ -137,55 +145,29 @@ def infer_structure_length(*pair_lists):
     return max(indices) + 1
 
 
-def load_trial_result(path):
-    """
-    Load a trial_result.json.
-
-    Returns:
-        {
-            sequence_id: {
-                "target": str,
-                "prediction": str,
-                "prediction_warnings": list[str],
-                "target_warnings": list[str],
-            }
-        }
-    """
-    logger.info("Reading trial result: %s", path)
-
-    try:
-        with path.open() as f:
-            data = json.load(f)
-    except json.JSONDecodeError as e:
-        raise ValueError(
-            f"Invalid JSON in {path}: {e}"
-        ) from e
-
+def load_trial_result_from_data(data, source):
+    """Convert an already loaded trial-result object to dot-bracket records."""
     if "scores" not in data:
         raise ValueError(
-            f"Missing 'scores' field in {path}"
+            f"Missing 'scores' field in {source}"
         )
 
     results = {}
 
-    logger.info(
-        "Found %d sequences in %s",
-        len(data["scores"]),
-        path,
-    )
+    logger.info("Loaded %d sequences for Config ID %s", len(data["scores"]), source)
 
     for index, score in enumerate(data["scores"], start=1):
         sequence_id = score.get("id")
 
         if sequence_id is None:
             raise ValueError(
-                f"{path}: score #{index} has no 'id'"
+                f"{source}: score #{index} has no 'id'"
             )
 
         logger.debug(
             "Processing sequence %s from %s",
             sequence_id,
-            path,
+            source,
         )
 
         try:
@@ -193,7 +175,7 @@ def load_trial_result(path):
             predicted_pairs = score["predicted_pairs"]
         except KeyError as e:
             raise ValueError(
-                f"{path}: sequence {sequence_id} is missing "
+                f"{source}: sequence {sequence_id} is missing "
                 f"{e.args[0]!r}"
             ) from e
 
@@ -211,20 +193,6 @@ def load_trial_result(path):
             predicted_pairs,
             size,
         )
-
-        for warning in target_warnings:
-            logger.warning(
-                "%s, target: %s",
-                sequence_id,
-                warning,
-            )
-
-        for warning in prediction_warnings:
-            logger.warning(
-                "%s, prediction: %s",
-                sequence_id,
-                warning,
-            )
 
         results[sequence_id] = {
             "target": target,
@@ -244,39 +212,6 @@ def format_prediction(prediction, warnings):
     return (
         f"{prediction} INVALID "
         f"({'; '.join(warnings)})"
-    )
-
-
-def write_trial_result(input_path, output_path):
-    logger.info("Mode: trial_result")
-    logger.info("Input: %s", input_path)
-    logger.info("Output: %s", output_path)
-
-    results = load_trial_result(input_path)
-
-    with output_path.open("w") as f:
-        for sequence_id, structures in results.items():
-            f.write(f"{sequence_id}\n")
-
-            f.write(
-                f"input:       {structures['target']}\n"
-            )
-
-            prediction = format_prediction(
-                structures["prediction"],
-                structures["prediction_warnings"],
-            )
-
-            f.write(
-                f"prediction:  {prediction}\n"
-            )
-
-            f.write("\n")
-
-    logger.info(
-        "Successfully wrote %d sequences to %s",
-        len(results),
-        output_path,
     )
 
 
@@ -312,7 +247,7 @@ def parse_config_ids(trajectory_path):
     return config_ids
 
 
-def write_trajectory(input_path, output_path):
+def write_trajectory(input_path, output_path, config_results=None):
     logger.info("Mode: trajectory")
     logger.info("Input: %s", input_path)
     logger.info("Output: %s", output_path)
@@ -324,35 +259,19 @@ def write_trajectory(input_path, output_path):
     # │   └── best_config_trajectory.txt
     # └── configs/
     #
-    neps_dir = input_path.parent.parent
-    configs_dir = neps_dir / "configs"
-
-    logger.info(
-        "NEPS directory: %s",
-        neps_dir,
-    )
-
-    logger.info(
-        "Configs directory: %s",
-        configs_dir,
-    )
+    if config_results is None:
+        raise ValueError("config_results are required for adapter execution")
 
     config_ids = parse_config_ids(input_path)
 
-    config_results = []
+    trajectory_results = []
+    warning_count = Counter()
 
     # Process configurations strictly in trajectory order.
     for config_number, config_id in enumerate(
         config_ids,
         start=1,
     ):
-        trial_path = (
-            configs_dir
-            / f"config_{config_id}"
-            / "artifacts"
-            / "trial_result.json"
-        )
-
         logger.info(
             "Processing trajectory entry %d/%d: "
             "Config ID %d",
@@ -361,50 +280,28 @@ def write_trajectory(input_path, output_path):
             config_id,
         )
 
-        logger.debug(
-            "Expected trial result: %s",
-            trial_path,
-        )
-
-        # Missing configuration result is a hard failure.
-        if not trial_path.is_file():
-            logger.error(
-                "Missing trial_result.json for Config ID %d: %s",
-                config_id,
-                trial_path,
-            )
-
-            raise FileNotFoundError(
-                f"Missing trial_result.json for Config ID "
-                f"{config_id}: {trial_path}"
-            )
+        if config_id not in config_results:
+            raise KeyError(f"Missing trial result for Config ID {config_id}")
 
         try:
-            results = load_trial_result(trial_path)
+            results = load_trial_result_from_data(config_results[config_id], config_id)
         except Exception:
-            logger.exception(
-                "Failed processing Config ID %d: %s",
-                config_id,
-                trial_path,
-            )
+            logger.exception("Failed processing Config ID %d", config_id)
             raise
 
         # Log invalid predictions with configuration context.
         for sequence_id, result in results.items():
             for warning in result["prediction_warnings"]:
-                logger.warning(
-                    "Config ID %d, sequence %s: %s",
-                    config_id,
-                    sequence_id,
-                    warning,
-                )
+                warning_count[warning] += 1
+            for warning in result["target_warnings"]:
+                warning_count[warning] += 1
 
-        config_results.append(
+        trajectory_results.append(
             (config_id, results)
         )
 
     # Use the first configuration for sequence ordering.
-    first_config_id, first_results = config_results[0]
+    first_config_id, first_results = trajectory_results[0]
 
     sequence_ids = list(first_results.keys())
 
@@ -421,7 +318,7 @@ def write_trajectory(input_path, output_path):
     expected_ids = set(sequence_ids)
 
     # Every configuration must contain exactly the same sequences.
-    for config_id, results in config_results:
+    for config_id, results in trajectory_results:
         actual_ids = set(results)
 
         if actual_ids != expected_ids:
@@ -472,7 +369,7 @@ def write_trajectory(input_path, output_path):
                 f"{target}\n"
             )
 
-            for config_id, results in config_results:
+            for config_id, results in trajectory_results:
                 result = results[sequence_id]
 
                 prediction = format_prediction(
@@ -493,120 +390,4 @@ def write_trajectory(input_path, output_path):
         "Successfully wrote trajectory to %s",
         output_path,
     )
-
-
-def main():
-    parser = argparse.ArgumentParser(
-        description=(
-            "Extract dot-bracket structures from NEPS "
-            "trial results."
-        )
-    )
-
-    parser.add_argument(
-        "--input",
-        required=True,
-        type=Path,
-        help=(
-            "Input file: trial_result.json or "
-            "best_config_trajectory.txt"
-        ),
-    )
-
-    parser.add_argument(
-        "--output",
-        required=True,
-        type=Path,
-        help="Output directory",
-    )
-
-    parser.add_argument(
-        "--verbose",
-        action="store_true",
-        help="Enable DEBUG logging",
-    )
-
-    args = parser.parse_args()
-
-    configure_logging(
-        args.verbose
-    )
-
-    input_path = args.input.resolve()
-    output_dir = args.output.resolve()
-
-    logger.info(
-        "Starting dot-bracket extraction"
-    )
-
-    logger.info(
-        "Input file: %s",
-        input_path,
-    )
-
-    logger.info(
-        "Output directory: %s",
-        output_dir,
-    )
-
-    if not input_path.is_file():
-        logger.error(
-            "Input file does not exist: %s",
-            input_path,
-        )
-        sys.exit(1)
-
-    output_dir.mkdir(
-        parents=True,
-        exist_ok=True,
-    )
-
-    try:
-        # Mode is determined exclusively from the input filename.
-        if input_path.name == "trial_result.json":
-            output_path = (
-                output_dir / "dotbracket.txt"
-            )
-
-            write_trial_result(
-                input_path,
-                output_path,
-            )
-
-        elif input_path.name == "best_config_trajectory.txt":
-            output_path = (
-                output_dir / "dotbracket_trajectory.txt"
-            )
-
-            write_trajectory(
-                input_path,
-                output_path,
-            )
-
-        else:
-            logger.error(
-                "Unknown input filename: %s",
-                input_path.name,
-            )
-
-            logger.error(
-                "Expected trial_result.json or "
-                "best_config_trajectory.txt"
-            )
-
-            sys.exit(1)
-
-    except Exception:
-        logger.exception(
-            "Dot-bracket extraction failed"
-        )
-        sys.exit(1)
-
-    logger.info(
-        "Finished successfully"
-    )
-
-
-if __name__ == "__main__":
-    main()
-
+    return sum(warning_count.values())
