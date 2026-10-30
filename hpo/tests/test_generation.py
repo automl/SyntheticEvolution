@@ -26,7 +26,7 @@ def generator_cli():
     """
     script = Path(os.environ.get(
         'SHS_GENERATOR',
-        str(Path(__file__).resolve().parents[2] / 'SHS-Generator/shs_generator.py'),
+        str(Path(__file__).resolve().parents[2] / 'SHS-Generator-RNA/shs_generator.py'),
     )).resolve()
     python = os.environ.get('SHS_PYTHON', sys.executable)
     assert script.is_file(), f'Generator not found: {script}; set SHS_GENERATOR if needed'
@@ -206,7 +206,7 @@ assert len(first) == 10 and first[0] == sequence
 
 
 @pytest.mark.parametrize('case_index', range(10))
-def test_seeded_output_matches_original_generator(run_api, case_index):
+def test_seeded_output_matches_regression_fixture(run_api, case_index):
     fixture = Path(__file__).with_name('fixtures') / 'generator_regression.json'
     result = run_api('''
 from pathlib import Path
@@ -217,6 +217,44 @@ pairs = build_pair_map(case['sequence'], case['pairs'],
 msa = MsaGenerator(parameters, seed=case['seed']).generate(case['sequence'], pairs)
 assert msa == case['msa'], case['id']
 ''', str(fixture.resolve()), str(case_index))
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_paired_deletions_are_independent_with_additional_pair_event(run_api):
+    result = run_api('''
+from generator_config import MutationParameters, build_pair_map
+from shs_generator import MsaGenerator
+
+parameters = MutationParameters(
+    N=10001,
+    pair_mutation_approach='none',
+    stem_single_deletion_prob=0.1,
+    stem_pair_deletion_prob=0.1,
+    loop_single_insertion_prob=0.0,
+    loop_long_insertion_prob=0.0,
+    loop_single_deletion_prob=0.0,
+    loop_long_deletion_prob=0.0,
+    stem_single_insertion_prob=0.0,
+    stem_long_insertion_prob=0.0,
+)
+pairs = build_pair_map('AU', [[0, 1, 1.0]], 0.0, 0.0)
+rows = MsaGenerator(parameters, seed=7).generate('AU', pairs)[1:]
+counts = {'both': 0, 'first': 0, 'second': 0, 'neither': 0}
+for row in rows:
+    outcome = (row[0] == '-', row[1] == '-')
+    name = {
+        (True, True): 'both',
+        (True, False): 'first',
+        (False, True): 'second',
+        (False, False): 'neither',
+    }[outcome]
+    counts[name] += 1
+total = len(rows)
+assert 0.095 < counts['both'] / total < 0.125
+assert 0.07 < counts['first'] / total < 0.095
+assert 0.07 < counts['second'] / total < 0.095
+assert 0.70 < counts['neither'] / total < 0.76
+''')
     assert result.returncode == 0, result.stdout + result.stderr
 
 

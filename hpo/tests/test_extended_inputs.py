@@ -8,7 +8,7 @@ import sys
 import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / 'SHS-Generator'))
+sys.path.insert(0, str(ROOT / 'SHS-Generator-RNA'))
 sys.path.insert(0, str(ROOT))
 from generator_config import MutationParameters, split_parameters
 from pair_map import build_pair_map

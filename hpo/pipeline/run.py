@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 PIPELINE_DIR = Path(__file__).resolve().parent  # SyntheticEvolution/hpo/pipeline
 HPO_DIR = PIPELINE_DIR.parent                   # SyntheticEvolution/hpo
 ROOT = HPO_DIR.parent                           # SyntheticEvolution
-GENERATOR_DIR = ROOT / 'SHS-Generator'
+GENERATOR_DIR = ROOT / 'SHS-Generator-RNA'
 
 Dataset = list[dict[str, Any]]
 

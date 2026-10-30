@@ -63,7 +63,7 @@ def _plot_config(config_id: int, context: ResultsContext, output_dir: Path, anal
         request = json.loads(request_path.read_text())
         pair_map_module = _load_module(
             "analysis_pair_map",
-            Path(__file__).parents[2] / "SHS-Generator" / "pair_map.py",
+            Path(__file__).parents[2] / "SHS-Generator-RNA" / "pair_map.py",
         )
         pair_map = pair_map_module.build_pair_map(
             request["sequence"], request["pairs"]
@@ -154,7 +154,7 @@ def _write_fasta(path: Path, rows: list[str]) -> None:
 
 def run(context: ResultsContext, output_dir: Path) -> None:
     """Generate covariance and indel plots for the configured SHS selections."""
-    generator_dir = Path(__file__).parents[2] / "SHS-Generator"
+    generator_dir = Path(__file__).parents[2] / "SHS-Generator-RNA"
     if str(generator_dir) not in sys.path:
         sys.path.insert(0, str(generator_dir))
     analyzer_path = Path(__file__).parents[1] / "SHS-Analyzer" / "shs_analyzer.py"
