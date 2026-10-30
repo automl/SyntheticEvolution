@@ -12,10 +12,7 @@ import matplotlib.pyplot as plt
 
 from pair_map import PairMap
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
+logger = logging.getLogger("analysis.shs_analyzer")
 
 VALID_BASES = list("AGCU-")
 
@@ -50,10 +47,10 @@ def _extract_fasta(content: str) -> str:
         return content
     all_fasta = [msa for c in data.get("sequences", []) if "rna" in c and (msa := c["rna"].get("unpairedMsa"))]
     if len(all_fasta) == 0:
-        logging.error("No unpaired MSA found for any rna in the json input")
+        logger.error("No unpaired MSA found for any rna in the json input")
         raise ValueError("Invalid Input, aborting.")
     if len(all_fasta) > 1:
-        logging.warning("Input json contains multiple rna chains with unpaired msa, using the first one")
+        logger.warning("Input json contains multiple rna chains with unpaired msa, using the first one")
     return all_fasta[0]
 
 
@@ -78,7 +75,7 @@ class MsaData:
         # Sequence lines only (drop headers); first is the seq, rest samples.
         lines = fasta.splitlines()[1::2]
         if len(lines) < 2:
-            logging.error("Recovered MSA is empty (need a query and >=1 sample)")
+            logger.error("Recovered MSA is empty (need a query and >=1 sample)")
             raise ValueError("Invalid Input, aborting.")
         seq_list, *sample_rows = lines
         seq = ''.join(seq_list)
@@ -92,13 +89,13 @@ class MsaData:
             insertion_rows.append(ins)
 
         if not all(len(r) == len(seq) for r in aligned_rows):
-            logging.error("Sequences in MSA have different aligned lengths or the json was invalid")
+            logger.error("Sequences in MSA have different aligned lengths or the json was invalid")
             raise ValueError("Invalid Input, aborting.")
         aligned = np.array(aligned_rows)
         insertions = np.array(insertion_rows)
         if not np.all(np.isin(aligned, VALID_BASES)):
             bad = np.unique(aligned[~np.isin(aligned, VALID_BASES)])
-            logging.error("Invalid characters in MSA: %s", bad)
+            logger.error("Invalid characters in MSA: %s", bad)
             raise ValueError("Invalid Input, aborting.")
 
         return cls(seq=seq, raw=raw, aligned=aligned, insertions=insertions, pairs=pairs)
@@ -255,7 +252,7 @@ def plot_covariance(seq: str, cov: np.ndarray, title: str = "Recovered covarianc
     fig.tight_layout()
     if out:
         fig.savefig(out, dpi=150)
-        logging.info("Figure written to: %s", out)
+        logger.info("Figure written to: %s", out)
     if show:
         plt.show()
     return fig
@@ -291,7 +288,7 @@ def plot_covariance_classification(seq: str, cov: np.ndarray, pairs: Optional[Pa
     fig.tight_layout()
     if out:
         fig.savefig(out, dpi=150)
-        logging.info("Figure written to: %s", out)
+        logger.info("Figure written to: %s", out)
     if show:
         plt.show()
     return fig
@@ -325,7 +322,7 @@ def plot_deletions_and_insertion(deletions: np.ndarray, insertions: np.ndarray,
     fig.tight_layout()
     if out:
         fig.savefig(out, dpi=150)
-        logging.info("Figure written to: %s", out)
+        logger.info("Figure written to: %s", out)
     if show:
         plt.show()
     return fig
@@ -378,7 +375,7 @@ def plot_mutation_rate_comparison(input_rates: np.ndarray, output_rates: np.ndar
     fig.tight_layout()
     if out:
         fig.savefig(out, dpi=150)
-        logging.info("Figure written to: %s", out)
+        logger.info("Figure written to: %s", out)
     if show:
         plt.show()
     return fig, {"mae": mae, "rmse": rmse, "pearson_r": pearson_r}
@@ -400,9 +397,9 @@ def main(argv: Optional[List[str]] = None) -> None:
     feat = Features(data)
 
     report = analyze_data(data)
-    logging.info("Recovered parameters:")
+    logger.info("Recovered parameters:")
     for name, est in report.items():
-        logging.info("  %-24s = %-8s %s", name, round(est.value, 4), est.detail or "")
+        logger.info("  %-24s = %-8s %s", name, round(est.value, 4), est.detail or "")
 
     title = args.title or "Recovered (covariation)"
     plot_covariance(data.seq, feat.covariance, title=title, show=args.show, out=args.out)

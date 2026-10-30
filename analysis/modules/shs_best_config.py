@@ -2,6 +2,7 @@
 
 import importlib.util
 import json
+import logging
 import re
 import sys
 from pathlib import Path
@@ -10,6 +11,8 @@ from typing import Any
 import matplotlib.pyplot as plt
 
 from analysis.results_loader import ResultsContext
+
+LOGGER = logging.getLogger("analysis.shs_best_config")
 
 
 def _load_module(name: str, path: Path) -> Any:
@@ -69,8 +72,8 @@ def _plot_config(config_id: int, context: ResultsContext, output_dir: Path, anal
             json.dumps(af3_input),
             pairs=pair_map,
         )
+        _write_msa_views(data, task_output := output_dir / f"config_{config_id}" / task_dir.name)
         features = analyzer.Features(data)
-        task_output = config_output / task_dir.name
         task_output.mkdir(parents=True, exist_ok=True)
         analyzer.plot_covariance(
             data.seq, features.covariance, show=False,
@@ -92,8 +95,68 @@ def _plot_config(config_id: int, context: ResultsContext, output_dir: Path, anal
     return plot_count
 
 
+def _write_msa_views(data: Any, output_dir: Path) -> None:
+    """Write clean and insertion-preserving FASTA views of one chain's MSA."""
+    rows = [data.seq, *("".join(row) for row in data.raw)]
+    clean_rows = ["".join(char for char in row if not char.islower()) for row in rows]
+    insertion_rows = [analyzer_row for analyzer_row in rows]
+    insertion_widths = [
+        max(len(chunks[index]) for chunks in map(_insertion_chunks, insertion_rows))
+        + 1
+        for index in range(len(data.seq) + 1)
+    ]
+
+    output_dir.mkdir(parents=True, exist_ok=True)
+    _write_fasta(
+        output_dir / "clean.fasta",
+        clean_rows,
+    )
+    _write_fasta(
+        output_dir / "aligned.fasta",
+        [_aligned_row(row, insertion_widths) for row in insertion_rows],
+    )
+    LOGGER.info(
+        "Wrote MSA FASTA views to %s (maximum column width: %d)",
+        output_dir,
+        max(insertion_widths),
+    )
+
+
+def _insertion_chunks(row: str) -> list[str]:
+    chunks: list[str] = []
+    current: list[str] = []
+    for char in row:
+        if char.islower():
+            current.append(char)
+        else:
+            chunks.append("".join(current))
+            current = []
+    chunks.append("".join(current))
+    return chunks
+
+
+def _aligned_row(row: str, insertion_widths: list[int]) -> str:
+    chunks = _insertion_chunks(row)
+    aligned = [char for char in row if not char.islower()]
+    parts = [
+        chunks[index]
+        + char
+        + " " * (insertion_widths[index] - len(chunks[index]) - 1)
+        for index, char in enumerate(aligned)
+    ]
+    parts.append(chunks[-1])
+    return "".join(parts)
+
+
+def _write_fasta(path: Path, rows: list[str]) -> None:
+    path.write_text("\n".join(rows) + "\n")
+
+
 def run(context: ResultsContext, output_dir: Path) -> None:
     """Generate covariance and indel plots for the configured SHS selections."""
+    generator_dir = Path(__file__).parents[2] / "SHS-Generator"
+    if str(generator_dir) not in sys.path:
+        sys.path.insert(0, str(generator_dir))
     analyzer_path = Path(__file__).parents[1] / "SHS-Analyzer" / "shs_analyzer.py"
     analyzer = _load_module("analysis_shs_analyzer", analyzer_path)
     selected_ids = _selected_config_ids(context)
