@@ -1,0 +1,468 @@
+$ tree --filelimit 50
+.
+├── controller_logs
+│   ├── 15471444_0.err
+│   ├── 15471444_0.out
+│   ├── 15471444_1.err
+│   ├── 15471444_1.out
+│   ├── 15471444_2.err
+│   ├── 15471444_2.out
+│   ├── 15471444_3.err
+│   ├── 15471444_3.out
+├── neps
+│   ├── configs [674 entries exceeds filelimit, not opening dir]
+│   ├── optimizer_info.yaml
+│   ├── optimizer_state.pkl
+│   ├── pipeline_space.pkl
+│   ├── shared_errors.jsonl
+│   └── summary
+│       ├── best_config_trajectory.txt
+│       ├── best_config.txt
+│       ├── full.csv
+│       └── short.csv
+└── run_metadata.json
+
+$ tree neps/configs/config_1/
+neps/configs/config_1/
+├── artifacts
+│   ├── af3_tasks.json
+│   ├── rna_00000
+│   │   ├── af3
+│   │   │   ├── af3_success.json
+│   │   │   └── rna_00000
+│   │   │       ├── ranking_scores.csv
+│   │   │       ├── rna_00000_confidences.json
+│   │   │       ├── rna_00000_data.json
+│   │   │       ├── rna_00000_model.cif
+│   │   │       ├── rna_00000_summary_confidences.json
+│   │   │       ├── seed-42_sample-0
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-1
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-2
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-3
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-4
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       └── TERMS_OF_USE.md
+│   │   ├── af3_input.json
+│   │   ├── af3.log
+│   │   ├── base_pair_evaluation.json
+│   │   ├── dssr
+│   │   │   ├── dssr-2ndstrs.bpseq
+│   │   │   ├── dssr-2ndstrs.ct
+│   │   │   ├── dssr-2ndstrs.dbn
+│   │   │   ├── dssr-helices.pdb
+│   │   │   ├── dssr.json
+│   │   │   ├── dssr.log
+│   │   │   ├── dssr-pairs.pdb
+│   │   │   ├── dssr-stacks.pdb
+│   │   │   └── dssr-torsions.txt
+│   │   ├── shs_effective_parameters.json
+│   │   ├── shs_generation.log
+│   │   └── shs_generation_request.json
+│   ├── rna_00001
+│   │   ├── af3
+│   │   │   ├── af3_success.json
+│   │   │   └── rna_00001
+│   │   │       ├── ranking_scores.csv
+│   │   │       ├── rna_00001_confidences.json
+│   │   │       ├── rna_00001_data.json
+│   │   │       ├── rna_00001_model.cif
+│   │   │       ├── rna_00001_summary_confidences.json
+│   │   │       ├── seed-42_sample-0
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-1
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-2
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-3
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-4
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       └── TERMS_OF_USE.md
+│   │   ├── af3_input.json
+│   │   ├── af3.log
+│   │   ├── base_pair_evaluation.json
+│   │   ├── dssr
+│   │   │   ├── dssr-2ndstrs.bpseq
+│   │   │   ├── dssr-2ndstrs.ct
+│   │   │   ├── dssr-2ndstrs.dbn
+│   │   │   ├── dssr-helices.pdb
+│   │   │   ├── dssr.json
+│   │   │   ├── dssr.log
+│   │   │   ├── dssr-pairs.pdb
+│   │   │   ├── dssr-stacks.pdb
+│   │   │   └── dssr-torsions.txt
+│   │   ├── shs_effective_parameters.json
+│   │   ├── shs_generation.log
+│   │   └── shs_generation_request.json
+│   ├── rna_00002
+│   │   ├── af3
+│   │   │   ├── af3_success.json
+│   │   │   └── rna_00002
+│   │   │       ├── ranking_scores.csv
+│   │   │       ├── rna_00002_confidences.json
+│   │   │       ├── rna_00002_data.json
+│   │   │       ├── rna_00002_model.cif
+│   │   │       ├── rna_00002_summary_confidences.json
+│   │   │       ├── seed-42_sample-0
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-1
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-2
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-3
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-4
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       └── TERMS_OF_USE.md
+│   │   ├── af3_input.json
+│   │   ├── af3.log
+│   │   ├── base_pair_evaluation.json
+│   │   ├── dssr
+│   │   │   ├── dssr-2ndstrs.bpseq
+│   │   │   ├── dssr-2ndstrs.ct
+│   │   │   ├── dssr-2ndstrs.dbn
+│   │   │   ├── dssr-helices.pdb
+│   │   │   ├── dssr.json
+│   │   │   ├── dssr.log
+│   │   │   ├── dssr-pairs.pdb
+│   │   │   ├── dssr-stacks.pdb
+│   │   │   └── dssr-torsions.txt
+│   │   ├── shs_effective_parameters.json
+│   │   ├── shs_generation.log
+│   │   └── shs_generation_request.json
+│   ├── rna_00003
+│   │   ├── af3
+│   │   │   ├── af3_success.json
+│   │   │   └── rna_00003
+│   │   │       ├── ranking_scores.csv
+│   │   │       ├── rna_00003_confidences.json
+│   │   │       ├── rna_00003_data.json
+│   │   │       ├── rna_00003_model.cif
+│   │   │       ├── rna_00003_summary_confidences.json
+│   │   │       ├── seed-42_sample-0
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-1
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-2
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-3
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-4
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       └── TERMS_OF_USE.md
+│   │   ├── af3_input.json
+│   │   ├── af3.log
+│   │   ├── base_pair_evaluation.json
+│   │   ├── dssr
+│   │   │   ├── dssr-2ndstrs.bpseq
+│   │   │   ├── dssr-2ndstrs.ct
+│   │   │   ├── dssr-2ndstrs.dbn
+│   │   │   ├── dssr-helices.pdb
+│   │   │   ├── dssr.json
+│   │   │   ├── dssr.log
+│   │   │   ├── dssr-pairs.pdb
+│   │   │   ├── dssr-stacks.pdb
+│   │   │   └── dssr-torsions.txt
+│   │   ├── shs_effective_parameters.json
+│   │   ├── shs_generation.log
+│   │   └── shs_generation_request.json
+│   ├── rna_00004
+│   │   ├── af3
+│   │   │   ├── af3_success.json
+│   │   │   └── rna_00004
+│   │   │       ├── ranking_scores.csv
+│   │   │       ├── rna_00004_confidences.json
+│   │   │       ├── rna_00004_data.json
+│   │   │       ├── rna_00004_model.cif
+│   │   │       ├── rna_00004_summary_confidences.json
+│   │   │       ├── seed-42_sample-0
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-1
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-2
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-3
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-4
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       └── TERMS_OF_USE.md
+│   │   ├── af3_input.json
+│   │   ├── af3.log
+│   │   ├── base_pair_evaluation.json
+│   │   ├── dssr
+│   │   │   ├── dssr-2ndstrs.bpseq
+│   │   │   ├── dssr-2ndstrs.ct
+│   │   │   ├── dssr-2ndstrs.dbn
+│   │   │   ├── dssr-atom2bases.pdb
+│   │   │   ├── dssr-hairpins.pdb
+│   │   │   ├── dssr-helices.pdb
+│   │   │   ├── dssr-iloops.pdb
+│   │   │   ├── dssr.json
+│   │   │   ├── dssr.log
+│   │   │   ├── dssr-pairs.pdb
+│   │   │   ├── dssr-stacks.pdb
+│   │   │   ├── dssr-stems.pdb
+│   │   │   └── dssr-torsions.txt
+│   │   ├── shs_effective_parameters.json
+│   │   ├── shs_generation.log
+│   │   └── shs_generation_request.json
+│   ├── rna_00005
+│   │   ├── af3
+│   │   │   ├── af3_success.json
+│   │   │   └── rna_00005
+│   │   │       ├── ranking_scores.csv
+│   │   │       ├── rna_00005_confidences.json
+│   │   │       ├── rna_00005_data.json
+│   │   │       ├── rna_00005_model.cif
+│   │   │       ├── rna_00005_summary_confidences.json
+│   │   │       ├── seed-42_sample-0
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-1
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-2
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-3
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-4
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       └── TERMS_OF_USE.md
+│   │   ├── af3_input.json
+│   │   ├── af3.log
+│   │   ├── base_pair_evaluation.json
+│   │   ├── dssr
+│   │   │   ├── dssr-2ndstrs.bpseq
+│   │   │   ├── dssr-2ndstrs.ct
+│   │   │   ├── dssr-2ndstrs.dbn
+│   │   │   ├── dssr-atom2bases.pdb
+│   │   │   ├── dssr-hairpins.pdb
+│   │   │   ├── dssr-helices.pdb
+│   │   │   ├── dssr-iloops.pdb
+│   │   │   ├── dssr.json
+│   │   │   ├── dssr.log
+│   │   │   ├── dssr-pairs.pdb
+│   │   │   ├── dssr-stacks.pdb
+│   │   │   ├── dssr-stems.pdb
+│   │   │   └── dssr-torsions.txt
+│   │   ├── shs_effective_parameters.json
+│   │   ├── shs_generation.log
+│   │   └── shs_generation_request.json
+│   ├── rna_00006
+│   │   ├── af3
+│   │   │   ├── af3_success.json
+│   │   │   └── rna_00006
+│   │   │       ├── ranking_scores.csv
+│   │   │       ├── rna_00006_confidences.json
+│   │   │       ├── rna_00006_data.json
+│   │   │       ├── rna_00006_model.cif
+│   │   │       ├── rna_00006_summary_confidences.json
+│   │   │       ├── seed-42_sample-0
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-1
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-2
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-3
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-4
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       └── TERMS_OF_USE.md
+│   │   ├── af3_input.json
+│   │   ├── af3.log
+│   │   ├── base_pair_evaluation.json
+│   │   ├── dssr
+│   │   │   ├── dssr-2ndstrs.bpseq
+│   │   │   ├── dssr-2ndstrs.ct
+│   │   │   ├── dssr-2ndstrs.dbn
+│   │   │   ├── dssr-atom2bases.pdb
+│   │   │   ├── dssr-bulges.pdb
+│   │   │   ├── dssr-hairpins.pdb
+│   │   │   ├── dssr-helices.pdb
+│   │   │   ├── dssr-iloops.pdb
+│   │   │   ├── dssr.json
+│   │   │   ├── dssr.log
+│   │   │   ├── dssr-pairs.pdb
+│   │   │   ├── dssr-stacks.pdb
+│   │   │   ├── dssr-stems.pdb
+│   │   │   └── dssr-torsions.txt
+│   │   ├── shs_effective_parameters.json
+│   │   ├── shs_generation.log
+│   │   └── shs_generation_request.json
+│   ├── rna_00007
+│   │   ├── af3
+│   │   │   ├── af3_success.json
+│   │   │   └── rna_00007
+│   │   │       ├── ranking_scores.csv
+│   │   │       ├── rna_00007_confidences.json
+│   │   │       ├── rna_00007_data.json
+│   │   │       ├── rna_00007_model.cif
+│   │   │       ├── rna_00007_summary_confidences.json
+│   │   │       ├── seed-42_sample-0
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-1
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-2
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-3
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-4
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       └── TERMS_OF_USE.md
+│   │   ├── af3_input.json
+│   │   ├── af3.log
+│   │   ├── base_pair_evaluation.json
+│   │   ├── dssr
+│   │   │   ├── dssr-2ndstrs.bpseq
+│   │   │   ├── dssr-2ndstrs.ct
+│   │   │   ├── dssr-2ndstrs.dbn
+│   │   │   ├── dssr-hairpins.pdb
+│   │   │   ├── dssr-helices.pdb
+│   │   │   ├── dssr-iloops.pdb
+│   │   │   ├── dssr.json
+│   │   │   ├── dssr.log
+│   │   │   ├── dssr-pairs.pdb
+│   │   │   ├── dssr-splays.pdb
+│   │   │   ├── dssr-stacks.pdb
+│   │   │   ├── dssr-stems.pdb
+│   │   │   └── dssr-torsions.txt
+│   │   ├── shs_effective_parameters.json
+│   │   ├── shs_generation.log
+│   │   └── shs_generation_request.json
+│   ├── rna_00008
+│   │   ├── af3
+│   │   │   ├── af3_success.json
+│   │   │   └── rna_00008
+│   │   │       ├── ranking_scores.csv
+│   │   │       ├── rna_00008_confidences.json
+│   │   │       ├── rna_00008_data.json
+│   │   │       ├── rna_00008_model.cif
+│   │   │       ├── rna_00008_summary_confidences.json
+│   │   │       ├── seed-42_sample-0
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-1
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-2
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-3
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       ├── seed-42_sample-4
+│   │   │       │   ├── confidences.json
+│   │   │       │   ├── model.cif
+│   │   │       │   └── summary_confidences.json
+│   │   │       └── TERMS_OF_USE.md
+│   │   ├── af3_input.json
+│   │   ├── af3.log
+│   │   ├── base_pair_evaluation.json
+│   │   ├── dssr
+│   │   │   ├── dssr-2ndstrs.bpseq
+│   │   │   ├── dssr-2ndstrs.ct
+│   │   │   ├── dssr-2ndstrs.dbn
+│   │   │   ├── dssr-hairpins.pdb
+│   │   │   ├── dssr-helices.pdb
+│   │   │   ├── dssr-iloops.pdb
+│   │   │   ├── dssr.json
+│   │   │   ├── dssr.log
+│   │   │   ├── dssr-pairs.pdb
+│   │   │   ├── dssr-splays.pdb
+│   │   │   ├── dssr-stacks.pdb
+│   │   │   ├── dssr-stems.pdb
+│   │   │   └── dssr-torsions.txt
+│   │   ├── shs_effective_parameters.json
+│   │   ├── shs_generation.log
+│   │   └── shs_generation_request.json
+│   ├── trial_metadata.json
+│   └── trial_result.json
+├── config.yaml
+├── metadata.json
+└── report.yaml
