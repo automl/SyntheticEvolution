@@ -1340,7 +1340,7 @@ print(f'### Plotting directory: {plotting_dir}')
 #####################################################################################################################
 # AlphaFold 3
 
-msa_sizes = pd.read_csv('msa_sizes_all_data.csv')
+msa_sizes = pd.read_csv('data/processed/msa_sizes_all_data.csv')
 # msa_sizes = pd.concat([
 #     pd.read_csv('msa_sizes_all_data_orphan.csv'),
 #     pd.read_csv('msa_sizes_all_data_non_orphan.csv')

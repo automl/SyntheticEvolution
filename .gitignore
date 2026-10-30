@@ -15,6 +15,9 @@ __pycache__/
 *.pyo
 *.pyd
 
+# build files
+*.egg-info/
+
 # vscode files
 .vscode/
 

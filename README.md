@@ -9,13 +9,13 @@ This process produces deep, MSA-like sequence ensembles in seconds, without reli
 When supplied to AlphaFold 3, synthetic homologs substantially improve local RNA structural accuracy while largely preserving global fold topology, and rescue predictions for orphan RNAs where no natural alignment exists.
 Secondary-structure-guided synthetic homologs thus provide a practical route to accurate RNA 3D structure prediction in regimes where evolutionary information is sparse or absent.
 
-![RNAformer Architecture and SHS Pipeline](SHS_pipeline_and_architecture_2_bg_white.png)
+![RNAformer Architecture and SHS Pipeline](docs/images/SHS_pipeline_and_architecture_2_bg_white.png)
 **RNAformer network architecture and workflow for the generation of synthetic homologous sequences.** **a,** *After embedding the input RNA sequence into a 2D latent representation, the RNAformer successively refines this internal representation in subsequent blocks leveraging axial attention layers to finally predict a full nucleotide interaction map.* **b,** *The synthetic homologous sequences (SHS) generation pipeline uses RNAformer to predict an interaction map. The interaction information is subsequently used to inform the generation of SHS.* **c,** *For comparison with our novel SHS approach, we show a (non-iterative) standard pipeline for obtaining MSA using a profile HMM for database mining and subsequent sequence alignment as e.g. used in the HMMER-based genetic search of AlphaFold 3.* **d,** *The generated set of SHS (or the obtained MSA in the case of vanilla AlphaFold 3 predictions) serves as the interaction information for 3D Structure prediction of AlphaFold 3.*
 
 ## Install
 We use [miniconda](https://www.anaconda.com/docs/getting-started/miniconda/main)/[Micromamba](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html) to create a virtual environment for all our dependencies. If you are not familiar with using ```conda``` or ```mamba``` please find more information at <https://www.anaconda.com/docs/getting-started/miniconda/main> and <https://mamba.readthedocs.io/en/latest/index.html>. You can download miniconda for Linux, Windows, and MAC [here](https://www.anaconda.com/download) or read about Micromamba installation [here](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html).
 
-Please find detailed guidelines for installation of our pipeline for the generation of synthetic homologues in our [Install Guidelines](/docs/INSTALL.md). 
+Please find detailed guidelines for installation of our pipeline for the generation of synthetic homologues in our [Install Guidelines](docs/INSTALL.md).
 For quick install, you can use our installation script by running 
 ```
 ./install.sh
@@ -24,7 +24,7 @@ This will install all requirements for the synthetic MSA genration, including do
 The install script was tested on ```Ubuntu 22.04.5 LTS (Jammy Jellyfish)```.
 
 **Note: Our full prediction pipeline requires AlphaFold 3.**
-You can find more guidelines for installation in our [Install Guidelines](/docs/INSTALL.md).
+You can find more guidelines for installation in our [Install Guidelines](docs/INSTALL.md).
 
 ## Data
 **Note: Our SHS pipeline works with any AlphaFold 3 json input (data) file for the standalone code version. The AlphaFold 3 server currently does not support custom MSA inputs.**

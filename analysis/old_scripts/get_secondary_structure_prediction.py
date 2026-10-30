@@ -107,7 +107,7 @@ def get_structure(predictor: str, pdb_id: str = None, sequence: str = None) -> D
     elif predictor == "rnaformer":
         # seq = get_seq_from_json(pdb_id).upper()
         print(seq)
-        known = pd.read_pickle('synthetic_msa_selection_max_rna_len_200_min_rna_len_15_max_protein_len_200_rnaformer2025_pdb_id2pairs_mapping.pkl')
+        known = pd.read_pickle('data/processed/synthetic_msa_selection_max_rna_len_200_min_rna_len_15_max_protein_len_200_rnaformer2025_pdb_id2pairs_mapping.pkl')
 
         if seq in known['sequence'].unique():
             # print('Known sequence, using cached RNAformer prediction.')
@@ -294,4 +294,3 @@ if __name__ == '__main__':
     pred_pairs = sorted(set((min(p1, p2), max(p1, p2)) for p1, p2 in pred_pairs.items()), key=lambda x: x[0])
     vis.visualize_rna(pred_pairs, seq, f'{pdb_id}_{args.predictor}', algorithm=args.predictor, plot_dir=plotting_dir, plot_type='radiate', resolution='8.0')
     vis.visualize_rna(pred_pairs, seq, f'{pdb_id}_{args.predictor}', algorithm=args.predictor, plot_dir=plotting_dir, plot_type='line', resolution='8.0')
-

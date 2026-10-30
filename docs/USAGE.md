@@ -10,7 +10,7 @@ All calls should be run from the project root.
 You can run our synthetic pipeline on any monomeric RNA-protein complex by providing an RNA sequence, a protein sequence, and a RNA secondary structure in dot-bracket format.
 For example run
 ```
-python rna_msa_generator_base_pair.py --structure "..((((....))))...." --rna-seq AGCGCGUAACGAUAGCUA --protein-seq MKTIIALSYIFCLVFAGQDEIRTLVSRVELTKLSDKIAARHGLQEVNRAALGRGIVRVA --seed 42 --show_plot
+python analysis/old_scripts/rna_msa_generator_base_pair.py --structure "..((((....))))...." --rna-seq AGCGCGUAACGAUAGCUA --protein-seq MKTIIALSYIFCLVFAGQDEIRTLVSRVELTKLSDKIAARHGLQEVNRAALGRGIVRVA --seed 42 --show_plot
 ```
 Per default, the generation pipeline will use the parameters that were also used in our manuscript.
 The ```--show_plot``` option enables plotting of some MSA features.
@@ -20,7 +20,7 @@ Alternatively, you can run the msa generation to modify an existing json data fi
 
 For example, simply run
 ```
-python rna_msa_generator_base_pair.py --structure_predictor rnafold --input_json_path data/datafiles/alphafold3/1SJ4_data.json
+python analysis/old_scripts/rna_msa_generator_base_pair.py --structure_predictor rnafold --input_json_path data/datafiles/alphafold3/1SJ4_data.json
 ```
 This will generate synthetic homologues using the RNAfold.
 Alternatively, you can use rnaformer or spotrna as predictors.
@@ -30,7 +30,7 @@ You can always provide a pdb_id via ```--pdb_id``` to name your output files fil
 
 For example, you can use
 ```
-python rna_msa_generator_base_pair.py --structure_predictor rnaformer --input_json_path data/datafiles/alphafold3/1SJ4_data.json --pdb_id myverylongcustomid
+python analysis/old_scripts/rna_msa_generator_base_pair.py --structure_predictor rnaformer --input_json_path data/datafiles/alphafold3/1SJ4_data.json --pdb_id myverylongcustomid
 ```
 
 **Note that we only provide a runtime patch for RNAformer that allows to run it on CPU. The runtime of RNAformer is substantially increased compared to running on GPU and we observed some differences in the predictions when using the CPU variant provided here.**
