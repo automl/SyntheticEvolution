@@ -23,3 +23,6 @@ __pycache__/
 
 # dev files
 test.py
+
+conda-mamba/
+custom_msa_json_output/
