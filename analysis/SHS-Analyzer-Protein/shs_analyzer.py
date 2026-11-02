@@ -6,18 +6,27 @@ import json
 from dataclasses import dataclass, field
 from functools import cached_property
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
+from pathlib import Path
 
 import numpy as np
 import matplotlib.pyplot as plt
+import importlib
+import sys
 
-from pair_map import PairMap
+_roots = (Path.cwd(), *Path.cwd().parents)
+REPO_ROOT = next((p for p in _roots if (p / "SHS-Generator-Protein" / "shs_generator.py").exists()), None)
+if REPO_ROOT is None:
+    raise FileNotFoundError("Could not find the SyntheticEvolution repository root.")
+SHS_DIR = (REPO_ROOT / "SHS-Generator-Protein").resolve()
+if str(SHS_DIR) not in sys.path:
+    sys.path.insert(0, str(SHS_DIR))
+
+from pair_map import PairMap, AMINO_ACIDS
 
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
-
-from pair_map import AMINO_ACIDS
 
 VALID_BASES = list(AMINO_ACIDS) + ['-']
 
@@ -50,18 +59,23 @@ def _extract_fasta(content: str) -> str:
             raise json.decoder.JSONDecodeError("not an object", content, 0)
     except json.decoder.JSONDecodeError:
         return content
-    all_fasta = [msa for c in data.get("sequences", []) if "rna" in c and (msa := c["rna"].get("unpairedMsa"))]
+    # Native AF3 JSON stores MSAs per chain type; protein chains use "protein",
+    # so accept both (protein first, since this is the protein analyzer).
+    all_fasta = []
+    for chain_type in ("protein", "rna"):
+        all_fasta += [msa for c in data.get("sequences", [])
+                      if chain_type in c and (msa := c[chain_type].get("unpairedMsa"))]
     if len(all_fasta) == 0:
-        logging.error("No unpaired MSA found for any rna in the json input")
+        logging.error("No unpaired MSA found for any protein or rna chain in the json input")
         raise ValueError("Invalid Input, aborting.")
     if len(all_fasta) > 1:
-        logging.warning("Input json contains multiple rna chains with unpaired msa, using the first one")
+        logging.warning("Input json contains multiple chains with unpaired msa, using the first one")
     return all_fasta[0]
 
 
 @dataclass(frozen=True, eq=False)
 class MsaData:
-    """Immutable parsed MSA."""
+    """Immutable parsed Protein."""
     seq: str
     raw: np.ndarray
     aligned: np.ndarray
@@ -185,26 +199,39 @@ def est_n(feat: Features, results: Dict[str, Estimate]) -> Estimate:
 
 
 def est_mutation_rate_unpaired(feat: Features, results: Dict[str, Estimate]) -> Estimate:
-    """Mutation rate at unpaired positions -> recovers --mutation-rate-unpaired."""
-    pairs = feat.data.pairs or {}
-    unpaired_cols = [i for i in range(len(feat.data.seq)) if not pairs.is_paired(i) and bool(pairs)]
+    """Mutation rate at unpaired positions -> recovers --mutation-rate-unpaired.
+
+    Without a known structure, all positions are treated as unpaired, which
+    blends the paired and unpaired rates and is reported via detail."""
+    pairs = feat.data.pairs
+    if pairs is not None:
+        unpaired_cols = [i for i in range(len(feat.data.seq)) if not pairs.is_paired(i)]
+    else:
+        unpaired_cols = list(range(len(feat.data.seq)))
     mutations = feat.mutation_mask[:, unpaired_cols]
     no_mutation = ~feat.deletion_mask[:, unpaired_cols]
     denom = int(no_mutation.sum())
     rate = float(mutations.sum() / denom) if denom else float("nan")
-    detail: Dict[str, Any] = {"unpaired_cols": len(unpaired_cols), "structure_known": bool(pairs)}
+    detail: Dict[str, Any] = {"unpaired_cols": len(unpaired_cols), "structure_known": pairs is not None}
     return Estimate("mutation_rate_unpaired", rate, detail)
 
 
 def est_mutation_rate_paired(feat: Features, results: Dict[str, Estimate]) -> Estimate:
-    """Mutation rate at paired (stem) positions -> recovers --mutation-rate-paired."""
-    pairs = feat.data.pairs or {}
-    paired_cols = [i for i in range(len(feat.data.seq)) if pairs.is_paired(i)]
+    """Mutation rate at paired (contact) positions -> recovers --mutation-rate-paired.
+
+    Without a known structure, no paired columns exist and the estimate is NaN.
+    Note that mutation rates are underestimated for the covariance approach:
+    a partner can mutate back to the original residue."""
+    pairs = feat.data.pairs
+    if pairs is not None:
+        paired_cols = [i for i in range(len(feat.data.seq)) if pairs.is_paired(i)]
+    else:
+        paired_cols = []
     mutations = feat.mutation_mask[:, paired_cols]
     not_deleted = ~feat.deletion_mask[:, paired_cols]
     denom = int(not_deleted.sum())
     rate = float(mutations.sum() / denom) if denom else float("nan")
-    detail: Dict[str, Any] = {"paired_cols": len(paired_cols), "structure_known": bool(pairs)}
+    detail: Dict[str, Any] = {"paired_cols": len(paired_cols), "structure_known": pairs is not None}
     return Estimate("mutation_rate_paired", rate, detail)
 
 
