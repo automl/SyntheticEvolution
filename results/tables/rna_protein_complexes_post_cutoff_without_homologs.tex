@@ -1,0 +1,15 @@
+\begin{table}[htbp]
+\centering
+\caption{RNA-protein complexes post-cutoff without homologs (n=96). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rna_protein_complexes_post_cutoff_without_homologs}
+\begin{tabular}{lcccccc}
+\toprule
+Input & DockQ ($\uparrow$) & ICS ($\uparrow$) & QS-global ($\uparrow$) & cTM ($\uparrow$) & cRMSD ($\downarrow$) & cLDDT ($\uparrow$) \\
+\midrule
+MSA & 0.303 $\pm$ 0.285 & 0.349 $\pm$ 0.297 & 0.347 $\pm$ 0.327 & 0.838 $\pm$ 0.146 & 5.238 $\pm$ 9.563 & \textbf{0.705 $\pm$ 0.098} \\
+SHS (RNAfold) & 0.279 $\pm$ 0.265 & 0.323 $\pm$ 0.275 & 0.316 $\pm$ 0.300 & 0.841 $\pm$ 0.142 & 5.025 $\pm$ 8.997 & 0.702 $\pm$ 0.091 \\
+SHS (SPOT-RNA) & 0.292 $\pm$ 0.264 & 0.342 $\pm$ 0.270 & 0.344 $\pm$ 0.297 & 0.840 $\pm$ 0.143 & 5.101 $\pm$ 9.214 & 0.704 $\pm$ 0.091 \\
+SHS (RNAformer) & \textbf{0.307 $\pm$ 0.267} & \textbf{0.357 $\pm$ 0.276} & \textbf{0.356 $\pm$ 0.305} & \textbf{0.843 $\pm$ 0.138} & \textbf{4.913 $\pm$ 8.932} & \textbf{0.705 $\pm$ 0.095} \\
+\bottomrule
+\end{tabular}
+\end{table}

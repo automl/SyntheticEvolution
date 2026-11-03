@@ -1,0 +1,28 @@
+# large / regenerable artifacts (shipped in 2026_neurips_shs_outputs.zip)
+results/db/
+results/db_long/
+results/db_rhofold/
+work/
+
+# built locally / site data / runtime files of the eval engine
+eval/engine/evaluation/USalign/USalign
+eval/engine/evaluation/data/
+eval/engine/database/config_shard_*.json
+eval/engine/sequences.fasta
+eval/engine/output.txt
+
+# python / editor noise
+__pycache__/
+*.pyc
+.DS_Store
+results/analysis/logs/
+
+# site-specific overrides and downloaded bundles
+config.local.sh
+downloads/
+
+# construction-sweep build intermediates (frozen copies in data/construct/)
+results/analysis/construction/construct91_datafiles/
+results/analysis/construction/construct_pairs_91.json
+results/analysis/construction/*_idxmap.tsv
+results/analysis/construction/*_fold.list

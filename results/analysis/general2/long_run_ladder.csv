@@ -1,0 +1,6 @@
+condition,RNA_TM
+natural MSA,0.81566648
+reference-topology SHS,0.59873096
+no-MSA,0.2321904
+shuffle-SHS,0.21972464
+random-SHS,0.128856

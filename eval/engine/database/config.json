@@ -1,0 +1,5 @@
+{
+    "classification": "protein_rna",
+    "base_data_path": "data",
+    "db_path": "database/rbpDatabase.db"
+}

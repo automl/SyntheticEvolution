@@ -1,0 +1,15 @@
+\begin{table}[htbp]
+\centering
+\caption{RNA single chain post-cutoff without homologs (n=13). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rna_single_chain_post_cutoff_without_homologs}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+MSA & 0.385 $\pm$ 0.228 & 6.897 $\pm$ 5.937 & 0.630 $\pm$ 0.234 \\
+SHS (RNAfold) & 0.301 $\pm$ 0.147 & 9.285 $\pm$ 5.828 & 0.594 $\pm$ 0.200 \\
+SHS (SPOT-RNA) & 0.333 $\pm$ 0.181 & 8.043 $\pm$ 5.708 & 0.636 $\pm$ 0.185 \\
+SHS (RNAformer) & \textbf{0.405 $\pm$ 0.209} & \textbf{6.809 $\pm$ 5.896} & \textbf{0.681 $\pm$ 0.214} \\
+\bottomrule
+\end{tabular}
+\end{table}

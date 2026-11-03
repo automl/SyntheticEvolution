@@ -1,0 +1,19 @@
+\begin{table}[htbp]
+\centering
+\caption{SHS combined with natural MSA, RNA single chain (n=91). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:shs_and_msa_depth_sweep}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+MSA & \textbf{0.660 $\pm$ 0.248} & \textbf{3.323 $\pm$ 4.103} & \textbf{0.771 $\pm$ 0.152} \\
+SHS (RNAformer) & 0.605 $\pm$ 0.222 & 4.230 $\pm$ 5.222 & 0.736 $\pm$ 0.137 \\
+SHS (RNAformerN20) + MSA & 0.655 $\pm$ 0.240 & 3.555 $\pm$ 4.352 & \textbf{0.771 $\pm$ 0.141} \\
+SHS (RNAformerN50) + MSA & 0.649 $\pm$ 0.237 & 3.643 $\pm$ 4.455 & 0.768 $\pm$ 0.140 \\
+SHS (RNAformerN100) + MSA & 0.645 $\pm$ 0.235 & 3.645 $\pm$ 4.437 & 0.764 $\pm$ 0.139 \\
+SHS (RNAformerN200) + MSA & 0.638 $\pm$ 0.235 & 3.746 $\pm$ 4.515 & 0.759 $\pm$ 0.141 \\
+SHS (RNAformerN500) + MSA & 0.633 $\pm$ 0.232 & 3.857 $\pm$ 4.589 & 0.755 $\pm$ 0.143 \\
+SHS (RNAformerN1000) + MSA & 0.629 $\pm$ 0.231 & 3.892 $\pm$ 4.554 & 0.751 $\pm$ 0.143 \\
+\bottomrule
+\end{tabular}
+\end{table}

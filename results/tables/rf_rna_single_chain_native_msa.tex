@@ -1,0 +1,15 @@
+\begin{table}[htbp]
+\centering
+\caption{RhoFold+ SHS variants vs. the native RhoFold+ MSA pipeline, RNA single chain (n=90); single run. Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rf_rna_single_chain_native_msa}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+SHS (RNAfold) & 0.368 $\pm$ 0.119 & 6.477 $\pm$ 4.912 & 0.527 $\pm$ 0.108 \\
+SHS (SPOT-RNA) & 0.402 $\pm$ 0.117 & 5.246 $\pm$ 4.051 & 0.555 $\pm$ 0.090 \\
+SHS (RNAformer) & 0.523 $\pm$ 0.184 & 3.748 $\pm$ 3.532 & 0.624 $\pm$ 0.098 \\
+RhoFold+ native MSA & \textbf{0.588 $\pm$ 0.190} & \textbf{3.191 $\pm$ 3.026} & \textbf{0.667 $\pm$ 0.097} \\
+\bottomrule
+\end{tabular}
+\end{table}

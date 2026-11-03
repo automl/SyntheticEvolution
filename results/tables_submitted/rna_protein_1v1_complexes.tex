@@ -1,0 +1,15 @@
+\begin{table}[htbp]
+\centering
+\caption{RNA-protein 1v1 complexes (n=112). Submitted single-seed evaluation (AF3 seed 1, sample 0); bold = best mean per metric.}
+\label{tab:rna_protein_1v1_complexes}
+\begin{tabular}{lcccccc}
+\toprule
+Input & DockQ ($\uparrow$) & ICS ($\uparrow$) & QS-global ($\uparrow$) & cTM ($\uparrow$) & cRMSD ($\downarrow$) & cLDDT ($\uparrow$) \\
+\midrule
+MSA & \textbf{0.714 $\pm$ 0.291} & \textbf{0.764 $\pm$ 0.282} & \textbf{0.806 $\pm$ 0.300} & \textbf{0.947 $\pm$ 0.084} & 3.964 $\pm$ 6.382 & \textbf{0.883 $\pm$ 0.098} \\
+SHS (RNAfold) & 0.550 $\pm$ 0.315 & 0.675 $\pm$ 0.305 & 0.721 $\pm$ 0.324 & 0.897 $\pm$ 0.118 & 7.309 $\pm$ 8.930 & 0.808 $\pm$ 0.135 \\
+SHS (SPOT-RNA) & 0.590 $\pm$ 0.316 & 0.688 $\pm$ 0.308 & 0.715 $\pm$ 0.324 & 0.907 $\pm$ 0.116 & 5.643 $\pm$ 7.489 & 0.837 $\pm$ 0.116 \\
+SHS (RNAformer) & 0.682 $\pm$ 0.296 & 0.737 $\pm$ 0.283 & 0.785 $\pm$ 0.298 & 0.940 $\pm$ 0.089 & \textbf{3.692 $\pm$ 5.654} & 0.872 $\pm$ 0.097 \\
+\bottomrule
+\end{tabular}
+\end{table}

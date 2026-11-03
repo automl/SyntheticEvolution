@@ -1,0 +1,10 @@
+seed1_existing: 120 shards -> job 15182331
+af3_seed1: 10 shards -> job 15182372
+N10000_single_seed1: 5 shards -> job 15182373
+N5000_complex: 15 shards -> job 15182374
+N20000_complex: 15 shards -> job 15182375
+N10000_complex: 20 shards -> job 15182376
+eval_depth=15213608
+eval_N1000=15214231
+zip_inputs=15223234
+zip_outputs=15223235

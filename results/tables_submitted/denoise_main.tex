@@ -1,0 +1,14 @@
+\begin{table}[htbp]
+\centering
+\caption{AF3 denoising ladder, RNA single chain (n=91). Submitted single-seed evaluation (AF3 seed 1, sample 0); bold = best mean per metric.}
+\label{tab:denoise_main}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+SHS (RNAfold) & 0.527 $\pm$ 0.208 & 5.413 $\pm$ 5.984 & 0.677 $\pm$ 0.151 \\
+SHS (RNAfold Denoise) & 0.528 $\pm$ 0.197 & 5.096 $\pm$ 5.477 & 0.679 $\pm$ 0.146 \\
+SHS (GT) & \textbf{0.609 $\pm$ 0.230} & \textbf{4.099 $\pm$ 5.213} & \textbf{0.739 $\pm$ 0.137} \\
+\bottomrule
+\end{tabular}
+\end{table}

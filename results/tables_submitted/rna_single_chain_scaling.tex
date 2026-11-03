@@ -1,0 +1,16 @@
+\begin{table}[htbp]
+\centering
+\caption{SHS depth scaling (RNAformer SHS, N=20 to 20000), RNA single chain (n=91). Submitted single-seed evaluation (AF3 seed 1, sample 0); bold = best mean per metric.}
+\label{tab:rna_single_chain_scaling}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+MSA & \textbf{0.670 $\pm$ 0.252} & \textbf{3.516 $\pm$ 4.669} & \textbf{0.770 $\pm$ 0.155} \\
+SHS (RNAformer) & 0.610 $\pm$ 0.220 & 4.289 $\pm$ 5.456 & 0.738 $\pm$ 0.139 \\
+SHS (RNAformer, N=5000) & 0.612 $\pm$ 0.224 & 4.306 $\pm$ 5.483 & 0.732 $\pm$ 0.144 \\
+SHS (RNAformer, N=10000) & 0.611 $\pm$ 0.223 & 4.337 $\pm$ 5.523 & 0.733 $\pm$ 0.142 \\
+SHS (RNAformer, N=20000) & 0.614 $\pm$ 0.223 & 4.329 $\pm$ 5.523 & 0.733 $\pm$ 0.145 \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,0 +1,1405 @@
+exp_db_id,RNA_LDDT_allAtom,RNA_TM,Complex_TM,Dockq,method,subtype,era,has_family,RNAFamily_merged,rna_len,has_pseudoknot,is_orphan,method_label
+7Y81,0.469,0.13435,0.85078,0.03,noMSA,complex,post,False,,36.0,False,True,no-MSA
+6VRC,0.820735,0.7651,0.97744,0.652,noMSA,complex,pre,False,,51.0,False,False,no-MSA
+8C4U,0.69381268,0.26744,0.93901,0.327,noMSA,complex,post,False,,20.0,False,True,no-MSA
+3NVI,0.989,0.76601,0.99233,0.902,noMSA,complex,pre,False,,24.0,False,True,no-MSA
+6G1X,0.98,0.5264,0.96473,0.856,noMSA,complex,pre,False,,15.0,False,True,no-MSA
+3EPJ,0.859,0.75882,0.48809,0.56,noMSA,complex,pre,True,tRNA,69.0,True,False,no-MSA
+5DAR,0.942,0.94796,0.51548,0.781,noMSA,complex,pre,True,LSU_rRNA_archaea,74.0,False,False,no-MSA
+1ZDK,0.845,0.6156,0.65499,0.353,noMSA,complex,pre,False,,19.0,False,True,no-MSA
+4QG3,0.904,0.9528,0.98569,0.907,noMSA,complex,pre,True,LSU_rRNA_bacteria,80.0,True,False,no-MSA
+7Y8Y,0.467,0.17703,0.81855,0.08,noMSA,complex,post,False,,37.0,False,True,no-MSA
+1QRT,0.891,0.92483,0.99325,0.825,noMSA,complex,pre,True,tRNA,74.0,True,False,no-MSA
+6SX2,1.0,0.80089,0.99672,0.978,noMSA,complex,pre,False,,19.0,False,True,no-MSA
+2ZH9,0.988,0.93075,0.99824,0.974,noMSA,complex,pre,False,,33.0,False,True,no-MSA
+2ZH1,0.998,0.95674,0.99841,0.982,noMSA,complex,pre,False,,33.0,False,True,no-MSA
+6NMD,0.903,0.72721,0.94054,0.68,noMSA,complex,pre,False,,25.0,False,True,no-MSA
+4J39,0.851,0.29666,0.9256,0.156,noMSA,complex,pre,False,,19.0,False,True,no-MSA
+4S3N,0.925,0.58176,0.97791,0.888,noMSA,complex,pre,False,,19.0,False,True,no-MSA
+8Z90,0.86711548,0.41971,0.98919,0.789,noMSA,complex,post,False,,18.0,False,True,no-MSA
+6TQB,0.99,0.76756,0.99575,0.935,noMSA,complex,pre,False,,19.0,False,True,no-MSA
+8WMC,0.43607494,0.2893,0.90701,0.123,noMSA,complex,post,False,,38.0,False,True,no-MSA
+4WC2,0.957,0.91105,0.97884,0.781,noMSA,complex,pre,True,tRNA,75.0,True,False,no-MSA
+4KR6,0.6580751,0.44914,0.93205,0.507,noMSA,complex,pre,False,,39.0,False,True,no-MSA
+9ENE,0.824,0.76907,0.9263,0.576,noMSA,complex,post,True,tRNA,73.0,True,False,no-MSA
+1UN6,0.914,0.66132,0.35789,0.325,noMSA,complex,pre,False,,61.0,False,False,no-MSA
+2DR2,0.77009379,0.69437,0.82177,0.006,noMSA,complex,pre,True,tRNA,75.0,False,False,no-MSA
+2W2H,0.427,0.20207,0.45911,0.34,noMSA,complex,pre,False,,22.0,False,True,no-MSA
+4TUX,0.923,0.56657,0.47014,0.648,noMSA,complex,pre,True,Histone3,26.0,False,True,no-MSA
+1VC6,0.918,0.88858,0.97079,0.94,noMSA,complex,pre,True,HDV_ribozyme,72.0,True,False,no-MSA
+3U56,0.859,0.90204,0.98567,0.866,noMSA,complex,pre,True,LSU_rRNA_bacteria,80.0,True,False,no-MSA
+6BJY,0.41675245,0.12287,0.58789,0.41,noMSA,complex,pre,False,,45.0,False,True,no-MSA
+7VTN,0.66067434,0.27407,0.31689,0.124,noMSA,complex,post,False,,56.0,False,True,no-MSA
+7KA0,0.852,0.68713,0.97271,0.799,noMSA,complex,pre,True,tRNA,66.0,True,False,no-MSA
+4KR9,0.69886678,0.45495,0.94814,0.567,noMSA,complex,pre,False,,39.0,False,True,no-MSA
+4TUW,0.939,0.56711,0.45138,0.47,noMSA,complex,pre,True,Histone3,28.0,False,True,no-MSA
+5F5H,0.897,0.66392,0.50147,0.799,noMSA,complex,pre,False,,21.0,False,True,no-MSA
+3FTF,0.909,0.40712,0.94258,0.73,noMSA,complex,pre,False,,22.0,False,True,no-MSA
+6BJV,0.97,0.75522,0.97596,0.875,noMSA,complex,pre,False,,21.0,False,True,no-MSA
+7X7R,0.44684094,0.31094,0.85193,0.045,noMSA,complex,post,False,,36.0,False,True,no-MSA
+1ZBH,0.958,0.67105,0.23406,0.246,noMSA,complex,pre,False,,16.0,False,True,no-MSA
+1QRS,0.898,0.9353,0.99312,0.828,noMSA,complex,pre,True,tRNA,74.0,True,False,no-MSA
+2BQ5,0.93,0.60654,0.64322,0.621,noMSA,complex,pre,False,,19.0,False,True,no-MSA
+8WML,0.4789707,0.21307,0.73326,0.01,noMSA,complex,post,False,,38.0,False,True,no-MSA
+4QOZ,0.983,0.73429,0.47125,0.32,noMSA,complex,pre,True,Histone3,26.0,False,True,no-MSA
+1EIY,0.685,0.52628,0.88837,0.666,noMSA,complex,pre,True,tRNA,76.0,True,False,no-MSA
+2DU4,0.75352103,0.55017,0.96042,0.791,noMSA,complex,pre,True,tRNA,71.0,True,False,no-MSA
+6NMC,0.93,0.74425,0.88329,0.601,noMSA,complex,pre,False,,25.0,False,True,no-MSA
+4X4O,0.835,0.6395,0.97836,0.81,noMSA,complex,pre,False,,34.0,False,True,no-MSA
+7N0B,0.934,0.56051,0.99137,0.921,noMSA,complex,pre,False,,20.0,False,True,no-MSA
+2ZH6,0.971,0.86025,0.9841,0.854,noMSA,complex,pre,False,,34.0,False,True,no-MSA
+7OS0,0.53222401,0.19939,0.43896,0.018,noMSA,complex,post,False,,48.0,False,True,no-MSA
+1O0C,0.919,0.94954,0.9916,0.842,noMSA,complex,pre,True,tRNA,74.0,True,False,no-MSA
+1DFU,0.945,0.72473,0.98642,0.932,noMSA,complex,pre,False,,19.0,False,True,no-MSA
+6U8D,0.931,0.81283,0.74644,0.464,noMSA,complex,pre,False,,68.0,False,False,no-MSA
+2DR5,0.846,0.88819,0.99713,0.962,noMSA,complex,pre,False,,32.0,False,True,no-MSA
+9ENB,0.852,0.78236,0.89836,0.442,noMSA,complex,post,True,tRNA,72.0,True,False,no-MSA
+4WC5,0.958,0.91626,0.98094,0.849,noMSA,complex,pre,True,tRNA,74.0,True,False,no-MSA
+2ZH7,0.995,0.95688,0.99839,0.981,noMSA,complex,pre,False,,33.0,False,True,no-MSA
+7N0C,0.945,0.60246,0.98499,0.9,noMSA,complex,pre,False,,25.0,False,True,no-MSA
+2DU5,0.75760616,0.60112,0.87258,0.697,noMSA,complex,pre,True,tRNA,71.0,True,False,no-MSA
+7UO7,0.943,0.41076,0.97591,0.819,noMSA,complex,post,False,,34.0,False,True,no-MSA
+8AW3,0.82334933,0.72622,0.90544,0.577,noMSA,complex,post,True,tRNA,73.0,True,False,no-MSA
+4WC4,0.956,0.91237,0.98183,0.85,noMSA,complex,pre,True,tRNA,74.0,True,False,no-MSA
+9ENC,0.817,0.78487,0.79524,0.344,noMSA,complex,post,True,tRNA,75.0,True,False,no-MSA
+2ZKO,0.976,0.80851,0.99416,0.969,noMSA,complex,pre,False,,21.0,False,True,no-MSA
+1LNG,0.852,0.92033,0.9729,0.927,noMSA,complex,pre,True,Bacteria_small_SRP,97.0,False,False,no-MSA
+7XC7,0.49960215,0.26301,0.81135,0.075,noMSA,complex,post,False,,31.0,False,True,no-MSA
+2IY5,0.674,0.55208,0.96002,0.746,noMSA,complex,pre,True,tRNA,76.0,True,False,no-MSA
+1VC0,0.893,0.91701,0.9753,0.946,noMSA,complex,pre,True,HDV_ribozyme,73.0,True,False,no-MSA
+1RPU,0.903,0.48707,0.95424,0.836,noMSA,complex,pre,False,,21.0,False,True,no-MSA
+6XJZ,0.28605499,0.27167,0.36562,0.34,noMSA,complex,post,False,,58.0,False,False,no-MSA
+3WQY,0.875,0.78979,0.9316,0.614,noMSA,complex,pre,True,tRNA,75.0,True,False,no-MSA
+1O0B,0.915,0.9508,0.99193,0.842,noMSA,complex,pre,True,tRNA,74.0,True,False,no-MSA
+7XW2,0.77983632,0.60606,0.87944,0.046,noMSA,complex,post,False,,54.0,False,True,no-MSA
+2HVY,0.922,0.85312,0.99291,0.914,noMSA,complex,pre,False,,61.0,False,False,no-MSA
+4ZLD,0.969,0.83478,0.99601,0.975,noMSA,complex,pre,False,,17.0,False,True,no-MSA
+2RE8,0.927,0.96243,0.99199,0.851,noMSA,complex,pre,True,tRNA,74.0,True,False,no-MSA
+8FZR,0.50208433,0.5769,0.81209,0.013,noMSA,complex,post,True,tRNA,77.0,False,False,no-MSA
+8GU6,0.47893788,0.31394,0.77732,0.055,noMSA,complex,post,False,,33.0,False,True,no-MSA
+1SDS,0.69222549,0.22639,0.52879,0.31,noMSA,complex,pre,False,,15.0,False,True,no-MSA
+6DU4,0.983,0.86362,0.99097,0.913,noMSA,complex,pre,False,,29.0,False,True,no-MSA
+8BGU,0.814,0.69253,0.86616,0.605,noMSA,complex,post,True,5S_rRNA,121.0,False,False,no-MSA
+1FEU,0.9,0.50202,0.48076,0.698,noMSA,complex,pre,False,,21.0,False,True,no-MSA
+8GS2,0.49142242,0.31378,0.80438,0.123,noMSA,complex,post,False,,38.0,False,True,no-MSA
+1QA6,0.943,0.94108,0.54428,0.78,noMSA,complex,pre,True,LSU_rRNA_bacteria,58.0,False,False,no-MSA
+6B14,0.969,0.88468,0.95333,0.829,noMSA,complex,pre,False,,83.0,False,True,no-MSA
+5V6X,0.824,0.67869,0.5287,0.635,noMSA,complex,pre,True,tRNA,72.0,True,False,no-MSA
+6H61,0.984,0.57707,0.97626,0.873,noMSA,complex,pre,False,,15.0,False,True,no-MSA
+7ZOQ,0.48864393,0.24601,0.82604,0.071,noMSA,complex,post,False,,39.0,False,True,no-MSA
+9IIY,0.788,0.25519,0.62636,0.273,noMSA,complex,post,False,,22.0,False,True,no-MSA
+2UWM,0.924,0.69501,0.92637,0.782,noMSA,complex,pre,False,,23.0,False,True,no-MSA
+6KLB,0.81,0.46837,0.44263,0.436,noMSA,complex,pre,False,,25.0,False,True,no-MSA
+7SLP,0.62311583,0.26559,0.64895,0.232,noMSA,complex,post,False,,37.0,False,False,no-MSA
+1VBZ,0.887,0.91751,0.97665,0.936,noMSA,complex,pre,True,HDV_ribozyme,73.0,True,False,no-MSA
+6E9F,0.838,0.71974,0.97731,0.755,noMSA,complex,pre,False,,52.0,False,False,no-MSA
+2GIC,0.42450568,0.22257,0.58575,0.405,noMSA,complex,pre,False,,45.0,False,True,no-MSA
+7K9M,0.871,0.78694,0.93144,0.684,noMSA,complex,pre,True,tRNA,66.0,True,False,no-MSA
+7WKP,0.81,0.36089,0.93335,0.406,noMSA,complex,post,False,,21.0,False,True,no-MSA
+3KTW,0.82754537,0.80431,0.50998,0.773,noMSA,complex,pre,False,,96.0,False,False,no-MSA
+1MMS,0.967,0.97098,0.62159,0.898,noMSA,complex,pre,True,LSU_rRNA_bacteria,58.0,False,False,no-MSA
+5F5F,0.953,0.62098,0.32939,0.533,noMSA,complex,pre,False,,20.0,False,True,no-MSA
+2RD2,0.917,0.96648,0.99258,0.844,noMSA,complex,pre,True,tRNA,74.0,True,False,no-MSA
+7YNA,0.49406831,0.33683,0.77802,0.134,noMSA,complex,post,False,,38.0,False,True,no-MSA
+7DWH,0.813,0.629,0.4501,0.546,noMSA,complex,post,False,,45.0,False,False,no-MSA
+4WC3,0.924,0.94025,0.98115,0.747,noMSA,complex,pre,True,tRNA,76.0,True,False,no-MSA
+4GHL,0.986,0.45588,0.26713,0.442,noMSA,complex,pre,False,,18.0,False,True,no-MSA
+1KUQ,0.824,0.88979,0.97244,0.883,noMSA,complex,pre,False,,57.0,False,False,no-MSA
+8DVS,0.9,0.62324,0.98873,0.759,noMSA,complex,post,False,,26.0,False,True,no-MSA
+1QTQ,0.901,0.9461,0.99212,0.832,noMSA,complex,pre,True,tRNA,74.0,True,False,no-MSA
+4ZT9,0.929,0.84692,0.52903,0.846,noMSA,complex,pre,False,,72.0,False,False,no-MSA
+6VRB,0.852,0.75358,0.81482,0.561,noMSA,complex,pre,False,,52.0,False,True,no-MSA
+2EZ6,0.992,0.82286,0.99599,0.961,noMSA,complex,pre,False,,28.0,False,True,no-MSA
+7Y80,0.44539782,0.39838,0.86096,0.011,noMSA,complex,post,False,,35.0,False,True,no-MSA
+2ZH8,0.999,0.96248,0.99843,0.97,noMSA,complex,pre,False,,34.0,False,True,no-MSA
+3PU4,0.40910275,0.39908,0.98017,0.578,noMSA,complex,pre,False,,45.0,False,True,no-MSA
+6SY6,0.908,0.73464,0.9687,0.742,noMSA,complex,pre,False,,36.0,False,True,no-MSA
+6H66,0.926,0.48179,0.97283,0.851,noMSA,complex,pre,False,,15.0,False,True,no-MSA
+1QRU,0.893,0.9269,0.99321,0.83,noMSA,complex,pre,True,tRNA,74.0,True,False,no-MSA
+5D6G,0.914,0.94399,0.92052,0.853,noMSA,complex,pre,True,LSU_rRNA_archaea,74.0,False,False,no-MSA
+4QQB,0.75489185,0.36206,0.50309,0.489,noMSA,complex,pre,False,,17.0,False,True,no-MSA
+1EXD,0.939,0.96625,0.99195,0.835,noMSA,complex,pre,True,tRNA,73.0,True,False,no-MSA
+3OVA,0.985,0.92677,0.99178,0.977,noMSA,complex,pre,False,,34.0,False,True,no-MSA
+9ENF,0.62642626,0.49589,0.62598,0.209,noMSA,complex,post,True,tRNA,91.0,True,False,no-MSA
+7YNC,0.496,0.31482,0.78323,0.13,noMSA,complex,post,False,,38.0,False,True,no-MSA
+6G1S,0.979,0.57796,0.96652,0.884,noMSA,complex,pre,False,,15.0,False,True,no-MSA
+6IV6,0.874,0.57938,0.95715,0.701,noMSA,complex,pre,False,,26.0,False,True,no-MSA
+1U0B,0.873,0.83499,0.97805,0.752,noMSA,complex,pre,True,tRNA,74.0,False,False,no-MSA
+7RE2,0.958,0.51461,0.71423,0.818,noMSA,complex,post,False,,37.0,False,True,no-MSA
+5VW1,0.954,0.86157,0.99161,0.896,noMSA,complex,pre,False,,73.0,False,False,no-MSA
+7BKQ,0.992,0.62485,0.95374,0.856,noMSA,complex,post,False,,15.0,False,True,no-MSA
+2ZH2,0.997,0.95831,0.99837,0.964,noMSA,complex,pre,False,,34.0,False,True,no-MSA
+4YB1,0.844,0.82235,0.50118,0.004,noMSA,complex,pre,True,c-di-GMP-I;c-di-GMP-I-GGC,91.0,True,False,no-MSA
+8SSW,0.83708317,0.24578,0.29976,0.153,noMSA,complex,post,False,,23.0,False,True,no-MSA
+6P7M,0.909,0.85896,0.90049,0.565,noMSA,complex,pre,False,,26.0,False,True,no-MSA
+1VBX,0.883,0.91109,0.97671,0.946,noMSA,complex,pre,True,HDV_ribozyme,73.0,True,False,no-MSA
+8D97,0.44931948,0.22025,0.74057,0.01,noMSA,complex,post,False,,42.0,False,True,no-MSA
+4QI2,0.827,0.50226,0.36698,0.592,noMSA,complex,pre,False,,19.0,False,True,no-MSA
+5MSF,0.964,0.65084,0.62475,0.293,noMSA,complex,pre,False,,18.0,False,True,no-MSA
+6XJW,0.36815028,0.22021,0.37596,0.329,noMSA,complex,post,False,,58.0,False,False,no-MSA
+3OUY,0.959,0.88337,0.99686,0.944,noMSA,complex,pre,False,,35.0,False,True,no-MSA
+7Y82,0.50612297,0.1704,0.80876,0.031,noMSA,complex,post,False,,41.0,False,True,no-MSA
+2DR9,0.973,0.90081,0.9839,0.869,noMSA,complex,pre,False,,34.0,False,True,no-MSA
+1SJ4,0.888,0.90117,0.97465,0.945,noMSA,complex,pre,True,HDV_ribozyme,73.0,True,False,no-MSA
+8URB,0.901,0.54708,0.96836,0.656,noMSA,complex,post,False,,21.0,False,True,no-MSA
+7KRP,0.943,0.63502,0.99324,0.887,noMSA,complex,pre,False,,37.0,False,True,no-MSA
+4M4O,0.956,0.88612,0.89411,0.647,noMSA,complex,pre,False,,59.0,True,True,no-MSA
+7YND,0.435,0.30828,0.8604,0.212,noMSA,complex,post,False,,38.0,False,True,no-MSA
+3TUP,0.85,0.74192,0.64517,0.23,noMSA,complex,pre,True,tRNA,74.0,True,False,no-MSA
+3K0J,0.65472903,0.56322,0.23351,0.164,noMSA,complex,pre,True,TPP,87.0,False,False,no-MSA
+4WC6,0.958,0.91358,0.98287,0.788,noMSA,complex,pre,True,tRNA,75.0,True,False,no-MSA
+8D1V,0.44044727,0.33727,0.87334,0.154,noMSA,complex,post,False,,34.0,False,True,no-MSA
+8D4B,0.86961385,0.34193,0.67149,0.35,noMSA,complex,post,False,,41.0,False,True,no-MSA
+9CPO,0.909,0.50937,0.95951,0.715,noMSA,complex,post,False,,33.0,False,True,no-MSA
+1A9N,0.971,0.64666,0.5068,0.827,noMSA,complex,pre,False,,24.0,False,True,no-MSA
+2ZH5,0.998,0.94797,0.99816,0.979,noMSA,complex,pre,False,,34.0,False,True,no-MSA
+1EUY,0.834,0.83123,0.98828,0.782,noMSA,complex,pre,True,tRNA,73.0,True,False,no-MSA
+7R97,0.946,0.51056,0.98264,0.878,noMSA,complex,post,False,,28.0,False,True,no-MSA
+1EUQ,0.894,0.92448,0.99187,0.824,noMSA,complex,pre,True,tRNA,72.0,True,False,no-MSA
+2B2G,0.826,0.51608,0.63467,0.681,noMSA,complex,pre,False,,16.0,False,True,no-MSA
+8EEY,0.4739235,0.4507,0.80478,0.103,noMSA,complex,post,False,,38.0,False,True,no-MSA
+7Y9X,0.47514904,0.37625,0.88759,0.187,noMSA,complex,post,False,,38.0,False,True,no-MSA
+3VJR,0.941,0.82616,0.55489,0.568,noMSA,complex,pre,False,,36.0,False,True,no-MSA
+1SJ3,0.892,0.90875,0.97428,0.945,noMSA,complex,pre,True,HDV_ribozyme,73.0,True,False,no-MSA
+3WC2,0.809,0.62013,0.91929,0.768,noMSA,complex,pre,True,tRNA,74.0,True,False,no-MSA
+7Y85,0.51407798,0.188,0.88304,0.086,noMSA,complex,post,False,,36.0,False,True,no-MSA
+6B3K,0.958,0.83523,0.85212,0.696,noMSA,complex,pre,False,,83.0,False,False,no-MSA
+7MLX,0.941,0.73723,0.96858,0.904,noMSA,complex,pre,False,,65.0,True,False,no-MSA
+3R9W,0.81970583,0.31818,0.95614,0.619,noMSA,complex,pre,False,,34.0,False,True,no-MSA
+8EEX,0.466,0.35925,0.91715,0.12,noMSA,complex,post,False,,36.0,False,True,no-MSA
+7Y9Y,0.51809896,0.23704,0.78775,0.065,noMSA,complex,post,False,,38.0,False,True,no-MSA
+6XJQ,0.36719802,0.2205,0.37604,0.333,noMSA,complex,post,False,,58.0,False,False,no-MSA
+7Y84,0.43448785,0.37756,0.86365,0.093,noMSA,complex,post,False,,35.0,False,True,no-MSA
+8OPT,0.43455295,0.23846,0.77638,0.021,noMSA,complex,post,False,,54.0,False,False,no-MSA
+1VFG,0.69216507,0.34491,0.43959,0.044,noMSA,complex,pre,True,tRNA,34.0,False,True,no-MSA
+2V3C,0.878,0.92743,0.29472,0.526,noMSA,complex,pre,True,Bacteria_small_SRP,96.0,False,False,no-MSA
+4WC7,0.96,0.91432,0.98262,0.794,noMSA,complex,pre,True,tRNA,75.0,True,False,no-MSA
+4KJI,0.962,0.66252,0.97492,0.914,noMSA,complex,pre,False,,16.0,False,True,no-MSA
+8HKE,0.79454016,0.2734,0.92519,0.421,noMSA,complex,post,False,,37.0,False,True,no-MSA
+2DR7,0.96,0.88746,0.99824,0.934,noMSA,complex,pre,False,,33.0,False,True,no-MSA
+7OZQ,0.74332329,0.39265,0.25805,0.071,noMSA,complex,post,False,,32.0,False,True,no-MSA
+8Z8X,0.89155278,0.46219,0.9046,0.587,noMSA,complex,post,False,,18.0,False,True,no-MSA
+6XJY,0.29247835,0.19398,0.38597,0.344,noMSA,complex,post,False,,58.0,False,False,no-MSA
+7QR3,0.61218436,0.32508,0.39638,0.403,noMSA,complex,post,True,CPEB3_ribozyme,69.0,True,False,no-MSA
+2ZH4,0.997,0.96615,0.99796,0.972,noMSA,complex,pre,False,,34.0,False,True,no-MSA
+6NMA,0.947,0.76804,0.82029,0.499,noMSA,complex,pre,False,,25.0,False,True,no-MSA
+4NH6,0.69816375,0.29831,0.92898,0.368,noMSA,complex,pre,False,,15.0,False,True,no-MSA
+2F8T,0.77128545,0.20277,0.42633,0.007,noMSA,complex,pre,False,,26.0,False,True,no-MSA
+7UO4,0.958,0.43956,0.98458,0.839,noMSA,complex,post,False,,36.0,False,True,no-MSA
+7Y8T,0.42364262,0.24757,0.81497,0.077,noMSA,complex,post,False,,37.0,False,True,no-MSA
+6AAX,0.872,0.50078,0.566,0.619,noMSA,complex,pre,False,,28.0,False,True,no-MSA
+2DU6,0.73915136,0.5386,0.89089,0.698,noMSA,complex,pre,True,tRNA,71.0,True,False,no-MSA
+4RWP,0.985,0.59407,0.98425,0.898,noMSA,complex,pre,False,,19.0,False,True,no-MSA
+6SX0,0.943,0.42342,0.98244,0.903,noMSA,complex,pre,False,,19.0,False,True,no-MSA
+8IDF,0.66298084,0.37185,0.73801,0.182,noMSA,complex,post,False,,53.0,False,True,no-MSA
+6W62,0.813,0.51267,0.91088,0.574,noMSA,complex,pre,False,,24.0,False,True,no-MSA
+8WMI,0.47038223,0.31857,0.84173,0.024,noMSA,complex,post,False,,39.0,False,True,no-MSA
+3NDB,0.866,0.78629,0.90985,0.752,noMSA,complex,pre,True,Archaea_SRP,136.0,False,False,no-MSA
+2AKE,0.76575645,0.7102,0.8294,0.005,noMSA,complex,pre,True,tRNA,72.0,False,False,no-MSA
+5NPM,0.931,0.9241,0.98902,0.896,noMSA,complex,pre,True,LSU_rRNA_bacteria,80.0,True,False,no-MSA
+2DR8,0.965,0.86997,0.98238,0.84,noMSA,complex,pre,False,,33.0,False,True,no-MSA
+8OPS,0.51152532,0.35367,0.78248,0.01,noMSA,complex,post,False,,69.0,False,False,no-MSA
+7WAH,0.49409578,0.4273,0.84531,0.118,noMSA,complex,post,False,,39.0,False,True,no-MSA
+1S03,0.87873477,0.71179,0.5513,0.768,noMSA,complex,pre,False,,47.0,False,True,no-MSA
+7YNB,0.48803539,0.32124,0.79351,0.129,noMSA,complex,post,False,,38.0,False,True,no-MSA
+6ZLC,0.998,0.74555,0.98488,0.942,noMSA,complex,pre,False,,19.0,False,True,no-MSA
+2R8S,0.869,0.87756,0.75185,0.474,noMSA,complex,pre,False,,159.0,False,False,no-MSA
+9IIZ,0.82,0.33248,0.89645,0.579,noMSA,complex,post,False,,25.0,False,True,no-MSA
+3R9X,0.948,0.57832,0.58274,0.694,noMSA,complex,pre,False,,35.0,False,False,no-MSA
+8DGA,0.912,0.44601,0.74557,0.267,noMSA,complex,post,False,,22.0,False,True,no-MSA
+4PMI,0.935,0.66867,0.84993,0.689,noMSA,complex,pre,False,,40.0,False,True,no-MSA
+1VBY,0.884,0.89739,0.97088,0.945,noMSA,complex,pre,True,HDV_ribozyme,73.0,True,False,no-MSA
+6E9E,0.82156012,0.72549,0.98721,0.774,noMSA,complex,pre,False,,51.0,False,False,no-MSA
+8ISS,0.77645327,0.74034,0.9318,0.597,noMSA,complex,post,True,tRNA,80.0,True,False,no-MSA
+2F8S,0.71766179,0.28091,0.42629,0.006,noMSA,complex,pre,False,,22.0,False,True,no-MSA
+1IVS,0.854,0.86161,0.49682,0.588,noMSA,complex,pre,True,tRNA,75.0,True,False,no-MSA
+5HC9,0.863,0.78971,0.49481,0.675,noMSA,complex,pre,True,tRNA,76.0,True,False,no-MSA
+2ZH3,0.996,0.95704,0.99849,0.979,noMSA,complex,pre,False,,34.0,False,True,no-MSA
+7QR4,0.63728522,0.41975,0.8068,0.66,noMSA,complex,post,True,CPEB3_ribozyme,69.0,True,False,no-MSA
+4PDB,0.97622135,0.88641,0.98943,0.937,noMSA,complex,pre,False,,38.0,False,True,no-MSA
+2ZZN,0.84585979,0.79813,0.53287,0.54,noMSA,complex,pre,True,tRNA,71.0,True,False,no-MSA
+1ZJW,0.923,0.96459,0.99317,0.844,noMSA,complex,pre,True,tRNA,74.0,True,False,no-MSA
+4OOG,0.961,0.64902,0.92653,0.75,noMSA,complex,pre,False,,34.0,False,True,no-MSA
+4PRF,0.933,0.92547,0.97768,0.931,noMSA,complex,pre,True,HDV_ribozyme,74.0,True,False,no-MSA
+3WBM,0.877,0.33531,0.49218,0.524,noMSA,complex,pre,False,,25.0,False,True,no-MSA
+4YVI,0.916,0.77958,0.96874,0.798,noMSA,complex,pre,True,tRNA,71.0,True,False,no-MSA
+7W0D,0.867,0.41505,0.61509,0.138,noMSA,complex,post,False,,52.0,False,False,no-MSA
+6ZDQ,0.81649377,0.6861,0.9739,0.682,noMSA,complex,pre,False,,65.0,False,False,no-MSA
+6BJG,0.98,0.65963,0.98401,0.914,noMSA,complex,pre,False,,21.0,False,True,no-MSA
+8H69,0.90347771,0.48259,0.9118,0.59,noMSA,complex,post,False,,19.0,False,True,no-MSA
+8S9X,0.73346066,0.33319,0.96352,0.532,noMSA,complex,post,False,,37.0,False,True,no-MSA
+5W0O,0.947,0.28981,0.71486,0.757,noMSA,complex,pre,False,,15.0,False,True,no-MSA
+6DB9,0.895,0.7491,0.91326,0.748,noMSA,complex,pre,False,,60.0,True,False,no-MSA
+5DE5,0.77986091,0.52248,0.42026,0.661,noMSA,complex,pre,False,,35.0,False,True,no-MSA
+7VG3,0.836,0.36806,0.94399,0.285,noMSA,complex,post,False,,32.0,False,True,no-MSA
+4FTS,0.59574097,0.18525,0.98222,0.925,noMSA,complex,pre,False,,15.0,False,True,no-MSA
+7XSS,0.469,0.29982,0.92278,0.103,noMSA,complex,post,False,,34.0,False,True,no-MSA
+6GKH,0.909,0.40875,0.97502,0.741,noMSA,complex,pre,False,,15.0,False,True,no-MSA
+1J1U,0.878,0.82439,0.93738,0.604,noMSA,complex,pre,True,tRNA,74.0,True,False,no-MSA
+5UDZ,0.917,0.54289,0.9844,0.879,noMSA,complex,pre,False,,24.0,False,True,no-MSA
+3U4M,0.891,0.90954,0.97614,0.862,noMSA,complex,pre,True,LSU_rRNA_bacteria,80.0,True,False,no-MSA
+5CCB,0.74337142,0.52068,0.91973,0.663,noMSA,complex,pre,True,tRNA,77.0,False,False,no-MSA
+7CTT,0.93,0.47621,0.97463,0.868,noMSA,complex,pre,False,,18.0,False,True,no-MSA
+8YE6,0.9,0.79887,0.86763,0.5,noMSA,complex,post,False,,92.0,False,False,no-MSA
+7D7V,0.874,0.6618,0.91167,0.81,noMSA,complex,pre,True,nadA,57.0,True,False,no-MSA
+3SIU,0.925,0.61344,0.58268,0.652,noMSA,complex,pre,False,,28.0,False,True,no-MSA
+2NUF,0.986,0.86048,0.9948,0.947,noMSA,complex,pre,False,,28.0,False,True,no-MSA
+4JNG,0.43847668,0.28688,0.77392,0.169,noMSA,complex,pre,False,,42.0,False,True,no-MSA
+8D9E,0.48755229,0.29306,0.85444,0.049,noMSA,complex,post,False,,36.0,False,True,no-MSA
+7W0C,0.908,0.39755,0.76016,0.303,noMSA,complex,post,False,,37.0,False,True,no-MSA
+3OVS,0.959,0.8427,0.9938,0.915,noMSA,complex,pre,False,,34.0,False,True,no-MSA
+6BJH,0.871,0.69785,0.96515,0.825,noMSA,complex,pre,False,,21.0,False,True,no-MSA
+4P3E,0.875,0.88934,0.94667,0.797,noMSA,complex,pre,True,Metazoa_SRP,124.0,False,False,no-MSA
+2OZB,0.857,0.74505,0.49349,0.656,noMSA,complex,pre,False,,33.0,False,True,no-MSA
+8T5S,0.96658564,0.34641,0.88071,0.035,noMSA,complex,post,False,,30.0,False,True,no-MSA
+1GAX,0.85,0.86067,0.49611,0.585,noMSA,complex,pre,True,tRNA,75.0,True,False,no-MSA
+1P6V,0.77643378,0.53625,0.50612,0.473,noMSA,complex,pre,True,tmRNA,45.0,False,False,no-MSA
+3FOZ,0.925,0.87703,0.49664,0.751,noMSA,complex,pre,True,tRNA,74.0,True,False,no-MSA
+4AL5,0.967,0.71757,0.9824,0.901,noMSA,complex,pre,False,,18.0,False,True,no-MSA
+7YN9,0.52618715,0.27461,0.80557,0.007,noMSA,complex,post,False,,38.0,False,True,no-MSA
+5UD5,0.891,0.7423,0.49946,0.599,noMSA,complex,pre,True,tRNA,72.0,True,False,no-MSA
+4C7O,0.818,0.48846,0.50117,0.632,noMSA,complex,pre,False,,48.0,False,True,no-MSA
+7DLZ,0.849,0.66121,0.39703,0.503,noMSA,complex,post,False,,45.0,False,False,no-MSA
+3IVK,0.885,0.89661,0.4253,0.657,noMSA,complex,pre,False,,128.0,True,False,no-MSA
+3IWN,0.83,0.84265,0.46065,0.501,noMSA,complex,pre,True,c-di-GMP-I;c-di-GMP-I-GGC,93.0,True,False,no-MSA
+1SJF,0.914,0.93002,0.97707,0.905,noMSA,complex,pre,True,HDV_ribozyme,74.0,True,False,no-MSA
+7NGA,0.983,0.56668,0.9493,0.822,noMSA,complex,post,False,,15.0,False,True,no-MSA
+8S9V,0.54161682,0.19938,0.97358,0.381,noMSA,complex,post,False,,37.0,False,True,no-MSA
+3AMU,0.861,0.87978,0.97104,0.601,noMSA,complex,pre,True,tRNA,78.0,True,False,no-MSA
+4YCO,0.874,0.67559,0.41452,0.478,noMSA,complex,pre,True,tRNA,74.0,True,False,no-MSA
+8SQ9,0.903,0.4297,0.98646,0.828,noMSA,complex,post,False,,35.0,False,True,no-MSA
+7X34,0.59016785,0.26722,0.56619,0.141,noMSA,complex,post,True,SSU_rRNA_eukarya,94.0,False,False,no-MSA
+8DFV,0.80456197,0.57292,0.80376,0.259,noMSA,complex,post,False,,60.0,False,False,no-MSA
+2ZXU,0.885,0.71333,0.54105,0.733,noMSA,complex,pre,True,tRNA,74.0,True,False,no-MSA
+7DOK,0.966,0.58759,0.98186,0.873,noMSA,complex,post,False,,24.0,False,True,no-MSA
+6XH1,0.986,0.82118,0.94816,0.786,noMSA,complex,pre,False,,27.0,False,True,no-MSA
+2PJP,0.976,0.71034,0.98959,0.931,noMSA,complex,pre,False,,23.0,False,True,no-MSA
+2DRB,0.981,0.93815,0.997,0.961,noMSA,complex,pre,False,,35.0,False,True,no-MSA
+8JTR,0.68107326,0.63837,0.90309,0.442,noMSA,complex,post,False,,105.0,False,True,no-MSA
+3AL0,0.902,0.90065,0.63725,0.502,noMSA,complex,pre,True,tRNA,74.0,True,False,no-MSA
+5DV7,0.984,0.56127,0.60213,0.602,noMSA,complex,pre,False,,18.0,False,True,no-MSA
+2ZHA,0.976,0.89631,0.98944,0.855,noMSA,complex,pre,False,,33.0,False,True,no-MSA
+7XT4,0.43585849,0.34106,0.84533,0.076,noMSA,complex,post,False,,34.0,False,True,no-MSA
+5Y7M,0.835,0.52829,0.49171,0.501,noMSA,complex,pre,False,,51.0,False,False,no-MSA
+4X0A,0.893,0.90982,0.97176,0.759,noMSA,complex,pre,True,tRNA,73.0,True,False,no-MSA
+8H0S,0.71262823,0.38917,0.47787,0.578,noMSA,complex,post,False,,17.0,False,True,no-MSA
+7XSR,0.48207699,0.24335,0.83455,0.075,noMSA,complex,post,False,,34.0,False,True,no-MSA
+7VG2,0.864,0.3445,0.93882,0.171,noMSA,complex,post,False,,36.0,False,True,no-MSA
+8D8N,0.44706773,0.14315,0.84308,0.027,noMSA,complex,post,False,,35.0,False,True,no-MSA
+7P0V,0.824,0.28818,0.77949,0.204,noMSA,complex,post,False,,24.0,False,True,no-MSA
+7U2A,0.7233839,0.38045,0.97935,0.774,noMSA,complex,post,False,,38.0,False,True,no-MSA
+8PTX,0.78922425,0.6586,0.92554,0.609,noMSA,complex,post,True,tRNA,75.0,True,False,no-MSA
+2OIH,0.892,0.91535,0.97654,0.924,noMSA,complex,pre,True,HDV_ribozyme,73.0,True,False,no-MSA
+7DMQ,0.826363,0.48199,0.92243,0.57,noMSA,complex,pre,False,,53.0,False,False,no-MSA
+4IG8,0.931,0.77601,0.99091,0.967,noMSA,complex,pre,False,,18.0,False,True,no-MSA
+1OOA,0.385,0.14103,0.45507,0.115,noMSA,complex,pre,False,,29.0,False,True,no-MSA
+4L8H,0.921,0.62321,0.98468,0.954,noMSA,complex,pre,False,,20.0,False,True,no-MSA
+8WM4,0.483,0.13319,0.82496,0.021,noMSA,complex,post,False,,38.0,False,True,no-MSA
+6DB8,0.886,0.6814,0.98019,0.857,noMSA,complex,pre,False,,60.0,True,False,no-MSA
+7PMQ,0.64738069,0.29729,0.28423,0.025,noMSA,complex,post,False,,42.0,False,False,no-MSA
+7W0E,0.874,0.35208,0.64119,0.315,noMSA,complex,post,False,,53.0,False,False,no-MSA
+6CF2,0.972,0.83617,0.97966,0.921,noMSA,complex,pre,False,,35.0,False,True,no-MSA
+4M2Z,0.866,0.59821,0.8985,0.697,noMSA,complex,pre,False,,27.0,False,True,no-MSA
+2ANN,0.54456743,0.21522,0.91632,0.521,noMSA,complex,pre,False,,23.0,False,True,no-MSA
+8PTZ,0.75527419,0.58986,0.95322,0.633,noMSA,complex,post,True,tRNA,75.0,True,False,no-MSA
+7KAB,0.82,0.77124,0.94976,0.755,noMSA,complex,pre,True,tRNA,66.0,True,False,no-MSA
+7NQ4,0.962,0.6426,0.98774,0.9,noMSA,complex,pre,False,,20.0,False,True,no-MSA
+6CMN,0.979,0.68867,0.96481,0.869,noMSA,complex,pre,False,,27.0,False,True,no-MSA
+9DTT,0.56449078,0.30399,0.85959,0.011,noMSA,complex,post,True,DENV_SLA,67.0,False,False,no-MSA
+2DER,0.80269576,0.69194,0.48881,0.555,noMSA,complex,pre,True,tRNA,74.0,True,False,no-MSA
+5JC7,0.958,0.39986,0.58395,0.153,noMSA,complex,pre,False,,24.0,False,True,no-MSA
+4QIL,0.42501851,0.27002,0.46043,0.01,noMSA,complex,pre,False,,16.0,False,True,no-MSA
+8D9I,0.5,0.35056,0.83951,0.036,noMSA,complex,post,False,,35.0,False,True,no-MSA
+2PLY,0.943,0.67059,0.92417,0.801,noMSA,complex,pre,False,,23.0,False,True,no-MSA
+7XSP,0.45559027,0.31281,0.84173,0.03,noMSA,complex,post,False,,35.0,False,True,no-MSA
+7SWF,0.857,0.43847,0.92753,0.614,noMSA,complex,post,False,,17.0,False,True,no-MSA
+4YVJ,0.931,0.82297,0.97301,0.804,noMSA,complex,pre,True,tRNA,71.0,True,False,no-MSA
+8OST,0.55038314,0.34522,0.74141,0.013,noMSA,complex,post,False,,69.0,False,False,no-MSA
+3OV7,0.951,0.84902,0.99551,0.934,noMSA,complex,pre,False,,34.0,False,True,no-MSA
+9CMP,0.918,0.29477,0.92495,0.547,noMSA,complex,post,False,,22.0,False,True,no-MSA
+8HMY,0.77535884,0.72006,0.69389,0.616,noMSA,complex,post,True,tRNA,90.0,False,False,no-MSA
+8CTI,0.842,0.82925,0.90798,0.698,noMSA,complex,post,True,tRNA,71.0,True,False,no-MSA
+4YYE,0.864,0.74991,0.90855,0.612,noMSA,complex,pre,True,tRNA,74.0,True,False,no-MSA
+4AL6,0.925,0.57046,0.97831,0.77,noMSA,complex,pre,False,,16.0,False,True,no-MSA
+5WT3,0.889,0.824,0.97426,0.779,noMSA,complex,pre,True,tRNA,73.0,True,False,no-MSA
+6XH3,0.983,0.66536,0.94892,0.839,noMSA,complex,pre,False,,27.0,False,True,no-MSA
+4NGF,0.923,0.39078,0.2706,0.466,noMSA,complex,pre,False,,17.0,False,True,no-MSA
+4JK0,0.7270028,0.29513,0.89869,0.235,noMSA,complex,pre,False,,21.0,False,True,no-MSA
+1JBT,0.957,0.60336,0.48985,0.778,noMSA,complex,pre,False,,29.0,False,True,no-MSA
+9IJ2,0.77819653,0.22079,0.91977,0.607,noMSA,complex,post,False,,22.0,False,True,no-MSA
+8S9T,0.69900086,0.45842,0.97884,0.478,noMSA,complex,post,False,,37.0,False,True,no-MSA
+1GTS,0.879,0.93647,0.99255,0.831,noMSA,complex,pre,True,tRNA,74.0,True,False,no-MSA
+4M30,0.866,0.6012,0.95137,0.759,noMSA,complex,pre,False,,27.0,False,True,no-MSA
+6KL9,0.838,0.64091,0.81755,0.468,noMSA,complex,pre,False,,25.0,False,True,no-MSA
+8HIO,0.63259566,0.40934,0.61885,0.045,noMSA,complex,post,False,,47.0,True,True,no-MSA
+8IUO,0.8761529,0.27713,0.84646,0.438,noMSA,complex,post,False,,35.0,False,True,no-MSA
+8D9F,0.45546913,0.29697,0.85142,0.096,noMSA,complex,post,False,,33.0,False,True,no-MSA
+2NUE,0.921,0.68255,0.70538,0.346,noMSA,complex,pre,False,,46.0,False,True,no-MSA
+4RWO,0.992,0.63079,0.98732,0.96,noMSA,complex,pre,False,,19.0,False,True,no-MSA
+5ZW4,0.86389466,0.31738,0.98239,0.706,noMSA,complex,pre,False,,16.0,False,True,no-MSA
+6O5F,0.884,0.3369,0.29881,0.222,noMSA,complex,pre,False,,24.0,False,True,no-MSA
+2F8K,0.96251216,0.81119,0.98414,0.915,noMSA,complex,pre,False,,16.0,False,True,no-MSA
+8G6R,0.812,0.41522,0.96728,0.672,noMSA,complex,post,False,,20.0,False,True,no-MSA
+2ZHB,0.996,0.95306,0.99781,0.976,noMSA,complex,pre,False,,34.0,False,True,no-MSA
+7UOB,0.925,0.56116,0.98258,0.788,noMSA,complex,post,False,,36.0,False,True,no-MSA
+7ED5,0.858,0.48211,0.99364,0.772,noMSA,complex,post,False,,24.0,False,True,no-MSA
+1EC6,0.426,0.24354,0.43015,0.215,noMSA,complex,pre,False,,20.0,False,True,no-MSA
+8D9G,0.52788355,0.16605,0.89606,0.088,noMSA,complex,post,False,,36.0,False,True,no-MSA
+4X0B,0.929,0.88198,0.97323,0.751,noMSA,complex,pre,True,tRNA,77.0,False,False,no-MSA
+8ASW,0.5762968,0.52882,0.91701,0.415,noMSA,complex,post,True,tRNA,73.0,False,False,no-MSA
+4JGN,0.75848719,0.38531,0.91325,0.22,noMSA,complex,pre,False,,20.0,False,True,no-MSA
+2DRA,0.982,0.90536,0.98504,0.882,noMSA,complex,pre,False,,34.0,False,True,no-MSA
+4RWN,0.997,0.80065,0.99027,0.958,noMSA,complex,pre,False,,19.0,False,True,no-MSA
+7ZOL,0.50068123,0.22887,0.7737,0.02,noMSA,complex,post,False,,39.0,False,True,no-MSA
+7X8A,0.45529579,0.4089,0.89202,0.08,noMSA,complex,post,False,,33.0,False,True,no-MSA
+6XH2,0.936,0.84104,0.95283,0.84,noMSA,complex,pre,False,,27.0,False,True,no-MSA
+5WLH,0.852,0.71821,0.98974,0.679,noMSA,complex,pre,False,,43.0,False,True,no-MSA
+2DET,0.87,0.87538,0.98349,0.853,noMSA,complex,pre,True,tRNA,70.0,True,False,no-MSA
+4XCO,0.933,0.92428,0.46,0.826,noMSA,complex,pre,True,Bacteria_small_SRP,96.0,False,False,no-MSA
+1GTR,0.898,0.93647,0.99349,0.831,noMSA,complex,pre,True,tRNA,74.0,True,False,no-MSA
+8S9U,0.78662753,0.365,0.97113,0.544,noMSA,complex,post,False,,37.0,False,True,no-MSA
+8GNA,0.45867592,0.36306,0.85327,0.047,noMSA,complex,post,False,,32.0,False,True,no-MSA
+7DTE,0.898,0.50563,0.99112,0.838,noMSA,complex,post,False,,33.0,False,True,no-MSA
+5W1H,0.865,0.68392,0.99021,0.663,noMSA,complex,pre,False,,42.0,False,True,no-MSA
+8DG7,0.889,0.36008,0.70332,0.184,noMSA,complex,post,False,,26.0,False,True,no-MSA
+7UOE,0.881,0.53111,0.98778,0.776,noMSA,complex,post,False,,37.0,False,True,no-MSA
+7X7A,0.45186989,0.35739,0.86755,0.011,noMSA,complex,post,False,,33.0,False,True,no-MSA
+8AF0,0.914,0.3488,0.5467,0.43,noMSA,complex,post,False,,19.0,False,True,no-MSA
+4YVK,0.928,0.85734,0.97095,0.831,noMSA,complex,pre,True,tRNA,71.0,True,False,no-MSA
+3UMY,0.873,0.89142,0.95035,0.735,noMSA,complex,pre,True,LSU_rRNA_bacteria,80.0,True,False,no-MSA
+2ZNI,0.875,0.87147,0.98304,0.845,noMSA,complex,pre,False,,72.0,False,False,no-MSA
+8AXF,0.47991392,0.25265,0.79426,0.382,noMSA,complex,post,False,,42.0,False,True,no-MSA
+3A2K,0.824,0.89305,0.97068,0.728,noMSA,complex,pre,True,tRNA,77.0,True,False,no-MSA
+3HTX,0.923,0.61514,0.30796,0.416,noMSA,complex,pre,False,,22.0,False,True,no-MSA
+7XSQ,0.43227994,0.27043,0.86049,0.1,noMSA,complex,post,False,,34.0,False,True,no-MSA
+7ORN,0.63252782,0.31876,0.87152,0.358,noMSA,complex,post,False,,18.0,False,True,no-MSA
+2OJ3,0.88,0.92449,0.9777,0.935,noMSA,complex,pre,True,HDV_ribozyme,73.0,True,False,no-MSA
+3V7E,0.843,0.77589,0.46574,0.661,noMSA,complex,pre,True,SAM,126.0,True,False,no-MSA
+8D9H,0.47967552,0.13236,0.80418,0.053,noMSA,complex,post,False,,36.0,False,True,no-MSA
+6Y0Y,0.94425158,0.62202,0.0,,noMSA,single_chain,pre,False,,27.0,False,True,no-MSA
+8UPT,0.73319933,0.55527,0.0,,noMSA,single_chain,post,False,,71.0,True,False,no-MSA
+3GX5,0.43431282,0.2502,0.0,,noMSA,single_chain,pre,True,SAM,94.0,False,False,no-MSA
+7EOP,0.54812899,0.27509,0.0,,noMSA,single_chain,post,False,,48.0,False,False,no-MSA
+9DE8,0.75463445,0.47792,0.0,,noMSA,single_chain,post,True,mir-TAR,56.0,False,False,no-MSA
+3L0U,0.873,0.79164,0.0,,noMSA,single_chain,pre,True,tRNA,73.0,True,False,no-MSA
+6JXM,0.838,0.76755,0.0,,noMSA,single_chain,pre,True,tRNA,97.0,True,False,no-MSA
+4LX6,0.84266878,0.72043,0.0,,noMSA,single_chain,pre,True,Purine,71.0,False,False,no-MSA
+7E9I,0.82370104,0.56159,0.0,,noMSA,single_chain,post,False,,33.0,True,True,no-MSA
+7MKT,0.25523852,0.07195,0.0,,noMSA,single_chain,post,False,,23.0,False,True,no-MSA
+3GX2,0.43200171,0.2524,0.0,,noMSA,single_chain,pre,True,SAM,94.0,False,False,no-MSA
+6D3P,0.671,0.41724,0.0,,noMSA,single_chain,pre,False,,45.0,False,False,no-MSA
+4TZX,0.67501591,0.55398,0.0,,noMSA,single_chain,pre,True,Purine,71.0,True,False,no-MSA
+3GOG,0.69491884,0.66466,0.0,,noMSA,single_chain,pre,True,Purine,65.0,False,False,no-MSA
+7TZT,0.4640606,0.30586,0.0,,noMSA,single_chain,post,True,TPP,79.0,False,False,no-MSA
+7SAM,0.56656815,0.25207,0.0,,noMSA,single_chain,post,True,TLS-PK3,169.0,True,False,no-MSA
+4L81,0.692,0.59737,0.0,,noMSA,single_chain,pre,True,SAM-I-IV;SAM-I-IV-variant,96.0,False,False,no-MSA
+2A43,0.79468435,0.38148,0.0,,noMSA,single_chain,pre,False,,26.0,True,True,no-MSA
+7EEM,0.92248165,0.64952,0.0,,noMSA,single_chain,post,False,,26.0,False,True,no-MSA
+4LVZ,0.73865241,0.66822,0.0,,noMSA,single_chain,pre,True,THF,89.0,False,False,no-MSA
+4TZY,0.66754199,0.55122,0.0,,noMSA,single_chain,pre,True,Purine,71.0,True,False,no-MSA
+4FE5,0.78393183,0.77859,0.0,,noMSA,single_chain,pre,True,Purine,67.0,True,False,no-MSA
+4LW0,0.74130422,0.6747,0.0,,noMSA,single_chain,pre,True,THF,89.0,False,False,no-MSA
+6WJS,0.42472961,0.25202,0.0,,noMSA,single_chain,pre,True,FMN,109.0,True,False,no-MSA
+5FK3,0.54517124,0.33907,0.0,,noMSA,single_chain,pre,True,SAM,94.0,False,False,no-MSA
+4LX5,0.81287832,0.72097,0.0,,noMSA,single_chain,pre,True,Purine,71.0,False,False,no-MSA
+9CXF,0.37975555,0.21249,0.0,,noMSA,single_chain,post,True,raiA,200.0,True,False,no-MSA
+4LVW,0.737428,0.67388,0.0,,noMSA,single_chain,pre,True,THF,89.0,False,False,no-MSA
+6VUI,0.80323564,0.56984,0.0,,noMSA,single_chain,pre,False,,33.0,True,True,no-MSA
+3IQP,0.4250753,0.25593,0.0,,noMSA,single_chain,pre,True,SAM,94.0,True,False,no-MSA
+8U5J,0.42189354,0.27928,0.0,,noMSA,single_chain,post,False,,36.0,False,True,no-MSA
+2YGH,0.65218868,0.5266,0.0,,noMSA,single_chain,pre,True,SAM,95.0,False,False,no-MSA
+7SXP,0.33161449,0.08382,0.0,,noMSA,single_chain,post,False,,21.0,False,True,no-MSA
+4FEP,0.69614344,0.69861,0.0,,noMSA,single_chain,pre,True,Purine,67.0,True,False,no-MSA
+3SD3,0.68023213,0.58504,0.0,,noMSA,single_chain,pre,True,THF,89.0,True,False,no-MSA
+1Z43,0.81768006,0.87523,0.0,,noMSA,single_chain,pre,True,Bacteria_small_SRP,101.0,False,False,no-MSA
+4LVY,0.73698536,0.68518,0.0,,noMSA,single_chain,pre,True,THF,89.0,True,False,no-MSA
+9C6K,0.55470199,0.42359,0.0,,noMSA,single_chain,post,True,group-II-D1D4-3,80.0,False,False,no-MSA
+7MKY,0.77327884,0.59864,0.0,,noMSA,single_chain,pre,False,,66.0,True,False,no-MSA
+3GAO,0.73895829,0.7895,0.0,,noMSA,single_chain,pre,True,Purine,67.0,True,False,no-MSA
+8UPY,0.73489935,0.66606,0.0,,noMSA,single_chain,post,True,tRNA,72.0,False,False,no-MSA
+5FK5,0.70069323,0.60059,0.0,,noMSA,single_chain,pre,True,SAM,94.0,False,False,no-MSA
+1Q9A,0.97137038,0.82773,0.0,,noMSA,single_chain,pre,False,,27.0,False,True,no-MSA
+5FK2,0.50117602,0.32269,0.0,,noMSA,single_chain,pre,True,SAM,94.0,False,False,no-MSA
+4LVV,0.73404391,0.70468,0.0,,noMSA,single_chain,pre,True,THF,89.0,True,False,no-MSA
+5FKF,0.61497364,0.52849,0.0,,noMSA,single_chain,pre,True,SAM,94.0,False,False,no-MSA
+8Q6N,0.70730686,0.41632,0.0,,noMSA,single_chain,post,True,Xanthine,46.0,False,False,no-MSA
+7URI,0.7781934,0.64767,0.0,,noMSA,single_chain,post,True,tRNA-Sec,90.0,True,True,no-MSA
+7EON,0.52188313,0.2772,0.0,,noMSA,single_chain,post,False,,48.0,False,False,no-MSA
+8TKK,0.70113179,0.52599,0.0,,noMSA,single_chain,post,False,,107.0,False,True,no-MSA
+7D81,0.76281967,0.48034,0.0,,noMSA,single_chain,pre,True,nadA,50.0,False,False,no-MSA
+4FEJ,0.70126787,0.73288,0.0,,noMSA,single_chain,pre,True,Purine,67.0,True,False,no-MSA
+2XO0,0.72994115,0.77874,0.0,,noMSA,single_chain,pre,True,Purine,65.0,True,False,no-MSA
+2GIS,0.41871798,0.27848,0.0,,noMSA,single_chain,pre,True,SAM,94.0,False,False,no-MSA
+7EOI,0.54416797,0.26278,0.0,,noMSA,single_chain,post,False,,49.0,False,False,no-MSA
+2EET,0.67020628,0.63604,0.0,,noMSA,single_chain,pre,True,Purine,67.0,True,False,no-MSA
+6UC8,0.77073753,0.79271,0.0,,noMSA,single_chain,pre,True,Purine,67.0,True,False,no-MSA
+2XO1,0.61945364,0.60044,0.0,,noMSA,single_chain,pre,True,Purine,65.0,True,False,no-MSA
+6UBU,0.78208548,0.78434,0.0,,noMSA,single_chain,pre,True,Purine,67.0,True,False,no-MSA
+3LA5,0.81446133,0.69367,0.0,,noMSA,single_chain,pre,True,Purine,71.0,True,False,no-MSA
+3FO4,0.59899004,0.61924,0.0,,noMSA,single_chain,pre,True,Purine,63.0,False,False,no-MSA
+6UC7,0.7466799,0.77443,0.0,,noMSA,single_chain,pre,True,Purine,67.0,True,False,no-MSA
+7EOO,0.51665943,0.27318,0.0,,noMSA,single_chain,post,False,,48.0,False,False,no-MSA
+7EOG,0.53139681,0.27495,0.0,,noMSA,single_chain,post,False,,48.0,False,False,no-MSA
+3DVZ,0.97549974,0.81254,0.0,,noMSA,single_chain,pre,False,,27.0,False,True,no-MSA
+7D82,0.7668976,0.5022,0.0,,noMSA,single_chain,pre,True,nadA,50.0,False,False,no-MSA
+7EOM,0.51691901,0.27014,0.0,,noMSA,single_chain,post,False,,48.0,False,False,no-MSA
+3IQN,0.41950116,0.28336,0.0,,noMSA,single_chain,pre,True,SAM,94.0,False,False,no-MSA
+5FKE,0.74039606,0.72413,0.0,,noMSA,single_chain,pre,True,SAM,94.0,False,False,no-MSA
+2EEV,0.67888689,0.67365,0.0,,noMSA,single_chain,pre,True,Purine,67.0,True,False,no-MSA
+4FEN,0.70135938,0.73572,0.0,,noMSA,single_chain,pre,True,Purine,67.0,True,False,no-MSA
+7URM,0.81095204,0.64737,0.0,,noMSA,single_chain,post,True,tRNA-Sec,90.0,True,True,no-MSA
+8KEB,0.60918095,0.38443,0.0,,noMSA,single_chain,post,False,,71.0,True,False,no-MSA
+4B5R,0.57677431,0.48465,0.0,,noMSA,single_chain,pre,True,SAM,94.0,False,False,no-MSA
+7EFH,0.48883628,0.19657,0.0,,noMSA,single_chain,post,False,,19.0,False,True,no-MSA
+3A3A,0.87965979,0.78822,0.0,,noMSA,single_chain,pre,True,tRNA-Sec,86.0,True,False,no-MSA
+8HB8,0.37751954,0.2632,0.0,,noMSA,single_chain,post,False,,55.0,False,True,no-MSA
+4FEO,0.66286538,0.64793,0.0,,noMSA,single_chain,pre,True,Purine,67.0,True,False,no-MSA
+7EOK,0.52695984,0.27511,0.0,,noMSA,single_chain,post,False,,48.0,False,False,no-MSA
+2XNW,0.72646298,0.77945,0.0,,noMSA,single_chain,pre,True,Purine,65.0,True,False,no-MSA
+7QSH,0.87568993,0.60155,0.0,,noMSA,single_chain,post,False,,25.0,False,True,no-MSA
+5M0H,0.847,0.65741,0.0,,noMSA,single_chain,pre,False,,42.0,False,True,no-MSA
+7VFT,0.78727096,0.19169,0.0,,noMSA,single_chain,post,False,,23.0,False,True,no-MSA
+7EFG,0.52787822,0.19797,0.0,,noMSA,single_chain,post,False,,19.0,False,True,no-MSA
+7LYJ,0.76725057,0.62318,0.0,,noMSA,single_chain,pre,False,,66.0,True,False,no-MSA
+2G9C,0.68097384,0.72679,0.0,,noMSA,single_chain,pre,True,Purine,67.0,False,False,no-MSA
+4XNR,0.68530451,0.5566,0.0,,noMSA,single_chain,pre,True,Purine,71.0,True,False,no-MSA
+7EOL,0.53449694,0.27068,0.0,,noMSA,single_chain,post,False,,48.0,False,False,no-MSA
+7EAF,0.4641106,0.31913,0.0,,noMSA,single_chain,pre,True,SAM,94.0,False,False,no-MSA
+483D,0.97602273,0.82499,0.0,,noMSA,single_chain,pre,False,,27.0,False,True,no-MSA
+8KED,0.6149584,0.38025,0.0,,noMSA,single_chain,post,False,,71.0,True,False,no-MSA
+7Y81,0.46898272,0.13435,0.85078,0.03,alphafold,complex,post,False,,36.0,False,True,natural MSA
+6VRC,0.812,0.75866,0.97874,0.66,alphafold,complex,pre,False,,51.0,False,False,natural MSA
+8C4U,0.69381268,0.26744,0.93901,0.327,alphafold,complex,post,False,,20.0,False,True,natural MSA
+3NVI,0.98757381,0.78226,0.99172,0.91,alphafold,complex,pre,False,,24.0,False,True,natural MSA
+6G1X,0.98,0.5264,0.96473,0.856,alphafold,complex,pre,False,,15.0,False,True,natural MSA
+3EPJ,0.89815843,0.83596,0.49181,0.604,alphafold,complex,pre,True,tRNA,69.0,True,False,natural MSA
+5DAR,0.95026545,0.95715,0.51505,0.784,alphafold,complex,pre,True,LSU_rRNA_archaea,74.0,False,False,natural MSA
+1ZDK,0.91687376,0.62905,0.6854,0.508,alphafold,complex,pre,False,,19.0,False,True,natural MSA
+4QG3,0.97794297,0.96318,0.99151,0.93,alphafold,complex,pre,True,LSU_rRNA_bacteria,80.0,True,False,natural MSA
+7Y8Y,0.46690857,0.17703,0.81855,0.08,alphafold,complex,post,False,,37.0,False,True,natural MSA
+1QRT,0.95454852,0.95958,0.99316,0.836,alphafold,complex,pre,True,tRNA,74.0,True,False,natural MSA
+6SX2,1.0,0.72891,0.99708,0.98,alphafold,complex,pre,False,,19.0,False,True,natural MSA
+2ZH9,0.985,0.91957,0.99805,0.957,alphafold,complex,pre,False,,33.0,False,True,natural MSA
+2ZH1,0.997,0.94887,0.99834,0.971,alphafold,complex,pre,False,,33.0,False,True,natural MSA
+6NMD,0.8972783,0.71944,0.94062,0.672,alphafold,complex,pre,False,,25.0,False,True,natural MSA
+4J39,0.845,0.30527,0.92384,0.156,alphafold,complex,pre,False,,19.0,False,True,natural MSA
+4S3N,0.921,0.55884,0.9778,0.879,alphafold,complex,pre,False,,19.0,False,True,natural MSA
+8Z90,0.86711548,0.41971,0.98919,0.789,alphafold,complex,post,False,,18.0,False,True,natural MSA
+6TQB,0.98815034,0.71297,0.99098,0.952,alphafold,complex,pre,False,,19.0,False,True,natural MSA
+8WMC,0.43607494,0.2893,0.90701,0.123,alphafold,complex,post,False,,38.0,False,True,natural MSA
+4WC2,0.977,0.96845,0.98611,0.82,alphafold,complex,pre,True,tRNA,75.0,True,False,natural MSA
+4KR6,0.63627998,0.40178,0.90572,0.464,alphafold,complex,pre,False,,39.0,False,True,natural MSA
+9ENE,0.817,0.74179,0.91151,0.538,alphafold,complex,post,True,tRNA,73.0,True,False,natural MSA
+1UN6,0.91164152,0.64021,0.37505,0.319,alphafold,complex,pre,False,,61.0,False,False,natural MSA
+2DR2,0.77465833,0.75852,0.97244,0.8,alphafold,complex,pre,True,tRNA,75.0,False,False,natural MSA
+2W2H,0.42312183,0.20207,0.45911,0.34,alphafold,complex,pre,False,,22.0,False,True,natural MSA
+4TUX,0.906,0.5465,0.46329,0.616,alphafold,complex,pre,True,Histone3,26.0,False,True,natural MSA
+1VC6,0.93502253,0.8853,0.96893,0.894,alphafold,complex,pre,True,HDV_ribozyme,72.0,True,False,natural MSA
+3U56,0.92972792,0.92428,0.98155,0.855,alphafold,complex,pre,True,LSU_rRNA_bacteria,80.0,True,False,natural MSA
+6BJY,0.41675245,0.12287,0.58789,0.41,alphafold,complex,pre,False,,45.0,False,True,natural MSA
+7VTN,0.66067434,0.27407,0.31689,0.124,alphafold,complex,post,False,,56.0,False,True,natural MSA
+7KA0,0.87200724,0.67374,0.95349,0.798,alphafold,complex,pre,True,tRNA,66.0,True,False,natural MSA
+4KR9,0.73391517,0.44308,0.96625,0.59,alphafold,complex,pre,False,,39.0,False,True,natural MSA
+4TUW,0.921,0.56431,0.46516,0.52,alphafold,complex,pre,True,Histone3,28.0,False,True,natural MSA
+5F5H,0.95183664,0.61183,0.5007,0.792,alphafold,complex,pre,False,,21.0,False,True,natural MSA
+3FTF,0.90613045,0.40896,0.92876,0.733,alphafold,complex,pre,False,,22.0,False,True,natural MSA
+6BJV,0.97,0.75615,0.976,0.873,alphafold,complex,pre,False,,21.0,False,True,natural MSA
+7X7R,0.44684094,0.31094,0.85193,0.045,alphafold,complex,post,False,,36.0,False,True,natural MSA
+1ZBH,0.93929172,0.61474,0.23249,0.079,alphafold,complex,pre,False,,16.0,False,True,natural MSA
+1QRS,0.95973461,0.96313,0.99362,0.836,alphafold,complex,pre,True,tRNA,74.0,True,False,natural MSA
+2BQ5,0.933,0.54239,0.64729,0.676,alphafold,complex,pre,False,,19.0,False,True,natural MSA
+8WML,0.4789707,0.21307,0.73326,0.01,alphafold,complex,post,False,,38.0,False,True,natural MSA
+4QOZ,0.963,0.82147,0.47111,0.319,alphafold,complex,pre,True,Histone3,26.0,False,True,natural MSA
+1EIY,0.68233926,0.55,0.89012,0.673,alphafold,complex,pre,True,tRNA,76.0,True,False,natural MSA
+2DU4,0.86014776,0.90006,0.94024,0.766,alphafold,complex,pre,True,tRNA,71.0,True,False,natural MSA
+6NMC,0.93031474,0.74425,0.88329,0.601,alphafold,complex,pre,False,,25.0,False,True,natural MSA
+4X4O,0.872,0.64255,0.98172,0.835,alphafold,complex,pre,False,,34.0,False,True,natural MSA
+7N0B,0.95280367,0.56051,0.99137,0.921,alphafold,complex,pre,False,,20.0,False,True,natural MSA
+2ZH6,0.97,0.88061,0.98491,0.854,alphafold,complex,pre,False,,34.0,False,True,natural MSA
+7OS0,0.34180237,0.14687,0.46758,0.058,alphafold,complex,post,False,,48.0,False,True,natural MSA
+1O0C,0.98462496,0.98395,0.99253,0.852,alphafold,complex,pre,True,tRNA,74.0,True,False,natural MSA
+1DFU,0.9461262,0.7037,0.98399,0.923,alphafold,complex,pre,False,,19.0,False,True,natural MSA
+6U8D,0.91343339,0.7912,0.85468,0.628,alphafold,complex,pre,False,,68.0,False,False,natural MSA
+2DR5,0.85255423,0.48323,0.99223,0.696,alphafold,complex,pre,False,,32.0,False,True,natural MSA
+9ENB,0.864,0.78997,0.90736,0.487,alphafold,complex,post,True,tRNA,72.0,True,False,natural MSA
+4WC5,0.951,0.94288,0.97773,0.825,alphafold,complex,pre,True,tRNA,74.0,True,False,natural MSA
+2ZH7,0.995,0.93883,0.99815,0.968,alphafold,complex,pre,False,,33.0,False,True,natural MSA
+7N0C,0.96802442,0.60246,0.98499,0.9,alphafold,complex,pre,False,,25.0,False,True,natural MSA
+2DU5,0.86135127,0.71727,0.89709,0.696,alphafold,complex,pre,True,tRNA,71.0,True,False,natural MSA
+7UO7,0.95703323,0.41076,0.97591,0.819,alphafold,complex,post,False,,34.0,False,True,natural MSA
+8AW3,0.82172627,0.78381,0.92525,0.595,alphafold,complex,post,True,tRNA,73.0,True,False,natural MSA
+4WC4,0.971,0.94963,0.98471,0.85,alphafold,complex,pre,True,tRNA,74.0,True,False,natural MSA
+9ENC,0.824,0.777,0.91543,0.573,alphafold,complex,post,True,tRNA,75.0,True,False,natural MSA
+2ZKO,0.978,0.8559,0.9939,0.966,alphafold,complex,pre,False,,21.0,False,True,natural MSA
+1LNG,0.88043692,0.90503,0.96527,0.919,alphafold,complex,pre,True,Bacteria_small_SRP,97.0,False,False,natural MSA
+7XC7,0.49960215,0.26301,0.81135,0.075,alphafold,complex,post,False,,31.0,False,True,natural MSA
+2IY5,0.66928935,0.54305,0.95643,0.738,alphafold,complex,pre,True,tRNA,76.0,True,False,natural MSA
+1VC0,0.93272957,0.90147,0.96555,0.895,alphafold,complex,pre,True,HDV_ribozyme,73.0,True,False,natural MSA
+1RPU,0.942,0.50634,0.95592,0.833,alphafold,complex,pre,False,,21.0,False,True,natural MSA
+6XJZ,0.29347728,0.29911,0.36545,0.346,alphafold,complex,post,False,,58.0,False,False,natural MSA
+3WQY,0.91003492,0.86188,0.9386,0.657,alphafold,complex,pre,True,tRNA,75.0,True,False,natural MSA
+1O0B,0.97932277,0.98452,0.9933,0.854,alphafold,complex,pre,True,tRNA,74.0,True,False,natural MSA
+7XW2,0.77983632,0.60606,0.87944,0.046,alphafold,complex,post,False,,54.0,False,True,natural MSA
+2HVY,0.867,0.49285,0.72081,0.653,alphafold,complex,pre,False,,61.0,False,False,natural MSA
+4ZLD,0.998,0.87773,0.99652,0.97,alphafold,complex,pre,False,,17.0,False,True,natural MSA
+2RE8,0.97324595,0.97322,0.99186,0.854,alphafold,complex,pre,True,tRNA,74.0,True,False,natural MSA
+8FZR,0.50435964,0.55969,0.80309,0.009,alphafold,complex,post,True,tRNA,77.0,False,False,natural MSA
+8GU6,0.47893788,0.31394,0.77732,0.055,alphafold,complex,post,False,,33.0,False,True,natural MSA
+1SDS,0.67906759,0.24772,0.44605,0.298,alphafold,complex,pre,False,,15.0,False,True,natural MSA
+6DU4,0.983,0.86336,0.99126,0.916,alphafold,complex,pre,False,,29.0,False,True,natural MSA
+8BGU,0.833,0.67517,0.85249,0.622,alphafold,complex,post,True,5S_rRNA,121.0,False,False,natural MSA
+1FEU,0.92848466,0.4531,0.48812,0.694,alphafold,complex,pre,False,,21.0,False,True,natural MSA
+8GS2,0.49142242,0.31378,0.80438,0.123,alphafold,complex,post,False,,38.0,False,True,natural MSA
+1QA6,0.95201656,0.95426,0.52064,0.797,alphafold,complex,pre,True,LSU_rRNA_bacteria,58.0,False,False,natural MSA
+6B14,0.96385792,0.89465,0.98057,0.891,alphafold,complex,pre,False,,83.0,False,True,natural MSA
+5V6X,0.89293997,0.73533,0.48464,0.622,alphafold,complex,pre,True,tRNA,72.0,True,False,natural MSA
+6H61,0.984,0.57707,0.97626,0.873,alphafold,complex,pre,False,,15.0,False,True,natural MSA
+7ZOQ,0.48864393,0.24601,0.82604,0.071,alphafold,complex,post,False,,39.0,False,True,natural MSA
+9IIY,0.788,0.25519,0.62636,0.273,alphafold,complex,post,False,,22.0,False,True,natural MSA
+2UWM,0.91448614,0.58383,0.93781,0.802,alphafold,complex,pre,False,,23.0,False,True,natural MSA
+6KLB,0.809,0.45556,0.44471,0.431,alphafold,complex,pre,False,,25.0,False,True,natural MSA
+7SLP,0.61784442,0.28639,0.69297,0.236,alphafold,complex,post,False,,37.0,False,False,natural MSA
+1VBZ,0.92594342,0.90497,0.96775,0.89,alphafold,complex,pre,True,HDV_ribozyme,73.0,True,False,natural MSA
+6E9F,0.833,0.77566,0.98539,0.774,alphafold,complex,pre,False,,52.0,False,False,natural MSA
+2GIC,0.41612698,0.25809,0.96567,0.559,alphafold,complex,pre,False,,45.0,False,True,natural MSA
+7K9M,0.86676407,0.7145,0.94439,0.741,alphafold,complex,pre,True,tRNA,66.0,True,False,natural MSA
+7WKP,0.804,0.39921,0.93218,0.389,alphafold,complex,post,False,,21.0,False,True,natural MSA
+3KTW,0.86594007,0.81672,0.47459,0.762,alphafold,complex,pre,False,,96.0,False,False,natural MSA
+1MMS,0.15384845,0.96813,0.61862,0.89,alphafold,complex,pre,True,LSU_rRNA_bacteria,58.0,False,False,natural MSA
+5F5F,0.953,0.58546,0.34,0.527,alphafold,complex,pre,False,,20.0,False,True,natural MSA
+2RD2,0.96920879,0.97958,0.99245,0.846,alphafold,complex,pre,True,tRNA,74.0,True,False,natural MSA
+7YNA,0.49406831,0.33683,0.77802,0.134,alphafold,complex,post,False,,38.0,False,True,natural MSA
+7DWH,0.844,0.56463,0.47346,0.497,alphafold,complex,post,False,,45.0,False,False,natural MSA
+4WC3,0.961,0.96246,0.98376,0.793,alphafold,complex,pre,True,tRNA,76.0,True,False,natural MSA
+4GHL,0.928,0.53862,0.26642,0.462,alphafold,complex,pre,False,,18.0,False,True,natural MSA
+1KUQ,0.905,0.90239,0.97363,0.898,alphafold,complex,pre,False,,57.0,False,False,natural MSA
+8DVS,0.90043946,0.62324,0.98873,0.759,alphafold,complex,post,False,,26.0,False,True,natural MSA
+1QTQ,0.95553298,0.9732,0.99286,0.847,alphafold,complex,pre,True,tRNA,74.0,True,False,natural MSA
+4ZT9,0.92873698,0.85576,0.52931,0.851,alphafold,complex,pre,False,,72.0,False,False,natural MSA
+6VRB,0.852,0.75358,0.81482,0.561,alphafold,complex,pre,False,,52.0,False,True,natural MSA
+2EZ6,0.99,0.78379,0.9945,0.954,alphafold,complex,pre,False,,28.0,False,True,natural MSA
+7Y80,0.44539782,0.39838,0.86096,0.011,alphafold,complex,post,False,,35.0,False,True,natural MSA
+2ZH8,0.999,0.96838,0.99806,0.964,alphafold,complex,pre,False,,34.0,False,True,natural MSA
+3PU4,0.40396442,0.29537,0.97101,0.564,alphafold,complex,pre,False,,45.0,False,True,natural MSA
+6SY6,0.90001129,0.65024,0.96928,0.725,alphafold,complex,pre,False,,36.0,False,True,natural MSA
+6H66,0.995,0.63897,0.97697,0.864,alphafold,complex,pre,False,,15.0,False,True,natural MSA
+1QRU,0.96292272,0.97212,0.99426,0.842,alphafold,complex,pre,True,tRNA,74.0,True,False,natural MSA
+5D6G,0.91791606,0.95515,0.90456,0.83,alphafold,complex,pre,True,LSU_rRNA_archaea,74.0,False,False,natural MSA
+4QQB,0.78073933,0.2577,0.43207,0.519,alphafold,complex,pre,False,,17.0,False,True,natural MSA
+1EXD,0.9358828,0.953,0.99526,0.931,alphafold,complex,pre,True,tRNA,73.0,True,False,natural MSA
+3OVA,0.942,0.92549,0.99055,0.968,alphafold,complex,pre,False,,34.0,False,True,natural MSA
+9ENF,0.61430397,0.55139,0.85678,0.456,alphafold,complex,post,True,tRNA,91.0,True,False,natural MSA
+7YNC,0.49585102,0.31482,0.78323,0.13,alphafold,complex,post,False,,38.0,False,True,natural MSA
+6G1S,0.979,0.57796,0.96652,0.884,alphafold,complex,pre,False,,15.0,False,True,natural MSA
+6IV6,0.86509653,0.54846,0.95846,0.719,alphafold,complex,pre,False,,26.0,False,True,natural MSA
+1U0B,0.90265614,0.88704,0.9707,0.683,alphafold,complex,pre,True,tRNA,74.0,False,False,natural MSA
+7RE2,0.97278062,0.51461,0.71423,0.818,alphafold,complex,post,False,,37.0,False,True,natural MSA
+5VW1,0.96000525,0.86242,0.98686,0.819,alphafold,complex,pre,False,,73.0,False,False,natural MSA
+7BKQ,0.992,0.62485,0.95374,0.856,alphafold,complex,post,False,,15.0,False,True,natural MSA
+2ZH2,0.996,0.9532,0.99808,0.951,alphafold,complex,pre,False,,34.0,False,True,natural MSA
+4YB1,0.93435827,0.88424,0.50006,0.004,alphafold,complex,pre,True,c-di-GMP-I;c-di-GMP-I-GGC,91.0,True,False,natural MSA
+8SSW,0.83708317,0.24578,0.29976,0.153,alphafold,complex,post,False,,23.0,False,True,natural MSA
+6P7M,0.909,0.85896,0.90049,0.565,alphafold,complex,pre,False,,26.0,False,True,natural MSA
+1VBX,0.92651289,0.90252,0.96923,0.903,alphafold,complex,pre,True,HDV_ribozyme,73.0,True,False,natural MSA
+8D97,0.44931948,0.22025,0.74057,0.01,alphafold,complex,post,False,,42.0,False,True,natural MSA
+4QI2,0.877039,0.46232,0.3487,0.49,alphafold,complex,pre,False,,19.0,False,True,natural MSA
+5MSF,0.976,0.771,0.65208,0.36,alphafold,complex,pre,False,,18.0,False,True,natural MSA
+6XJW,0.36172011,0.18764,0.37654,0.331,alphafold,complex,post,False,,58.0,False,False,natural MSA
+3OUY,0.957,0.87372,0.99481,0.928,alphafold,complex,pre,False,,35.0,False,True,natural MSA
+7Y82,0.50612297,0.1704,0.80876,0.031,alphafold,complex,post,False,,41.0,False,True,natural MSA
+2DR9,0.973,0.91714,0.98593,0.869,alphafold,complex,pre,False,,34.0,False,True,natural MSA
+1SJ4,0.92897798,0.89193,0.96713,0.897,alphafold,complex,pre,True,HDV_ribozyme,73.0,True,False,natural MSA
+8URB,0.9199871,0.54708,0.96836,0.656,alphafold,complex,post,False,,21.0,False,True,natural MSA
+7KRP,0.96938355,0.52609,0.99489,0.895,alphafold,complex,pre,False,,37.0,False,True,natural MSA
+4M4O,0.958,0.89712,0.94707,0.81,alphafold,complex,pre,False,,59.0,True,True,natural MSA
+7YND,0.4348583,0.30828,0.8604,0.212,alphafold,complex,post,False,,38.0,False,True,natural MSA
+3TUP,0.882,0.81673,0.65215,0.226,alphafold,complex,pre,True,tRNA,74.0,True,False,natural MSA
+3K0J,0.89686994,0.86538,0.26409,0.426,alphafold,complex,pre,True,TPP,87.0,False,False,natural MSA
+4WC6,0.951,0.94475,0.97555,0.782,alphafold,complex,pre,True,tRNA,75.0,True,False,natural MSA
+8D1V,0.44044727,0.33727,0.87334,0.154,alphafold,complex,post,False,,34.0,False,True,natural MSA
+8D4B,0.86961385,0.34193,0.67149,0.35,alphafold,complex,post,False,,41.0,False,True,natural MSA
+9CPO,0.92744178,0.50937,0.95951,0.715,alphafold,complex,post,False,,33.0,False,True,natural MSA
+1A9N,0.98138304,0.69961,0.50723,0.832,alphafold,complex,pre,False,,24.0,False,True,natural MSA
+2ZH5,0.997,0.94083,0.99775,0.966,alphafold,complex,pre,False,,34.0,False,True,natural MSA
+1EUY,0.95437771,0.97053,0.99721,0.945,alphafold,complex,pre,True,tRNA,73.0,True,False,natural MSA
+7R97,0.949,0.51423,0.98177,0.885,alphafold,complex,post,False,,28.0,False,True,natural MSA
+1EUQ,0.91527007,0.9403,0.99237,0.834,alphafold,complex,pre,True,tRNA,72.0,True,False,natural MSA
+2B2G,0.92004049,0.51608,0.63467,0.681,alphafold,complex,pre,False,,16.0,False,True,natural MSA
+8EEY,0.4739235,0.4507,0.80478,0.103,alphafold,complex,post,False,,38.0,False,True,natural MSA
+7Y9X,0.47514904,0.37625,0.88759,0.187,alphafold,complex,post,False,,38.0,False,True,natural MSA
+3VJR,0.963,0.66342,0.6153,0.672,alphafold,complex,pre,False,,36.0,False,True,natural MSA
+1SJ3,0.93465932,0.89251,0.96524,0.899,alphafold,complex,pre,True,HDV_ribozyme,73.0,True,False,natural MSA
+3WC2,0.85262862,0.73503,0.91941,0.77,alphafold,complex,pre,True,tRNA,74.0,True,False,natural MSA
+7Y85,0.51407798,0.188,0.88304,0.086,alphafold,complex,post,False,,36.0,False,True,natural MSA
+6B3K,0.94287922,0.86324,0.79905,0.654,alphafold,complex,pre,False,,83.0,False,False,natural MSA
+7MLX,0.949,0.78783,0.91036,0.816,alphafold,complex,pre,False,,65.0,True,False,natural MSA
+3R9W,0.81819615,0.31733,0.95616,0.619,alphafold,complex,pre,False,,34.0,False,True,natural MSA
+8EEX,0.46567905,0.35925,0.91715,0.12,alphafold,complex,post,False,,36.0,False,True,natural MSA
+7Y9Y,0.51809896,0.23704,0.78775,0.065,alphafold,complex,post,False,,38.0,False,True,natural MSA
+6XJQ,0.36094875,0.18759,0.37523,0.334,alphafold,complex,post,False,,58.0,False,False,natural MSA
+7Y84,0.43448785,0.37756,0.86365,0.093,alphafold,complex,post,False,,35.0,False,True,natural MSA
+8OPT,0.42411429,0.22937,0.81523,0.04,alphafold,complex,post,False,,54.0,False,False,natural MSA
+1VFG,0.36698332,0.27466,0.45055,0.029,alphafold,complex,pre,True,tRNA,34.0,False,True,natural MSA
+2V3C,0.89771787,0.8559,0.28888,0.52,alphafold,complex,pre,True,Bacteria_small_SRP,96.0,False,False,natural MSA
+4WC7,0.952,0.94843,0.97604,0.789,alphafold,complex,pre,True,tRNA,75.0,True,False,natural MSA
+4KJI,0.963,0.64352,0.97628,0.916,alphafold,complex,pre,False,,16.0,False,True,natural MSA
+8HKE,0.79454016,0.2734,0.92519,0.421,alphafold,complex,post,False,,37.0,False,True,natural MSA
+2DR7,0.967,0.87227,0.99838,0.947,alphafold,complex,pre,False,,33.0,False,True,natural MSA
+7OZQ,0.741,0.38795,0.22817,0.04,alphafold,complex,post,False,,32.0,False,True,natural MSA
+8Z8X,0.89155278,0.46219,0.9046,0.587,alphafold,complex,post,False,,18.0,False,True,natural MSA
+6XJY,0.29959028,0.3007,0.38832,0.353,alphafold,complex,post,False,,58.0,False,False,natural MSA
+7QR3,0.60980853,0.28191,0.38756,0.368,alphafold,complex,post,True,CPEB3_ribozyme,69.0,True,False,natural MSA
+2ZH4,0.998,0.96808,0.9978,0.979,alphafold,complex,pre,False,,34.0,False,True,natural MSA
+6NMA,0.94694783,0.76804,0.82029,0.499,alphafold,complex,pre,False,,25.0,False,True,natural MSA
+4NH6,0.70234164,0.30849,0.94083,0.369,alphafold,complex,pre,False,,15.0,False,True,natural MSA
+2F8T,0.69,0.20551,0.42682,0.16,alphafold,complex,pre,False,,26.0,False,True,natural MSA
+7UO4,0.9580547,0.43956,0.98458,0.839,alphafold,complex,post,False,,36.0,False,True,natural MSA
+7Y8T,0.42364262,0.24757,0.81497,0.077,alphafold,complex,post,False,,37.0,False,True,natural MSA
+6AAX,0.94230504,0.64266,0.56063,0.598,alphafold,complex,pre,False,,28.0,False,True,natural MSA
+2DU6,0.84734721,0.71441,0.89502,0.702,alphafold,complex,pre,True,tRNA,71.0,True,False,natural MSA
+4RWP,0.986,0.56406,0.98687,0.913,alphafold,complex,pre,False,,19.0,False,True,natural MSA
+6SX0,0.95,0.4733,0.98398,0.905,alphafold,complex,pre,False,,19.0,False,True,natural MSA
+8IDF,0.66296029,0.36174,0.7604,0.183,alphafold,complex,post,False,,53.0,False,True,natural MSA
+6W62,0.8088885,0.49819,0.93522,0.592,alphafold,complex,pre,False,,24.0,False,True,natural MSA
+8WMI,0.47038223,0.31857,0.84173,0.024,alphafold,complex,post,False,,39.0,False,True,natural MSA
+3NDB,0.88968254,0.92529,0.89317,0.777,alphafold,complex,pre,True,Archaea_SRP,136.0,False,False,natural MSA
+2AKE,0.77233784,0.75485,0.96868,0.803,alphafold,complex,pre,True,tRNA,72.0,False,False,natural MSA
+5NPM,0.951,0.92535,0.99057,0.901,alphafold,complex,pre,True,LSU_rRNA_bacteria,80.0,True,False,natural MSA
+2DR8,0.964,0.88574,0.98483,0.827,alphafold,complex,pre,False,,33.0,False,True,natural MSA
+8OPS,0.50778503,0.35937,0.90112,0.246,alphafold,complex,post,False,,69.0,False,False,natural MSA
+7WAH,0.49409578,0.4273,0.84531,0.118,alphafold,complex,post,False,,39.0,False,True,natural MSA
+1S03,0.856,0.69781,0.4889,0.771,alphafold,complex,pre,False,,47.0,False,True,natural MSA
+7YNB,0.48803539,0.32124,0.79351,0.129,alphafold,complex,post,False,,38.0,False,True,natural MSA
+6ZLC,0.999,0.81349,0.98259,0.944,alphafold,complex,pre,False,,19.0,False,True,natural MSA
+2R8S,0.87361081,0.88878,0.73729,0.478,alphafold,complex,pre,False,,159.0,False,False,natural MSA
+9IIZ,0.82,0.33248,0.89645,0.579,alphafold,complex,post,False,,25.0,False,True,natural MSA
+3R9X,0.91558406,0.71667,0.63456,0.72,alphafold,complex,pre,False,,35.0,False,False,natural MSA
+8DGA,0.9124398,0.44601,0.74557,0.267,alphafold,complex,post,False,,22.0,False,True,natural MSA
+4PMI,0.93842075,0.72171,0.83542,0.679,alphafold,complex,pre,False,,40.0,False,True,natural MSA
+1VBY,0.92334761,0.88265,0.96188,0.901,alphafold,complex,pre,True,HDV_ribozyme,73.0,True,False,natural MSA
+6E9E,0.832,0.70328,0.98822,0.797,alphafold,complex,pre,False,,51.0,False,False,natural MSA
+8ISS,0.80195411,0.80755,0.93082,0.597,alphafold,complex,post,True,tRNA,80.0,True,False,natural MSA
+2F8S,0.71228211,0.28916,0.43649,0.006,alphafold,complex,pre,False,,22.0,False,True,natural MSA
+1IVS,0.85390419,0.82718,0.49294,0.431,alphafold,complex,pre,True,tRNA,75.0,True,False,natural MSA
+5HC9,0.862,0.7605,0.48518,0.665,alphafold,complex,pre,True,tRNA,76.0,True,False,natural MSA
+2ZH3,0.998,0.95929,0.99824,0.972,alphafold,complex,pre,False,,34.0,False,True,natural MSA
+7QR4,0.71705925,0.47717,0.79654,0.679,alphafold,complex,post,True,CPEB3_ribozyme,69.0,True,False,natural MSA
+4PDB,0.88,0.8611,0.98724,0.902,alphafold,complex,pre,False,,38.0,False,True,natural MSA
+2ZZN,0.85857162,0.81488,0.5403,0.557,alphafold,complex,pre,True,tRNA,71.0,True,False,natural MSA
+1ZJW,0.98179384,0.98835,0.99385,0.852,alphafold,complex,pre,True,tRNA,74.0,True,False,natural MSA
+4OOG,0.973,0.71692,0.93078,0.752,alphafold,complex,pre,False,,34.0,False,True,natural MSA
+4PRF,0.93182142,0.93513,0.97134,0.905,alphafold,complex,pre,True,HDV_ribozyme,74.0,True,False,natural MSA
+3WBM,0.922,0.32222,0.49164,0.515,alphafold,complex,pre,False,,25.0,False,True,natural MSA
+4YVI,0.92617952,0.80866,0.97477,0.823,alphafold,complex,pre,True,tRNA,71.0,True,False,natural MSA
+7W0D,0.841,0.27457,0.61568,0.008,alphafold,complex,post,False,,52.0,False,False,natural MSA
+6ZDQ,0.85914653,0.71986,0.97539,0.732,alphafold,complex,pre,False,,65.0,False,False,natural MSA
+6BJG,0.926,0.81465,0.98032,0.901,alphafold,complex,pre,False,,21.0,False,True,natural MSA
+8H69,0.903,0.48259,0.9118,0.59,alphafold,complex,post,False,,19.0,False,True,natural MSA
+8S9X,0.73346066,0.33319,0.96352,0.532,alphafold,complex,post,False,,37.0,False,True,natural MSA
+5W0O,0.877,0.33576,0.70349,0.745,alphafold,complex,pre,False,,15.0,False,True,natural MSA
+6DB9,0.901,0.69106,0.88348,0.724,alphafold,complex,pre,False,,60.0,True,False,natural MSA
+5DE5,0.83171066,0.59274,0.41876,0.635,alphafold,complex,pre,False,,35.0,False,True,natural MSA
+7VG3,0.836,0.36806,0.94399,0.285,alphafold,complex,post,False,,32.0,False,True,natural MSA
+4FTS,0.70171128,0.21905,0.97795,0.923,alphafold,complex,pre,False,,15.0,False,True,natural MSA
+7XSS,0.46894286,0.29982,0.92278,0.103,alphafold,complex,post,False,,34.0,False,True,natural MSA
+6GKH,0.909,0.40875,0.97502,0.741,alphafold,complex,pre,False,,15.0,False,True,natural MSA
+1J1U,0.89455279,0.82766,0.96814,0.656,alphafold,complex,pre,True,tRNA,74.0,True,False,natural MSA
+5UDZ,0.916,0.54723,0.97746,0.861,alphafold,complex,pre,False,,24.0,False,True,natural MSA
+3U4M,0.95567507,0.91428,0.97509,0.865,alphafold,complex,pre,True,LSU_rRNA_bacteria,80.0,True,False,natural MSA
+5CCB,0.70207128,0.43457,0.92857,0.677,alphafold,complex,pre,True,tRNA,77.0,False,False,natural MSA
+7CTT,0.96755193,0.57066,0.97453,0.868,alphafold,complex,pre,False,,18.0,False,True,natural MSA
+8YE6,0.89932442,0.80981,0.92096,0.578,alphafold,complex,post,False,,92.0,False,False,natural MSA
+7D7V,0.88900289,0.68758,0.88157,0.778,alphafold,complex,pre,True,nadA,57.0,True,False,natural MSA
+3SIU,0.93231519,0.59449,0.54128,0.631,alphafold,complex,pre,False,,28.0,False,True,natural MSA
+2NUF,0.986,0.8423,0.99388,0.941,alphafold,complex,pre,False,,28.0,False,True,natural MSA
+4JNG,0.44323705,0.24265,0.80365,0.194,alphafold,complex,pre,False,,42.0,False,True,natural MSA
+8D9E,0.48755229,0.29306,0.85444,0.049,alphafold,complex,post,False,,36.0,False,True,natural MSA
+7W0C,0.90780653,0.39755,0.76016,0.303,alphafold,complex,post,False,,37.0,False,True,natural MSA
+3OVS,0.847,0.86616,0.99642,0.934,alphafold,complex,pre,False,,34.0,False,True,natural MSA
+6BJH,0.919,0.66824,0.96551,0.827,alphafold,complex,pre,False,,21.0,False,True,natural MSA
+4P3E,0.90803611,0.92264,0.96629,0.816,alphafold,complex,pre,True,Metazoa_SRP,124.0,False,False,natural MSA
+2OZB,0.93353564,0.7594,0.80674,0.702,alphafold,complex,pre,False,,33.0,False,True,natural MSA
+8T5S,0.96658564,0.34641,0.88071,0.035,alphafold,complex,post,False,,30.0,False,True,natural MSA
+1GAX,0.84844827,0.82792,0.49225,0.43,alphafold,complex,pre,True,tRNA,75.0,True,False,natural MSA
+1P6V,0.77840859,0.50061,0.47439,0.48,alphafold,complex,pre,True,tmRNA,45.0,False,False,natural MSA
+3FOZ,0.934,0.93764,0.49206,0.787,alphafold,complex,pre,True,tRNA,74.0,True,False,natural MSA
+4AL5,0.97525825,0.78458,0.98164,0.901,alphafold,complex,pre,False,,18.0,False,True,natural MSA
+7YN9,0.52618715,0.27461,0.80557,0.007,alphafold,complex,post,False,,38.0,False,True,natural MSA
+5UD5,0.90492337,0.77713,0.48571,0.623,alphafold,complex,pre,True,tRNA,72.0,True,False,natural MSA
+4C7O,0.84122397,0.41866,0.50053,0.686,alphafold,complex,pre,False,,48.0,False,True,natural MSA
+7DLZ,0.84,0.57292,0.39687,0.481,alphafold,complex,post,False,,45.0,False,False,natural MSA
+3IVK,0.86494236,0.8079,0.32887,0.534,alphafold,complex,pre,False,,128.0,True,False,natural MSA
+3IWN,0.883,0.87425,0.4652,0.526,alphafold,complex,pre,True,c-di-GMP-I;c-di-GMP-I-GGC,93.0,True,False,natural MSA
+1SJF,0.90411097,0.93094,0.96856,0.888,alphafold,complex,pre,True,HDV_ribozyme,74.0,True,False,natural MSA
+7NGA,0.983,0.56668,0.9493,0.822,alphafold,complex,post,False,,15.0,False,True,natural MSA
+8S9V,0.54161682,0.19938,0.97358,0.381,alphafold,complex,post,False,,37.0,False,True,natural MSA
+3AMU,0.91029899,0.91341,0.97265,0.596,alphafold,complex,pre,True,tRNA,78.0,True,False,natural MSA
+4YCO,0.875,0.69221,0.34909,0.469,alphafold,complex,pre,True,tRNA,74.0,True,False,natural MSA
+8SQ9,0.90271198,0.4297,0.98646,0.828,alphafold,complex,post,False,,35.0,False,True,natural MSA
+7X34,0.75341748,0.40659,0.56696,0.144,alphafold,complex,post,True,SSU_rRNA_eukarya,94.0,False,False,natural MSA
+8DFV,0.812,0.587,0.86151,0.28,alphafold,complex,post,False,,60.0,False,False,natural MSA
+2ZXU,0.889,0.86462,0.48527,0.735,alphafold,complex,pre,True,tRNA,74.0,True,False,natural MSA
+7DOK,0.96621649,0.58759,0.98186,0.873,alphafold,complex,post,False,,24.0,False,True,natural MSA
+6XH1,0.98403059,0.81518,0.94857,0.792,alphafold,complex,pre,False,,27.0,False,True,natural MSA
+2PJP,0.97811937,0.73876,0.99194,0.931,alphafold,complex,pre,False,,23.0,False,True,natural MSA
+2DRB,0.983,0.94716,0.99727,0.965,alphafold,complex,pre,False,,35.0,False,True,natural MSA
+8JTR,0.68107326,0.63837,0.90309,0.442,alphafold,complex,post,False,,105.0,False,True,natural MSA
+3AL0,0.93407144,0.93686,0.9048,0.698,alphafold,complex,pre,True,tRNA,74.0,True,False,natural MSA
+5DV7,0.985,0.56341,0.60479,0.608,alphafold,complex,pre,False,,18.0,False,True,natural MSA
+2ZHA,0.974,0.89495,0.98921,0.854,alphafold,complex,pre,False,,33.0,False,True,natural MSA
+7XT4,0.43585849,0.34106,0.84533,0.076,alphafold,complex,post,False,,34.0,False,True,natural MSA
+5Y7M,0.80856531,0.51508,0.48335,0.502,alphafold,complex,pre,False,,51.0,False,False,natural MSA
+4X0A,0.956,0.91705,0.95846,0.683,alphafold,complex,pre,True,tRNA,73.0,True,False,natural MSA
+8H0S,0.71262823,0.38917,0.47787,0.578,alphafold,complex,post,False,,17.0,False,True,natural MSA
+7XSR,0.48207699,0.24335,0.83455,0.075,alphafold,complex,post,False,,34.0,False,True,natural MSA
+7VG2,0.89166647,0.3445,0.93882,0.171,alphafold,complex,post,False,,36.0,False,True,natural MSA
+8D8N,0.44706773,0.14315,0.84308,0.027,alphafold,complex,post,False,,35.0,False,True,natural MSA
+7P0V,0.82801839,0.25263,0.77673,0.172,alphafold,complex,post,False,,24.0,False,True,natural MSA
+7U2A,0.73284878,0.37683,0.97944,0.787,alphafold,complex,post,False,,38.0,False,True,natural MSA
+8PTX,0.76494327,0.64837,0.9227,0.483,alphafold,complex,post,True,tRNA,75.0,True,False,natural MSA
+2OIH,0.88778198,0.91256,0.96904,0.862,alphafold,complex,pre,True,HDV_ribozyme,73.0,True,False,natural MSA
+7DMQ,0.82030265,0.45668,0.91998,0.563,alphafold,complex,pre,False,,53.0,False,False,natural MSA
+4IG8,0.931,0.76906,0.99099,0.967,alphafold,complex,pre,False,,18.0,False,True,natural MSA
+1OOA,0.38231871,0.16695,0.47568,0.136,alphafold,complex,pre,False,,29.0,False,True,natural MSA
+4L8H,0.983,0.59045,0.98329,0.947,alphafold,complex,pre,False,,20.0,False,True,natural MSA
+8WM4,0.4827081,0.13319,0.82496,0.021,alphafold,complex,post,False,,38.0,False,True,natural MSA
+6DB8,0.868,0.64273,0.97507,0.86,alphafold,complex,pre,False,,60.0,True,False,natural MSA
+7PMQ,0.61110027,0.27553,0.29887,0.024,alphafold,complex,post,False,,42.0,False,False,natural MSA
+7W0E,0.84223694,0.26523,0.60358,0.079,alphafold,complex,post,False,,53.0,False,False,natural MSA
+6CF2,0.965,0.79537,0.97988,0.916,alphafold,complex,pre,False,,35.0,False,True,natural MSA
+4M2Z,0.8604882,0.60103,0.89687,0.679,alphafold,complex,pre,False,,27.0,False,True,natural MSA
+2ANN,0.57295958,0.19366,0.92514,0.573,alphafold,complex,pre,False,,23.0,False,True,natural MSA
+8PTZ,0.743,0.61712,0.94546,0.479,alphafold,complex,post,True,tRNA,75.0,True,False,natural MSA
+7KAB,0.86660905,0.78568,0.93605,0.743,alphafold,complex,pre,True,tRNA,66.0,True,False,natural MSA
+7NQ4,0.96625869,0.66651,0.98785,0.911,alphafold,complex,pre,False,,20.0,False,True,natural MSA
+6CMN,0.98562929,0.77183,0.97468,0.894,alphafold,complex,pre,False,,27.0,False,True,natural MSA
+9DTT,0.56453269,0.31156,0.84743,0.014,alphafold,complex,post,True,DENV_SLA,67.0,False,False,natural MSA
+2DER,0.8163524,0.75916,0.4918,0.526,alphafold,complex,pre,True,tRNA,74.0,True,False,natural MSA
+5JC7,0.959,0.39429,0.57866,0.155,alphafold,complex,pre,False,,24.0,False,True,natural MSA
+4QIL,0.42522214,0.29141,0.46186,0.009,alphafold,complex,pre,False,,16.0,False,True,natural MSA
+8D9I,0.49969016,0.35056,0.83951,0.036,alphafold,complex,post,False,,35.0,False,True,natural MSA
+2PLY,0.90693966,0.51065,0.56319,0.425,alphafold,complex,pre,False,,23.0,False,True,natural MSA
+7XSP,0.45559027,0.31281,0.84173,0.03,alphafold,complex,post,False,,35.0,False,True,natural MSA
+7SWF,0.857,0.43847,0.92753,0.614,alphafold,complex,post,False,,17.0,False,True,natural MSA
+4YVJ,0.96004817,0.88237,0.97039,0.809,alphafold,complex,pre,True,tRNA,71.0,True,False,natural MSA
+8OST,0.54661982,0.3275,0.76379,0.095,alphafold,complex,post,False,,69.0,False,False,natural MSA
+3OV7,0.951,0.84902,0.99551,0.934,alphafold,complex,pre,False,,34.0,False,True,natural MSA
+9CMP,0.918,0.29477,0.92495,0.547,alphafold,complex,post,False,,22.0,False,True,natural MSA
+8HMY,0.77521798,0.72697,0.69392,0.621,alphafold,complex,post,True,tRNA,90.0,False,False,natural MSA
+8CTI,0.858,0.85594,0.90655,0.702,alphafold,complex,post,True,tRNA,71.0,True,False,natural MSA
+4YYE,0.886,0.82208,0.97571,0.844,alphafold,complex,pre,True,tRNA,74.0,True,False,natural MSA
+4AL6,0.91855252,0.46758,0.97307,0.748,alphafold,complex,pre,False,,16.0,False,True,natural MSA
+5WT3,0.9387182,0.89608,0.97199,0.802,alphafold,complex,pre,True,tRNA,73.0,True,False,natural MSA
+6XH3,0.98692484,0.72775,0.96061,0.853,alphafold,complex,pre,False,,27.0,False,True,natural MSA
+4NGF,0.892,0.24284,0.24768,0.19,alphafold,complex,pre,False,,17.0,False,True,natural MSA
+4JK0,0.71794843,0.25404,0.87255,0.236,alphafold,complex,pre,False,,21.0,False,True,natural MSA
+1JBT,0.87,0.52237,0.47386,0.481,alphafold,complex,pre,False,,29.0,False,True,natural MSA
+9IJ2,0.77819653,0.22079,0.91977,0.607,alphafold,complex,post,False,,22.0,False,True,natural MSA
+8S9T,0.69900086,0.45842,0.97884,0.478,alphafold,complex,post,False,,37.0,False,True,natural MSA
+1GTS,0.93744872,0.96194,0.99332,0.842,alphafold,complex,pre,True,tRNA,74.0,True,False,natural MSA
+4M30,0.86615095,0.59701,0.96561,0.776,alphafold,complex,pre,False,,27.0,False,True,natural MSA
+6KL9,0.838,0.64091,0.81755,0.468,alphafold,complex,pre,False,,25.0,False,True,natural MSA
+8HIO,0.63259566,0.40934,0.61885,0.045,alphafold,complex,post,False,,47.0,True,True,natural MSA
+8IUO,0.8761529,0.27713,0.84646,0.438,alphafold,complex,post,False,,35.0,False,True,natural MSA
+8D9F,0.45546913,0.29697,0.85142,0.096,alphafold,complex,post,False,,33.0,False,True,natural MSA
+2NUE,0.908,0.75001,0.70135,0.345,alphafold,complex,pre,False,,46.0,False,True,natural MSA
+4RWO,0.93,0.58763,0.98633,0.955,alphafold,complex,pre,False,,19.0,False,True,natural MSA
+5ZW4,0.86259203,0.31721,0.98992,0.813,alphafold,complex,pre,False,,16.0,False,True,natural MSA
+6O5F,0.7932223,0.3029,0.32188,0.011,alphafold,complex,pre,False,,24.0,False,True,natural MSA
+2F8K,0.95018945,0.67733,0.97609,0.855,alphafold,complex,pre,False,,16.0,False,True,natural MSA
+8G6R,0.85192983,0.41522,0.96728,0.672,alphafold,complex,post,False,,20.0,False,True,natural MSA
+2ZHB,0.996,0.94962,0.99737,0.96,alphafold,complex,pre,False,,34.0,False,True,natural MSA
+7UOB,0.93448797,0.56116,0.98258,0.788,alphafold,complex,post,False,,36.0,False,True,natural MSA
+7ED5,0.88037629,0.48211,0.99364,0.772,alphafold,complex,post,False,,24.0,False,True,natural MSA
+1EC6,0.593,0.35054,0.44638,0.292,alphafold,complex,pre,False,,20.0,False,True,natural MSA
+8D9G,0.52788355,0.16605,0.89606,0.088,alphafold,complex,post,False,,36.0,False,True,natural MSA
+4X0B,0.959,0.96243,0.98254,0.792,alphafold,complex,pre,True,tRNA,77.0,False,False,natural MSA
+8ASW,0.57774582,0.54266,0.91821,0.502,alphafold,complex,post,True,tRNA,73.0,False,False,natural MSA
+4JGN,0.72415477,0.33197,0.89449,0.239,alphafold,complex,pre,False,,20.0,False,True,natural MSA
+2DRA,0.982,0.91865,0.98681,0.881,alphafold,complex,pre,False,,34.0,False,True,natural MSA
+4RWN,0.991,0.67365,0.98891,0.95,alphafold,complex,pre,False,,19.0,False,True,natural MSA
+7ZOL,0.50068123,0.22887,0.7737,0.02,alphafold,complex,post,False,,39.0,False,True,natural MSA
+7X8A,0.45529579,0.4089,0.89202,0.08,alphafold,complex,post,False,,33.0,False,True,natural MSA
+6XH2,0.98532429,0.84898,0.95438,0.788,alphafold,complex,pre,False,,27.0,False,True,natural MSA
+5WLH,0.88527771,0.73225,0.9881,0.682,alphafold,complex,pre,False,,43.0,False,True,natural MSA
+2DET,0.89394105,0.89176,0.9825,0.85,alphafold,complex,pre,True,tRNA,70.0,True,False,natural MSA
+4XCO,0.95385892,0.95076,0.41696,0.682,alphafold,complex,pre,True,Bacteria_small_SRP,96.0,False,False,natural MSA
+1GTR,0.94141811,0.96155,0.99368,0.84,alphafold,complex,pre,True,tRNA,74.0,True,False,natural MSA
+8S9U,0.78662753,0.365,0.97113,0.544,alphafold,complex,post,False,,37.0,False,True,natural MSA
+8GNA,0.45867592,0.36306,0.85327,0.047,alphafold,complex,post,False,,32.0,False,True,natural MSA
+7DTE,0.89843114,0.50563,0.99112,0.838,alphafold,complex,post,False,,33.0,False,True,natural MSA
+5W1H,0.87456054,0.67755,0.98825,0.675,alphafold,complex,pre,False,,42.0,False,True,natural MSA
+8DG7,0.8886185,0.36008,0.70332,0.184,alphafold,complex,post,False,,26.0,False,True,natural MSA
+7UOE,0.89459412,0.53111,0.98778,0.776,alphafold,complex,post,False,,37.0,False,True,natural MSA
+7X7A,0.45186989,0.35739,0.86755,0.011,alphafold,complex,post,False,,33.0,False,True,natural MSA
+8AF0,0.90879043,0.3785,0.51032,0.477,alphafold,complex,post,False,,19.0,False,True,natural MSA
+4YVK,0.95187729,0.89469,0.97099,0.811,alphafold,complex,pre,True,tRNA,71.0,True,False,natural MSA
+3UMY,0.94660615,0.90434,0.93608,0.702,alphafold,complex,pre,True,LSU_rRNA_bacteria,80.0,True,False,natural MSA
+2ZNI,0.85780036,0.80109,0.97164,0.829,alphafold,complex,pre,False,,72.0,False,False,natural MSA
+8AXF,0.45941981,0.25566,0.81046,0.3,alphafold,complex,post,False,,42.0,False,True,natural MSA
+3A2K,0.834,0.89759,0.97274,0.756,alphafold,complex,pre,True,tRNA,77.0,True,False,natural MSA
+3HTX,0.923,0.61514,0.30796,0.416,alphafold,complex,pre,False,,22.0,False,True,natural MSA
+7XSQ,0.43227994,0.27043,0.86049,0.1,alphafold,complex,post,False,,34.0,False,True,natural MSA
+7ORN,0.63252782,0.31876,0.87152,0.358,alphafold,complex,post,False,,18.0,False,True,natural MSA
+2OJ3,0.88552676,0.91566,0.96898,0.905,alphafold,complex,pre,True,HDV_ribozyme,73.0,True,False,natural MSA
+3V7E,0.857,0.81651,0.48323,0.671,alphafold,complex,pre,True,SAM,126.0,True,False,natural MSA
+8D9H,0.47967552,0.13236,0.80418,0.053,alphafold,complex,post,False,,36.0,False,True,natural MSA
+6Y0Y,0.94425158,0.62202,0.0,,alphafold,single_chain,pre,False,,27.0,False,True,natural MSA
+8UPT,0.75683982,0.62781,0.0,,alphafold,single_chain,post,False,,71.0,True,False,natural MSA
+3GX5,0.944,0.95292,0.0,,alphafold,single_chain,pre,True,SAM,94.0,False,False,natural MSA
+7EOP,0.55030632,0.25573,0.0,,alphafold,single_chain,post,False,,48.0,False,False,natural MSA
+9DE8,0.76157377,0.49328,0.0,,alphafold,single_chain,post,True,mir-TAR,56.0,False,False,natural MSA
+3L0U,0.868,0.76255,0.0,,alphafold,single_chain,pre,True,tRNA,73.0,True,False,natural MSA
+6JXM,0.846,0.77853,0.0,,alphafold,single_chain,pre,True,tRNA,97.0,True,False,natural MSA
+4LX6,0.88752255,0.8774,0.0,,alphafold,single_chain,pre,True,Purine,71.0,False,False,natural MSA
+7E9I,0.82370104,0.56159,0.0,,alphafold,single_chain,post,False,,33.0,True,True,natural MSA
+7MKT,0.25523852,0.07195,0.0,,alphafold,single_chain,post,False,,23.0,False,True,natural MSA
+3GX2,0.939,0.95503,0.0,,alphafold,single_chain,pre,True,SAM,94.0,False,False,natural MSA
+6D3P,0.66,0.36123,0.0,,alphafold,single_chain,pre,False,,45.0,False,False,natural MSA
+4TZX,0.84561852,0.85059,0.0,,alphafold,single_chain,pre,True,Purine,71.0,True,False,natural MSA
+3GOG,0.70274126,0.69109,0.0,,alphafold,single_chain,pre,True,Purine,65.0,False,False,natural MSA
+7TZT,0.81137668,0.78634,0.0,,alphafold,single_chain,post,True,TPP,79.0,False,False,natural MSA
+7SAM,0.63141221,0.5663,0.0,,alphafold,single_chain,post,True,TLS-PK3,169.0,True,False,natural MSA
+4L81,0.832,0.71879,0.0,,alphafold,single_chain,pre,True,SAM-I-IV;SAM-I-IV-variant,96.0,False,False,natural MSA
+2A43,0.79468435,0.38148,0.0,,alphafold,single_chain,pre,False,,26.0,True,True,natural MSA
+7EEM,0.92248165,0.64952,0.0,,alphafold,single_chain,post,False,,26.0,False,True,natural MSA
+4LVZ,0.869,0.87989,0.0,,alphafold,single_chain,pre,True,THF,89.0,False,False,natural MSA
+4TZY,0.83685066,0.85155,0.0,,alphafold,single_chain,pre,True,Purine,71.0,True,False,natural MSA
+4FE5,0.83083775,0.84392,0.0,,alphafold,single_chain,pre,True,Purine,67.0,True,False,natural MSA
+4LW0,0.871,0.88605,0.0,,alphafold,single_chain,pre,True,THF,89.0,False,False,natural MSA
+6WJS,0.856,0.87906,0.0,,alphafold,single_chain,pre,True,FMN,109.0,True,False,natural MSA
+5FK3,0.929,0.9461,0.0,,alphafold,single_chain,pre,True,SAM,94.0,False,False,natural MSA
+4LX5,0.85263094,0.85125,0.0,,alphafold,single_chain,pre,True,Purine,71.0,False,False,natural MSA
+9CXF,0.59902148,0.45292,0.0,,alphafold,single_chain,post,True,raiA,200.0,True,False,natural MSA
+4LVW,0.873,0.89476,0.0,,alphafold,single_chain,pre,True,THF,89.0,False,False,natural MSA
+6VUI,0.80323564,0.56984,0.0,,alphafold,single_chain,pre,False,,33.0,True,True,natural MSA
+3IQP,0.888,0.89661,0.0,,alphafold,single_chain,pre,True,SAM,94.0,True,False,natural MSA
+8U5J,0.42189354,0.27928,0.0,,alphafold,single_chain,post,False,,36.0,False,True,natural MSA
+2YGH,0.936,0.88832,0.0,,alphafold,single_chain,pre,True,SAM,95.0,False,False,natural MSA
+7SXP,0.33161449,0.08382,0.0,,alphafold,single_chain,post,False,,21.0,False,True,natural MSA
+4FEP,0.7068203,0.75005,0.0,,alphafold,single_chain,pre,True,Purine,67.0,True,False,natural MSA
+3SD3,0.854,0.87233,0.0,,alphafold,single_chain,pre,True,THF,89.0,True,False,natural MSA
+1Z43,0.83902156,0.89113,0.0,,alphafold,single_chain,pre,True,Bacteria_small_SRP,101.0,False,False,natural MSA
+4LVY,0.87,0.89363,0.0,,alphafold,single_chain,pre,True,THF,89.0,True,False,natural MSA
+9C6K,0.80966705,0.78996,0.0,,alphafold,single_chain,post,True,group-II-D1D4-3,80.0,False,False,natural MSA
+7MKY,0.78087749,0.61149,0.0,,alphafold,single_chain,pre,False,,66.0,True,False,natural MSA
+3GAO,0.78536275,0.86964,0.0,,alphafold,single_chain,pre,True,Purine,67.0,True,False,natural MSA
+8UPY,0.73663238,0.61444,0.0,,alphafold,single_chain,post,True,tRNA,72.0,False,False,natural MSA
+5FK5,0.921,0.95353,0.0,,alphafold,single_chain,pre,True,SAM,94.0,False,False,natural MSA
+1Q9A,0.97137038,0.82773,0.0,,alphafold,single_chain,pre,False,,27.0,False,True,natural MSA
+5FK2,0.922,0.95301,0.0,,alphafold,single_chain,pre,True,SAM,94.0,False,False,natural MSA
+4LVV,0.867,0.90376,0.0,,alphafold,single_chain,pre,True,THF,89.0,True,False,natural MSA
+5FKF,0.911,0.9426,0.0,,alphafold,single_chain,pre,True,SAM,94.0,False,False,natural MSA
+8Q6N,0.71525523,0.37751,0.0,,alphafold,single_chain,post,True,Xanthine,46.0,False,False,natural MSA
+7URI,0.7781934,0.64767,0.0,,alphafold,single_chain,post,True,tRNA-Sec,90.0,True,True,natural MSA
+7EON,0.52496411,0.2561,0.0,,alphafold,single_chain,post,False,,48.0,False,False,natural MSA
+8TKK,0.70113179,0.52599,0.0,,alphafold,single_chain,post,False,,107.0,False,True,natural MSA
+7D81,0.77375806,0.49055,0.0,,alphafold,single_chain,pre,True,nadA,50.0,False,False,natural MSA
+4FEJ,0.77654341,0.80771,0.0,,alphafold,single_chain,pre,True,Purine,67.0,True,False,natural MSA
+2XO0,0.81875933,0.87685,0.0,,alphafold,single_chain,pre,True,Purine,65.0,True,False,natural MSA
+2GIS,0.921,0.94267,0.0,,alphafold,single_chain,pre,True,SAM,94.0,False,False,natural MSA
+7EOI,0.5278257,0.26737,0.0,,alphafold,single_chain,post,False,,49.0,False,False,natural MSA
+2EET,0.68202605,0.67915,0.0,,alphafold,single_chain,pre,True,Purine,67.0,True,False,natural MSA
+6UC8,0.81817027,0.86615,0.0,,alphafold,single_chain,pre,True,Purine,67.0,True,False,natural MSA
+2XO1,0.82554814,0.86776,0.0,,alphafold,single_chain,pre,True,Purine,65.0,True,False,natural MSA
+6UBU,0.82979361,0.86316,0.0,,alphafold,single_chain,pre,True,Purine,67.0,True,False,natural MSA
+3LA5,0.87537864,0.75759,0.0,,alphafold,single_chain,pre,True,Purine,71.0,True,False,natural MSA
+3FO4,0.69018663,0.70556,0.0,,alphafold,single_chain,pre,True,Purine,63.0,False,False,natural MSA
+6UC7,0.79349843,0.85254,0.0,,alphafold,single_chain,pre,True,Purine,67.0,True,False,natural MSA
+7EOO,0.52010088,0.25579,0.0,,alphafold,single_chain,post,False,,48.0,False,False,natural MSA
+7EOG,0.53335428,0.2538,0.0,,alphafold,single_chain,post,False,,48.0,False,False,natural MSA
+3DVZ,0.97549974,0.81254,0.0,,alphafold,single_chain,pre,False,,27.0,False,True,natural MSA
+7D82,0.77700263,0.52301,0.0,,alphafold,single_chain,pre,True,nadA,50.0,False,False,natural MSA
+7EOM,0.51959925,0.25083,0.0,,alphafold,single_chain,post,False,,48.0,False,False,natural MSA
+3IQN,0.917,0.92883,0.0,,alphafold,single_chain,pre,True,SAM,94.0,False,False,natural MSA
+5FKE,0.923,0.95123,0.0,,alphafold,single_chain,pre,True,SAM,94.0,False,False,natural MSA
+2EEV,0.76686239,0.83976,0.0,,alphafold,single_chain,pre,True,Purine,67.0,True,False,natural MSA
+4FEN,0.75731043,0.80451,0.0,,alphafold,single_chain,pre,True,Purine,67.0,True,False,natural MSA
+7URM,0.81095204,0.64737,0.0,,alphafold,single_chain,post,True,tRNA-Sec,90.0,True,True,natural MSA
+8KEB,0.60139986,0.38823,0.0,,alphafold,single_chain,post,False,,71.0,True,False,natural MSA
+4B5R,0.91,0.88043,0.0,,alphafold,single_chain,pre,True,SAM,94.0,False,False,natural MSA
+7EFH,0.48883628,0.19657,0.0,,alphafold,single_chain,post,False,,19.0,False,True,natural MSA
+3A3A,0.8822876,0.81566,0.0,,alphafold,single_chain,pre,True,tRNA-Sec,86.0,True,False,natural MSA
+8HB8,0.37751954,0.2632,0.0,,alphafold,single_chain,post,False,,55.0,False,True,natural MSA
+4FEO,0.77762181,0.82218,0.0,,alphafold,single_chain,pre,True,Purine,67.0,True,False,natural MSA
+7EOK,0.53056576,0.26475,0.0,,alphafold,single_chain,post,False,,48.0,False,False,natural MSA
+2XNW,0.81774699,0.86723,0.0,,alphafold,single_chain,pre,True,Purine,65.0,True,False,natural MSA
+7QSH,0.87568993,0.60155,0.0,,alphafold,single_chain,post,False,,25.0,False,True,natural MSA
+5M0H,0.847,0.65741,0.0,,alphafold,single_chain,pre,False,,42.0,False,True,natural MSA
+7VFT,0.78727096,0.19169,0.0,,alphafold,single_chain,post,False,,23.0,False,True,natural MSA
+7EFG,0.52787822,0.19797,0.0,,alphafold,single_chain,post,False,,19.0,False,True,natural MSA
+7LYJ,0.77505978,0.63281,0.0,,alphafold,single_chain,pre,False,,66.0,True,False,natural MSA
+2G9C,0.75983226,0.817,0.0,,alphafold,single_chain,pre,True,Purine,67.0,False,False,natural MSA
+4XNR,0.8554858,0.86186,0.0,,alphafold,single_chain,pre,True,Purine,71.0,True,False,natural MSA
+7EOL,0.53800763,0.25057,0.0,,alphafold,single_chain,post,False,,48.0,False,False,natural MSA
+7EAF,0.923,0.93158,0.0,,alphafold,single_chain,pre,True,SAM,94.0,False,False,natural MSA
+483D,0.97602273,0.82499,0.0,,alphafold,single_chain,pre,False,,27.0,False,True,natural MSA
+8KED,0.60625496,0.38647,0.0,,alphafold,single_chain,post,False,,71.0,True,False,natural MSA
+7Y81,0.45442398,0.36161,0.85006,0.115,rnaformerN100,complex,post,False,,36.0,False,True,RNAformer-SHS
+6VRC,0.76475285,0.69373,0.97653,0.623,rnaformerN100,complex,pre,False,,51.0,False,False,RNAformer-SHS
+8C4U,0.51027537,0.23435,0.91935,0.039,rnaformerN100,complex,post,False,,20.0,False,True,RNAformer-SHS
+3NVI,0.98778609,0.80577,0.99288,0.904,rnaformerN100,complex,pre,False,,24.0,False,True,RNAformer-SHS
+6G1X,0.979,0.53662,0.96442,0.852,rnaformerN100,complex,pre,False,,15.0,False,True,RNAformer-SHS
+3EPJ,0.87494872,0.75084,0.48714,0.547,rnaformerN100,complex,pre,True,tRNA,69.0,True,False,RNAformer-SHS
+5DAR,0.9175557,0.90526,0.51695,0.77,rnaformerN100,complex,pre,True,LSU_rRNA_archaea,74.0,False,False,RNAformer-SHS
+1ZDK,0.91632442,0.56273,0.68722,0.498,rnaformerN100,complex,pre,False,,19.0,False,True,RNAformer-SHS
+4QG3,0.95109373,0.94334,0.98676,0.906,rnaformerN100,complex,pre,True,LSU_rRNA_bacteria,80.0,True,False,RNAformer-SHS
+7Y8Y,0.46744761,0.27256,0.83302,0.084,rnaformerN100,complex,post,False,,37.0,False,True,RNAformer-SHS
+1QRT,0.92782396,0.88525,0.9915,0.763,rnaformerN100,complex,pre,True,tRNA,74.0,True,False,RNAformer-SHS
+6SX2,0.841,0.3563,0.89305,0.446,rnaformerN100,complex,pre,False,,19.0,False,True,RNAformer-SHS
+2ZH9,0.984,0.9021,0.99814,0.972,rnaformerN100,complex,pre,False,,33.0,False,True,RNAformer-SHS
+2ZH1,0.995,0.94009,0.99829,0.98,rnaformerN100,complex,pre,False,,33.0,False,True,RNAformer-SHS
+6NMD,0.89154158,0.66036,0.93097,0.651,rnaformerN100,complex,pre,False,,25.0,False,True,RNAformer-SHS
+4J39,0.851,0.28868,0.92247,0.156,rnaformerN100,complex,pre,False,,19.0,False,True,RNAformer-SHS
+4S3N,0.969,0.43362,0.97125,0.856,rnaformerN100,complex,pre,False,,19.0,False,True,RNAformer-SHS
+8Z90,0.845,0.2981,0.98252,0.743,rnaformerN100,complex,post,False,,18.0,False,True,RNAformer-SHS
+6TQB,0.98278314,0.68569,0.99456,0.907,rnaformerN100,complex,pre,False,,19.0,False,True,RNAformer-SHS
+8WMC,0.51045045,0.21216,0.93278,0.161,rnaformerN100,complex,post,False,,38.0,False,True,RNAformer-SHS
+4WC2,0.953,0.94326,0.97865,0.767,rnaformerN100,complex,pre,True,tRNA,75.0,True,False,RNAformer-SHS
+4KR6,0.64,0.42886,0.8794,0.324,rnaformerN100,complex,pre,False,,39.0,False,True,RNAformer-SHS
+9ENE,0.809,0.74224,0.92661,0.55,rnaformerN100,complex,post,True,tRNA,73.0,True,False,RNAformer-SHS
+1UN6,0.9097105,0.70407,0.39213,0.377,rnaformerN100,complex,pre,False,,61.0,False,False,RNAformer-SHS
+2DR2,0.77166996,0.73888,0.8398,0.013,rnaformerN100,complex,pre,True,tRNA,75.0,False,False,RNAformer-SHS
+2W2H,0.67658976,0.26759,0.47004,0.437,rnaformerN100,complex,pre,False,,22.0,False,True,RNAformer-SHS
+4TUX,0.922,0.54726,0.46789,0.613,rnaformerN100,complex,pre,True,Histone3,26.0,False,True,RNAformer-SHS
+1VC6,0.91660836,0.84431,0.9609,0.929,rnaformerN100,complex,pre,True,HDV_ribozyme,72.0,True,False,RNAformer-SHS
+3U56,0.91014973,0.9093,0.98545,0.869,rnaformerN100,complex,pre,True,LSU_rRNA_bacteria,80.0,True,False,RNAformer-SHS
+6BJY,0.44765552,0.10016,0.97067,0.603,rnaformerN100,complex,pre,False,,45.0,False,True,RNAformer-SHS
+7VTN,0.65980528,0.30333,0.52415,0.107,rnaformerN100,complex,post,False,,56.0,False,True,RNAformer-SHS
+7KA0,0.84203679,0.66092,0.95351,0.762,rnaformerN100,complex,pre,True,tRNA,66.0,True,False,RNAformer-SHS
+4KR9,0.68973734,0.45306,0.91425,0.398,rnaformerN100,complex,pre,False,,39.0,False,True,RNAformer-SHS
+4TUW,0.9,0.4801,0.45888,0.482,rnaformerN100,complex,pre,True,Histone3,28.0,False,True,RNAformer-SHS
+5F5H,0.93462035,0.58597,0.50057,0.787,rnaformerN100,complex,pre,False,,21.0,False,True,RNAformer-SHS
+3FTF,0.85579245,0.22974,0.93835,0.7,rnaformerN100,complex,pre,False,,22.0,False,True,RNAformer-SHS
+6BJV,0.898,0.63014,0.97118,0.823,rnaformerN100,complex,pre,False,,21.0,False,True,RNAformer-SHS
+7X7R,0.47872846,0.11832,0.84105,0.03,rnaformerN100,complex,post,False,,36.0,False,True,RNAformer-SHS
+1ZBH,0.91628043,0.48259,0.23854,0.103,rnaformerN100,complex,pre,False,,16.0,False,True,RNAformer-SHS
+1QRS,0.93706854,0.89552,0.99169,0.771,rnaformerN100,complex,pre,True,tRNA,74.0,True,False,RNAformer-SHS
+2BQ5,0.941,0.61586,0.34905,0.619,rnaformerN100,complex,pre,False,,19.0,False,True,RNAformer-SHS
+8WML,0.52477901,0.11083,0.76286,0.031,rnaformerN100,complex,post,False,,38.0,False,True,RNAformer-SHS
+4QOZ,0.9,0.5149,0.4342,0.265,rnaformerN100,complex,pre,True,Histone3,26.0,False,True,RNAformer-SHS
+1EIY,0.681,0.49947,0.8841,0.655,rnaformerN100,complex,pre,True,tRNA,76.0,True,False,RNAformer-SHS
+2DU4,0.80644376,0.77688,0.76634,0.317,rnaformerN100,complex,pre,True,tRNA,71.0,True,False,RNAformer-SHS
+6NMC,0.91729799,0.6852,0.86054,0.579,rnaformerN100,complex,pre,False,,25.0,False,True,RNAformer-SHS
+4X4O,0.857,0.6134,0.97972,0.792,rnaformerN100,complex,pre,False,,34.0,False,True,RNAformer-SHS
+7N0B,0.90016577,0.40277,0.98518,0.878,rnaformerN100,complex,pre,False,,20.0,False,True,RNAformer-SHS
+2ZH6,0.966,0.82816,0.98378,0.854,rnaformerN100,complex,pre,False,,34.0,False,True,RNAformer-SHS
+7OS0,0.64359792,0.39055,0.48025,0.272,rnaformerN100,complex,post,False,,48.0,False,True,RNAformer-SHS
+1O0C,0.9514394,0.92121,0.99054,0.789,rnaformerN100,complex,pre,True,tRNA,74.0,True,False,RNAformer-SHS
+1DFU,0.74131317,0.19953,0.72767,0.03,rnaformerN100,complex,pre,False,,19.0,False,True,RNAformer-SHS
+6U8D,0.94589587,0.75927,0.8736,0.619,rnaformerN100,complex,pre,False,,68.0,False,False,RNAformer-SHS
+2DR5,0.922,0.79603,0.99757,0.964,rnaformerN100,complex,pre,False,,32.0,False,True,RNAformer-SHS
+9ENB,0.849,0.77844,0.90465,0.444,rnaformerN100,complex,post,True,tRNA,72.0,True,False,RNAformer-SHS
+4WC5,0.946,0.90856,0.97629,0.827,rnaformerN100,complex,pre,True,tRNA,74.0,True,False,RNAformer-SHS
+2ZH7,0.992,0.94012,0.99828,0.98,rnaformerN100,complex,pre,False,,33.0,False,True,RNAformer-SHS
+7N0C,0.94860289,0.5,0.98378,0.871,rnaformerN100,complex,pre,False,,25.0,False,True,RNAformer-SHS
+2DU5,0.78442387,0.74339,0.86656,0.69,rnaformerN100,complex,pre,True,tRNA,71.0,True,False,RNAformer-SHS
+7UO7,0.95171233,0.41083,0.98163,0.833,rnaformerN100,complex,post,False,,34.0,False,True,RNAformer-SHS
+8AW3,0.81249886,0.69927,0.91329,0.606,rnaformerN100,complex,post,True,tRNA,73.0,True,False,RNAformer-SHS
+4WC4,0.944,0.90542,0.97712,0.83,rnaformerN100,complex,pre,True,tRNA,74.0,True,False,RNAformer-SHS
+9ENC,0.811,0.7455,0.87809,0.462,rnaformerN100,complex,post,True,tRNA,75.0,True,False,RNAformer-SHS
+2ZKO,0.976,0.77958,0.99196,0.961,rnaformerN100,complex,pre,False,,21.0,False,True,RNAformer-SHS
+1LNG,0.87688707,0.86375,0.95089,0.915,rnaformerN100,complex,pre,True,Bacteria_small_SRP,97.0,False,False,RNAformer-SHS
+7XC7,0.47180703,0.25491,0.84349,0.074,rnaformerN100,complex,post,False,,31.0,False,True,RNAformer-SHS
+2IY5,0.671,0.52879,0.95551,0.733,rnaformerN100,complex,pre,True,tRNA,76.0,True,False,RNAformer-SHS
+1VC0,0.91994907,0.88546,0.97065,0.944,rnaformerN100,complex,pre,True,HDV_ribozyme,73.0,True,False,RNAformer-SHS
+1RPU,0.832,0.2939,0.88597,0.346,rnaformerN100,complex,pre,False,,21.0,False,True,RNAformer-SHS
+6XJZ,0.54891515,0.36367,0.4346,0.399,rnaformerN100,complex,post,False,,58.0,False,False,RNAformer-SHS
+3WQY,0.89618679,0.77946,0.94085,0.637,rnaformerN100,complex,pre,True,tRNA,75.0,True,False,RNAformer-SHS
+1O0B,0.9453356,0.92084,0.99077,0.79,rnaformerN100,complex,pre,True,tRNA,74.0,True,False,RNAformer-SHS
+7XW2,0.76077129,0.39097,0.90658,0.326,rnaformerN100,complex,post,False,,54.0,False,True,RNAformer-SHS
+2HVY,0.914,0.86411,0.99319,0.905,rnaformerN100,complex,pre,False,,61.0,False,False,RNAformer-SHS
+4ZLD,0.963,0.78143,0.99585,0.964,rnaformerN100,complex,pre,False,,17.0,False,True,RNAformer-SHS
+2RE8,0.95139226,0.92891,0.99118,0.795,rnaformerN100,complex,pre,True,tRNA,74.0,True,False,RNAformer-SHS
+8FZR,0.50034886,0.55778,0.81636,0.013,rnaformerN100,complex,post,True,tRNA,77.0,False,False,RNAformer-SHS
+8GU6,0.46124064,0.39005,0.81496,0.253,rnaformerN100,complex,post,False,,33.0,False,True,RNAformer-SHS
+1SDS,0.67078547,0.22372,0.30955,0.192,rnaformerN100,complex,pre,False,,15.0,False,True,RNAformer-SHS
+6DU4,0.969,0.78645,0.9918,0.92,rnaformerN100,complex,pre,False,,29.0,False,True,RNAformer-SHS
+8BGU,0.79837646,0.67012,0.86655,0.557,rnaformerN100,complex,post,True,5S_rRNA,121.0,False,False,RNAformer-SHS
+1FEU,0.8142746,0.25044,0.46337,0.311,rnaformerN100,complex,pre,False,,21.0,False,True,RNAformer-SHS
+8GS2,0.5352572,0.24419,0.83155,0.082,rnaformerN100,complex,post,False,,38.0,False,True,RNAformer-SHS
+1QA6,0.90848107,0.91052,0.54568,0.802,rnaformerN100,complex,pre,True,LSU_rRNA_bacteria,58.0,False,False,RNAformer-SHS
+6B14,0.88255681,0.78554,0.87128,0.709,rnaformerN100,complex,pre,False,,83.0,False,True,RNAformer-SHS
+5V6X,0.8791914,0.78743,0.47995,0.583,rnaformerN100,complex,pre,True,tRNA,72.0,True,False,RNAformer-SHS
+6H61,0.98,0.59981,0.97672,0.871,rnaformerN100,complex,pre,False,,15.0,False,True,RNAformer-SHS
+7ZOQ,0.48268088,0.28909,0.79247,0.08,rnaformerN100,complex,post,False,,39.0,False,True,RNAformer-SHS
+9IIY,0.77,0.21245,0.4077,0.19,rnaformerN100,complex,post,False,,22.0,False,True,RNAformer-SHS
+2UWM,0.93339099,0.62854,0.53543,0.393,rnaformerN100,complex,pre,False,,23.0,False,True,RNAformer-SHS
+6KLB,0.79227698,0.43207,0.44472,0.432,rnaformerN100,complex,pre,False,,25.0,False,True,RNAformer-SHS
+7SLP,0.61470295,0.23993,0.68341,0.256,rnaformerN100,complex,post,False,,37.0,False,False,RNAformer-SHS
+1VBZ,0.91253482,0.88871,0.9728,0.935,rnaformerN100,complex,pre,True,HDV_ribozyme,73.0,True,False,RNAformer-SHS
+6E9F,0.818,0.71178,0.97976,0.727,rnaformerN100,complex,pre,False,,52.0,False,False,RNAformer-SHS
+2GIC,0.45627492,0.09722,0.96854,0.607,rnaformerN100,complex,pre,False,,45.0,False,True,RNAformer-SHS
+7K9M,0.86047855,0.78736,0.92355,0.67,rnaformerN100,complex,pre,True,tRNA,66.0,True,False,RNAformer-SHS
+7WKP,0.816,0.39123,0.9462,0.387,rnaformerN100,complex,post,False,,21.0,False,True,RNAformer-SHS
+3KTW,0.69352022,0.42952,0.32816,0.026,rnaformerN100,complex,pre,False,,96.0,False,False,RNAformer-SHS
+1MMS,0.1482737,0.62229,0.57928,0.658,rnaformerN100,complex,pre,True,LSU_rRNA_bacteria,58.0,False,False,RNAformer-SHS
+5F5F,0.897,0.55746,0.32792,0.452,rnaformerN100,complex,pre,False,,20.0,False,True,RNAformer-SHS
+2RD2,0.93905511,0.93192,0.99158,0.786,rnaformerN100,complex,pre,True,tRNA,74.0,True,False,RNAformer-SHS
+7YNA,0.54603877,0.28563,0.78354,0.041,rnaformerN100,complex,post,False,,38.0,False,True,RNAformer-SHS
+7DWH,0.809,0.58427,0.44157,0.53,rnaformerN100,complex,post,False,,45.0,False,False,RNAformer-SHS
+4WC3,0.892,0.94974,0.97954,0.803,rnaformerN100,complex,pre,True,tRNA,76.0,True,False,RNAformer-SHS
+4GHL,0.79619055,0.25918,0.24285,0.112,rnaformerN100,complex,pre,False,,18.0,False,True,RNAformer-SHS
+1KUQ,0.818,0.88763,0.97298,0.882,rnaformerN100,complex,pre,False,,57.0,False,False,RNAformer-SHS
+8DVS,0.90029419,0.6223,0.98885,0.76,rnaformerN100,complex,post,False,,26.0,False,True,RNAformer-SHS
+1QTQ,0.93446876,0.9034,0.99085,0.779,rnaformerN100,complex,pre,True,tRNA,74.0,True,False,RNAformer-SHS
+4ZT9,0.92819023,0.88431,0.52931,0.858,rnaformerN100,complex,pre,False,,72.0,False,False,RNAformer-SHS
+6VRB,0.70821741,0.62644,0.8152,0.491,rnaformerN100,complex,pre,False,,52.0,False,True,RNAformer-SHS
+2EZ6,0.992,0.81632,0.99588,0.96,rnaformerN100,complex,pre,False,,28.0,False,True,RNAformer-SHS
+7Y80,0.46744361,0.30598,0.85928,0.048,rnaformerN100,complex,post,False,,35.0,False,True,RNAformer-SHS
+2ZH8,0.996,0.92657,0.99834,0.972,rnaformerN100,complex,pre,False,,34.0,False,True,RNAformer-SHS
+3PU4,0.47177928,0.10438,0.96312,0.56,rnaformerN100,complex,pre,False,,45.0,False,True,RNAformer-SHS
+6SY6,0.88834757,0.68974,0.95666,0.702,rnaformerN100,complex,pre,False,,36.0,False,True,RNAformer-SHS
+6H66,0.924,0.53149,0.97053,0.841,rnaformerN100,complex,pre,False,,15.0,False,True,RNAformer-SHS
+1QRU,0.93159962,0.88999,0.99143,0.776,rnaformerN100,complex,pre,True,tRNA,74.0,True,False,RNAformer-SHS
+5D6G,0.83370341,0.8176,0.9375,0.875,rnaformerN100,complex,pre,True,LSU_rRNA_archaea,74.0,False,False,RNAformer-SHS
+4QQB,0.56273468,0.31013,0.39872,0.2,rnaformerN100,complex,pre,False,,17.0,False,True,RNAformer-SHS
+1EXD,0.91496152,0.95883,0.99167,0.828,rnaformerN100,complex,pre,True,tRNA,73.0,True,False,RNAformer-SHS
+3OVA,0.975,0.88391,0.98056,0.877,rnaformerN100,complex,pre,False,,34.0,False,True,RNAformer-SHS
+9ENF,0.632,0.53528,0.69201,0.238,rnaformerN100,complex,post,True,tRNA,91.0,True,False,RNAformer-SHS
+7YNC,0.49834168,0.29725,0.81162,0.11,rnaformerN100,complex,post,False,,38.0,False,True,RNAformer-SHS
+6G1S,0.97,0.55798,0.9655,0.885,rnaformerN100,complex,pre,False,,15.0,False,True,RNAformer-SHS
+6IV6,0.87639985,0.58348,0.95829,0.697,rnaformerN100,complex,pre,False,,26.0,False,True,RNAformer-SHS
+1U0B,0.88698253,0.83258,0.97698,0.734,rnaformerN100,complex,pre,True,tRNA,74.0,False,False,RNAformer-SHS
+7RE2,0.96767372,0.49908,0.71273,0.795,rnaformerN100,complex,post,False,,37.0,False,True,RNAformer-SHS
+5VW1,0.96337462,0.86913,0.99188,0.888,rnaformerN100,complex,pre,False,,73.0,False,False,RNAformer-SHS
+7BKQ,0.992,0.69837,0.95399,0.857,rnaformerN100,complex,post,False,,15.0,False,True,RNAformer-SHS
+2ZH2,0.993,0.91741,0.99816,0.963,rnaformerN100,complex,pre,False,,34.0,False,True,RNAformer-SHS
+4YB1,0.9018794,0.82679,0.50115,0.005,rnaformerN100,complex,pre,True,c-di-GMP-I;c-di-GMP-I-GGC,91.0,True,False,RNAformer-SHS
+8SSW,0.8,0.26297,0.29984,0.18,rnaformerN100,complex,post,False,,23.0,False,True,RNAformer-SHS
+6P7M,0.897,0.78962,0.90175,0.562,rnaformerN100,complex,pre,False,,26.0,False,True,RNAformer-SHS
+1VBX,0.91465858,0.88672,0.97338,0.945,rnaformerN100,complex,pre,True,HDV_ribozyme,73.0,True,False,RNAformer-SHS
+8D97,0.46466156,0.28967,0.71782,0.067,rnaformerN100,complex,post,False,,42.0,False,True,RNAformer-SHS
+4QI2,0.80822621,0.42133,0.36394,0.598,rnaformerN100,complex,pre,False,,19.0,False,True,RNAformer-SHS
+5MSF,0.967,0.59043,0.65024,0.359,rnaformerN100,complex,pre,False,,18.0,False,True,RNAformer-SHS
+6XJW,0.52945771,0.34224,0.37854,0.347,rnaformerN100,complex,post,False,,58.0,False,False,RNAformer-SHS
+3OUY,0.846,0.8395,0.99026,0.886,rnaformerN100,complex,pre,False,,35.0,False,True,RNAformer-SHS
+7Y82,0.52528178,0.18295,0.80383,0.033,rnaformerN100,complex,post,False,,41.0,False,True,RNAformer-SHS
+2DR9,0.964,0.85882,0.98227,0.865,rnaformerN100,complex,pre,False,,34.0,False,True,RNAformer-SHS
+1SJ4,0.91846526,0.87622,0.97111,0.944,rnaformerN100,complex,pre,True,HDV_ribozyme,73.0,True,False,RNAformer-SHS
+8URB,0.91280114,0.502,0.96445,0.651,rnaformerN100,complex,post,False,,21.0,False,True,RNAformer-SHS
+7KRP,0.96472183,0.66706,0.99267,0.89,rnaformerN100,complex,pre,False,,37.0,False,True,RNAformer-SHS
+4M4O,0.918,0.79849,0.8364,0.484,rnaformerN100,complex,pre,False,,59.0,True,True,RNAformer-SHS
+7YND,0.4648305,0.26596,0.81524,0.173,rnaformerN100,complex,post,False,,38.0,False,True,RNAformer-SHS
+3TUP,0.856,0.73671,0.64598,0.23,rnaformerN100,complex,pre,True,tRNA,74.0,True,False,RNAformer-SHS
+3K0J,0.87794347,0.90829,0.21642,0.464,rnaformerN100,complex,pre,True,TPP,87.0,False,False,RNAformer-SHS
+4WC6,0.956,0.94433,0.98174,0.778,rnaformerN100,complex,pre,True,tRNA,75.0,True,False,RNAformer-SHS
+8D1V,0.4561016,0.35071,0.88303,0.158,rnaformerN100,complex,post,False,,34.0,False,True,RNAformer-SHS
+8D4B,0.85085666,0.3703,0.71926,0.233,rnaformerN100,complex,post,False,,41.0,False,True,RNAformer-SHS
+9CPO,0.90751115,0.47431,0.95545,0.646,rnaformerN100,complex,post,False,,33.0,False,True,RNAformer-SHS
+1A9N,0.98024398,0.70817,0.48553,0.83,rnaformerN100,complex,pre,False,,24.0,False,True,RNAformer-SHS
+2ZH5,0.996,0.93718,0.99795,0.979,rnaformerN100,complex,pre,False,,34.0,False,True,RNAformer-SHS
+1EUY,0.82444956,0.82007,0.98793,0.772,rnaformerN100,complex,pre,True,tRNA,73.0,True,False,RNAformer-SHS
+7R97,0.945,0.50976,0.98204,0.874,rnaformerN100,complex,post,False,,28.0,False,True,RNAformer-SHS
+1EUQ,0.87837059,0.89552,0.99056,0.771,rnaformerN100,complex,pre,True,tRNA,72.0,True,False,RNAformer-SHS
+2B2G,0.91322537,0.46978,0.3146,0.625,rnaformerN100,complex,pre,False,,16.0,False,True,RNAformer-SHS
+8EEY,0.57688936,0.31729,0.80421,0.077,rnaformerN100,complex,post,False,,38.0,False,True,RNAformer-SHS
+7Y9X,0.49733322,0.37712,0.86923,0.074,rnaformerN100,complex,post,False,,38.0,False,True,RNAformer-SHS
+3VJR,0.947,0.79129,0.6883,0.444,rnaformerN100,complex,pre,False,,36.0,False,True,RNAformer-SHS
+1SJ3,0.92253429,0.88108,0.97007,0.942,rnaformerN100,complex,pre,True,HDV_ribozyme,73.0,True,False,RNAformer-SHS
+3WC2,0.81605863,0.62017,0.9223,0.769,rnaformerN100,complex,pre,True,tRNA,74.0,True,False,RNAformer-SHS
+7Y85,0.53048641,0.14794,0.85195,0.09,rnaformerN100,complex,post,False,,36.0,False,True,RNAformer-SHS
+6B3K,0.9369812,0.83726,0.84895,0.698,rnaformerN100,complex,pre,False,,83.0,False,False,RNAformer-SHS
+7MLX,0.89551602,0.70139,0.91546,0.826,rnaformerN100,complex,pre,False,,65.0,True,False,RNAformer-SHS
+3R9W,0.81933598,0.30509,0.95516,0.615,rnaformerN100,complex,pre,False,,34.0,False,True,RNAformer-SHS
+8EEX,0.47471511,0.32277,0.93095,0.143,rnaformerN100,complex,post,False,,36.0,False,True,RNAformer-SHS
+7Y9Y,0.6180204,0.3719,0.80046,0.054,rnaformerN100,complex,post,False,,38.0,False,True,RNAformer-SHS
+6XJQ,0.52957455,0.33396,0.37812,0.35,rnaformerN100,complex,post,False,,58.0,False,False,RNAformer-SHS
+7Y84,0.41222118,0.39811,0.87762,0.193,rnaformerN100,complex,post,False,,35.0,False,True,RNAformer-SHS
+8OPT,0.31969449,0.19536,0.80565,0.009,rnaformerN100,complex,post,False,,54.0,False,False,RNAformer-SHS
+1VFG,0.68602847,0.2792,0.46194,0.024,rnaformerN100,complex,pre,True,tRNA,34.0,False,True,RNAformer-SHS
+2V3C,0.88857677,0.92218,0.33392,0.53,rnaformerN100,complex,pre,True,Bacteria_small_SRP,96.0,False,False,RNAformer-SHS
+4WC7,0.957,0.94157,0.98128,0.78,rnaformerN100,complex,pre,True,tRNA,75.0,True,False,RNAformer-SHS
+4KJI,0.71278733,0.28189,0.92694,0.687,rnaformerN100,complex,pre,False,,16.0,False,True,RNAformer-SHS
+8HKE,0.80574028,0.27342,0.91964,0.345,rnaformerN100,complex,post,False,,37.0,False,True,RNAformer-SHS
+2DR7,0.965,0.88289,0.99764,0.911,rnaformerN100,complex,pre,False,,33.0,False,True,RNAformer-SHS
+7OZQ,0.76389726,0.45298,0.25521,0.119,rnaformerN100,complex,post,False,,32.0,False,True,RNAformer-SHS
+8Z8X,0.85272373,0.3215,0.89864,0.546,rnaformerN100,complex,post,False,,18.0,False,True,RNAformer-SHS
+6XJY,0.55091726,0.35189,0.37331,0.354,rnaformerN100,complex,post,False,,58.0,False,False,RNAformer-SHS
+7QR3,0.65980591,0.38518,0.39365,0.385,rnaformerN100,complex,post,True,CPEB3_ribozyme,69.0,True,False,RNAformer-SHS
+2ZH4,0.976,0.88277,0.99723,0.855,rnaformerN100,complex,pre,False,,34.0,False,True,RNAformer-SHS
+6NMA,0.93373124,0.72968,0.86423,0.53,rnaformerN100,complex,pre,False,,25.0,False,True,RNAformer-SHS
+4NH6,0.70990566,0.28269,0.94368,0.375,rnaformerN100,complex,pre,False,,15.0,False,True,RNAformer-SHS
+2F8T,0.7588204,0.21962,0.43223,0.007,rnaformerN100,complex,pre,False,,26.0,False,True,RNAformer-SHS
+7UO4,0.96102682,0.45966,0.98494,0.843,rnaformerN100,complex,post,False,,36.0,False,True,RNAformer-SHS
+7Y8T,0.48664389,0.23501,0.88923,0.115,rnaformerN100,complex,post,False,,37.0,False,True,RNAformer-SHS
+6AAX,0.91992625,0.5273,0.56653,0.632,rnaformerN100,complex,pre,False,,28.0,False,True,RNAformer-SHS
+2DU6,0.7998522,0.73485,0.86809,0.692,rnaformerN100,complex,pre,True,tRNA,71.0,True,False,RNAformer-SHS
+4RWP,0.919,0.53824,0.98238,0.888,rnaformerN100,complex,pre,False,,19.0,False,True,RNAformer-SHS
+6SX0,0.809,0.30007,0.88381,0.441,rnaformerN100,complex,pre,False,,19.0,False,True,RNAformer-SHS
+8IDF,0.66153786,0.36413,0.73442,0.184,rnaformerN100,complex,post,False,,53.0,False,True,RNAformer-SHS
+6W62,0.80907363,0.49894,0.90633,0.573,rnaformerN100,complex,pre,False,,24.0,False,True,RNAformer-SHS
+8WMI,0.48597338,0.21018,0.84075,0.025,rnaformerN100,complex,post,False,,39.0,False,True,RNAformer-SHS
+3NDB,0.8699821,0.7707,0.90001,0.74,rnaformerN100,complex,pre,True,Archaea_SRP,136.0,False,False,RNAformer-SHS
+2AKE,0.76351606,0.73048,0.83367,0.01,rnaformerN100,complex,pre,True,tRNA,72.0,False,False,RNAformer-SHS
+5NPM,0.928,0.92311,0.99084,0.901,rnaformerN100,complex,pre,True,LSU_rRNA_bacteria,80.0,True,False,RNAformer-SHS
+2DR8,0.961,0.83051,0.9828,0.838,rnaformerN100,complex,pre,False,,33.0,False,True,RNAformer-SHS
+8OPS,0.49331332,0.34518,0.78383,0.009,rnaformerN100,complex,post,False,,69.0,False,False,RNAformer-SHS
+7WAH,0.48567847,0.49681,0.8459,0.134,rnaformerN100,complex,post,False,,39.0,False,True,RNAformer-SHS
+1S03,0.844,0.69384,0.49862,0.773,rnaformerN100,complex,pre,False,,47.0,False,True,RNAformer-SHS
+7YNB,0.54507833,0.27008,0.77803,0.047,rnaformerN100,complex,post,False,,38.0,False,True,RNAformer-SHS
+6ZLC,0.858,0.28473,0.88416,0.432,rnaformerN100,complex,pre,False,,19.0,False,True,RNAformer-SHS
+2R8S,0.8248656,0.79493,0.74346,0.464,rnaformerN100,complex,pre,False,,159.0,False,False,RNAformer-SHS
+9IIZ,0.835,0.3543,0.91094,0.622,rnaformerN100,complex,post,False,,25.0,False,True,RNAformer-SHS
+3R9X,0.9761065,0.60301,0.88428,0.789,rnaformerN100,complex,pre,False,,35.0,False,False,RNAformer-SHS
+8DGA,0.90810084,0.3058,0.7944,0.286,rnaformerN100,complex,post,False,,22.0,False,True,RNAformer-SHS
+4PMI,0.92526646,0.69516,0.66166,0.685,rnaformerN100,complex,pre,False,,40.0,False,True,RNAformer-SHS
+1VBY,0.9128261,0.87462,0.96786,0.942,rnaformerN100,complex,pre,True,HDV_ribozyme,73.0,True,False,RNAformer-SHS
+6E9E,0.71436996,0.51015,0.97416,0.279,rnaformerN100,complex,pre,False,,51.0,False,False,RNAformer-SHS
+8ISS,0.78936295,0.77552,0.93049,0.597,rnaformerN100,complex,post,True,tRNA,80.0,True,False,RNAformer-SHS
+2F8S,0.73325987,0.23234,0.42645,0.006,rnaformerN100,complex,pre,False,,22.0,False,True,RNAformer-SHS
+1IVS,0.85794483,0.83898,0.49533,0.433,rnaformerN100,complex,pre,True,tRNA,75.0,True,False,RNAformer-SHS
+5HC9,0.829,0.76336,0.49614,0.633,rnaformerN100,complex,pre,True,tRNA,76.0,True,False,RNAformer-SHS
+2ZH3,0.994,0.93967,0.9985,0.987,rnaformerN100,complex,pre,False,,34.0,False,True,RNAformer-SHS
+7QR4,0.76669072,0.46503,0.8068,0.681,rnaformerN100,complex,post,True,CPEB3_ribozyme,69.0,True,False,RNAformer-SHS
+4PDB,0.97124852,0.85828,0.98833,0.921,rnaformerN100,complex,pre,False,,38.0,False,True,RNAformer-SHS
+2ZZN,0.83015646,0.77206,0.52542,0.507,rnaformerN100,complex,pre,True,tRNA,71.0,True,False,RNAformer-SHS
+1ZJW,0.94643496,0.93325,0.99183,0.79,rnaformerN100,complex,pre,True,tRNA,74.0,True,False,RNAformer-SHS
+4OOG,0.961,0.66601,0.92326,0.747,rnaformerN100,complex,pre,False,,34.0,False,True,RNAformer-SHS
+4PRF,0.92650422,0.90702,0.97385,0.934,rnaformerN100,complex,pre,True,HDV_ribozyme,74.0,True,False,RNAformer-SHS
+3WBM,0.876,0.36735,0.42482,0.54,rnaformerN100,complex,pre,False,,25.0,False,True,RNAformer-SHS
+4YVI,0.91208713,0.79266,0.96535,0.793,rnaformerN100,complex,pre,True,tRNA,71.0,True,False,RNAformer-SHS
+7W0D,0.863,0.35736,0.61928,0.134,rnaformerN100,complex,post,False,,52.0,False,False,RNAformer-SHS
+6ZDQ,0.79385355,0.55535,0.97173,0.569,rnaformerN100,complex,pre,False,,65.0,False,False,RNAformer-SHS
+6BJG,0.918,0.58935,0.97927,0.895,rnaformerN100,complex,pre,False,,21.0,False,True,RNAformer-SHS
+8H69,0.87794468,0.40668,0.91148,0.583,rnaformerN100,complex,post,False,,19.0,False,True,RNAformer-SHS
+8S9X,0.56227193,0.18207,0.95947,0.379,rnaformerN100,complex,post,False,,37.0,False,True,RNAformer-SHS
+5W0O,0.942,0.31785,0.72913,0.751,rnaformerN100,complex,pre,False,,15.0,False,True,RNAformer-SHS
+6DB9,0.75570933,0.54834,0.83647,0.666,rnaformerN100,complex,pre,False,,60.0,True,False,RNAformer-SHS
+5DE5,0.76815687,0.51097,0.41029,0.631,rnaformerN100,complex,pre,False,,35.0,False,True,RNAformer-SHS
+7VG3,0.808,0.32098,0.93044,0.181,rnaformerN100,complex,post,False,,32.0,False,True,RNAformer-SHS
+4FTS,0.66802593,0.19867,0.98213,0.927,rnaformerN100,complex,pre,False,,15.0,False,True,RNAformer-SHS
+7XSS,0.43124286,0.17296,0.87861,0.118,rnaformerN100,complex,post,False,,34.0,False,True,RNAformer-SHS
+6GKH,0.898,0.38326,0.97553,0.729,rnaformerN100,complex,pre,False,,15.0,False,True,RNAformer-SHS
+1J1U,0.88352889,0.78561,0.94537,0.595,rnaformerN100,complex,pre,True,tRNA,74.0,True,False,RNAformer-SHS
+5UDZ,0.823,0.50439,0.9338,0.802,rnaformerN100,complex,pre,False,,24.0,False,True,RNAformer-SHS
+3U4M,0.93882228,0.90725,0.97605,0.857,rnaformerN100,complex,pre,True,LSU_rRNA_bacteria,80.0,True,False,RNAformer-SHS
+5CCB,0.69104676,0.43205,0.89918,0.575,rnaformerN100,complex,pre,True,tRNA,77.0,False,False,RNAformer-SHS
+7CTT,0.93204049,0.39808,0.97873,0.756,rnaformerN100,complex,pre,False,,18.0,False,True,RNAformer-SHS
+8YE6,0.88725356,0.82681,0.92137,0.574,rnaformerN100,complex,post,False,,92.0,False,False,RNAformer-SHS
+7D7V,0.88504996,0.7224,0.92227,0.805,rnaformerN100,complex,pre,True,nadA,57.0,True,False,RNAformer-SHS
+3SIU,0.94626887,0.55346,0.50243,0.641,rnaformerN100,complex,pre,False,,28.0,False,True,RNAformer-SHS
+2NUF,0.986,0.85518,0.99489,0.947,rnaformerN100,complex,pre,False,,28.0,False,True,RNAformer-SHS
+4JNG,0.416,0.30821,0.80512,0.189,rnaformerN100,complex,pre,False,,42.0,False,True,RNAformer-SHS
+8D9E,0.51388738,0.21194,0.86395,0.038,rnaformerN100,complex,post,False,,36.0,False,True,RNAformer-SHS
+7W0C,0.90424372,0.32912,0.75972,0.27,rnaformerN100,complex,post,False,,37.0,False,True,RNAformer-SHS
+3OVS,0.885,0.79617,0.98361,0.839,rnaformerN100,complex,pre,False,,34.0,False,True,RNAformer-SHS
+6BJH,0.876,0.70025,0.95953,0.841,rnaformerN100,complex,pre,False,,21.0,False,True,RNAformer-SHS
+4P3E,0.77636482,0.56827,0.74886,0.554,rnaformerN100,complex,pre,True,Metazoa_SRP,124.0,False,False,RNAformer-SHS
+2OZB,0.920271,0.64199,0.49363,0.652,rnaformerN100,complex,pre,False,,33.0,False,True,RNAformer-SHS
+8T5S,0.96006368,0.39778,0.89716,0.037,rnaformerN100,complex,post,False,,30.0,False,True,RNAformer-SHS
+1GAX,0.85221184,0.83897,0.49468,0.433,rnaformerN100,complex,pre,True,tRNA,75.0,True,False,RNAformer-SHS
+1P6V,0.76348829,0.49769,0.49202,0.456,rnaformerN100,complex,pre,True,tmRNA,45.0,False,False,RNAformer-SHS
+3FOZ,0.906,0.86358,0.51662,0.758,rnaformerN100,complex,pre,True,tRNA,74.0,True,False,RNAformer-SHS
+4AL5,0.96177534,0.65464,0.98151,0.902,rnaformerN100,complex,pre,False,,18.0,False,True,RNAformer-SHS
+7YN9,0.46829609,0.27331,0.81126,0.085,rnaformerN100,complex,post,False,,38.0,False,True,RNAformer-SHS
+5UD5,0.89607688,0.72829,0.48198,0.599,rnaformerN100,complex,pre,True,tRNA,72.0,True,False,RNAformer-SHS
+4C7O,0.81728169,0.53631,0.50488,0.658,rnaformerN100,complex,pre,False,,48.0,False,True,RNAformer-SHS
+7DLZ,0.832,0.54054,0.47868,0.551,rnaformerN100,complex,post,False,,45.0,False,False,RNAformer-SHS
+3IVK,0.78717695,0.723,0.54534,0.831,rnaformerN100,complex,pre,False,,128.0,True,False,RNAformer-SHS
+3IWN,0.84,0.77459,0.36888,0.424,rnaformerN100,complex,pre,True,c-di-GMP-I;c-di-GMP-I-GGC,93.0,True,False,RNAformer-SHS
+1SJF,0.88039936,0.90381,0.97502,0.916,rnaformerN100,complex,pre,True,HDV_ribozyme,74.0,True,False,RNAformer-SHS
+7NGA,0.974,0.5579,0.95076,0.821,rnaformerN100,complex,post,False,,15.0,False,True,RNAformer-SHS
+8S9V,0.67318345,0.50212,0.96495,0.591,rnaformerN100,complex,post,False,,37.0,False,True,RNAformer-SHS
+3AMU,0.86418778,0.84829,0.96807,0.567,rnaformerN100,complex,pre,True,tRNA,78.0,True,False,RNAformer-SHS
+4YCO,0.85768083,0.64718,0.62865,0.506,rnaformerN100,complex,pre,True,tRNA,74.0,True,False,RNAformer-SHS
+8SQ9,0.90087454,0.45254,0.98609,0.826,rnaformerN100,complex,post,False,,35.0,False,True,RNAformer-SHS
+7X34,0.74615268,0.40929,0.54751,0.179,rnaformerN100,complex,post,True,SSU_rRNA_eukarya,94.0,False,False,RNAformer-SHS
+8DFV,0.805,0.5949,0.80499,0.254,rnaformerN100,complex,post,False,,60.0,False,False,RNAformer-SHS
+2ZXU,0.884,0.78546,0.50817,0.711,rnaformerN100,complex,pre,True,tRNA,74.0,True,False,RNAformer-SHS
+7DOK,0.94200933,0.42323,0.98113,0.666,rnaformerN100,complex,post,False,,24.0,False,True,RNAformer-SHS
+6XH1,0.9828794,0.72002,0.93244,0.757,rnaformerN100,complex,pre,False,,27.0,False,True,RNAformer-SHS
+2PJP,0.8426803,0.53936,0.97304,0.704,rnaformerN100,complex,pre,False,,23.0,False,True,RNAformer-SHS
+2DRB,0.967,0.85552,0.98132,0.858,rnaformerN100,complex,pre,False,,35.0,False,True,RNAformer-SHS
+8JTR,0.65026648,0.48547,0.79792,0.231,rnaformerN100,complex,post,False,,105.0,False,True,RNAformer-SHS
+3AL0,0.90956184,0.87874,0.60445,0.484,rnaformerN100,complex,pre,True,tRNA,74.0,True,False,RNAformer-SHS
+5DV7,0.978,0.52541,0.6015,0.59,rnaformerN100,complex,pre,False,,18.0,False,True,RNAformer-SHS
+2ZHA,0.973,0.87153,0.99042,0.866,rnaformerN100,complex,pre,False,,33.0,False,True,RNAformer-SHS
+7XT4,0.45604645,0.1081,0.92009,0.1,rnaformerN100,complex,post,False,,34.0,False,True,RNAformer-SHS
+5Y7M,0.82752956,0.55209,0.48607,0.496,rnaformerN100,complex,pre,False,,51.0,False,False,RNAformer-SHS
+4X0A,0.923,0.90255,0.96297,0.741,rnaformerN100,complex,pre,True,tRNA,73.0,True,False,RNAformer-SHS
+8H0S,0.70445905,0.36485,0.47603,0.572,rnaformerN100,complex,post,False,,17.0,False,True,RNAformer-SHS
+7XSR,0.48356818,0.18021,0.92101,0.11,rnaformerN100,complex,post,False,,34.0,False,True,RNAformer-SHS
+7VG2,0.90616006,0.36436,0.87042,0.328,rnaformerN100,complex,post,False,,36.0,False,True,RNAformer-SHS
+8D8N,0.48759534,0.18769,0.85536,0.133,rnaformerN100,complex,post,False,,35.0,False,True,RNAformer-SHS
+7P0V,0.8766839,0.37457,0.77602,0.259,rnaformerN100,complex,post,False,,24.0,False,True,RNAformer-SHS
+7U2A,0.71858414,0.34724,0.97713,0.767,rnaformerN100,complex,post,False,,38.0,False,True,RNAformer-SHS
+8PTX,0.76119774,0.62493,0.92094,0.506,rnaformerN100,complex,post,True,tRNA,75.0,True,False,RNAformer-SHS
+2OIH,0.88208845,0.90339,0.97695,0.936,rnaformerN100,complex,pre,True,HDV_ribozyme,73.0,True,False,RNAformer-SHS
+7DMQ,0.72545013,0.4523,0.91408,0.509,rnaformerN100,complex,pre,False,,53.0,False,False,RNAformer-SHS
+4IG8,0.919,0.5423,0.98999,0.944,rnaformerN100,complex,pre,False,,18.0,False,True,RNAformer-SHS
+1OOA,0.37976208,0.14439,0.45002,0.121,rnaformerN100,complex,pre,False,,29.0,False,True,RNAformer-SHS
+4L8H,0.861,0.50951,0.97161,0.881,rnaformerN100,complex,pre,False,,20.0,False,True,RNAformer-SHS
+8WM4,0.58648564,0.27225,0.82484,0.026,rnaformerN100,complex,post,False,,38.0,False,True,RNAformer-SHS
+6DB8,0.70218993,0.42615,0.95925,0.816,rnaformerN100,complex,pre,False,,60.0,True,False,RNAformer-SHS
+7PMQ,0.66845061,0.31754,0.30945,0.012,rnaformerN100,complex,post,False,,42.0,False,False,RNAformer-SHS
+7W0E,0.87467268,0.3608,0.62501,0.31,rnaformerN100,complex,post,False,,53.0,False,False,RNAformer-SHS
+6CF2,0.862,0.82911,0.97551,0.923,rnaformerN100,complex,pre,False,,35.0,False,True,RNAformer-SHS
+4M2Z,0.860567,0.58014,0.94556,0.756,rnaformerN100,complex,pre,False,,27.0,False,True,RNAformer-SHS
+2ANN,0.90427259,0.48949,0.96417,0.822,rnaformerN100,complex,pre,False,,23.0,False,True,RNAformer-SHS
+8PTZ,0.74921267,0.62119,0.94587,0.478,rnaformerN100,complex,post,True,tRNA,75.0,True,False,RNAformer-SHS
+7KAB,0.8481146,0.76607,0.92348,0.754,rnaformerN100,complex,pre,True,tRNA,66.0,True,False,RNAformer-SHS
+7NQ4,0.94465735,0.55112,0.98843,0.891,rnaformerN100,complex,pre,False,,20.0,False,True,RNAformer-SHS
+6CMN,0.91409842,0.59552,0.95446,0.803,rnaformerN100,complex,pre,False,,27.0,False,True,RNAformer-SHS
+9DTT,0.56972369,0.31248,0.85373,0.011,rnaformerN100,complex,post,True,DENV_SLA,67.0,False,False,RNAformer-SHS
+2DER,0.82740024,0.69287,0.27988,0.101,rnaformerN100,complex,pre,True,tRNA,74.0,True,False,RNAformer-SHS
+5JC7,0.957,0.39615,0.58603,0.153,rnaformerN100,complex,pre,False,,24.0,False,True,RNAformer-SHS
+4QIL,0.91961311,0.48946,0.45635,0.471,rnaformerN100,complex,pre,False,,16.0,False,True,RNAformer-SHS
+8D9I,0.47511408,0.24496,0.87085,0.114,rnaformerN100,complex,post,False,,35.0,False,True,RNAformer-SHS
+2PLY,0.93826419,0.67724,0.93212,0.812,rnaformerN100,complex,pre,False,,23.0,False,True,RNAformer-SHS
+7XSP,0.46679034,0.16855,0.83564,0.035,rnaformerN100,complex,post,False,,35.0,False,True,RNAformer-SHS
+7SWF,0.94,0.38496,0.93049,0.634,rnaformerN100,complex,post,False,,17.0,False,True,RNAformer-SHS
+4YVJ,0.93379663,0.84146,0.96562,0.824,rnaformerN100,complex,pre,True,tRNA,71.0,True,False,RNAformer-SHS
+8OST,0.54043609,0.30922,0.75051,0.009,rnaformerN100,complex,post,False,,69.0,False,False,RNAformer-SHS
+3OV7,0.877,0.78148,0.98313,0.829,rnaformerN100,complex,pre,False,,34.0,False,True,RNAformer-SHS
+9CMP,0.884,0.28942,0.86522,0.439,rnaformerN100,complex,post,False,,22.0,False,True,RNAformer-SHS
+8HMY,0.76223386,0.59299,0.64728,0.517,rnaformerN100,complex,post,True,tRNA,90.0,False,False,RNAformer-SHS
+8CTI,0.824,0.80422,0.90706,0.695,rnaformerN100,complex,post,True,tRNA,71.0,True,False,RNAformer-SHS
+4YYE,0.869,0.74622,0.90832,0.601,rnaformerN100,complex,pre,True,tRNA,74.0,True,False,RNAformer-SHS
+4AL6,0.91592834,0.5807,0.97872,0.761,rnaformerN100,complex,pre,False,,16.0,False,True,RNAformer-SHS
+5WT3,0.89991428,0.78912,0.96996,0.769,rnaformerN100,complex,pre,True,tRNA,73.0,True,False,RNAformer-SHS
+6XH3,0.97779985,0.60607,0.942,0.81,rnaformerN100,complex,pre,False,,27.0,False,True,RNAformer-SHS
+4NGF,0.888,0.28694,0.26996,0.409,rnaformerN100,complex,pre,False,,17.0,False,True,RNAformer-SHS
+4JK0,0.70965047,0.26748,0.84367,0.156,rnaformerN100,complex,pre,False,,21.0,False,True,RNAformer-SHS
+1JBT,0.862,0.56116,0.48862,0.62,rnaformerN100,complex,pre,False,,29.0,False,True,RNAformer-SHS
+9IJ2,0.782,0.18794,0.91491,0.596,rnaformerN100,complex,post,False,,22.0,False,True,RNAformer-SHS
+8S9T,0.60702655,0.28607,0.97424,0.467,rnaformerN100,complex,post,False,,37.0,False,True,RNAformer-SHS
+1GTS,0.92122967,0.89346,0.99134,0.776,rnaformerN100,complex,pre,True,tRNA,74.0,True,False,RNAformer-SHS
+4M30,0.86187519,0.60501,0.95246,0.763,rnaformerN100,complex,pre,False,,27.0,False,True,RNAformer-SHS
+6KL9,0.86920292,0.59901,0.81983,0.42,rnaformerN100,complex,pre,False,,25.0,False,True,RNAformer-SHS
+8HIO,0.64142377,0.39861,0.67815,0.042,rnaformerN100,complex,post,False,,47.0,True,True,RNAformer-SHS
+8IUO,0.57265833,0.21767,0.8534,0.438,rnaformerN100,complex,post,False,,35.0,False,True,RNAformer-SHS
+8D9F,0.44200961,0.23967,0.83738,0.242,rnaformerN100,complex,post,False,,33.0,False,True,RNAformer-SHS
+2NUE,0.9,0.71022,0.7005,0.343,rnaformerN100,complex,pre,False,,46.0,False,True,RNAformer-SHS
+4RWO,0.979,0.47986,0.99012,0.939,rnaformerN100,complex,pre,False,,19.0,False,True,RNAformer-SHS
+5ZW4,0.82849726,0.29231,0.98237,0.705,rnaformerN100,complex,pre,False,,16.0,False,True,RNAformer-SHS
+6O5F,0.79833452,0.25838,0.30632,0.01,rnaformerN100,complex,pre,False,,24.0,False,True,RNAformer-SHS
+2F8K,0.91965932,0.498,0.87394,0.468,rnaformerN100,complex,pre,False,,16.0,False,True,RNAformer-SHS
+8G6R,0.82751069,0.35262,0.96507,0.523,rnaformerN100,complex,post,False,,20.0,False,True,RNAformer-SHS
+2ZHB,0.992,0.91313,0.99762,0.973,rnaformerN100,complex,pre,False,,34.0,False,True,RNAformer-SHS
+7UOB,0.93364698,0.55808,0.98266,0.782,rnaformerN100,complex,post,False,,36.0,False,True,RNAformer-SHS
+7ED5,0.89963293,0.34962,0.99187,0.767,rnaformerN100,complex,post,False,,24.0,False,True,RNAformer-SHS
+1EC6,0.34470332,0.19912,0.40047,0.073,rnaformerN100,complex,pre,False,,20.0,False,True,RNAformer-SHS
+8D9G,0.50584327,0.14319,0.84976,0.049,rnaformerN100,complex,post,False,,36.0,False,True,RNAformer-SHS
+4X0B,0.918,0.83634,0.96519,0.741,rnaformerN100,complex,pre,True,tRNA,77.0,False,False,RNAformer-SHS
+8ASW,0.5729172,0.55896,0.91991,0.519,rnaformerN100,complex,post,True,tRNA,73.0,False,False,RNAformer-SHS
+4JGN,0.71226108,0.23378,0.87297,0.175,rnaformerN100,complex,pre,False,,20.0,False,True,RNAformer-SHS
+2DRA,0.974,0.85891,0.98352,0.874,rnaformerN100,complex,pre,False,,34.0,False,True,RNAformer-SHS
+4RWN,0.978,0.47641,0.99055,0.934,rnaformerN100,complex,pre,False,,19.0,False,True,RNAformer-SHS
+7ZOL,0.48833548,0.28524,0.77216,0.023,rnaformerN100,complex,post,False,,39.0,False,True,RNAformer-SHS
+7X8A,0.41733428,0.41988,0.89462,0.21,rnaformerN100,complex,post,False,,33.0,False,True,RNAformer-SHS
+6XH2,0.9152753,0.6645,0.94193,0.754,rnaformerN100,complex,pre,False,,27.0,False,True,RNAformer-SHS
+5WLH,0.8853629,0.76046,0.99004,0.709,rnaformerN100,complex,pre,False,,43.0,False,True,RNAformer-SHS
+2DET,0.87292693,0.87888,0.97933,0.845,rnaformerN100,complex,pre,True,tRNA,70.0,True,False,RNAformer-SHS
+4XCO,0.93621749,0.87979,0.52469,0.822,rnaformerN100,complex,pre,True,Bacteria_small_SRP,96.0,False,False,RNAformer-SHS
+1GTR,0.92354261,0.89273,0.99209,0.773,rnaformerN100,complex,pre,True,tRNA,74.0,True,False,RNAformer-SHS
+8S9U,0.61171462,0.21581,0.9832,0.401,rnaformerN100,complex,post,False,,37.0,False,True,RNAformer-SHS
+8GNA,0.47781658,0.09148,0.82909,0.038,rnaformerN100,complex,post,False,,32.0,False,True,RNAformer-SHS
+7DTE,0.90017356,0.49092,0.9858,0.832,rnaformerN100,complex,post,False,,33.0,False,True,RNAformer-SHS
+5W1H,0.84992826,0.61012,0.99027,0.652,rnaformerN100,complex,pre,False,,42.0,False,True,RNAformer-SHS
+8DG7,0.89640565,0.26532,0.69678,0.298,rnaformerN100,complex,post,False,,26.0,False,True,RNAformer-SHS
+7UOE,0.89105072,0.55694,0.98914,0.776,rnaformerN100,complex,post,False,,37.0,False,True,RNAformer-SHS
+7X7A,0.46904172,0.32468,0.86386,0.228,rnaformerN100,complex,post,False,,33.0,False,True,RNAformer-SHS
+8AF0,0.9065664,0.32818,0.43342,0.434,rnaformerN100,complex,post,False,,19.0,False,True,RNAformer-SHS
+4YVK,0.93368996,0.83833,0.9664,0.825,rnaformerN100,complex,pre,True,tRNA,71.0,True,False,RNAformer-SHS
+3UMY,0.92807459,0.90371,0.9504,0.735,rnaformerN100,complex,pre,True,LSU_rRNA_bacteria,80.0,True,False,RNAformer-SHS
+2ZNI,0.84659907,0.80635,0.97989,0.839,rnaformerN100,complex,pre,False,,72.0,False,False,RNAformer-SHS
+8AXF,0.56516924,0.35405,0.81087,0.328,rnaformerN100,complex,post,False,,42.0,False,True,RNAformer-SHS
+3A2K,0.82974054,0.86817,0.97079,0.688,rnaformerN100,complex,pre,True,tRNA,77.0,True,False,RNAformer-SHS
+3HTX,0.917,0.427,0.47263,0.65,rnaformerN100,complex,pre,False,,22.0,False,True,RNAformer-SHS
+7XSQ,0.43298701,0.28582,0.85095,0.222,rnaformerN100,complex,post,False,,34.0,False,True,RNAformer-SHS
+7ORN,0.69742799,0.26668,0.86991,0.345,rnaformerN100,complex,post,False,,18.0,False,True,RNAformer-SHS
+2OJ3,0.87643887,0.90632,0.97644,0.932,rnaformerN100,complex,pre,True,HDV_ribozyme,73.0,True,False,RNAformer-SHS
+3V7E,0.84,0.81587,0.4706,0.665,rnaformerN100,complex,pre,True,SAM,126.0,True,False,RNAformer-SHS
+8D9H,0.49040744,0.27187,0.85736,0.091,rnaformerN100,complex,post,False,,36.0,False,True,RNAformer-SHS
+6Y0Y,0.9477835,0.59324,0.0,,rnaformerN100,single_chain,pre,False,,27.0,False,True,RNAformer-SHS
+8UPT,0.74935938,0.63588,0.0,,rnaformerN100,single_chain,post,False,,71.0,True,False,RNAformer-SHS
+3GX5,0.913,0.92553,0.0,,rnaformerN100,single_chain,pre,True,SAM,94.0,False,False,RNAformer-SHS
+7EOP,0.54907001,0.25661,0.0,,rnaformerN100,single_chain,post,False,,48.0,False,False,RNAformer-SHS
+9DE8,0.76600379,0.48527,0.0,,rnaformerN100,single_chain,post,True,mir-TAR,56.0,False,False,RNAformer-SHS
+3L0U,0.887,0.75843,0.0,,rnaformerN100,single_chain,pre,True,tRNA,73.0,True,False,RNAformer-SHS
+6JXM,0.85,0.75912,0.0,,rnaformerN100,single_chain,pre,True,tRNA,97.0,True,False,RNAformer-SHS
+4LX6,0.83265142,0.71006,0.0,,rnaformerN100,single_chain,pre,True,Purine,71.0,False,False,RNAformer-SHS
+7E9I,0.72890892,0.40125,0.0,,rnaformerN100,single_chain,post,False,,33.0,True,True,RNAformer-SHS
+7MKT,0.25643191,0.09466,0.0,,rnaformerN100,single_chain,post,False,,23.0,False,True,RNAformer-SHS
+3GX2,0.913,0.92447,0.0,,rnaformerN100,single_chain,pre,True,SAM,94.0,False,False,RNAformer-SHS
+6D3P,0.647,0.39485,0.0,,rnaformerN100,single_chain,pre,False,,45.0,False,False,RNAformer-SHS
+4TZX,0.80637502,0.71204,0.0,,rnaformerN100,single_chain,pre,True,Purine,71.0,True,False,RNAformer-SHS
+3GOG,0.66986105,0.66169,0.0,,rnaformerN100,single_chain,pre,True,Purine,65.0,False,False,RNAformer-SHS
+7TZT,0.55223566,0.39887,0.0,,rnaformerN100,single_chain,post,True,TPP,79.0,False,False,RNAformer-SHS
+7SAM,0.5961643,0.35335,0.0,,rnaformerN100,single_chain,post,True,TLS-PK3,169.0,True,False,RNAformer-SHS
+4L81,0.77274354,0.74033,0.0,,rnaformerN100,single_chain,pre,True,SAM-I-IV;SAM-I-IV-variant,96.0,False,False,RNAformer-SHS
+2A43,0.65820723,0.25196,0.0,,rnaformerN100,single_chain,pre,False,,26.0,True,True,RNAformer-SHS
+7EEM,0.92217273,0.61185,0.0,,rnaformerN100,single_chain,post,False,,26.0,False,True,RNAformer-SHS
+4LVZ,0.79727493,0.69427,0.0,,rnaformerN100,single_chain,pre,True,THF,89.0,False,False,RNAformer-SHS
+4TZY,0.79772467,0.71615,0.0,,rnaformerN100,single_chain,pre,True,Purine,71.0,True,False,RNAformer-SHS
+4FE5,0.71816936,0.70197,0.0,,rnaformerN100,single_chain,pre,True,Purine,67.0,True,False,RNAformer-SHS
+4LW0,0.79889941,0.69413,0.0,,rnaformerN100,single_chain,pre,True,THF,89.0,False,False,RNAformer-SHS
+6WJS,0.839,0.86046,0.0,,rnaformerN100,single_chain,pre,True,FMN,109.0,True,False,RNAformer-SHS
+5FK3,0.854,0.9261,0.0,,rnaformerN100,single_chain,pre,True,SAM,94.0,False,False,RNAformer-SHS
+4LX5,0.80033543,0.71574,0.0,,rnaformerN100,single_chain,pre,True,Purine,71.0,False,False,RNAformer-SHS
+9CXF,0.40025743,0.24182,0.0,,rnaformerN100,single_chain,post,True,raiA,200.0,True,False,RNAformer-SHS
+4LVW,0.7962147,0.69531,0.0,,rnaformerN100,single_chain,pre,True,THF,89.0,False,False,RNAformer-SHS
+6VUI,0.74455458,0.42462,0.0,,rnaformerN100,single_chain,pre,False,,33.0,True,True,RNAformer-SHS
+3IQP,0.873,0.85898,0.0,,rnaformerN100,single_chain,pre,True,SAM,94.0,True,False,RNAformer-SHS
+8U5J,0.42770342,0.27351,0.0,,rnaformerN100,single_chain,post,False,,36.0,False,True,RNAformer-SHS
+2YGH,0.906,0.87794,0.0,,rnaformerN100,single_chain,pre,True,SAM,95.0,False,False,RNAformer-SHS
+7SXP,0.52557635,0.14319,0.0,,rnaformerN100,single_chain,post,False,,21.0,False,True,RNAformer-SHS
+4FEP,0.68525704,0.67671,0.0,,rnaformerN100,single_chain,pre,True,Purine,67.0,True,False,RNAformer-SHS
+3SD3,0.75102786,0.66617,0.0,,rnaformerN100,single_chain,pre,True,THF,89.0,True,False,RNAformer-SHS
+1Z43,0.79593362,0.72891,0.0,,rnaformerN100,single_chain,pre,True,Bacteria_small_SRP,101.0,False,False,RNAformer-SHS
+4LVY,0.79649574,0.70537,0.0,,rnaformerN100,single_chain,pre,True,THF,89.0,True,False,RNAformer-SHS
+9C6K,0.56442466,0.44128,0.0,,rnaformerN100,single_chain,post,True,group-II-D1D4-3,80.0,False,False,RNAformer-SHS
+7MKY,0.76730719,0.59958,0.0,,rnaformerN100,single_chain,pre,False,,66.0,True,False,RNAformer-SHS
+3GAO,0.67847781,0.71911,0.0,,rnaformerN100,single_chain,pre,True,Purine,67.0,True,False,RNAformer-SHS
+8UPY,0.7277128,0.60738,0.0,,rnaformerN100,single_chain,post,True,tRNA,72.0,False,False,RNAformer-SHS
+5FK5,0.846,0.92363,0.0,,rnaformerN100,single_chain,pre,True,SAM,94.0,False,False,RNAformer-SHS
+1Q9A,0.97509031,0.84171,0.0,,rnaformerN100,single_chain,pre,False,,27.0,False,True,RNAformer-SHS
+5FK2,0.861,0.93544,0.0,,rnaformerN100,single_chain,pre,True,SAM,94.0,False,False,RNAformer-SHS
+4LVV,0.79472557,0.73053,0.0,,rnaformerN100,single_chain,pre,True,THF,89.0,True,False,RNAformer-SHS
+5FKF,0.836,0.91317,0.0,,rnaformerN100,single_chain,pre,True,SAM,94.0,False,False,RNAformer-SHS
+8Q6N,0.67618228,0.3867,0.0,,rnaformerN100,single_chain,post,True,Xanthine,46.0,False,False,RNAformer-SHS
+7URI,0.77587345,0.66341,0.0,,rnaformerN100,single_chain,post,True,tRNA-Sec,90.0,True,True,RNAformer-SHS
+7EON,0.53245867,0.26296,0.0,,rnaformerN100,single_chain,post,False,,48.0,False,False,RNAformer-SHS
+8TKK,0.66715881,0.475,0.0,,rnaformerN100,single_chain,post,False,,107.0,False,True,RNAformer-SHS
+7D81,0.7585513,0.47841,0.0,,rnaformerN100,single_chain,pre,True,nadA,50.0,False,False,RNAformer-SHS
+4FEJ,0.68838796,0.67199,0.0,,rnaformerN100,single_chain,pre,True,Purine,67.0,True,False,RNAformer-SHS
+2XO0,0.70863072,0.73922,0.0,,rnaformerN100,single_chain,pre,True,Purine,65.0,True,False,RNAformer-SHS
+2GIS,0.883,0.9103,0.0,,rnaformerN100,single_chain,pre,True,SAM,94.0,False,False,RNAformer-SHS
+7EOI,0.561774,0.29439,0.0,,rnaformerN100,single_chain,post,False,,49.0,False,False,RNAformer-SHS
+2EET,0.6411533,0.61118,0.0,,rnaformerN100,single_chain,pre,True,Purine,67.0,True,False,RNAformer-SHS
+6UC8,0.70548788,0.71885,0.0,,rnaformerN100,single_chain,pre,True,Purine,67.0,True,False,RNAformer-SHS
+2XO1,0.69546488,0.70845,0.0,,rnaformerN100,single_chain,pre,True,Purine,65.0,True,False,RNAformer-SHS
+6UBU,0.71472835,0.711,0.0,,rnaformerN100,single_chain,pre,True,Purine,67.0,True,False,RNAformer-SHS
+3LA5,0.81811704,0.71667,0.0,,rnaformerN100,single_chain,pre,True,Purine,71.0,True,False,RNAformer-SHS
+3FO4,0.67437611,0.74612,0.0,,rnaformerN100,single_chain,pre,True,Purine,63.0,False,False,RNAformer-SHS
+6UC7,0.68720814,0.70632,0.0,,rnaformerN100,single_chain,pre,True,Purine,67.0,True,False,RNAformer-SHS
+7EOO,0.52791038,0.25745,0.0,,rnaformerN100,single_chain,post,False,,48.0,False,False,RNAformer-SHS
+7EOG,0.54347132,0.26126,0.0,,rnaformerN100,single_chain,post,False,,48.0,False,False,RNAformer-SHS
+3DVZ,0.9780061,0.81432,0.0,,rnaformerN100,single_chain,pre,False,,27.0,False,True,RNAformer-SHS
+7D82,0.75760062,0.50892,0.0,,rnaformerN100,single_chain,pre,True,nadA,50.0,False,False,RNAformer-SHS
+7EOM,0.52840804,0.25597,0.0,,rnaformerN100,single_chain,post,False,,48.0,False,False,RNAformer-SHS
+3IQN,0.867,0.86868,0.0,,rnaformerN100,single_chain,pre,True,SAM,94.0,False,False,RNAformer-SHS
+5FKE,0.903,0.91613,0.0,,rnaformerN100,single_chain,pre,True,SAM,94.0,False,False,RNAformer-SHS
+2EEV,0.64911793,0.65675,0.0,,rnaformerN100,single_chain,pre,True,Purine,67.0,True,False,RNAformer-SHS
+4FEN,0.69106401,0.67461,0.0,,rnaformerN100,single_chain,pre,True,Purine,67.0,True,False,RNAformer-SHS
+7URM,0.79617204,0.66965,0.0,,rnaformerN100,single_chain,post,True,tRNA-Sec,90.0,True,True,RNAformer-SHS
+8KEB,0.64784301,0.40281,0.0,,rnaformerN100,single_chain,post,False,,71.0,True,False,RNAformer-SHS
+4B5R,0.892,0.86598,0.0,,rnaformerN100,single_chain,pre,True,SAM,94.0,False,False,RNAformer-SHS
+7EFH,0.80769749,0.39724,0.0,,rnaformerN100,single_chain,post,False,,19.0,False,True,RNAformer-SHS
+3A3A,0.88867681,0.8002,0.0,,rnaformerN100,single_chain,pre,True,tRNA-Sec,86.0,True,False,RNAformer-SHS
+8HB8,0.48663095,0.30573,0.0,,rnaformerN100,single_chain,post,False,,55.0,False,True,RNAformer-SHS
+4FEO,0.68505661,0.7249,0.0,,rnaformerN100,single_chain,pre,True,Purine,67.0,True,False,RNAformer-SHS
+7EOK,0.53778295,0.26522,0.0,,rnaformerN100,single_chain,post,False,,48.0,False,False,RNAformer-SHS
+2XNW,0.70195079,0.73595,0.0,,rnaformerN100,single_chain,pre,True,Purine,65.0,True,False,RNAformer-SHS
+7QSH,0.87536413,0.61815,0.0,,rnaformerN100,single_chain,post,False,,25.0,False,True,RNAformer-SHS
+5M0H,0.806,0.58312,0.0,,rnaformerN100,single_chain,pre,False,,42.0,False,True,RNAformer-SHS
+7VFT,0.7837037,0.21373,0.0,,rnaformerN100,single_chain,post,False,,23.0,False,True,RNAformer-SHS
+7EFG,0.9015125,0.42407,0.0,,rnaformerN100,single_chain,post,False,,19.0,False,True,RNAformer-SHS
+7LYJ,0.76079583,0.62344,0.0,,rnaformerN100,single_chain,pre,False,,66.0,True,False,RNAformer-SHS
+2G9C,0.68828717,0.74944,0.0,,rnaformerN100,single_chain,pre,True,Purine,67.0,False,False,RNAformer-SHS
+4XNR,0.81619437,0.71784,0.0,,rnaformerN100,single_chain,pre,True,Purine,71.0,True,False,RNAformer-SHS
+7EOL,0.54572583,0.25621,0.0,,rnaformerN100,single_chain,post,False,,48.0,False,False,RNAformer-SHS
+7EAF,0.887,0.91207,0.0,,rnaformerN100,single_chain,pre,True,SAM,94.0,False,False,RNAformer-SHS
+483D,0.97951862,0.83901,0.0,,rnaformerN100,single_chain,pre,False,,27.0,False,True,RNAformer-SHS
+8KED,0.65422023,0.4033,0.0,,rnaformerN100,single_chain,post,False,,71.0,True,False,RNAformer-SHS

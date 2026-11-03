@@ -1,0 +1,15 @@
+\begin{table}[htbp]
+\centering
+\caption{RNA-protein complexes pre-cutoff without homologs (n=139). Submitted single-seed evaluation (AF3 seed 1, sample 0); bold = best mean per metric.}
+\label{tab:rna_protein_complexes_pre_cutoff_without_homologs}
+\begin{tabular}{lcccccc}
+\toprule
+Input & DockQ ($\uparrow$) & ICS ($\uparrow$) & QS-global ($\uparrow$) & cTM ($\uparrow$) & cRMSD ($\downarrow$) & cLDDT ($\uparrow$) \\
+\midrule
+MSA & \textbf{0.695 $\pm$ 0.261} & \textbf{0.724 $\pm$ 0.250} & \textbf{0.722 $\pm$ 0.301} & \textbf{0.822 $\pm$ 0.231} & 13.337 $\pm$ 15.481 & \textbf{0.859 $\pm$ 0.090} \\
+SHS (RNAfold) & 0.638 $\pm$ 0.280 & 0.678 $\pm$ 0.281 & 0.683 $\pm$ 0.319 & 0.806 $\pm$ 0.242 & 13.459 $\pm$ 15.071 & 0.833 $\pm$ 0.110 \\
+SHS (SPOT-RNA) & 0.650 $\pm$ 0.273 & 0.685 $\pm$ 0.272 & 0.687 $\pm$ 0.314 & 0.811 $\pm$ 0.232 & \textbf{13.276 $\pm$ 15.058} & 0.841 $\pm$ 0.096 \\
+SHS (RNAformer) & 0.649 $\pm$ 0.268 & 0.681 $\pm$ 0.265 & 0.692 $\pm$ 0.305 & 0.806 $\pm$ 0.237 & 13.634 $\pm$ 15.018 & 0.832 $\pm$ 0.123 \\
+\bottomrule
+\end{tabular}
+\end{table}

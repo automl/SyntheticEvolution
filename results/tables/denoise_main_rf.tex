@@ -1,0 +1,14 @@
+\begin{table}[htbp]
+\centering
+\caption{RhoFold+ denoising ladder, RNA single chain (n=91); single run. Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:denoise_main_rf}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+SHS (RNAfold) & 0.366 $\pm$ 0.121 & 6.874 $\pm$ 6.181 & 0.524 $\pm$ 0.110 \\
+SHS (RNAfold Denoise) & 0.340 $\pm$ 0.116 & 8.197 $\pm$ 6.284 & 0.506 $\pm$ 0.109 \\
+SHS (GT) & \textbf{0.524 $\pm$ 0.178} & \textbf{4.190 $\pm$ 4.321} & \textbf{0.631 $\pm$ 0.099} \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,0 +1,609 @@
+\begin{table}[htbp]
+\centering
+\caption{RNA single chain (n=91). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rna_single_chain}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+MSA & \textbf{0.660 $\pm$ 0.248} & \textbf{3.323 $\pm$ 4.103} & \textbf{0.771 $\pm$ 0.152} \\
+SHS (RNAfold) & 0.518 $\pm$ 0.200 & 5.300 $\pm$ 5.480 & 0.677 $\pm$ 0.145 \\
+SHS (SPOT-RNA) & 0.508 $\pm$ 0.190 & 5.206 $\pm$ 5.278 & 0.669 $\pm$ 0.127 \\
+SHS (RNAformer) & 0.605 $\pm$ 0.222 & 4.230 $\pm$ 5.222 & 0.736 $\pm$ 0.137 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RNA single chain post-cutoff (n=31). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rna_single_chain_post_cutoff}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+MSA & \textbf{0.405 $\pm$ 0.199} & \textbf{7.446 $\pm$ 4.828} & \textbf{0.628 $\pm$ 0.168} \\
+SHS (RNAfold) & 0.331 $\pm$ 0.125 & 9.984 $\pm$ 6.649 & 0.583 $\pm$ 0.148 \\
+SHS (SPOT-RNA) & 0.336 $\pm$ 0.140 & 10.024 $\pm$ 6.664 & 0.584 $\pm$ 0.151 \\
+SHS (RNAformer) & 0.377 $\pm$ 0.161 & 9.273 $\pm$ 6.409 & 0.627 $\pm$ 0.158 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RNA single chain without homologs (n=20). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rna_single_chain_without_homologs}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+MSA & 0.468 $\pm$ 0.230 & \textbf{4.776 $\pm$ 5.580} & 0.718 $\pm$ 0.229 \\
+SHS (RNAfold) & 0.396 $\pm$ 0.199 & 6.402 $\pm$ 6.151 & 0.687 $\pm$ 0.213 \\
+SHS (SPOT-RNA) & 0.365 $\pm$ 0.166 & 5.845 $\pm$ 5.488 & 0.672 $\pm$ 0.164 \\
+SHS (RNAformer) & \textbf{0.471 $\pm$ 0.224} & 4.840 $\pm$ 5.462 & \textbf{0.740 $\pm$ 0.203} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RNA single chain with homologs (n=71). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rna_single_chain_with_homologs}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+MSA & \textbf{0.714 $\pm$ 0.226} & \textbf{2.913 $\pm$ 3.525} & \textbf{0.786 $\pm$ 0.120} \\
+SHS (RNAfold) & 0.553 $\pm$ 0.188 & 4.990 $\pm$ 5.282 & 0.674 $\pm$ 0.122 \\
+SHS (SPOT-RNA) & 0.549 $\pm$ 0.177 & 5.026 $\pm$ 5.243 & 0.669 $\pm$ 0.116 \\
+SHS (RNAformer) & 0.643 $\pm$ 0.207 & 4.058 $\pm$ 5.180 & 0.735 $\pm$ 0.114 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RNA single chain pre-cutoff (n=60). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rna_single_chain_pre_cutoff}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+MSA & \textbf{0.792 $\pm$ 0.147} & \textbf{1.193 $\pm$ 0.534} & \textbf{0.845 $\pm$ 0.066} \\
+SHS (RNAfold) & 0.615 $\pm$ 0.159 & 2.880 $\pm$ 2.419 & 0.725 $\pm$ 0.119 \\
+SHS (SPOT-RNA) & 0.597 $\pm$ 0.147 & 2.716 $\pm$ 1.190 & 0.713 $\pm$ 0.085 \\
+SHS (RNAformer) & 0.723 $\pm$ 0.144 & 1.625 $\pm$ 0.672 & 0.793 $\pm$ 0.081 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RNA single chain pre-cutoff without homologs (n=7). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rna_single_chain_pre_cutoff_without_homologs}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+MSA & \textbf{0.621 $\pm$ 0.145} & \textbf{0.836 $\pm$ 0.476} & \textbf{0.883 $\pm$ 0.087} \\
+SHS (RNAfold) & 0.571 $\pm$ 0.166 & 1.048 $\pm$ 0.661 & 0.858 $\pm$ 0.104 \\
+SHS (SPOT-RNA) & 0.424 $\pm$ 0.125 & 1.764 $\pm$ 0.575 & 0.740 $\pm$ 0.096 \\
+SHS (RNAformer) & 0.593 $\pm$ 0.212 & 1.182 $\pm$ 0.959 & 0.848 $\pm$ 0.132 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RNA single chain pre-cutoff with homologs (n=53). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rna_single_chain_pre_cutoff_with_homologs}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+MSA & \textbf{0.814 $\pm$ 0.132} & \textbf{1.240 $\pm$ 0.527} & \textbf{0.840 $\pm$ 0.063} \\
+SHS (RNAfold) & 0.621 $\pm$ 0.159 & 3.122 $\pm$ 2.465 & 0.707 $\pm$ 0.110 \\
+SHS (SPOT-RNA) & 0.620 $\pm$ 0.134 & 2.842 $\pm$ 1.196 & 0.710 $\pm$ 0.084 \\
+SHS (RNAformer) & 0.740 $\pm$ 0.125 & 1.683 $\pm$ 0.613 & 0.785 $\pm$ 0.070 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RNA single chain post-cutoff without homologs (n=13). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rna_single_chain_post_cutoff_without_homologs}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+MSA & 0.385 $\pm$ 0.228 & 6.897 $\pm$ 5.937 & 0.630 $\pm$ 0.234 \\
+SHS (RNAfold) & 0.301 $\pm$ 0.147 & 9.285 $\pm$ 5.828 & 0.594 $\pm$ 0.200 \\
+SHS (SPOT-RNA) & 0.333 $\pm$ 0.181 & 8.043 $\pm$ 5.708 & 0.636 $\pm$ 0.185 \\
+SHS (RNAformer) & \textbf{0.405 $\pm$ 0.209} & \textbf{6.809 $\pm$ 5.896} & \textbf{0.681 $\pm$ 0.214} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RNA single chain post-cutoff with homologs (n=18). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rna_single_chain_post_cutoff_with_homologs}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+MSA & \textbf{0.419 $\pm$ 0.181} & \textbf{7.842 $\pm$ 3.982} & \textbf{0.626 $\pm$ 0.105} \\
+SHS (RNAfold) & 0.352 $\pm$ 0.106 & 10.490 $\pm$ 7.307 & 0.576 $\pm$ 0.103 \\
+SHS (SPOT-RNA) & 0.338 $\pm$ 0.107 & 11.455 $\pm$ 7.085 & 0.547 $\pm$ 0.113 \\
+SHS (RNAformer) & 0.357 $\pm$ 0.117 & 11.053 $\pm$ 6.320 & 0.588 $\pm$ 0.089 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RNA-protein complexes (n=377). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rna_protein_complexes}
+\begin{tabular}{lcccccc}
+\toprule
+Input & DockQ ($\uparrow$) & ICS ($\uparrow$) & QS-global ($\uparrow$) & cTM ($\uparrow$) & cRMSD ($\downarrow$) & cLDDT ($\uparrow$) \\
+\midrule
+MSA & \textbf{0.585 $\pm$ 0.304} & \textbf{0.630 $\pm$ 0.303} & \textbf{0.639 $\pm$ 0.340} & \textbf{0.821 $\pm$ 0.205} & \textbf{8.079 $\pm$ 12.861} & \textbf{0.809 $\pm$ 0.117} \\
+SHS (RNAfold) & 0.479 $\pm$ 0.298 & 0.555 $\pm$ 0.308 & 0.566 $\pm$ 0.340 & 0.794 $\pm$ 0.210 & 9.245 $\pm$ 12.971 & 0.768 $\pm$ 0.124 \\
+SHS (SPOT-RNA) & 0.517 $\pm$ 0.293 & 0.584 $\pm$ 0.296 & 0.592 $\pm$ 0.328 & 0.803 $\pm$ 0.206 & 8.758 $\pm$ 12.937 & 0.786 $\pm$ 0.112 \\
+SHS (RNAformer) & 0.545 $\pm$ 0.297 & 0.600 $\pm$ 0.298 & 0.613 $\pm$ 0.332 & 0.813 $\pm$ 0.207 & 8.479 $\pm$ 12.973 & 0.797 $\pm$ 0.114 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RNA-protein complexes without homologs (n=235). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rna_protein_complexes_without_homologs}
+\begin{tabular}{lcccccc}
+\toprule
+Input & DockQ ($\uparrow$) & ICS ($\uparrow$) & QS-global ($\uparrow$) & cTM ($\uparrow$) & cRMSD ($\downarrow$) & cLDDT ($\uparrow$) \\
+\midrule
+MSA & \textbf{0.540 $\pm$ 0.330} & \textbf{0.577 $\pm$ 0.326} & \textbf{0.574 $\pm$ 0.360} & \textbf{0.828 $\pm$ 0.197} & \textbf{7.356 $\pm$ 11.970} & \textbf{0.795 $\pm$ 0.120} \\
+SHS (RNAfold) & 0.487 $\pm$ 0.322 & 0.529 $\pm$ 0.322 & 0.527 $\pm$ 0.352 & 0.819 $\pm$ 0.206 & 7.571 $\pm$ 12.111 & 0.779 $\pm$ 0.121 \\
+SHS (SPOT-RNA) & 0.503 $\pm$ 0.316 & 0.545 $\pm$ 0.312 & 0.544 $\pm$ 0.342 & 0.821 $\pm$ 0.201 & 7.493 $\pm$ 11.971 & 0.784 $\pm$ 0.115 \\
+SHS (RNAformer) & 0.509 $\pm$ 0.315 & 0.551 $\pm$ 0.310 & 0.554 $\pm$ 0.343 & 0.823 $\pm$ 0.199 & 7.485 $\pm$ 12.136 & 0.783 $\pm$ 0.117 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RNA-protein complexes with homologs (n=142). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rna_protein_complexes_with_homologs}
+\begin{tabular}{lcccccc}
+\toprule
+Input & DockQ ($\uparrow$) & ICS ($\uparrow$) & QS-global ($\uparrow$) & cTM ($\uparrow$) & cRMSD ($\downarrow$) & cLDDT ($\uparrow$) \\
+\midrule
+MSA & \textbf{0.659 $\pm$ 0.240} & \textbf{0.717 $\pm$ 0.238} & \textbf{0.746 $\pm$ 0.272} & \textbf{0.809 $\pm$ 0.218} & \textbf{9.275 $\pm$ 14.177} & \textbf{0.833 $\pm$ 0.106} \\
+SHS (RNAfold) & 0.465 $\pm$ 0.256 & 0.598 $\pm$ 0.280 & 0.630 $\pm$ 0.310 & 0.753 $\pm$ 0.212 & 12.016 $\pm$ 13.887 & 0.751 $\pm$ 0.126 \\
+SHS (SPOT-RNA) & 0.540 $\pm$ 0.248 & 0.648 $\pm$ 0.257 & 0.670 $\pm$ 0.286 & 0.773 $\pm$ 0.213 & 10.853 $\pm$ 14.192 & 0.788 $\pm$ 0.107 \\
+SHS (RNAformer) & 0.605 $\pm$ 0.253 & 0.680 $\pm$ 0.257 & 0.711 $\pm$ 0.289 & 0.795 $\pm$ 0.220 & 10.125 $\pm$ 14.141 & 0.820 $\pm$ 0.103 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RNA-protein complexes pre-cutoff (n=249). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rna_protein_complexes_pre_cutoff}
+\begin{tabular}{lcccccc}
+\toprule
+Input & DockQ ($\uparrow$) & ICS ($\uparrow$) & QS-global ($\uparrow$) & cTM ($\uparrow$) & cRMSD ($\downarrow$) & cLDDT ($\uparrow$) \\
+\midrule
+MSA & \textbf{0.722 $\pm$ 0.217} & \textbf{0.765 $\pm$ 0.208} & \textbf{0.776 $\pm$ 0.259} & \textbf{0.829 $\pm$ 0.219} & \textbf{8.632 $\pm$ 13.469} & \textbf{0.864 $\pm$ 0.082} \\
+SHS (RNAfold) & 0.576 $\pm$ 0.273 & 0.666 $\pm$ 0.266 & 0.682 $\pm$ 0.301 & 0.790 $\pm$ 0.228 & 10.277 $\pm$ 13.731 & 0.806 $\pm$ 0.122 \\
+SHS (SPOT-RNA) & 0.626 $\pm$ 0.250 & 0.698 $\pm$ 0.242 & 0.706 $\pm$ 0.282 & 0.802 $\pm$ 0.223 & 9.486 $\pm$ 13.531 & 0.830 $\pm$ 0.096 \\
+SHS (RNAformer) & 0.661 $\pm$ 0.245 & 0.716 $\pm$ 0.238 & 0.734 $\pm$ 0.279 & 0.815 $\pm$ 0.225 & 9.214 $\pm$ 13.683 & 0.844 $\pm$ 0.091 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RNA-protein complexes pre-cutoff without homologs (n=139). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rna_protein_complexes_pre_cutoff_without_homologs}
+\begin{tabular}{lcccccc}
+\toprule
+Input & DockQ ($\uparrow$) & ICS ($\uparrow$) & QS-global ($\uparrow$) & cTM ($\uparrow$) & cRMSD ($\downarrow$) & cLDDT ($\uparrow$) \\
+\midrule
+MSA & \textbf{0.704 $\pm$ 0.249} & \textbf{0.734 $\pm$ 0.242} & \textbf{0.731 $\pm$ 0.292} & \textbf{0.822 $\pm$ 0.226} & \textbf{8.818 $\pm$ 13.218} & \textbf{0.857 $\pm$ 0.092} \\
+SHS (RNAfold) & 0.630 $\pm$ 0.277 & 0.671 $\pm$ 0.271 & 0.673 $\pm$ 0.308 & 0.804 $\pm$ 0.239 & 9.329 $\pm$ 13.615 & 0.832 $\pm$ 0.110 \\
+SHS (SPOT-RNA) & 0.648 $\pm$ 0.264 & 0.686 $\pm$ 0.258 & 0.683 $\pm$ 0.301 & 0.809 $\pm$ 0.232 & 9.144 $\pm$ 13.335 & 0.840 $\pm$ 0.096 \\
+SHS (RNAformer) & 0.648 $\pm$ 0.267 & 0.685 $\pm$ 0.258 & 0.691 $\pm$ 0.300 & 0.809 $\pm$ 0.231 & 9.261 $\pm$ 13.677 & 0.836 $\pm$ 0.100 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RNA-protein complexes pre-cutoff with homologs (n=110). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rna_protein_complexes_pre_cutoff_with_homologs}
+\begin{tabular}{lcccccc}
+\toprule
+Input & DockQ ($\uparrow$) & ICS ($\uparrow$) & QS-global ($\uparrow$) & cTM ($\uparrow$) & cRMSD ($\downarrow$) & cLDDT ($\uparrow$) \\
+\midrule
+MSA & \textbf{0.745 $\pm$ 0.165} & \textbf{0.803 $\pm$ 0.149} & \textbf{0.833 $\pm$ 0.198} & \textbf{0.837 $\pm$ 0.212} & \textbf{8.397 $\pm$ 13.836} & \textbf{0.873 $\pm$ 0.066} \\
+SHS (RNAfold) & 0.508 $\pm$ 0.254 & 0.659 $\pm$ 0.261 & 0.693 $\pm$ 0.294 & 0.772 $\pm$ 0.213 & 11.475 $\pm$ 13.845 & 0.772 $\pm$ 0.128 \\
+SHS (SPOT-RNA) & 0.598 $\pm$ 0.228 & 0.714 $\pm$ 0.220 & 0.735 $\pm$ 0.255 & 0.794 $\pm$ 0.212 & 9.917 $\pm$ 13.825 & 0.816 $\pm$ 0.095 \\
+SHS (RNAformer) & 0.677 $\pm$ 0.213 & 0.755 $\pm$ 0.205 & 0.787 $\pm$ 0.242 & 0.822 $\pm$ 0.217 & 9.155 $\pm$ 13.755 & 0.855 $\pm$ 0.077 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RNA-protein complexes post-cutoff (n=128). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rna_protein_complexes_post_cutoff}
+\begin{tabular}{lcccccc}
+\toprule
+Input & DockQ ($\uparrow$) & ICS ($\uparrow$) & QS-global ($\uparrow$) & cTM ($\uparrow$) & cRMSD ($\downarrow$) & cLDDT ($\uparrow$) \\
+\midrule
+MSA & 0.318 $\pm$ 0.271 & 0.367 $\pm$ 0.287 & 0.372 $\pm$ 0.319 & 0.806 $\pm$ 0.174 & \textbf{7.002 $\pm$ 11.562} & 0.702 $\pm$ 0.099 \\
+SHS (RNAfold) & 0.289 $\pm$ 0.251 & 0.340 $\pm$ 0.268 & 0.340 $\pm$ 0.294 & 0.802 $\pm$ 0.171 & 7.238 $\pm$ 11.127 & 0.696 $\pm$ 0.091 \\
+SHS (SPOT-RNA) & 0.304 $\pm$ 0.251 & 0.361 $\pm$ 0.265 & 0.369 $\pm$ 0.294 & 0.805 $\pm$ 0.170 & 7.343 $\pm$ 11.617 & 0.700 $\pm$ 0.091 \\
+SHS (RNAformer) & \textbf{0.319 $\pm$ 0.256} & \textbf{0.373 $\pm$ 0.270} & \textbf{0.379 $\pm$ 0.301} & \textbf{0.809 $\pm$ 0.169} & 7.050 $\pm$ 11.380 & \textbf{0.704 $\pm$ 0.094} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RNA-protein complexes post-cutoff without homologs (n=96). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rna_protein_complexes_post_cutoff_without_homologs}
+\begin{tabular}{lcccccc}
+\toprule
+Input & DockQ ($\uparrow$) & ICS ($\uparrow$) & QS-global ($\uparrow$) & cTM ($\uparrow$) & cRMSD ($\downarrow$) & cLDDT ($\uparrow$) \\
+\midrule
+MSA & 0.303 $\pm$ 0.285 & 0.349 $\pm$ 0.297 & 0.347 $\pm$ 0.327 & 0.838 $\pm$ 0.146 & 5.238 $\pm$ 9.563 & \textbf{0.705 $\pm$ 0.098} \\
+SHS (RNAfold) & 0.279 $\pm$ 0.265 & 0.323 $\pm$ 0.275 & 0.316 $\pm$ 0.300 & 0.841 $\pm$ 0.142 & 5.025 $\pm$ 8.997 & 0.702 $\pm$ 0.091 \\
+SHS (SPOT-RNA) & 0.292 $\pm$ 0.264 & 0.342 $\pm$ 0.270 & 0.344 $\pm$ 0.297 & 0.840 $\pm$ 0.143 & 5.101 $\pm$ 9.214 & 0.704 $\pm$ 0.091 \\
+SHS (RNAformer) & \textbf{0.307 $\pm$ 0.267} & \textbf{0.357 $\pm$ 0.276} & \textbf{0.356 $\pm$ 0.305} & \textbf{0.843 $\pm$ 0.138} & \textbf{4.913 $\pm$ 8.932} & \textbf{0.705 $\pm$ 0.095} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RNA-protein complexes post-cutoff with homologs (n=32). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rna_protein_complexes_post_cutoff_with_homologs}
+\begin{tabular}{lcccccc}
+\toprule
+Input & DockQ ($\uparrow$) & ICS ($\uparrow$) & QS-global ($\uparrow$) & cTM ($\uparrow$) & cRMSD ($\downarrow$) & cLDDT ($\uparrow$) \\
+\midrule
+MSA & \textbf{0.364 $\pm$ 0.224} & \textbf{0.422 $\pm$ 0.249} & \textbf{0.447 $\pm$ 0.282} & \textbf{0.710 $\pm$ 0.213} & \textbf{12.292 $\pm$ 15.130} & 0.693 $\pm$ 0.101 \\
+SHS (RNAfold) & 0.317 $\pm$ 0.203 & 0.388 $\pm$ 0.240 & 0.413 $\pm$ 0.267 & 0.688 $\pm$ 0.198 & 13.877 $\pm$ 14.088 & 0.679 $\pm$ 0.088 \\
+SHS (SPOT-RNA) & 0.340 $\pm$ 0.207 & 0.418 $\pm$ 0.246 & 0.446 $\pm$ 0.276 & 0.701 $\pm$ 0.203 & 14.069 $\pm$ 15.178 & 0.691 $\pm$ 0.090 \\
+SHS (RNAformer) & 0.357 $\pm$ 0.223 & 0.421 $\pm$ 0.250 & 0.446 $\pm$ 0.282 & 0.705 $\pm$ 0.208 & 13.460 $\pm$ 15.149 & \textbf{0.702 $\pm$ 0.092} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RNA-protein 1v1 complexes (n=112). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rna_protein_1v1_complexes}
+\begin{tabular}{lcccccc}
+\toprule
+Input & DockQ ($\uparrow$) & ICS ($\uparrow$) & QS-global ($\uparrow$) & cTM ($\uparrow$) & cRMSD ($\downarrow$) & cLDDT ($\uparrow$) \\
+\midrule
+MSA & \textbf{0.723 $\pm$ 0.286} & \textbf{0.770 $\pm$ 0.270} & \textbf{0.813 $\pm$ 0.287} & \textbf{0.946 $\pm$ 0.086} & \textbf{1.080 $\pm$ 1.712} & \textbf{0.880 $\pm$ 0.097} \\
+SHS (RNAfold) & 0.546 $\pm$ 0.313 & 0.675 $\pm$ 0.306 & 0.720 $\pm$ 0.326 & 0.894 $\pm$ 0.120 & 3.480 $\pm$ 6.325 & 0.808 $\pm$ 0.134 \\
+SHS (SPOT-RNA) & 0.594 $\pm$ 0.307 & 0.691 $\pm$ 0.302 & 0.726 $\pm$ 0.314 & 0.907 $\pm$ 0.113 & 2.114 $\pm$ 3.317 & 0.837 $\pm$ 0.114 \\
+SHS (RNAformer) & 0.675 $\pm$ 0.297 & 0.732 $\pm$ 0.287 & 0.781 $\pm$ 0.304 & 0.938 $\pm$ 0.087 & 1.151 $\pm$ 1.823 & 0.870 $\pm$ 0.096 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RNA-protein multichain complexes (n=265). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rna_protein_multichain_complexes}
+\begin{tabular}{lcccccc}
+\toprule
+Input & DockQ ($\uparrow$) & ICS ($\uparrow$) & QS-global ($\uparrow$) & cTM ($\uparrow$) & cRMSD ($\downarrow$) & cLDDT ($\uparrow$) \\
+\midrule
+MSA & \textbf{0.527 $\pm$ 0.293} & \textbf{0.570 $\pm$ 0.297} & \textbf{0.565 $\pm$ 0.334} & \textbf{0.768 $\pm$ 0.218} & \textbf{11.037 $\pm$ 14.310} & \textbf{0.779 $\pm$ 0.111} \\
+SHS (RNAfold) & 0.450 $\pm$ 0.288 & 0.504 $\pm$ 0.295 & 0.501 $\pm$ 0.325 & 0.752 $\pm$ 0.226 & 11.682 $\pm$ 14.239 & 0.751 $\pm$ 0.115 \\
+SHS (SPOT-RNA) & 0.484 $\pm$ 0.281 & 0.539 $\pm$ 0.283 & 0.535 $\pm$ 0.317 & 0.759 $\pm$ 0.221 & 11.566 $\pm$ 14.392 & 0.764 $\pm$ 0.104 \\
+SHS (RNAformer) & 0.490 $\pm$ 0.279 & 0.544 $\pm$ 0.284 & 0.542 $\pm$ 0.319 & 0.760 $\pm$ 0.220 & 11.577 $\pm$ 14.348 & 0.766 $\pm$ 0.106 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RNA-protein complexes post-cutoff without homologs (n=96); main-text metrics. Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rna_protein_complexes_post_cutoff_without_homologs_reduced}
+\begin{tabular}{lccc}
+\toprule
+Input & DockQ ($\uparrow$) & cRMSD ($\downarrow$) & cLDDT ($\uparrow$) \\
+\midrule
+MSA & 0.303 $\pm$ 0.285 & 5.238 $\pm$ 9.563 & \textbf{0.705 $\pm$ 0.098} \\
+SHS (RNAfold) & 0.279 $\pm$ 0.265 & 5.025 $\pm$ 8.997 & 0.702 $\pm$ 0.091 \\
+SHS (SPOT-RNA) & 0.292 $\pm$ 0.264 & 5.101 $\pm$ 9.214 & 0.704 $\pm$ 0.091 \\
+SHS (RNAformer) & \textbf{0.307 $\pm$ 0.267} & \textbf{4.913 $\pm$ 8.932} & \textbf{0.705 $\pm$ 0.095} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Equal-depth negative controls, RNA single chain (n=91). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rna_single_chain_shuffle}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+MSA removed baseline & 0.519 $\pm$ 0.209 & 6.576 $\pm$ 7.844 & 0.671 $\pm$ 0.155 \\
+SHS (Random) & 0.179 $\pm$ 0.038 & 44.601 $\pm$ 19.536 & 0.307 $\pm$ 0.080 \\
+SHS (Shuffled) & 0.412 $\pm$ 0.144 & 7.629 $\pm$ 6.885 & 0.615 $\pm$ 0.118 \\
+SHS (RNAformer) & \textbf{0.605 $\pm$ 0.222} & \textbf{4.230 $\pm$ 5.222} & \textbf{0.736 $\pm$ 0.137} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Cross-architecture ordering, AlphaFold 3 part (n=90; 9CXF excluded as in the RhoFold+ part). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:order_rna_single_chain_af3}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+SHS (RNAfold) & 0.522 $\pm$ 0.199 & 4.977 $\pm$ 4.555 & 0.680 $\pm$ 0.143 \\
+SHS (SPOT-RNA) & 0.511 $\pm$ 0.189 & 4.892 $\pm$ 4.369 & 0.672 $\pm$ 0.124 \\
+SHS (RNAformer) & \textbf{0.609 $\pm$ 0.220} & \textbf{3.959 $\pm$ 4.561} & \textbf{0.740 $\pm$ 0.134} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{AF3 denoising ladder, RNA single chain (n=89). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:denoise_main}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+SHS (RNAfold) & 0.525 $\pm$ 0.198 & 5.068 $\pm$ 5.275 & 0.674 $\pm$ 0.146 \\
+SHS (RNAfold Denoise) & 0.531 $\pm$ 0.193 & 5.058 $\pm$ 5.185 & 0.682 $\pm$ 0.143 \\
+SHS (GT) & \textbf{0.615 $\pm$ 0.222} & \textbf{4.091 $\pm$ 5.180} & \textbf{0.739 $\pm$ 0.136} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{SHS combined with natural MSA, RNA single chain (n=91). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:shs_and_msa_depth_sweep}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+MSA & \textbf{0.660 $\pm$ 0.248} & \textbf{3.323 $\pm$ 4.103} & \textbf{0.771 $\pm$ 0.152} \\
+SHS (RNAformer) & 0.605 $\pm$ 0.222 & 4.230 $\pm$ 5.222 & 0.736 $\pm$ 0.137 \\
+SHS (RNAformerN20) + MSA & 0.655 $\pm$ 0.240 & 3.555 $\pm$ 4.352 & \textbf{0.771 $\pm$ 0.141} \\
+SHS (RNAformerN50) + MSA & 0.649 $\pm$ 0.237 & 3.643 $\pm$ 4.455 & 0.768 $\pm$ 0.140 \\
+SHS (RNAformerN100) + MSA & 0.645 $\pm$ 0.235 & 3.645 $\pm$ 4.437 & 0.764 $\pm$ 0.139 \\
+SHS (RNAformerN200) + MSA & 0.638 $\pm$ 0.235 & 3.746 $\pm$ 4.515 & 0.759 $\pm$ 0.141 \\
+SHS (RNAformerN500) + MSA & 0.633 $\pm$ 0.232 & 3.857 $\pm$ 4.589 & 0.755 $\pm$ 0.143 \\
+SHS (RNAformerN1000) + MSA & 0.629 $\pm$ 0.231 & 3.892 $\pm$ 4.554 & 0.751 $\pm$ 0.143 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{SHS depth scaling (RNAformer SHS, N=20 to 20000), RNA single chain (n=91). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rna_single_chain_scaling}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+MSA & \textbf{0.660 $\pm$ 0.248} & \textbf{3.323 $\pm$ 4.103} & \textbf{0.771 $\pm$ 0.152} \\
+SHS (RNAformer, N=20) & 0.596 $\pm$ 0.218 & 4.364 $\pm$ 5.402 & 0.734 $\pm$ 0.139 \\
+SHS (RNAformer) & 0.605 $\pm$ 0.222 & 4.230 $\pm$ 5.222 & 0.736 $\pm$ 0.137 \\
+SHS (RNAformer, N=500) & 0.609 $\pm$ 0.225 & 4.310 $\pm$ 5.520 & 0.736 $\pm$ 0.139 \\
+SHS (RNAformer, N=1000) & 0.609 $\pm$ 0.226 & 4.282 $\pm$ 5.221 & 0.735 $\pm$ 0.141 \\
+SHS (RNAformer, N=5000) & 0.608 $\pm$ 0.224 & 4.247 $\pm$ 5.178 & 0.734 $\pm$ 0.140 \\
+SHS (RNAformer, N=10000) & 0.608 $\pm$ 0.224 & 4.249 $\pm$ 5.214 & 0.734 $\pm$ 0.140 \\
+SHS (RNAformer, N=15000) & 0.608 $\pm$ 0.224 & 4.237 $\pm$ 5.167 & 0.734 $\pm$ 0.140 \\
+SHS (RNAformer, N=20000) & 0.608 $\pm$ 0.224 & 4.234 $\pm$ 5.165 & 0.734 $\pm$ 0.140 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{SHS depth scaling (RNAformer SHS, N=20 to 20000), RNA-protein complexes (n=377). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rna_protein_complexes_scaling}
+\begin{tabular}{lcccccc}
+\toprule
+Input & DockQ ($\uparrow$) & ICS ($\uparrow$) & QS-global ($\uparrow$) & cTM ($\uparrow$) & cRMSD ($\downarrow$) & cLDDT ($\uparrow$) \\
+\midrule
+MSA & \textbf{0.585 $\pm$ 0.304} & \textbf{0.630 $\pm$ 0.303} & \textbf{0.639 $\pm$ 0.340} & \textbf{0.821 $\pm$ 0.205} & \textbf{8.079 $\pm$ 12.861} & \textbf{0.809 $\pm$ 0.117} \\
+SHS (RNAformer, N=20) & 0.552 $\pm$ 0.297 & 0.606 $\pm$ 0.297 & 0.617 $\pm$ 0.334 & 0.813 $\pm$ 0.209 & 8.680 $\pm$ 13.139 & 0.800 $\pm$ 0.116 \\
+SHS (RNAformer) & 0.545 $\pm$ 0.297 & 0.600 $\pm$ 0.298 & 0.613 $\pm$ 0.332 & 0.813 $\pm$ 0.207 & 8.479 $\pm$ 12.973 & 0.797 $\pm$ 0.114 \\
+SHS (RNAformer, N=500) & 0.533 $\pm$ 0.300 & 0.591 $\pm$ 0.301 & 0.601 $\pm$ 0.337 & 0.811 $\pm$ 0.206 & 8.332 $\pm$ 12.731 & 0.794 $\pm$ 0.113 \\
+SHS (RNAformer, N=1000) & 0.528 $\pm$ 0.301 & 0.586 $\pm$ 0.302 & 0.595 $\pm$ 0.338 & 0.809 $\pm$ 0.207 & 8.560 $\pm$ 12.889 & 0.792 $\pm$ 0.114 \\
+SHS (RNAformer, N=5000) & 0.512 $\pm$ 0.299 & 0.572 $\pm$ 0.301 & 0.582 $\pm$ 0.335 & 0.807 $\pm$ 0.205 & 8.578 $\pm$ 12.799 & 0.788 $\pm$ 0.114 \\
+SHS (RNAformer, N=10000) & 0.503 $\pm$ 0.302 & 0.562 $\pm$ 0.304 & 0.569 $\pm$ 0.341 & 0.801 $\pm$ 0.206 & 8.807 $\pm$ 13.164 & 0.785 $\pm$ 0.118 \\
+SHS (RNAformer, N=15000) & 0.500 $\pm$ 0.302 & 0.559 $\pm$ 0.306 & 0.566 $\pm$ 0.343 & 0.796 $\pm$ 0.207 & 8.965 $\pm$ 13.167 & 0.783 $\pm$ 0.119 \\
+SHS (RNAformer, N=20000) & 0.496 $\pm$ 0.301 & 0.556 $\pm$ 0.306 & 0.561 $\pm$ 0.343 & 0.795 $\pm$ 0.207 & 8.994 $\pm$ 13.215 & 0.782 $\pm$ 0.119 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RhoFold+ rNA single chain (n=90); single run. Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rf_rna_single_chain}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+SHS (RNAfold) & 0.368 $\pm$ 0.119 & 6.477 $\pm$ 4.912 & 0.527 $\pm$ 0.108 \\
+SHS (SPOT-RNA) & 0.402 $\pm$ 0.117 & 5.246 $\pm$ 4.051 & 0.555 $\pm$ 0.090 \\
+SHS (RNAformer) & \textbf{0.523 $\pm$ 0.184} & \textbf{3.748 $\pm$ 3.532} & \textbf{0.624 $\pm$ 0.098} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RhoFold+ rNA single chain post-cutoff (n=30); single run. Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rf_rna_single_chain_post_cutoff}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+SHS (RNAfold) & 0.331 $\pm$ 0.125 & 7.800 $\pm$ 7.501 & 0.523 $\pm$ 0.140 \\
+SHS (SPOT-RNA) & 0.344 $\pm$ 0.146 & 6.754 $\pm$ 6.507 & 0.538 $\pm$ 0.124 \\
+SHS (RNAformer) & \textbf{0.373 $\pm$ 0.162} & \textbf{5.731 $\pm$ 5.590} & \textbf{0.563 $\pm$ 0.136} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RhoFold+ rNA single chain without homologs (n=20); single run. Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rf_rna_single_chain_without_homologs}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+SHS (RNAfold) & 0.263 $\pm$ 0.120 & 6.987 $\pm$ 7.943 & 0.556 $\pm$ 0.186 \\
+SHS (SPOT-RNA) & 0.267 $\pm$ 0.115 & 6.222 $\pm$ 6.891 & 0.561 $\pm$ 0.167 \\
+SHS (RNAformer) & \textbf{0.291 $\pm$ 0.139} & \textbf{5.992 $\pm$ 6.639} & \textbf{0.580 $\pm$ 0.180} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RhoFold+ rNA single chain with homologs (n=70); single run. Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rf_rna_single_chain_with_homologs}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+SHS (RNAfold) & 0.398 $\pm$ 0.101 & 6.332 $\pm$ 3.695 & 0.518 $\pm$ 0.072 \\
+SHS (SPOT-RNA) & 0.441 $\pm$ 0.085 & 4.967 $\pm$ 2.781 & 0.554 $\pm$ 0.053 \\
+SHS (RNAformer) & \textbf{0.589 $\pm$ 0.136} & \textbf{3.106 $\pm$ 1.442} & \textbf{0.637 $\pm$ 0.053} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RhoFold+ rNA single chain pre-cutoff (n=60); single run. Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rf_rna_single_chain_pre_cutoff}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+SHS (RNAfold) & 0.387 $\pm$ 0.113 & 5.816 $\pm$ 2.723 & 0.528 $\pm$ 0.089 \\
+SHS (SPOT-RNA) & 0.432 $\pm$ 0.088 & 4.491 $\pm$ 1.487 & 0.564 $\pm$ 0.067 \\
+SHS (RNAformer) & \textbf{0.598 $\pm$ 0.145} & \textbf{2.756 $\pm$ 0.681} & \textbf{0.655 $\pm$ 0.051} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RhoFold+ rNA single chain pre-cutoff without homologs (n=7); single run. Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rf_rna_single_chain_pre_cutoff_without_homologs}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+SHS (RNAfold) & 0.270 $\pm$ 0.055 & 2.489 $\pm$ 0.814 & 0.660 $\pm$ 0.126 \\
+SHS (SPOT-RNA) & 0.294 $\pm$ 0.044 & 2.215 $\pm$ 0.346 & 0.668 $\pm$ 0.070 \\
+SHS (RNAformer) & \textbf{0.317 $\pm$ 0.084} & \textbf{2.196 $\pm$ 0.725} & \textbf{0.677 $\pm$ 0.122} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RhoFold+ rNA single chain pre-cutoff with homologs (n=53); single run. Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rf_rna_single_chain_pre_cutoff_with_homologs}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+SHS (RNAfold) & 0.402 $\pm$ 0.110 & 6.255 $\pm$ 2.578 & 0.511 $\pm$ 0.067 \\
+SHS (SPOT-RNA) & 0.450 $\pm$ 0.075 & 4.792 $\pm$ 1.305 & 0.550 $\pm$ 0.054 \\
+SHS (RNAformer) & \textbf{0.635 $\pm$ 0.105} & \textbf{2.830 $\pm$ 0.646} & \textbf{0.652 $\pm$ 0.034} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RhoFold+ rNA single chain post-cutoff without homologs (n=13); single run. Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rf_rna_single_chain_post_cutoff_without_homologs}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+SHS (RNAfold) & 0.260 $\pm$ 0.146 & 9.410 $\pm$ 9.022 & 0.501 $\pm$ 0.193 \\
+SHS (SPOT-RNA) & 0.252 $\pm$ 0.140 & 8.380 $\pm$ 7.792 & 0.504 $\pm$ 0.178 \\
+SHS (RNAformer) & \textbf{0.277 $\pm$ 0.163} & \textbf{8.036 $\pm$ 7.523} & \textbf{0.528 $\pm$ 0.188} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RhoFold+ rNA single chain post-cutoff with homologs (n=17); single run. Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rf_rna_single_chain_post_cutoff_with_homologs}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+SHS (RNAfold) & 0.385 $\pm$ 0.071 & 6.570 $\pm$ 6.100 & 0.541 $\pm$ 0.082 \\
+SHS (SPOT-RNA) & 0.414 $\pm$ 0.109 & 5.511 $\pm$ 5.236 & 0.564 $\pm$ 0.052 \\
+SHS (RNAformer) & \textbf{0.445 $\pm$ 0.120} & \textbf{3.968 $\pm$ 2.564} & \textbf{0.590 $\pm$ 0.073} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RhoFold+ denoising ladder, RNA single chain (n=91); single run. Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:denoise_main_rf}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+SHS (RNAfold) & 0.366 $\pm$ 0.121 & 6.874 $\pm$ 6.181 & 0.524 $\pm$ 0.110 \\
+SHS (RNAfold Denoise) & 0.340 $\pm$ 0.116 & 8.197 $\pm$ 6.284 & 0.506 $\pm$ 0.109 \\
+SHS (GT) & \textbf{0.524 $\pm$ 0.178} & \textbf{4.190 $\pm$ 4.321} & \textbf{0.631 $\pm$ 0.099} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RhoFold+ SHS variants vs. the native RhoFold+ MSA pipeline, RNA single chain (n=90); single run. Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rf_rna_single_chain_native_msa}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+SHS (RNAfold) & 0.368 $\pm$ 0.119 & 6.477 $\pm$ 4.912 & 0.527 $\pm$ 0.108 \\
+SHS (SPOT-RNA) & 0.402 $\pm$ 0.117 & 5.246 $\pm$ 4.051 & 0.555 $\pm$ 0.090 \\
+SHS (RNAformer) & 0.523 $\pm$ 0.184 & 3.748 $\pm$ 3.532 & 0.624 $\pm$ 0.098 \\
+RhoFold+ native MSA & \textbf{0.588 $\pm$ 0.190} & \textbf{3.191 $\pm$ 3.026} & \textbf{0.667 $\pm$ 0.097} \\
+\bottomrule
+\end{tabular}
+\end{table}

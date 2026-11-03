@@ -1,0 +1,15 @@
+\begin{table}[htbp]
+\centering
+\caption{RNA single chain without homologs (n=20). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rna_single_chain_without_homologs}
+\begin{tabular}{lccc}
+\toprule
+Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+MSA & 0.468 $\pm$ 0.230 & \textbf{4.776 $\pm$ 5.580} & 0.718 $\pm$ 0.229 \\
+SHS (RNAfold) & 0.396 $\pm$ 0.199 & 6.402 $\pm$ 6.151 & 0.687 $\pm$ 0.213 \\
+SHS (SPOT-RNA) & 0.365 $\pm$ 0.166 & 5.845 $\pm$ 5.488 & 0.672 $\pm$ 0.164 \\
+SHS (RNAformer) & \textbf{0.471 $\pm$ 0.224} & 4.840 $\pm$ 5.462 & \textbf{0.740 $\pm$ 0.203} \\
+\bottomrule
+\end{tabular}
+\end{table}

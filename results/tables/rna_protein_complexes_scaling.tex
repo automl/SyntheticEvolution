@@ -1,0 +1,20 @@
+\begin{table}[htbp]
+\centering
+\caption{SHS depth scaling (RNAformer SHS, N=20 to 20000), RNA-protein complexes (n=377). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\label{tab:rna_protein_complexes_scaling}
+\begin{tabular}{lcccccc}
+\toprule
+Input & DockQ ($\uparrow$) & ICS ($\uparrow$) & QS-global ($\uparrow$) & cTM ($\uparrow$) & cRMSD ($\downarrow$) & cLDDT ($\uparrow$) \\
+\midrule
+MSA & \textbf{0.585 $\pm$ 0.304} & \textbf{0.630 $\pm$ 0.303} & \textbf{0.639 $\pm$ 0.340} & \textbf{0.821 $\pm$ 0.205} & \textbf{8.079 $\pm$ 12.861} & \textbf{0.809 $\pm$ 0.117} \\
+SHS (RNAformer, N=20) & 0.552 $\pm$ 0.297 & 0.606 $\pm$ 0.297 & 0.617 $\pm$ 0.334 & 0.813 $\pm$ 0.209 & 8.680 $\pm$ 13.139 & 0.800 $\pm$ 0.116 \\
+SHS (RNAformer) & 0.545 $\pm$ 0.297 & 0.600 $\pm$ 0.298 & 0.613 $\pm$ 0.332 & 0.813 $\pm$ 0.207 & 8.479 $\pm$ 12.973 & 0.797 $\pm$ 0.114 \\
+SHS (RNAformer, N=500) & 0.533 $\pm$ 0.300 & 0.591 $\pm$ 0.301 & 0.601 $\pm$ 0.337 & 0.811 $\pm$ 0.206 & 8.332 $\pm$ 12.731 & 0.794 $\pm$ 0.113 \\
+SHS (RNAformer, N=1000) & 0.528 $\pm$ 0.301 & 0.586 $\pm$ 0.302 & 0.595 $\pm$ 0.338 & 0.809 $\pm$ 0.207 & 8.560 $\pm$ 12.889 & 0.792 $\pm$ 0.114 \\
+SHS (RNAformer, N=5000) & 0.512 $\pm$ 0.299 & 0.572 $\pm$ 0.301 & 0.582 $\pm$ 0.335 & 0.807 $\pm$ 0.205 & 8.578 $\pm$ 12.799 & 0.788 $\pm$ 0.114 \\
+SHS (RNAformer, N=10000) & 0.503 $\pm$ 0.302 & 0.562 $\pm$ 0.304 & 0.569 $\pm$ 0.341 & 0.801 $\pm$ 0.206 & 8.807 $\pm$ 13.164 & 0.785 $\pm$ 0.118 \\
+SHS (RNAformer, N=15000) & 0.500 $\pm$ 0.302 & 0.559 $\pm$ 0.306 & 0.566 $\pm$ 0.343 & 0.796 $\pm$ 0.207 & 8.965 $\pm$ 13.167 & 0.783 $\pm$ 0.119 \\
+SHS (RNAformer, N=20000) & 0.496 $\pm$ 0.301 & 0.556 $\pm$ 0.306 & 0.561 $\pm$ 0.343 & 0.795 $\pm$ 0.207 & 8.994 $\pm$ 13.215 & 0.782 $\pm$ 0.119 \\
+\bottomrule
+\end{tabular}
+\end{table}
