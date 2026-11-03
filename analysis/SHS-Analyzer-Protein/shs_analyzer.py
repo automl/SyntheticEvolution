@@ -12,6 +12,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import importlib
 import sys
+import warnings
 
 _roots = (Path.cwd(), *Path.cwd().parents)
 REPO_ROOT = next((p for p in _roots if (p / "SHS-Generator-Protein" / "shs_generator.py").exists()), None)
@@ -161,8 +162,11 @@ class Features:
 
     @cached_property
     def col_mut_rate(self) -> np.ndarray:
-        """Per-column fraction of rows that differ from the seq"""
-        return self.diff_mask.mean(axis=0, where=~self.deletion_mask)
+        """Per-column fraction of rows that differ from the seq.
+        Columns deleted in every row have no data and come out as NaN."""
+        with np.errstate(invalid="ignore", divide="ignore"), warnings.catch_warnings():
+            warnings.simplefilter("ignore", RuntimeWarning)
+            return self.diff_mask.mean(axis=0, where=~self.deletion_mask)
 
     @cached_property
     def covariance(self) -> np.ndarray:

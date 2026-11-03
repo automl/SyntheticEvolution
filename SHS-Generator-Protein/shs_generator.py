@@ -22,6 +22,7 @@ if str(ROOT_DIR) not in sys.path:
 
 from pair_map import PairMap, AMINO_ACIDS
 
+
 AMINO_ACIDS_LOWER = AMINO_ACIDS.lower()
 from generator_config import (
     MutationParameters, APPROACHES, build_pair_map, split_parameters,
@@ -42,6 +43,7 @@ class MsaGenerator:
         validate_seed(seed)
         self.rng = random.Random(None if seed is None else int(seed))
         self.pair_map = None
+        self._paired_deletions = {}
 
     def generate(self, rna_sequence: str, pair_map: PairMap) -> List[str]:
         """Return query followed by N-1 synthetic A3M sequence rows (no headers)."""
@@ -84,15 +86,32 @@ class MsaGenerator:
         return ""
 
     def paired_deletion(self, i, mutated_partner: str, partner_index: float) -> bool:
-        single_del = self.parameters.stem_single_deletion_prob
-        pair_del =  self.parameters.stem_pair_deletion_prob * self.pair_map.interaction(i, partner_index)
+        """Sample deletion for one pair member.
+
+        Single deletions are independent per position. A separate coordinated
+        deletion event removes both pair members and is weighted by interaction.
+        """
+        pair = tuple(sorted((i, int(partner_index))))
         if self.pair_map.is_multiplet_member(i):
-            return self.rng.random() < single_del
-        if i < partner_index: # P(-)
-            return self.rng.random() < single_del + pair_del
-        if mutated_partner == "-": # P(-|-)
-            return self.rng.random() * (single_del + pair_del) < pair_del
-        return self.rng.random() * (1 - single_del - pair_del) < single_del # P(-|!-)
+            return self.rng.random() < self.parameters.stem_single_deletion_prob
+
+        if pair not in self._paired_deletions:
+            single_del = self.parameters.stem_single_deletion_prob
+            pair_del = (
+                self.parameters.stem_pair_deletion_prob
+                * self.pair_map.interaction(i, partner_index)
+            )
+            if self.rng.random() < pair_del:
+                deletion = (True, True)
+            else:
+                deletion = (
+                    self.rng.random() < single_del,
+                    self.rng.random() < single_del,
+                )
+            self._paired_deletions[pair] = deletion
+
+        return self._paired_deletions[pair][0 if i == pair[0] else 1]
+
 
     def mutate_random(self, aa: str, prob: float):
         if self.rng.random() < prob:
@@ -134,6 +153,7 @@ class MsaGenerator:
         new_seq = np.empty(len(seq), str)
         insertions = []
         loop_long_del_len = 0
+        self._paired_deletions = {}
         for i, nt in enumerate(seq):
             new_nt = nt
             new_insertion = ""
