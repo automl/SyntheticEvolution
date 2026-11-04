@@ -108,11 +108,10 @@ def _write_msa_views(data: Any, output_dir: Path) -> None:
     rows = [data.seq, *("".join(row) for row in data.raw)]
     clean_rows = ["".join(char for char in row if not char.islower()) for row in rows]
     insertion_rows = [analyzer_row for analyzer_row in rows]
-    insertion_widths = [
-        max(len(chunks[index]) for chunks in map(_insertion_chunks, insertion_rows))
+    column_width = (
+        max(len(chunk) for row in insertion_rows for chunk in _insertion_chunks(row))
         + 1
-        for index in range(len(data.seq) + 1)
-    ]
+    )
 
     output_dir.mkdir(parents=True, exist_ok=True)
     _write_fasta(
@@ -121,12 +120,12 @@ def _write_msa_views(data: Any, output_dir: Path) -> None:
     )
     _write_fasta(
         output_dir / "aligned.fasta",
-        [_aligned_row(row, insertion_widths) for row in insertion_rows],
+        [_aligned_row(row, column_width) for row in insertion_rows],
     )
     LOGGER.info(
-        "Wrote MSA FASTA views to %s (maximum column width: %d)",
+        "Wrote MSA FASTA views to %s (column width: %d)",
         output_dir,
-        max(insertion_widths),
+        column_width,
     )
 
 
@@ -143,15 +142,10 @@ def _insertion_chunks(row: str) -> list[str]:
     return chunks
 
 
-def _aligned_row(row: str, insertion_widths: list[int]) -> str:
+def _aligned_row(row: str, column_width: int) -> str:
+    """Keep only insertions, each padded to a fixed-width cell per column."""
     chunks = _insertion_chunks(row)
-    aligned = [char for char in row if not char.islower()]
-    parts = [
-        chunks[index]
-        + char
-        + " " * (insertion_widths[index] - len(chunks[index]) - 1)
-        for index, char in enumerate(aligned)
-    ]
+    parts = [chunk.ljust(column_width) for chunk in chunks[:-1]]
     parts.append(chunks[-1])
     return "".join(parts)
 
