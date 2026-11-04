@@ -15,6 +15,18 @@ import hpo.pipeline.run as run
 import hpo.pipeline.trial as trial
 
 
+def fake_prediction(name, input_path, output, log):
+    """What AF3 writes for one finished input, including its log lines."""
+    log.write(f"Processing fold input {name}\n")
+    af3_input = json.loads(input_path.read_text())
+    prediction = output / name
+    (prediction / "seed-42_sample-0").mkdir(parents=True)
+    (prediction / f"{name}_model.cif").write_text(f"model of {name}")
+    (prediction / f"{name}_data.json").write_text(json.dumps(af3_input))
+    (prediction / "seed-42_sample-0" / "model.cif").write_text("sample")
+    log.write(f"Done processing fold input {name}.\n")
+
+
 @pytest.fixture
 def trial_case(tmp_path, monkeypatch):
     """A two-RNA trial whose fake tools write what the real tools write."""
@@ -63,18 +75,11 @@ def trial_case(tmp_path, monkeypatch):
         output_path.write_text(json.dumps({"name": request["task_name"], "msa": "synthetic"}))
         request_path.with_name("shs_effective_parameters.json").write_text('{"N": 20}')
 
-    def run_af3(af3_input_path, output, log_path, cfg):
+    def run_af3(af3_inputs, output, log_path, cfg):
         assert cfg is config
-        af3_input = json.loads(af3_input_path.read_text())
-        name = af3_input["name"]
-        prediction = output / name
-        (prediction / "seed-42_sample-0").mkdir(parents=True)
-        model = prediction / f"{name}_model.cif"
-        model.write_text(f"model of {name}")
-        (prediction / f"{name}_data.json").write_text(json.dumps(af3_input))
-        (prediction / "seed-42_sample-0" / "model.cif").write_text("sample")
-        log_path.write_text(f"af3 ran {name}\n")
-        return model
+        with log_path.open("w") as log:
+            for name, input_path in af3_inputs.items():
+                fake_prediction(name, input_path, output, log)
 
     def fake_dssr(model, directory, sequence, exe, timeout, scratch):
         assert (exe, timeout) == ("test-dssr", 10)
@@ -151,7 +156,9 @@ def test_fresh_trial_publishes_one_archive_per_rna(trial_case):
         assert request == dict(rows[index], task_name=f'rna_{index:05d}',
                                parameters={'N': 20, 'mutation_rate_paired': 0.3},
                                shs_seed=11, af3_seed=2)
-    assert (generation.call_count, af3.call_count, dssr.call_count) == (2, 2, 2)
+    # One AF3 process predicts all RNAs, so the model is compiled once.
+    assert (generation.call_count, af3.call_count, dssr.call_count) == (2, 1, 2)
+    assert list(af3.call_args.args[0]) == ['rna_00000', 'rna_00001']
     # DSSR reads the model from scratch.
     for index, call in enumerate(dssr.call_args_list):
         model = call.args[0]
@@ -178,7 +185,7 @@ def test_fresh_trial_publishes_one_archive_per_rna(trial_case):
 
     # Cached completion performs no further external work.
     assert run_pipeline(trial_case) == 0.5
-    assert (generation.call_count, af3.call_count, dssr.call_count) == (2, 2, 2)
+    assert (generation.call_count, af3.call_count, dssr.call_count) == (2, 1, 2)
 
 
 def test_changed_identity_rejects_cached_result(trial_case):
@@ -208,7 +215,8 @@ def test_standalone_trial_keeps_logs(trial_case, fails):
     except RuntimeError:
         assert fails
     logs = [name for name in workspace_files(directory) if name.endswith('.log')]
-    assert logs == [f'logs/rna_{i:05d}/{tool}.log' for i in range(2) for tool in ('af3', 'dssr', 'shs_generation')]
+    assert logs == ['logs/af3.log'] + [
+        f'logs/rna_{i:05d}/{tool}.log' for i in range(2) for tool in ('dssr', 'shs_generation')]
     assert (directory / 'logs/rna_00000/shs_generation.log').read_text() == 'generated rna_00000\n'
     assert list(scratch_root(trial_case).iterdir()) == []
 
@@ -257,10 +265,10 @@ def test_dssr_crash_keeps_published_archives_and_reports(trial_case):
     # Scratch paths are marked; only run_metadata.json holds absolute paths.
     assert report['command'] == ['/opt/x3dna-dssr', '-i=<scratch>/rna_00001/archive/rna_00001_model.cif', '--json']
     assert str(directory) not in report['message']
-    assert report['logs'] == {
-        'shs_generation.log': 'generated rna_00001\n', 'af3.log': 'af3 ran rna_00001\n',
-        'dssr.log': 'dssr output\n',
-    }
+    # The trial's AF3 log covers all RNAs.
+    assert report['logs']['shs_generation.log'] == 'generated rna_00001\n'
+    assert report['logs']['dssr.log'] == 'dssr output\n'
+    assert report['logs']['af3.log'].endswith('Done processing fold input rna_00001.\n')
     assert 'Traceback' in report['traceback']
     assert {'host', 'slurm_job_id', 'slurm_array_task_id', 'time'} <= report.keys()
     assert report['storage']['files'] == 3
@@ -278,32 +286,44 @@ def test_rejected_dssr_output_is_kept_in_the_archive(trial_case):
     assert read_failure_report(directory)['stage'] == 'dssr'
 
 
-def test_af3_without_valid_prediction_publishes_nothing(trial_case):
-    trial_case[5].side_effect = RuntimeError('Expected exactly one nonempty AF3 model')
-    with pytest.raises(RuntimeError):
-        run_pipeline(trial_case)
-    assert not list(trial_case[2].glob('*.tar.gz'))
-    assert read_failure_report(trial_case[2])['stage'] == 'af3'
+def fail_af3_on_second(case, failure, log_text=''):
+    """AF3 finishes the first input, then fails while predicting the second."""
+    def run_af3(af3_inputs, output, log_path, cfg):
+        with log_path.open('w') as log:
+            first, second = af3_inputs.items()
+            fake_prediction(*first, output, log)
+            log.write(f'Processing fold input {second[0]}\n{log_text}')
+        raise failure
+    case[5].side_effect = run_af3
 
 
-def test_af3_failure_names_the_rna_and_keeps_the_log_tail(trial_case):
-    af3 = trial_case[5]
-    finish_af3 = af3.side_effect
-    def fail_second(af3_input_path, output, log_path, cfg):
-        if 'rna_00001' in str(af3_input_path):
-            log_path.write_text('x' * 70000 + 'CUDA error')
-            raise subprocess.CalledProcessError(1, ['af3'])
-        return finish_af3(af3_input_path, output, log_path, cfg)
-    af3.side_effect = fail_second
-    with pytest.raises(subprocess.CalledProcessError):
+@pytest.mark.parametrize('failure', [subprocess.CalledProcessError(1, ['af3']), KeyboardInterrupt()],
+                         ids=['af3-error', 'interrupted'])
+def test_af3_failure_keeps_finished_predictions_and_names_the_rna(trial_case, failure):
+    fail_af3_on_second(trial_case, failure, log_text='x' * 70000 + 'CUDA error')
+    with pytest.raises(type(failure)):
         run_pipeline(trial_case)
+    # The first prediction is archived although the AF3 process failed.
+    assert [path.name for path in trial_case[2].glob('*.tar.gz')] == ['rna_00000.tar.gz']
     report = read_failure_report(trial_case[2])
-    assert (report['stage'], report['rna_id'], report['signal']) == ('af3', 'unpaired', None)
+    assert (report['stage'], report['rna_id'], report['error_type']) == ('af3', 'unpaired', type(failure).__name__)
     log = report['logs']['af3.log']
     # Only the end of a long log is kept, where the error is.
-    assert log.startswith('[... first 4474 bytes truncated ...]') and log.endswith('CUDA error')
-    # The trial stops at the first failing RNA; the first archive stays.
+    assert log.startswith('[... first ') and log.endswith('CUDA error')
+    assert len(log) < 64 * 1024 + 100
+    assert list(scratch_root(trial_case).iterdir()) == []
+
+
+def test_af3_without_a_model_fails_that_rna(trial_case):
+    def skip_second(af3_inputs, output, log_path, cfg):
+        with log_path.open('w') as log:
+            fake_prediction('rna_00000', af3_inputs['rna_00000'], output, log)
+    trial_case[5].side_effect = skip_second
+    with pytest.raises(RuntimeError, match='rna_00001'):
+        run_pipeline(trial_case)
     assert [path.name for path in trial_case[2].glob('*.tar.gz')] == ['rna_00000.tar.gz']
+    report = read_failure_report(trial_case[2])
+    assert (report['stage'], report['rna_id']) == ('af3', 'unpaired')
 
 
 def test_interruption_is_reported_like_a_failure(trial_case):
@@ -324,14 +344,26 @@ def test_resume_reuses_archives_and_replaces_the_failure_record(trial_case):
     fail_dssr_on_second(trial_case, RuntimeError('DSSR failed'))
     with pytest.raises(RuntimeError):
         run_pipeline(trial_case)
-    assert (generation.call_count, af3.call_count) == (2, 2)
+    assert (generation.call_count, af3.call_count) == (2, 1)
 
     dssr.side_effect = score
     assert run_pipeline(trial_case) == pytest.approx(0.5)
     # Both AF3 predictions came from the archives.
-    assert (generation.call_count, af3.call_count) == (2, 2)
+    assert (generation.call_count, af3.call_count) == (2, 1)
     assert workspace_files(directory) == ['rna_00000.tar.gz', 'rna_00001.tar.gz', 'trial_result.json']
     assert 'dssr.json' in members(directory / 'rna_00001.tar.gz')
+
+
+def test_resume_after_af3_failure_predicts_only_the_missing_rnas(trial_case):
+    config, rows, directory, requests, generation, af3, dssr = trial_case
+    run_af3 = af3.side_effect
+    fail_af3_on_second(trial_case, subprocess.CalledProcessError(1, ['af3']))
+    with pytest.raises(subprocess.CalledProcessError):
+        run_pipeline(trial_case)
+    af3.side_effect = run_af3
+    assert run_pipeline(trial_case) == pytest.approx(0.5)
+    assert list(af3.call_args.args[0]) == ['rna_00001']
+    assert generation.call_count == 3  # rna_00001 is generated again, rna_00000 is not
 
 
 def test_unreadable_archive_and_stale_temporaries_are_replaced(trial_case):
@@ -366,37 +398,46 @@ def af3_environment(tmp_path, monkeypatch):
     return dict(model_dir=str(tmp_path / 'models'), af3_timeout_seconds=10)
 
 
-def test_af3_runs_with_the_module_environment_and_returns_the_model(tmp_path, monkeypatch, af3_environment):
+def test_af3_predicts_all_inputs_in_one_process(tmp_path, monkeypatch, af3_environment):
+    inputs = {}
+    for name in ('rna_00000', 'rna_00001'):
+        inputs[name] = tmp_path / name / 'af3_input.json'
+        inputs[name].parent.mkdir()
+        inputs[name].write_text(json.dumps({'name': name}))
     output, log = tmp_path / 'af3', tmp_path / 'af3.log'
     def predict(args, **kwargs):
-        assert args == ['/af3/bin/python', '/af3/bin/run_alphafold.py', f'--json_path={tmp_path / "in.json"}',
+        assert args == ['/af3/bin/python', '/af3/bin/run_alphafold.py', f'--input_dir={tmp_path / "af3_inputs"}',
                         f'--output_dir={output}', f'--model_dir={tmp_path / "models"}',
                         '--db_dir=/af3/db', '--norun_data_pipeline']
-        assert (kwargs['check'], kwargs['timeout'], kwargs['stdout'].name) == (True, 10, str(log))
+        # The timeout applies per input.
+        assert (kwargs['check'], kwargs['timeout'], kwargs['stdout'].name) == (True, 20, str(log))
+        assert sorted(path.name for path in (tmp_path / 'af3_inputs').iterdir()) == ['rna_00000.json', 'rna_00001.json']
         kwargs['stdout'].write('af3 output\n')
-        for path in ('rna_00000/rna_00000_model.cif', 'rna_00000/seed-42_sample-0/model.cif'):
-            (output / path).parent.mkdir(parents=True, exist_ok=True)
-            (output / path).write_text('model')
     monkeypatch.setattr(trial.subprocess, 'run', predict)
-    model = trial.run_af3(tmp_path / 'in.json', output, log, af3_environment)
-    assert model == output / 'rna_00000' / 'rna_00000_model.cif'
+    trial.run_af3(inputs, output, log, af3_environment)
     assert log.read_text() == 'af3 output\n'
 
 
-@pytest.mark.parametrize('models', [[], ['a/a_model.cif', 'b/b_model.cif'], ['a/a_model.cif:empty']])
-def test_af3_needs_exactly_one_nonempty_model(tmp_path, monkeypatch, af3_environment, models):
+@pytest.mark.parametrize('models,done,found', [
+    (['a/a_model.cif'], ['a'], ['a']),
+    (['a/a_model.cif', 'b/b_model.cif'], ['a'], ['a']),             # b still running
+    (['a/a_model.cif', 'a/seed-42_sample-0/model.cif'], ['a'], ['a']),
+    (['a/a_model.cif:empty'], ['a'], []),
+    (['a/a_model.cif', 'a/x_model.cif'], ['a'], []),
+    ([], ['a'], []),
+])
+def test_af3_predictions_need_the_done_line_and_one_nonempty_model(tmp_path, models, done, found):
     output = tmp_path / 'af3'
-    def predict(args, **kwargs):
-        for entry in models:
-            path, _, empty = entry.partition(':')
-            (output / path).parent.mkdir(parents=True, exist_ok=True)
-            (output / path).write_text('' if empty else 'model')
-    monkeypatch.setattr(trial.subprocess, 'run', predict)
-    with pytest.raises(RuntimeError, match='exactly one nonempty AF3 model'):
-        trial.run_af3(tmp_path / 'in.json', output, tmp_path / 'af3.log', af3_environment)
+    for entry in models:
+        path, _, empty = entry.partition(':')
+        (output / path).parent.mkdir(parents=True, exist_ok=True)
+        (output / path).write_text('' if empty else 'model')
+    log = tmp_path / 'af3.log'
+    log.write_text(''.join(f'Processing fold input {n}\nDone processing fold input {n}.\n' for n in done))
+    assert sorted(trial.af3_predictions(output, log)) == found
 
 
 def test_af3_requires_the_module_environment(tmp_path, monkeypatch, af3_environment):
     monkeypatch.delenv('ALPHAFOLD_DATABASES')
     with pytest.raises(RuntimeError, match='ALPHAFOLD_DATABASES not set'):
-        trial.run_af3(tmp_path / 'in.json', tmp_path / 'af3', tmp_path / 'af3.log', af3_environment)
+        trial.run_af3({}, tmp_path / 'af3', tmp_path / 'af3.log', af3_environment)

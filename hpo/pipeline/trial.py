@@ -2,6 +2,7 @@
 
 import json
 import os
+import re
 import shutil
 import subprocess
 import tempfile
@@ -38,15 +39,24 @@ def trial_scratch(root: Path) -> Iterator[Path]:
 
 
 def keep_logs(scratch: Path, destination: Path) -> None:
-    """Copy all logs from scratch (standalone trials keep their logs)."""
-    for log in sorted(scratch.glob('rna_*/*.log')):
-        target = destination / log.parent.name / log.name
+    """Copy all logs from scratch (standalone trials keep their logs).
+
+    Per-RNA logs keep their ``rna_<index>/`` folder; the trial's AF3 log
+    (one AF3 process for all RNAs) lands directly in ``destination``.
+    """
+    for log in sorted([*scratch.glob('*.log'), *scratch.glob('rna_*/*.log')]):
+        target = destination / log.relative_to(scratch)
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(log, target)
 
 
-def run_af3(af3_input: Path, output: Path, log_path: Path, config: dict[str, Any]) -> Path:
-    """Run one AF3 prediction and return its top-level model.
+def run_af3(af3_inputs: dict[str, Path], output: Path, log_path: Path, config: dict[str, Any]) -> None:
+    """Predict all inputs in one AF3 process.
+
+    A new AF3 process compiles its model first (~26 s on an A100), which is
+    most of a short prediction (~8 s), so one process per trial compiles once
+    instead of once per RNA. ``af3_inputs`` maps task names to inputs; AF3
+    writes ``output/<name>/``. ``af3_timeout_seconds`` applies per input.
 
     The controller job loads the AF3 module (``controller.slurm``), which
     provides AF3_PYTHON, ALPHAFOLD_BIN_DIR and ALPHAFOLD_DATABASES.
@@ -58,12 +68,16 @@ def run_af3(af3_input: Path, output: Path, log_path: Path, config: dict[str, Any
             f"{', '.join(missing)} not set. Submit the pipeline through the "
             "controller Slurm script, which loads the AF3 module."
         )
+    input_directory = output.parent / 'af3_inputs'
+    input_directory.mkdir(parents=True, exist_ok=True)
+    for name, path in af3_inputs.items():
+        shutil.copy2(path, input_directory / f'{name}.json')
     with log_path.open('w') as log:
         subprocess.run(
             [
                 os.environ['AF3_PYTHON'],
                 str(Path(os.environ['ALPHAFOLD_BIN_DIR']) / 'run_alphafold.py'),
-                f'--json_path={af3_input}',
+                f'--input_dir={input_directory}',
                 f'--output_dir={output}',
                 f"--model_dir={Path(config['model_dir']).expanduser().resolve()}",
                 f"--db_dir={os.environ['ALPHAFOLD_DATABASES']}",
@@ -72,13 +86,23 @@ def run_af3(af3_input: Path, output: Path, log_path: Path, config: dict[str, Any
             stdout=log,
             stderr=subprocess.STDOUT,
             check=True,
-            timeout=config['af3_timeout_seconds'],
+            timeout=config['af3_timeout_seconds'] * len(af3_inputs),
         )
-    # AF3 writes <output>/<name>/<name>_model.cif; samples live one level deeper.
-    models = list(output.glob(f'*/*{archive.MODEL_SUFFIX}'))
-    if len(models) != 1 or models[0].stat().st_size == 0:
-        raise RuntimeError(f'Expected exactly one nonempty AF3 model in {output}, found {models}')
-    return models[0]
+
+
+def af3_predictions(output: Path, log_path: Path) -> dict[str, Path]:
+    """Models of the inputs AF3 finished, also after AF3 failed or was stopped.
+
+    An input counts as finished once AF3 logged that it is done and wrote
+    exactly one nonempty top-level model (samples live one level deeper).
+    """
+    log = log_path.read_text(errors='replace') if log_path.is_file() else ''
+    predictions = {}
+    for name in re.findall(r'^Done processing fold input (\S+)\.$', log, re.MULTILINE):
+        models = list((output / name).glob(f'*{archive.MODEL_SUFFIX}'))
+        if len(models) == 1 and models[0].stat().st_size > 0:
+            predictions[name] = models[0]
+    return predictions
 
 
 def run_pipeline(
@@ -205,6 +229,34 @@ def _generate(
     return af3_input_path
 
 
+def _archive_predictions(
+    pending: list[str],
+    scratch: Path,
+    trial_directory: Path,
+    progress: dict[str, Any],
+) -> list[str]:
+    """Publish the archive of every prediction AF3 finished; return their names.
+
+    Flattens AF3's ``<name>/`` folder (its data.json holds the synthetic MSA)
+    and adds the generator's effective parameters.
+    """
+    predictions = af3_predictions(scratch / 'af3', scratch / 'af3.log')
+    progress.update(stage='archive')
+    archived = []
+    for name in pending:
+        if name not in predictions:
+            continue
+        content = scratch / name / 'archive'
+        for path in predictions[name].parent.iterdir():
+            shutil.move(str(path), str(content / path.name))
+        effective = scratch / name / 'shs_effective_parameters.json'
+        if effective.is_file():
+            shutil.copy2(effective, content / effective.name)
+        archive.publish(content, archive.path_for(trial_directory, name))
+        archived.append(name)
+    return archived
+
+
 def _run_stages(
     config: dict[str, Any],
     rows: Dataset,
@@ -213,55 +265,67 @@ def _run_stages(
     trial_signature: dict[str, Any],
     progress: dict[str, Any],
 ) -> float:
-    """Predict and score every RNA in turn, then publish the trial result.
+    """Predict and score every RNA, then publish the trial result.
 
-    Per RNA: generate and predict in scratch, publish the archive right after
-    AF3 (so a later failure cannot lose the prediction), then run DSSR and add
-    ``dssr.json`` to the archive. An existing readable archive skips
-    generation and AF3.
+    1. Generate the AF3 inputs of all RNAs without a readable archive.
+    2. Predict them in one AF3 process and publish each archive; also after
+       an AF3 failure or stop, for the inputs AF3 finished.
+    3. Per RNA, run DSSR, add ``dssr.json`` to the archive and score.
     """
     trial_result_path = trial_directory / 'trial_result.json'
     trial_parameters = trial_signature['parameters']
-
+    task_names = [f'rna_{index:05d}' for index in range(len(rows))]
     logger.info('Trial contains %d RNA rows', len(rows))
-    task_evaluations = []
-    for index, row in enumerate(rows):
-        task_name = f'rna_{index:05d}'
-        task_scratch = scratch / task_name
-        content = task_scratch / 'archive'
+
+    ############################ 1. - generate SHS #############################
+    af3_inputs = {}
+    for index, (row, task_name) in enumerate(zip(rows, task_names)):
+        progress.update(stage='generation', rna_index=index)
+        content = scratch / task_name / 'archive'
         content.mkdir(parents=True)
         rna_archive = archive.path_for(trial_directory, task_name)
-
-        ######################## 1.-2. - generate SHS, AF3 ########################
-        progress.update(stage='generation', rna_index=index)
-        model_name = archive.model_name(rna_archive)
-        if model_name is not None:
+        if archive.model_name(rna_archive) is not None:
             logger.info('Reusing AF3 prediction %d/%d for %s', index + 1, len(rows), row['id'])
             archive.extract(rna_archive, content)
-        else:
-            if rna_archive.exists():
-                logger.warning('Replacing unreadable archive %s', rna_archive)
-                rna_archive.unlink()
-            logger.info('Generating AF3 input %d/%d for %s', index + 1, len(rows), row['id'])
-            af3_input_path = _generate(config, row, index, trial_parameters, task_scratch)
+            continue
+        if rna_archive.exists():
+            logger.warning('Replacing unreadable archive %s', rna_archive)
+            rna_archive.unlink()
+        logger.info('Generating AF3 input %d/%d for %s', index + 1, len(rows), row['id'])
+        af3_inputs[task_name] = _generate(config, row, index, trial_parameters, scratch / task_name)
 
-            progress.update(stage='af3')
-            logger.info('Running AF3 prediction %d/%d for %s', index + 1, len(rows), row['id'])
-            model = run_af3(af3_input_path, task_scratch / 'af3', task_scratch / 'af3.log', config)
+    ################################# 2. - AF3 #################################
+    if af3_inputs:
+        pending = list(af3_inputs)
+        progress.update(stage='af3', rna_index=None)
+        logger.info('Running AF3 for %d RNA(s) in one process', len(pending))
+        try:
+            run_af3(af3_inputs, scratch / 'af3', scratch / 'af3.log', config)
+        except BaseException:
+            # Keep what AF3 finished, then name the RNA it was working on.
+            try:
+                archived = _archive_predictions(pending, scratch, trial_directory, progress)
+            except Exception:
+                logger.exception('Could not archive the finished AF3 predictions')
+                archived = []
+            unfinished = [name for name in pending if name not in archived]
+            progress.update(stage='af3', rna_index=task_names.index(unfinished[0]) if unfinished else None)
+            raise
+        archived = _archive_predictions(pending, scratch, trial_directory, progress)
+        unfinished = [name for name in pending if name not in archived]
+        if unfinished:
+            progress.update(stage='af3', rna_index=task_names.index(unfinished[0]))
+            raise RuntimeError(f'AF3 finished without a valid model for {unfinished[0]}; see af3.log')
 
-            # Flatten AF3's <name>/ folder; its data.json holds the synthetic MSA.
-            for path in model.parent.iterdir():
-                shutil.move(str(path), str(content / path.name))
-            effective = task_scratch / 'shs_effective_parameters.json'
-            if effective.is_file():
-                shutil.copy2(effective, content / effective.name)
-
-            progress.update(stage='archive')
-            archive.publish(content, rna_archive)
-            model_name = model.name
+    task_evaluations = []
+    for index, (row, task_name) in enumerate(zip(rows, task_names)):
+        task_scratch = scratch / task_name
+        content = task_scratch / 'archive'
+        rna_archive = archive.path_for(trial_directory, task_name)
+        model_name = archive.model_name(rna_archive)
 
         ################################ 3. - DSSR #################################
-        progress.update(stage='dssr')
+        progress.update(stage='dssr', rna_index=index)
         (content / 'dssr.json').unlink(missing_ok=True)
         try:
             dssr_predicted_pairs = dssr.run_dssr(

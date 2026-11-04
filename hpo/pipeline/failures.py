@@ -56,7 +56,8 @@ def write_failure_report(
     """Write everything needed to debug a failed trial into one file.
 
     Logs are read from ``log_directory/rna_<index>/`` (the trial's scratch
-    directory; default: the trial directory) and embedded in the report.
+    directory; default: the trial directory), or from ``log_directory`` for
+    logs of the whole trial such as ``af3.log``, and embedded in the report.
     """
     if log_directory is None:
         log_directory = trial_directory
@@ -102,8 +103,10 @@ def write_failure_report(
     if rna_index is not None:
         task_dir = log_directory / f'rna_{rna_index:05d}'
         for name in LOG_NAMES:
-            if (task_dir / name).is_file():
-                report['logs'][name] = _log_tail(task_dir / name)
+            for path in (task_dir / name, log_directory / name):
+                if path.is_file():
+                    report['logs'][name] = _log_tail(path)
+                    break
 
     write_json(trial_directory / FAILURE_REPORT, report)
     return report

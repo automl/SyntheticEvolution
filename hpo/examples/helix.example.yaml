@@ -37,8 +37,9 @@ failures:
 
 # ---- Storage ---------------------------------------------------
 # Logs and temporary tool files go to a per-trial scratch directory that is
-# removed after each trial. Default: /dev/shm (RAM; counts towards the job's
-# memory, a few MB per trial). $TMPDIR is on GPFS on Helix, so it is not used.
+# removed after each trial. Default: /dev/shm (RAM, private to the job and
+# cleared at job end; counts towards controller.memory, exceeding it ends the
+# job with OUT_OF_MEMORY). $TMPDIR is on GPFS on Helix, so it is not used.
 # Failed trials embed their logs in failure_report.json; standalone trials
 # also keep them in standalone_trial/logs/.
 storage:
@@ -73,7 +74,7 @@ generator_timeout_seconds: 600 # Per RNA input-generation process
 # ---- AF3 config ------------------------------------------------
 module: bio/alphafold/3.0.1
 model_dir:                  # REQUIRED: AF3 model parameters directory
-af3_timeout_seconds: 9000
+af3_timeout_seconds: 9000  # per RNA; one AF3 process predicts all RNAs of a trial
 af3_seed: 42
 
 
