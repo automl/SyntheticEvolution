@@ -82,6 +82,10 @@ results/
 - The trajectory dot-bracket analysis uses each exported
   `configs/config_<id>/trial_result.json` and writes its combined output under
   the module's analysis directory.
+- The trial comparison analysis compares `parameters` and the per-RNA
+  `scores[].predicted_pairs` of all trajectory configurations and writes
+  `trial_comparison.txt`. It is skipped when the trajectory has only one
+  configuration.
 - SHS analysis uses the exported `shs/rna_<index>/` files and never reads the
   original HPO workspace.
 
