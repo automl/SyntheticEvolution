@@ -42,7 +42,7 @@ def parse_pairs(data: dict[str, Any], sequence: str) -> list[tuple[int, int]]:
         raise ValueError('Inconsistent DSSR pair count')
     return [(mapping[p['nt1']], mapping[p['nt2']]) for p in pairs]
 
-
+DSSR
 def run_dssr(
     model: Union[str, Path],
     directory: Union[str, Path],
