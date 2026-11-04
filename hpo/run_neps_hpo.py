@@ -1,6 +1,5 @@
 """Run the NePS hyperparameter search for one shared RNA dataset."""
 import argparse
-import fcntl
 import json
 import os
 import socket

@@ -1,50 +1,14 @@
-"""Inspect controller sbatch commands without invoking Slurm."""
-
+"""Slurm submission: the controller script and the sbatch commands, without Slurm."""
 import importlib
-import sys
-from unittest.mock import Mock
 import os
 import subprocess
-import json
-
-from hpo.pipeline.run import ROOT, check_existing_run
+import sys
+from unittest.mock import Mock
 
 import pytest
 
-def test_check_existing_run_missing_metadata(tmp_path):
-    assert check_existing_run(tmp_path, "expected") is False
-    assert not (tmp_path / "run_metadata.json").exists()
+from hpo.pipeline.run import ROOT
 
-
-def test_check_existing_run_matching_fingerprint(tmp_path):
-    metadata = tmp_path / "run_metadata.json"
-    metadata.write_text(json.dumps({"fingerprint": "expected"}))
-    before = metadata.read_bytes()
-
-    assert check_existing_run(tmp_path, "expected") is True
-    assert metadata.read_bytes() == before
-
-
-@pytest.mark.parametrize(
-    "contents",
-    [
-        '{"fingerprint": "different"}',
-        '{}',
-        '[]',
-        'invalid json',
-    ],
-)
-def test_check_existing_run_rejects_invalid_metadata(
-    tmp_path, contents,
-):
-    metadata = tmp_path / "run_metadata.json"
-    metadata.write_text(contents)
-    before = metadata.read_bytes()
-
-    with pytest.raises(ValueError):
-        check_existing_run(tmp_path, "expected")
-
-    assert metadata.read_bytes() == before
 
 def test_controller_script_starts_requested_module(tmp_path):
     script = ROOT / "hpo/slurm/controller.slurm"

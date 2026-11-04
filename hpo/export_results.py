@@ -13,8 +13,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from hpo.pipeline import failures
-from hpo.pipeline.run import get_workspace_path, load_config
+from hpo.pipeline import archive, failures
+from hpo.pipeline.run import get_workspace_path, load_config, shs_generation_request
 
 EXPORT_DIR_NAME = "results"
 
@@ -92,8 +92,71 @@ def _export_errors(neps_dir: Path, destination: Path) -> dict[str, Any]:
     return block
 
 
-def export_results(config_path: Path) -> Path:
-    """Copy the selected run summaries and trajectory trial results."""
+def _export_shs(
+    source_dir: Path,
+    target_dir: Path,
+    result: dict[str, Any],
+    run_metadata: dict[str, Any],
+    include_archives: bool,
+) -> list[Path]:
+    """Write ``shs/rna_<index>/{af3_input.json, shs_generation_request.json}``.
+
+    Both are derived instead of stored: AF3's ``data.json`` in the RNA's
+    archive is the AF3 input with the synthetic MSA, and the request is
+    rebuilt from the dataset and seeds in ``run_metadata.json``.
+    """
+    archives = sorted(source_dir.glob(f"rna_*{archive.SUFFIX}"))
+    if not archives:
+        return _copy_legacy_shs(source_dir, target_dir)
+    rows = run_metadata["dataset"]
+    if len(archives) != len(rows):
+        raise FileNotFoundError(
+            f"Expected {len(rows)} RNA archives in {source_dir}, found {len(archives)}"
+        )
+    written = []
+    for path in archives:
+        task_name = path.name[: -len(archive.SUFFIX)]
+        index = int(task_name[len("rna_"):])
+        task_target = target_dir / "shs" / task_name
+        task_target.mkdir(parents=True, exist_ok=True)
+        (task_target / "af3_input.json").write_bytes(archive.read_data_json(path))
+        request = shs_generation_request(
+            rows[index], index, result["parameters"],
+            run_metadata["config"]["shs_seed"], run_metadata["config"]["af3_seed"],
+        )
+        (task_target / "shs_generation_request.json").write_text(json.dumps(request, indent=2) + "\n")
+        written += [task_target / "af3_input.json", task_target / "shs_generation_request.json"]
+        if include_archives:
+            copy = target_dir / "archives" / path.name
+            copy.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(path, copy)
+            written.append(copy)
+    return written
+
+
+def _copy_legacy_shs(source_dir: Path, target_dir: Path) -> list[Path]:
+    """Runs from before the per-RNA archives kept the files in rna_<index>/."""
+    written = []
+    for task_dir in sorted(source_dir.glob("rna_*")):
+        if not task_dir.is_dir():
+            continue
+        for filename in ("af3_input.json", "shs_generation_request.json"):
+            artifact = task_dir / filename
+            if not artifact.is_file():
+                raise FileNotFoundError(f"Expected SHS artifact does not exist: {artifact}")
+            artifact_target = target_dir / "shs" / task_dir.name / filename
+            artifact_target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(artifact, artifact_target)
+            written.append(artifact_target)
+    return written
+
+
+def export_results(config_path: Path, include_archives: bool = False) -> Path:
+    """Copy the selected run summaries and trajectory trial results.
+
+    ``include_archives`` also copies the complete per-RNA archives (AF3
+    samples, confidences, DSSR output) of the exported configs.
+    """
     config_path = config_path.expanduser().resolve()
     config = load_config(config_path, mode="export")
     workspace = get_workspace_path(config)
@@ -129,6 +192,7 @@ def export_results(config_path: Path) -> Path:
         raise FileNotFoundError(f"Expected run metadata does not exist: {run_metadata}")
     shutil.copy2(run_metadata, destination / run_metadata.name)
     copied.append(run_metadata.name)
+    run_metadata_data = json.loads(run_metadata.read_text())
 
     config_ids = [
         int(match)
@@ -155,24 +219,11 @@ def export_results(config_path: Path) -> Path:
         shutil.copy2(source, target)
         copied.append(target.relative_to(destination).as_posix())
 
-        for task_dir in sorted(source_dir.glob("rna_*")):
-            if not task_dir.is_dir():
-                continue
-            for filename in ("af3_input.json", "shs_generation_request.json"):
-                artifact = task_dir / filename
-                if not artifact.is_file():
-                    raise FileNotFoundError(f"Expected SHS artifact does not exist: {artifact}")
-                artifact_target = (
-                    destination
-                    / "configs"
-                    / f"config_{config_id}"
-                    / "shs"
-                    / task_dir.name
-                    / filename
-                )
-                artifact_target.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copy2(artifact, artifact_target)
-                copied.append(artifact_target.relative_to(destination).as_posix())
+        written = _export_shs(
+            source_dir, target.parent, json.loads(source.read_text()),
+            run_metadata_data, include_archives,
+        )
+        copied += [path.relative_to(destination).as_posix() for path in written]
 
     manifest = {
         "config": str(config_path),
@@ -198,9 +249,14 @@ def main() -> None:
         type=Path,
         help="YAML configuration file identifying the completed HPO run",
     )
+    parser.add_argument(
+        "--include-archives",
+        action="store_true",
+        help="Also copy the per-RNA archives (AF3 samples, confidences, DSSR output)",
+    )
     args = parser.parse_args()
 
-    destination = export_results(args.config)
+    destination = export_results(args.config, include_archives=args.include_archives)
     print(destination)
 
 

@@ -1,15 +1,38 @@
-"""DSSR subprocess contract and error propagation; the binary is replaced."""
+"""DSSR: parsing its JSON output and running the binary (replaced in tests)."""
 import json
 import subprocess
 from pathlib import Path
 from unittest.mock import Mock
 
 import pytest
+
 from hpo.pipeline import dssr
+from hpo.pipeline.dssr import parse_pairs
+
+FIXTURE = json.loads((Path(__file__).parent / 'fixtures' / 'dssr_example.json').read_text())
+SEQUENCE = 'AGUAGUAGUAGUAGA'
+
+
+# ---- Parsing ----------------------------------------------------------------
+
+def test_pairs_are_mapped_through_validated_nucleotide_ids():
+    assert parse_pairs(FIXTURE, SEQUENCE) == [(0, 14), (1, 13), (2, 12), (3, 11), (4, 10), (5, 9)]
+
+
+@pytest.mark.parametrize('data,sequence', [
+    (FIXTURE, 'A' * len(SEQUENCE)),                       # base mismatch
+    (dict(FIXTURE, nts=FIXTURE['nts'][:-1]), SEQUENCE),   # missing residue
+], ids=['mismatched-sequence', 'missing-residue'])
+def test_unexpected_residues_are_rejected(data, sequence):
+    with pytest.raises(ValueError):
+        parse_pairs(data, sequence)
+
+
+# ---- Running DSSR -----------------------------------------------------------
 
 
 @pytest.mark.parametrize('outcome', ['success', 'exit_failure', 'timeout', 'invalid_json', 'missing_output'])
-def test_dssr_execution_and_output_errors(tmp_path, monkeypatch, outcome):
+def test_dssr_runs_in_scratch_and_propagates_errors(tmp_path, monkeypatch, outcome):
     model = tmp_path / 'input model.cif'
     model.write_text('model')
     directory = tmp_path / 'rna dir'
@@ -65,7 +88,7 @@ def test_dssr_execution_and_output_errors(tmp_path, monkeypatch, outcome):
     assert not work_directories[0].exists()
 
 
-def test_dssr_json_is_kept_when_mapping_is_rejected(tmp_path, monkeypatch):
+def test_dssr_json_is_kept_when_its_pairs_are_rejected(tmp_path, monkeypatch):
     model = tmp_path / 'model.cif'
     model.write_text('model')
     def execute(args, **kwargs):

@@ -51,6 +51,7 @@ def write_failure_report(
     progress: dict[str, Any],
     error: BaseException,
     log_directory: Optional[Path] = None,
+    storage: Optional[dict[str, int]] = None,
 ) -> dict[str, Any]:
     """Write everything needed to debug a failed trial into one file.
 
@@ -78,6 +79,8 @@ def write_failure_report(
         slurm_job_id=os.environ.get('SLURM_JOB_ID'),
         slurm_array_task_id=os.environ.get('SLURM_ARRAY_TASK_ID'),
         time=datetime.now(timezone.utc).isoformat(),
+        # Files and bytes published so far, e.g. archives of completed RNAs.
+        storage=storage,
         logs={},
     )
 
@@ -135,43 +138,30 @@ def read_jsonl(path: Path) -> tuple[list[dict[str, Any]], int]:
     return records, skipped
 
 
+GROUP_KEYS = ('error_type', 'signal', 'stage', 'rna_id')
+
+
 def summarize(
     reports: dict[str, dict[str, Any]],
-    finished: Optional[int],
+    finished: int,
     files: Iterable[str] = (),
 ) -> dict[str, Any]:
     """Build the failure block for summaries; always present, also without failures.
 
     ``reports`` maps config IDs to failure reports (or to records with the same
-    keys). ``finished`` is the number of finished trials, if known.
+    keys). ``finished`` is the number of finished trials.
     """
-    groups = Counter(
-        (
-            report.get('error_type'),
-            report.get('signal'),
-            report.get('stage'),
-            report.get('rna_id'),
-        )
-        for report in reports.values()
-    )
+    groups = Counter(tuple(report.get(key) for key in GROUP_KEYS) for report in reports.values())
     count = len(reports)
     return dict(
         status='found' if count else 'none',
         count=count,
         finished=finished,
-        rate=round(count / finished, 4) if finished else (None if count else 0.0),
+        rate=round(count / finished, 4) if finished else 0.0,
         groups=[
-            dict(
-                error_type=error_type,
-                signal=signal_name,
-                stage=stage,
-                rna_id=rna_id,
-                count=group_count,
-                description=describe(
-                    dict(error_type=error_type, signal=signal_name, stage=stage, rna_id=rna_id)
-                ),
-            )
-            for (error_type, signal_name, stage, rna_id), group_count in groups.most_common()
+            dict(group, count=group_count, description=describe(group))
+            for values, group_count in groups.most_common()
+            for group in [dict(zip(GROUP_KEYS, values))]
         ],
         files=sorted(files),
     )
@@ -181,10 +171,8 @@ def summary_line(block: dict[str, Any]) -> str:
     """Human-readable form of a failure block."""
     if block['status'] == 'none':
         return 'No failed trials.'
-    rate = f" ({block['rate']:.1%})" if block['rate'] is not None else ''
-    of = f" of {block['finished']}" if block['finished'] is not None else ''
     groups = '; '.join(f"{g['count']}x {g['description']}" for g in block['groups'])
-    return f"{block['count']}{of} trials failed{rate}: {groups}"
+    return f"{block['count']} of {block['finished']} trials failed ({block['rate']:.1%}): {groups}"
 
 
 # ---- Failure limit (NePS runs) ---------------------------------------------

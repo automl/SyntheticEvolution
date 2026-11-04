@@ -28,7 +28,7 @@ subgraph CpuNode["Controller allocation"]
     end
 
     subgraph Step2["Step 2: AF3"]
-        AF3Task["hpo/pipeline/af3_task.py"]
+        AF3Task["hpo/pipeline/trial.py: run_af3"]
         AF3[/"AlphaFold 3"/]
     end
 

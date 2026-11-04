@@ -61,9 +61,3 @@ def trial_running() -> Iterator[None]:
         yield
     finally:
         _in_trial = False
-
-
-def reset() -> None:
-    """Forget a received signal (tests only)."""
-    global _requested, _in_trial
-    _requested, _in_trial = None, False

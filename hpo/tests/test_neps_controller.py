@@ -1,4 +1,8 @@
-"""Test our NePS adapter with a fake NePS module, not optimizer internals."""
+"""The NePS controller with a fake NePS module: handoff to the trial and run summary.
+
+The failure limit and the stop signals are tested in ``test_failures.py``
+and ``test_signals.py``.
+"""
 import sys
 from types import SimpleNamespace
 from unittest.mock import Mock
@@ -40,6 +44,8 @@ def neps_case(tmp_path, monkeypatch):
     return config, fake, calls, tmp_path, load
 
 
+# ---- Handoff to the trial ---------------------------------------------------
+
 def test_neps_space_and_each_evaluation_reach_trial(neps_case):
     config, fake, calls, root, load = neps_case
     def search(**kwargs):
@@ -78,6 +84,8 @@ def test_wrong_neps_version_stops_before_loading_run(neps_case, monkeypatch):
     load.assert_not_called()
     fake.run.assert_not_called()
 
+
+# ---- Run summary ------------------------------------------------------------
 
 def fake_neps_state(monkeypatch, states):
     """Fake NePS state; ``states`` maps trial IDs to a state or (state, error message)."""

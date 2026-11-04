@@ -1,229 +1,175 @@
-"""Unit tests for configuration loading and mode-specific validation."""
+"""Configuration loading and the validation each entry point needs."""
 import copy
 from pathlib import Path
-import tempfile
-import unittest
-from unittest.mock import patch
 
+import pytest
 import yaml
-import hpo.pipeline.run as run_pipeline
+
+import hpo.pipeline.run as run
 from hpo.pipeline.run import load_config
 
-class TestLoadConfig(unittest.TestCase):
-    def setUp(self):
-        self.temp_dir = tempfile.TemporaryDirectory()
-        self.addCleanup(self.temp_dir.cleanup)
-        self.config_path = Path(self.temp_dir.name) / 'config.yaml'
-
-        # Resolve test configs locally, independently of the repository layout.
-        resolver = patch.object(
-            run_pipeline, 'repo_path', side_effect=lambda value: Path(value)
-        )
-        resolver.start()
-        self.addCleanup(resolver.stop)
-
-        fixture_path = (
-            Path(__file__).parent
-            / 'fixtures'
-            / 'valid_standalone_config.yaml'
-        )
-        self.config = yaml.safe_load(fixture_path.read_text())
-
-    def load(self, config, mode='standalone', **kwargs):
-        self.config_path.write_text(yaml.safe_dump(config))
-        return load_config(
-            self.config_path, mode=mode, **kwargs
-        )
-
-    def neps_config(self):
-        config = copy.deepcopy(self.config)
-        config.update({
-            'evaluations': 2,
-            'optimizer': 'bayesian_optimization',
-            'search': {
-                'N': {'type': 'integer', 'lower': 2, 'upper': 128},
-            },
-            # Explicit, so loading returns the config unchanged.
-            'failures': {'min_trials': 5, 'max_rate': 0.2, 'window': 50},
-        })
-        return config
-
-    def test_storage_scratch_is_optional_and_must_be_absolute(self):
-        for mode, config in (('standalone', copy.deepcopy(self.config)), ('neps', self.neps_config())):
-            with self.subTest(mode=mode):
-                config['storage'] = {'scratch': '/dev/shm/custom'}
-                loaded = self.load(config, mode=mode)
-                self.assertEqual(run_pipeline.scratch_root(loaded), Path('/dev/shm/custom'))
-                for storage in ({'scratch': 'relative/path'}, {'scratch': 3}, {'typo': '/x'}, []):
-                    config['storage'] = storage
-                    with self.assertRaisesRegex(ValueError, 'storage'):
-                        self.load(config, mode=mode)
-
-    def test_scratch_defaults_to_shared_memory(self):
-        with patch.object(run_pipeline.Path, 'is_dir', return_value=True):
-            self.assertEqual(run_pipeline.scratch_root({}), Path('/dev/shm'))
-        with patch.object(run_pipeline.Path, 'is_dir', return_value=False):
-            self.assertEqual(run_pipeline.scratch_root({}), Path(run_pipeline.tempfile.gettempdir()))
-
-    def test_failure_limit_defaults_and_partial_settings(self):
-        config = self.neps_config()
-        del config['failures']
-        self.assertEqual(self.load(config, mode='neps')['failures'],
-                         {'min_trials': 5, 'max_rate': 0.2, 'window': 50})
-        config['failures'] = {'max_rate': 1, 'window': None}
-        self.assertEqual(self.load(config, mode='neps')['failures'],
-                         {'min_trials': 5, 'max_rate': 1.0, 'window': None})
-
-    def test_failure_limit_rejects_invalid_settings(self):
-        for failures in ([], {'max_rate': 0}, {'max_rate': 1.5}, {'max_rate': True},
-                         {'window': 0}, {'min_trials': 2.5}, {'typo': 1}):
-            with self.subTest(failures=failures):
-                config = self.neps_config()
-                config['failures'] = failures
-                with self.assertRaisesRegex(ValueError, 'failures'):
-                    self.load(config, mode='neps')
-
-    def test_standalone_does_not_require_neps_or_controller_settings(self):
-        loaded = self.load(self.config)
-        self.assertEqual(loaded, self.config)
-
-    def test_standalone_warns_about_search_and_preserves_fixed(self):
-        config = self.neps_config()
-        config['fixed'] = {'mutation_rate_paired': 0.2}
-
-        with self.assertLogs(run_pipeline.logger, level='WARNING') as logs:
-            loaded = self.load(config)
-
-        self.assertIn("ignoring 'search'", '\n'.join(logs.output))
-        self.assertEqual(loaded['fixed'], config['fixed'])
-
-    def test_neps_requires_nonempty_search(self):
-        for search in (None, {}):
-            with self.subTest(search=search):
-                config = self.neps_config()
-                if search is None:
-                    del config['search']
-                else:
-                    config['search'] = search
-
-                with self.assertRaisesRegex(ValueError, 'search'):
-                    self.load(config, mode='neps')
-
-    def test_direct_neps_execution_does_not_require_submission_settings(self):
-        config = self.neps_config()
-        self.assertEqual(self.load(config, mode='neps'), config)
-
-    def test_controller_submission_requires_its_settings(self):
-        config = self.neps_config()
-
-        with self.assertRaisesRegex(ValueError, 'neps_python'):
-            self.load(config, mode='neps', submitting_controller=True)
-
-        config['neps_python'] = '/example/neps/bin/python'
-        with self.assertRaisesRegex(ValueError, 'controller'):
-            self.load(config, mode='neps', submitting_controller=True)
-
-        config['controller'] = {
-            'count': 1,
-            'partition': 'gpu-single',
-            'cpus': 1,
-            'memory': '20G',
-            'gres': 'gpu:A100:1',
-            'time': '04:00:00',
-        }
-        self.assertEqual(
-            self.load(config, mode='neps', submitting_controller=True),
-            config,
-        )
-
-    def test_controller_submission_requires_gpu_request(self):
-        config = self.neps_config()
-        config['neps_python'] = '/example/neps/bin/python'
-        config['controller'] = {
-            'count': 1,
-            'partition': 'gpu-single',
-            'cpus': 1,
-            'memory': '20G',
-            'time': '04:00:00',
-        }
-
-        with self.assertRaisesRegex(ValueError, r'controller\.gres'):
-            self.load(config, mode='neps', submitting_controller=True)
-
-        for value in ('', None, 1):
-            with self.subTest(value=value):
-                invalid = copy.deepcopy(config)
-                invalid['controller']['gres'] = value
-                with self.assertRaisesRegex(ValueError, r'controller\.gres'):
-                    self.load(invalid, mode='neps', submitting_controller=True)
-
-    def test_export_only_requires_run_location(self):
-        config = {
-            'run_name': 'test-run',
-            'workspace_name': 'alphafold',
-        }
-        self.assertEqual(self.load(config, mode='export'), config)
-
-    def test_required_value_cannot_be_missing_empty_or_null(self):
-        for case in ('missing', '', None):
-            with self.subTest(value=case):
-                config = copy.deepcopy(self.config)
-                if case == 'missing':
-                    del config['dssr']
-                else:
-                    config['dssr'] = case
-
-                with self.assertRaisesRegex(ValueError, 'dssr'):
-                    self.load(config)
-
-    def test_rejects_invalid_run_names(self):
-        for name in ('', '../other-run', 'run/name', 'run name', None):
-            with self.subTest(name=name):
-                config = {**self.config, 'run_name': name}
-                with self.assertRaisesRegex(ValueError, 'run_name'):
-                    self.load(config)
-
-    def test_rejects_invalid_count(self):
-        for value in (0, -1, 1.5, True, '2'):
-            with self.subTest(value=value):
-                config = self.neps_config()
-                config['controller']['count'] = value
-                config['neps_python'] = '/example/neps/bin/python'
-                with self.assertRaisesRegex(ValueError, r'controller\.count'):
-                    self.load(config, mode='neps', submitting_controller=True)
-
-    def test_rejects_overlapping_fixed_and_search_parameters(self):
-        config = self.neps_config()
-        config['fixed'] = {'N': 20}
-
-        with self.assertRaisesRegex(ValueError, 'both fixed and search'):
-            self.load(config, mode='neps')
-
-    def test_rejects_yaml_that_is_not_a_mapping(self):
-        for value in (None, ['not', 'a', 'mapping']):
-            with self.subTest(value=value):
-                with self.assertRaisesRegex(ValueError, 'YAML mapping'):
-                    self.load(value)
-
-    def test_fixed_is_optional(self):
-        for mode in ('standalone', 'neps'):
-            with self.subTest(mode=mode):
-                config = (
-                    self.neps_config()
-                    if mode == 'neps'
-                    else copy.deepcopy(self.config)
-                )
-                config.pop('fixed', None)
-
-                loaded = self.load(config, mode=mode)
-
-                self.assertEqual(loaded.get('fixed', {}), {})
-                self.assertEqual(
-                    {key: value for key, value in loaded.items()
-                     if key != 'fixed'},
-                    config,
-                )
+FIXTURE = Path(__file__).parent / 'fixtures' / 'valid_standalone_config.yaml'
+CONTROLLER = dict(count=1, partition='gpu-single', cpus=1, memory='20G', gres='gpu:A100:1', time='04:00:00')
 
 
-if __name__ == '__main__':
-    unittest.main()
+@pytest.fixture
+def load(tmp_path, monkeypatch):
+    """Write a config as YAML and load it like an entry point does."""
+    # Resolve test configs locally, independently of the repository layout.
+    monkeypatch.setattr(run, 'repo_path', lambda value: Path(value))
+    path = tmp_path / 'config.yaml'
+
+    def load(config, mode='standalone', **kwargs):
+        path.write_text(yaml.safe_dump(config))
+        return load_config(path, mode=mode, **kwargs)
+    return load
+
+
+@pytest.fixture
+def standalone():
+    return yaml.safe_load(FIXTURE.read_text())
+
+
+@pytest.fixture
+def neps(standalone):
+    return dict(
+        standalone,
+        evaluations=2,
+        optimizer='bayesian_optimization',
+        search={'N': {'type': 'integer', 'lower': 2, 'upper': 128}},
+        # Explicit, so loading returns the config unchanged.
+        failures={'min_trials': 5, 'max_rate': 0.2, 'window': 50},
+    )
+
+
+# ---- Shared settings --------------------------------------------------------
+
+@pytest.mark.parametrize('value', [None, ['not', 'a', 'mapping']])
+def test_config_must_be_a_mapping(load, value):
+    with pytest.raises(ValueError, match='YAML mapping'):
+        load(value)
+
+
+@pytest.mark.parametrize('value', ['missing', '', None])
+def test_required_value_cannot_be_missing_empty_or_null(load, standalone, value):
+    if value == 'missing':
+        del standalone['dssr']
+    else:
+        standalone['dssr'] = value
+    with pytest.raises(ValueError, match='dssr'):
+        load(standalone)
+
+
+@pytest.mark.parametrize('name', ['', '../other-run', 'run/name', 'run name', None])
+def test_run_name_must_be_a_safe_folder_name(load, standalone, name):
+    with pytest.raises(ValueError, match='run_name'):
+        load(dict(standalone, run_name=name))
+
+
+@pytest.mark.parametrize('mode', ['standalone', 'neps'])
+def test_fixed_is_optional(load, standalone, neps, mode):
+    config = neps if mode == 'neps' else standalone
+    config.pop('fixed', None)
+    assert load(config, mode=mode) == config
+
+
+def test_scratch_is_optional_and_must_be_absolute(load, standalone):
+    loaded = load(dict(standalone, storage={'scratch': '/dev/shm/custom'}))
+    assert run.scratch_root(loaded) == Path('/dev/shm/custom')
+    for storage in ({'scratch': 'relative/path'}, {'scratch': 3}, {'typo': '/x'}, []):
+        with pytest.raises(ValueError, match='storage'):
+            load(dict(standalone, storage=storage))
+
+
+@pytest.mark.parametrize('shm_exists', [True, False])
+def test_scratch_defaults_to_shared_memory(monkeypatch, shm_exists):
+    monkeypatch.setattr(run.Path, 'is_dir', lambda self: shm_exists)
+    expected = Path('/dev/shm') if shm_exists else Path(run.tempfile.gettempdir())
+    assert run.scratch_root({}) == expected
+
+
+# ---- Standalone -------------------------------------------------------------
+
+def test_standalone_needs_no_neps_settings(load, standalone):
+    assert load(standalone) == standalone
+
+
+def test_standalone_warns_about_search_and_keeps_fixed(load, neps, caplog):
+    neps['fixed'] = {'mutation_rate_paired': 0.2}
+    loaded = load(neps)
+    assert "ignoring 'search'" in caplog.text
+    assert loaded['fixed'] == neps['fixed']
+
+
+# ---- NePS -------------------------------------------------------------------
+
+def test_neps_needs_no_submission_settings(load, neps):
+    assert load(neps, mode='neps') == neps
+
+
+@pytest.mark.parametrize('search', ['missing', {}])
+def test_neps_requires_a_nonempty_search(load, neps, search):
+    if search == 'missing':
+        del neps['search']
+    else:
+        neps['search'] = search
+    with pytest.raises(ValueError, match='search'):
+        load(neps, mode='neps')
+
+
+def test_parameter_cannot_be_both_fixed_and_searched(load, neps):
+    neps['fixed'] = {'N': 20}
+    with pytest.raises(ValueError, match='both fixed and search'):
+        load(neps, mode='neps')
+
+
+def test_failure_limit_defaults_and_partial_settings(load, neps):
+    del neps['failures']
+    assert load(neps, mode='neps')['failures'] == {'min_trials': 5, 'max_rate': 0.2, 'window': 50}
+    neps['failures'] = {'max_rate': 1, 'window': None}
+    assert load(neps, mode='neps')['failures'] == {'min_trials': 5, 'max_rate': 1.0, 'window': None}
+
+
+@pytest.mark.parametrize('failures', [
+    [], {'max_rate': 0}, {'max_rate': 1.5}, {'max_rate': True},
+    {'window': 0}, {'min_trials': 2.5}, {'typo': 1},
+])
+def test_invalid_failure_limit_is_rejected(load, neps, failures):
+    neps['failures'] = failures
+    with pytest.raises(ValueError, match='failures'):
+        load(neps, mode='neps')
+
+
+# ---- Controller submission --------------------------------------------------
+
+def test_submission_requires_the_controller_settings(load, neps):
+    neps.pop('controller')
+    with pytest.raises(ValueError, match='controller'):
+        load(neps, mode='neps', submitting_controller=True)
+    neps['controller'] = CONTROLLER
+    with pytest.raises(ValueError, match='neps_python'):
+        load(neps, mode='neps', submitting_controller=True)
+    neps['neps_python'] = '/example/neps/bin/python'
+    assert load(neps, mode='neps', submitting_controller=True) == neps
+
+
+@pytest.mark.parametrize('key,value', [
+    ('gres', 'missing'), ('gres', ''), ('gres', None), ('gres', 1),
+    ('count', 0), ('count', -1), ('count', 1.5), ('count', True), ('count', '2'),
+])
+def test_invalid_controller_resources_are_rejected(load, neps, key, value):
+    neps['neps_python'] = '/example/neps/bin/python'
+    neps['controller'] = copy.deepcopy(CONTROLLER)
+    if value == 'missing':
+        del neps['controller'][key]
+    else:
+        neps['controller'][key] = value
+    with pytest.raises(ValueError, match=rf'controller\.{key}'):
+        load(neps, mode='neps', submitting_controller=True)
+
+
+# ---- Export -----------------------------------------------------------------
+
+def test_export_only_requires_the_run_location(load):
+    config = {'run_name': 'test-run', 'workspace_name': 'alphafold'}
+    assert load(config, mode='export') == config

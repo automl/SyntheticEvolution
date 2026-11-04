@@ -7,7 +7,7 @@ import subprocess
 import math
 import re
 import yaml
-from typing import Union, Any
+from typing import Any
 from pathlib import Path
 import tempfile
 
@@ -134,7 +134,6 @@ def load_config(path, *, mode, submitting_controller=False):
         if not isinstance(config.get('ignore_errors'), bool):
             raise ValueError('ignore_errors must be a YAML boolean: true or false')
         config['failures'] = failure_limit_settings(config.get('failures'))
-        require_positive
 
     # These settings are used to launch the controller through Slurm.
     if submitting_controller:
@@ -296,6 +295,17 @@ def validate_probability(value, name):
     # Keep submission validation independent of the SHS environment (NumPy).
     if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or not 0 <= value <= 1:
         raise ValueError(f'{name} must be a finite number between 0 and 1')
+
+
+def shs_generation_request(row, index, parameters, shs_seed, af3_seed):
+    """The generator's input for one RNA; the exporter rebuilds it the same way."""
+    return dict(
+        **row,   # contains (id=, sequence=, pairs=)
+        task_name=f'rna_{index:05d}',
+        parameters=parameters,
+        shs_seed=shs_seed,
+        af3_seed=af3_seed,
+    )
 
 
 def create_dataset(path) -> Dataset:

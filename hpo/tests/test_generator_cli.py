@@ -1,9 +1,9 @@
-"""Contract tests for the NEW shs_generator.py request-file interface.
+"""SHS generator as the pipeline runs it: in its own process and environment.
 
-Place in SyntheticEvolution/hpo/tests/. Run with pytest; subprocesses use
-SHS_PYTHON when set, otherwise the Python running pytest. Optional SHS_GENERATOR
-can point at a checkout elsewhere. No Slurm, AF3 inference or DSSR is called.
-Includes request/legacy CLI checks, pure API checks, and seeded regression fixtures.
+Covers the request-file CLI the trial uses, the generator's Python API,
+seeded regression fixtures and the legacy CLI. Subprocesses use SHS_PYTHON
+when set, otherwise the Python running pytest; SHS_GENERATOR can point at
+another checkout. In-process unit tests are in ``test_generator.py``.
 """
 import copy
 import json
@@ -98,6 +98,8 @@ def msa_sequences(data):
     return records
 
 
+# ---- Request-file CLI (used by the trial) -----------------------------------
+
 def test_request_cli_writes_rna_only_af3_input(invoke, request_data):
     data = read_success(*invoke(request_data))
     assert data['name'] == request_data['task_name']
@@ -173,8 +175,8 @@ def test_invalid_request_fails_without_output(invoke, request_data, problem):
     assert not output.exists(), 'Failure left an output that could look successful'
     assert (result.stdout + result.stderr).strip(), 'Failure needs a diagnostic'
 
-# Tests below cover the pure Python API and coexistence with the legacy CLI.
-# All generator code still runs in SHS_PYTHON, not in pytest's environment.
+# ---- Python API and seeded regression ---------------------------------------
+# The generator code still runs in SHS_PYTHON, not in pytest's environment.
 
 @pytest.fixture
 def run_api(generator_cli, tmp_path):
@@ -278,6 +280,8 @@ for kwargs in ({'N':0}, {'N':True}, {'wobble_prob':float('nan')}, {'pair_mutatio
 ''')
     assert result.returncode == 0, result.stdout + result.stderr
 
+
+# ---- Legacy CLI -------------------------------------------------------------
 
 @pytest.mark.parametrize('input_args', [
     ['--structure', '((.....(....)))'],

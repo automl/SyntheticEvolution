@@ -33,6 +33,8 @@ def manifest(destination):
     return json.loads((destination / 'manifest.json').read_text())
 
 
+# ---- Failures ---------------------------------------------------------------
+
 def test_failures_block_is_written_without_failures(run, capsys):
     config, _ = run
     destination = export.export_results(config)
@@ -91,3 +93,56 @@ def test_failures_are_copied_and_reported(run, capsys):
     assert 'Skipped 1 non-JSON line(s)' in err
     assert 'WARNING: 2 of 3 trials failed (66.7%)' in err
     assert 'See results/errors/' in err
+
+
+# ---- SHS files from the per-RNA archives -------------------------------------
+
+@pytest.fixture
+def archived_run(run):
+    """The same run in the archive layout: no rna_<index>/ folders."""
+    from hpo.pipeline import archive
+    config, neps = run
+    root = neps.parent
+    rows = [dict(id='ex_1', sequence='ACGU', pairs=[[0, 3]]),
+            dict(id='ex_2', sequence='AAAA', pairs=[])]
+    (root / 'run_metadata.json').write_text(json.dumps(dict(
+        fingerprint='f', config=dict(shs_seed=11, af3_seed=2), dataset=rows)))
+    artifacts = neps / 'configs' / 'config_1' / 'artifacts'
+    import shutil
+    shutil.rmtree(artifacts / 'rna_00000')
+    (artifacts / 'trial_result.json').write_text(json.dumps(dict(loss=0.5, parameters={'N': 20})))
+    for index in range(2):
+        content = root.parent / f'content_{index}'
+        content.mkdir()
+        (content / f'rna_{index:05d}_model.cif').write_text('model')
+        (content / f'rna_{index:05d}_data.json').write_text(json.dumps({'msa': index}))
+        archive.publish(content, artifacts / f'rna_{index:05d}.tar.gz')
+    return config, neps, rows
+
+
+def test_export_derives_shs_files_from_archives(archived_run):
+    config, _, rows = archived_run
+    destination = export.export_results(config)
+    shs = destination / 'configs' / 'config_1' / 'shs'
+    for index in range(2):
+        task = shs / f'rna_{index:05d}'
+        assert json.loads((task / 'af3_input.json').read_text()) == {'msa': index}
+        # Rebuilt exactly as the trial built it for the generator.
+        assert json.loads((task / 'shs_generation_request.json').read_text()) == dict(
+            rows[index], task_name=f'rna_{index:05d}', parameters={'N': 20}, shs_seed=11, af3_seed=2)
+    assert not (destination / 'configs' / 'config_1' / 'archives').exists()
+    assert 'configs/config_1/shs/rna_00001/af3_input.json' in manifest(destination)['files']
+
+
+def test_export_can_include_archives(archived_run):
+    config, neps, _ = archived_run
+    destination = export.export_results(config, include_archives=True)
+    copied = destination / 'configs' / 'config_1' / 'archives'
+    assert sorted(path.name for path in copied.iterdir()) == ['rna_00000.tar.gz', 'rna_00001.tar.gz']
+
+
+def test_export_rejects_missing_archives(archived_run):
+    config, neps, _ = archived_run
+    (neps / 'configs' / 'config_1' / 'artifacts' / 'rna_00001.tar.gz').unlink()
+    with pytest.raises(FileNotFoundError, match='Expected 2 RNA archives'):
+        export.export_results(config)
