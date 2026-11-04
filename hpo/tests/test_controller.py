@@ -30,6 +30,7 @@ def trial_case(tmp_path, monkeypatch):
         "af3_timeout_seconds": 60,
         "dssr": "test-dssr",
         "dssr_timeout_seconds": 10,
+        "storage": {"scratch": str(tmp_path / "scratch")},
         "module": "bio/alphafold/3.0.1",
         "controller": {
             "partition": "gpu-single",
@@ -116,7 +117,7 @@ def trial_case(tmp_path, monkeypatch):
     # RNA 1 is perfect; RNA 2 has one spurious pair.
     # The aggregate mean loss must therefore be 0.5.
     dssr = Mock(
-        side_effect=lambda model, directory, sequence, exe, timeout: [(0, 3)]
+        side_effect=lambda model, directory, sequence, exe, timeout, scratch: [(0, 3)]
     )
 
     monkeypatch.setattr(trial.subprocess, "run", generation)
@@ -151,6 +152,10 @@ def test_fresh_trial_wires_two_rnas_and_averages_scores(trial_case):
     tasks = af3.call_args.args[0]
     assert len(tasks) == 2
     for index, task in enumerate(tasks):
+        log = Path(task.pop('log'))
+        # AF3 logs go to the trial's scratch directory, not to the workspace.
+        assert log.name == 'af3.log' and log.parent.name == f'rna_{index:05d}'
+        assert log.parents[2] == Path(config['storage']['scratch'])
         assert task == dict(input=str(directory / f'rna_{index:05d}' / 'af3_input.json'),
                             output=str(directory / f'rna_{index:05d}' / 'af3'),
                             model_dir=config['model_dir'])
@@ -165,6 +170,9 @@ def test_fresh_trial_wires_two_rnas_and_averages_scores(trial_case):
     assert dssr.call_count == 2
     for index, call in enumerate(dssr.call_args_list):
         assert call.args[1:] == (directory / f'rna_{index:05d}', rows[index]['sequence'], 'test-dssr', 10)
+        scratch = call.kwargs['scratch']
+        assert scratch.name == f'rna_{index:05d}'
+        assert scratch.parents[1] == Path(config['storage']['scratch'])
     result = json.loads((directory / 'trial_result.json').read_text())
     # Model paths are stored relative to the trial directory.
     assert [s['model'] for s in result['scores']] == [
@@ -255,10 +263,10 @@ def read_failure_report(directory):
 
 def test_dssr_crash_writes_failure_report(trial_case):
     (config, rows, directory, requests, generation, af3, dssr) = trial_case
-    def crash_on_second(model, task_dir, *args):
+    def crash_on_second(model, task_dir, *args, scratch):
         if task_dir.name == 'rna_00000':
             return [(0, 3)]
-        (task_dir / 'dssr.log').write_text('dssr output\n')
+        (scratch / 'dssr.log').write_text('dssr output\n')
         raise subprocess.CalledProcessError(-11, ['/opt/x3dna-dssr', f'-i={model}', '--json'])
     dssr.side_effect = crash_on_second
     with pytest.raises(subprocess.CalledProcessError):
@@ -290,7 +298,7 @@ def test_af3_failure_names_the_rna(trial_case):
     (config, rows, directory, requests, generation, af3, dssr) = trial_case
     def fail_second(tasks, cfg, progress):
         progress.update(stage='af3', rna_index=1)
-        (directory / 'rna_00001' / 'af3.log').write_text('x' * 70000 + 'CUDA error')
+        Path(tasks[1]['log']).write_text('x' * 70000 + 'CUDA error')
         raise subprocess.CalledProcessError(1, ['af3'])
     af3.side_effect = fail_second
     with pytest.raises(subprocess.CalledProcessError):
@@ -318,6 +326,118 @@ def test_successful_retry_removes_old_failure_report(trial_case):
     assert (directory / 'failure_report.json').exists()
     assert run_pipeline(trial_case) == pytest.approx(0.5)
     assert not (directory / 'failure_report.json').exists()
+
+
+def write_tool_logs(trial_case):
+    """Let the mocked generator and DSSR write log output, as the real tools do."""
+    generation, dssr = trial_case[4], trial_case[6]
+    generate = generation.side_effect
+    def generate_and_log(args, **kwargs):
+        kwargs['stdout'].write('generator says hi\n')
+        return generate(args, **kwargs)
+    generation.side_effect = generate_and_log
+    score = dssr.side_effect
+    def dssr_and_log(model, directory, sequence, exe, timeout, scratch):
+        (scratch / 'dssr.log').write_text('dssr says hi\n')
+        return score(model, directory, sequence, exe, timeout, scratch)
+    dssr.side_effect = dssr_and_log
+
+
+def scratch_root(trial_case):
+    return Path(trial_case[0]['storage']['scratch'])
+
+
+def test_neps_trial_keeps_no_logs_and_cleans_scratch(trial_case):
+    write_tool_logs(trial_case)
+    assert run_pipeline(trial_case) == pytest.approx(0.5)
+    directory = trial_case[2]
+    assert not list(directory.rglob('*.log'))
+    assert not (directory / 'logs').exists()
+    # The trial's scratch directory is removed; the root stays.
+    assert list(scratch_root(trial_case).iterdir()) == []
+
+
+@pytest.mark.parametrize('failure', [RuntimeError('DSSR failed'), KeyboardInterrupt()])
+def test_failed_trial_embeds_scratch_logs_and_cleans_scratch(trial_case, failure):
+    write_tool_logs(trial_case)
+    dssr = trial_case[6]
+    score = dssr.side_effect
+    def fail_on_second(model, directory, sequence, exe, timeout, scratch):
+        if directory.name == 'rna_00001':
+            (scratch / 'dssr.log').write_text('segfault soon\n')
+            raise failure
+        return score(model, directory, sequence, exe, timeout, scratch)
+    dssr.side_effect = fail_on_second
+    with pytest.raises(type(failure)):
+        run_pipeline(trial_case)
+    report = read_failure_report(trial_case[2])
+    assert report['rna_index'] == 1
+    assert report['logs'] == {'shs_generation.log': 'generator says hi\n', 'dssr.log': 'segfault soon\n'}
+    assert not list(trial_case[2].rglob('*.log'))
+    assert list(scratch_root(trial_case).iterdir()) == []
+
+
+@pytest.mark.parametrize('fails', [False, True], ids=['success', 'failure'])
+def test_standalone_trial_keeps_logs(trial_case, fails):
+    config, rows, directory, *_ = trial_case
+    write_tool_logs(trial_case)
+    if fails:
+        trial_case[5].side_effect = RuntimeError('AF3 failed')
+    try:
+        trial.run_pipeline(config, rows, directory, 'identity', {}, keep_logs_in_trial=True)
+    except RuntimeError:
+        assert fails
+    logs = sorted(path.relative_to(directory).as_posix() for path in (directory / 'logs').rglob('*.log'))
+    expected = ['logs/rna_00000/shs_generation.log', 'logs/rna_00001/shs_generation.log']
+    if not fails:
+        expected = ['logs/rna_00000/dssr.log', 'logs/rna_00000/shs_generation.log',
+                    'logs/rna_00001/dssr.log', 'logs/rna_00001/shs_generation.log']
+    assert logs == expected
+    assert (directory / 'logs/rna_00000/shs_generation.log').read_text() == 'generator says hi\n'
+    assert list(scratch_root(trial_case).iterdir()) == []
+
+
+def test_failure_report_marks_scratch_paths(trial_case):
+    dssr = trial_case[6]
+    def crash(model, directory, sequence, exe, timeout, scratch):
+        raise subprocess.CalledProcessError(-11, [exe, f'-o={scratch}/dssr-x/dssr.json', f'-i={model}'])
+    dssr.side_effect = crash
+    with pytest.raises(subprocess.CalledProcessError):
+        run_pipeline(trial_case)
+    command = read_failure_report(trial_case[2])['command']
+    assert command == ['test-dssr', '-o=<scratch>/rna_00000/dssr-x/dssr.json',
+                       '-i=rna_00000/af3/prediction/rna_model.cif']
+
+
+def test_trial_scratch_is_private_and_removed(tmp_path, monkeypatch):
+    monkeypatch.setenv('SLURM_JOB_ID', '4242')
+    with trial.trial_scratch(tmp_path / 'root') as first, trial.trial_scratch(tmp_path / 'root') as second:
+        assert first != second
+        assert first.parent == tmp_path / 'root'
+        assert first.name.startswith('shs_hpo_4242_')
+        (first / 'rna_00000').mkdir()
+        (first / 'rna_00000' / 'af3.log').write_text('log')
+    assert list((tmp_path / 'root').iterdir()) == []
+
+
+def test_af3_log_goes_to_the_task_log_path(tmp_path, monkeypatch):
+    python = tmp_path / 'af3-python'
+    python.write_text('')
+    monkeypatch.setenv('AF3_PYTHON', str(python))
+    output = tmp_path / 'trial' / 'rna_00000' / 'af3'
+    log = tmp_path / 'scratch' / 'rna_00000' / 'af3.log'
+    def predict(args, **kwargs):
+        assert kwargs['stdout'].name == str(log)
+        kwargs['stdout'].write('af3 output\n')
+        model = output / 'rna_00000' / 'rna_00000_model.cif'
+        model.parent.mkdir(parents=True)
+        model.write_text('model')
+        run.write_json(output / 'af3_success.json', {'model': 'rna_00000/rna_00000_model.cif'})
+    monkeypatch.setattr(trial.subprocess, 'run', predict)
+    task = dict(input=str(tmp_path / 'in.json'), output=str(output), model_dir=str(tmp_path), log=str(log))
+    trial.run_af3_tasks([task], {'af3_timeout_seconds': 10})
+    assert log.read_text() == 'af3 output\n'
+    assert not (output.parent / 'af3.log').exists()
 
 
 def test_changed_identity_rejects_cached_result(trial_case):
@@ -391,6 +511,7 @@ class DSSRTests(unittest.TestCase):
                 "af3_timeout_seconds": 60,
                 "dssr": "fake",
                 "dssr_timeout_seconds": 10,
+                "storage": {"scratch": str(directory / "scratch")},
             }
 
             rows = [
@@ -469,8 +590,10 @@ class DSSRTests(unittest.TestCase):
 
             # run_pipeline passes the task list in memory, without a manifest.
             self.assertFalse((directory / "af3_tasks.json").exists())
+            tasks = af3.call_args.args[0]
+            self.assertEqual(Path(tasks[0].pop("log")).name, "af3.log")
             self.assertEqual(
-                af3.call_args.args[0],
+                tasks,
                 [
                     {
                         "input": str(af3_input.resolve()),

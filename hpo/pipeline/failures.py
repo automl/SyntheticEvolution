@@ -19,10 +19,19 @@ LOG_NAMES = ('shs_generation.log', 'af3.log', 'dssr.log')
 LOG_TAIL_BYTES = 64 * 1024
 
 
-def _relative(value: str, trial_directory: Path) -> str:
-    """Strip the trial directory from paths; absolute paths belong in run_metadata.json."""
-    prefix = str(trial_directory) + os.sep
-    return value.replace(prefix, '')
+def _relative(value: str, trial_directory: Path, scratch: Optional[Path] = None) -> str:
+    """Shorten trial paths; absolute paths belong in run_metadata.json.
+
+    Paths in the trial directory become relative, paths in the scratch
+    directory (deleted after the trial) start with ``<scratch>/``.
+    """
+    replacements = {str(trial_directory) + os.sep: ''}
+    if scratch is not None and scratch != trial_directory:
+        replacements[str(scratch) + os.sep] = '<scratch>' + os.sep
+    # Longest prefix first, in case one directory lies inside the other.
+    for prefix in sorted(replacements, key=len, reverse=True):
+        value = value.replace(prefix, replacements[prefix])
+    return value
 
 
 def _log_tail(path: Path) -> str:
@@ -41,15 +50,22 @@ def write_failure_report(
     rows: list[dict[str, Any]],
     progress: dict[str, Any],
     error: BaseException,
+    log_directory: Optional[Path] = None,
 ) -> dict[str, Any]:
-    """Write everything needed to debug a failed trial into one file."""
+    """Write everything needed to debug a failed trial into one file.
+
+    Logs are read from ``log_directory/rna_<index>/`` (the trial's scratch
+    directory; default: the trial directory) and embedded in the report.
+    """
+    if log_directory is None:
+        log_directory = trial_directory
     rna_index = progress.get('rna_index')
     report: dict[str, Any] = dict(
         stage=progress.get('stage'),
         rna_index=rna_index,
         rna_id=rows[rna_index]['id'] if rna_index is not None else None,
         error_type=type(error).__name__,
-        message=_relative(str(error), trial_directory),
+        message=_relative(str(error), trial_directory, log_directory),
         traceback=''.join(
             traceback.format_exception(type(error), error, error.__traceback__)
         ),
@@ -69,9 +85,9 @@ def write_failure_report(
     command = getattr(error, 'cmd', None)
     if command is not None:
         if isinstance(command, (list, tuple)):
-            report['command'] = [_relative(str(arg), trial_directory) for arg in command]
+            report['command'] = [_relative(str(arg), trial_directory, log_directory) for arg in command]
         else:
-            report['command'] = _relative(str(command), trial_directory)
+            report['command'] = _relative(str(command), trial_directory, log_directory)
     if isinstance(error, subprocess.CalledProcessError):
         report['returncode'] = error.returncode
         if error.returncode < 0:
@@ -81,7 +97,7 @@ def write_failure_report(
                 pass
 
     if rna_index is not None:
-        task_dir = trial_directory / f'rna_{rna_index:05d}'
+        task_dir = log_directory / f'rna_{rna_index:05d}'
         for name in LOG_NAMES:
             if (task_dir / name).is_file():
                 report['logs'][name] = _log_tail(task_dir / name)

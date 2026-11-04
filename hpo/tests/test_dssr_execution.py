@@ -13,7 +13,8 @@ def test_dssr_execution_and_output_errors(tmp_path, monkeypatch, outcome):
     model = tmp_path / 'input model.cif'
     model.write_text('model')
     directory = tmp_path / 'rna dir'
-    log_path = directory / 'dssr.log'
+    scratch = tmp_path / 'scratch' / 'rna_00000'
+    log_path = scratch / 'dssr.log'
     document = {'test_document': True}
     parse = Mock(return_value=[(0, 3)])
     monkeypatch.setattr(dssr, 'parse_pairs', parse)
@@ -23,11 +24,11 @@ def test_dssr_execution_and_output_errors(tmp_path, monkeypatch, outcome):
         assert '-i=' + str(model.resolve()) in args
         assert '--json' in args
         output = Path(next(arg[3:] for arg in args if arg.startswith('-o=')))
-        # DSSR runs and writes its JSON in a private temporary directory.
+        # DSSR runs and writes its JSON in a private directory inside scratch.
         work_directory = Path(kwargs['cwd'])
         work_directories.append(work_directory)
         assert output.parent == work_directory
-        assert tmp_path not in work_directory.parents
+        assert work_directory.parent == scratch.resolve()
         assert kwargs['check'] is True
         assert kwargs['timeout'] == 7
         assert kwargs['stderr'] == subprocess.STDOUT
@@ -45,7 +46,7 @@ def test_dssr_execution_and_output_errors(tmp_path, monkeypatch, outcome):
     command = Mock(side_effect=execute)
     monkeypatch.setattr(dssr.subprocess, 'run', command)
     if outcome == 'success':
-        assert dssr.run_dssr(model, directory, 'ACGU', '/test/x3dna-dssr', 7) == [(0, 3)]
+        assert dssr.run_dssr(model, directory, 'ACGU', '/test/x3dna-dssr', 7, scratch=scratch) == [(0, 3)]
         parse.assert_called_once_with(document, 'ACGU')
         assert json.loads((directory / 'dssr.json').read_text()) == document
     else:
@@ -53,13 +54,14 @@ def test_dssr_execution_and_output_errors(tmp_path, monkeypatch, outcome):
                     'timeout': subprocess.TimeoutExpired, 'invalid_json': ValueError,
                     'missing_output': FileNotFoundError}[outcome]
         with pytest.raises(expected):
-            dssr.run_dssr(model, directory, 'ACGU', '/test/x3dna-dssr', 7)
+            dssr.run_dssr(model, directory, 'ACGU', '/test/x3dna-dssr', 7, scratch=scratch)
         parse.assert_not_called()
     command.assert_called_once()
-    # The log is always kept and the JSON only when DSSR produced valid JSON;
-    # side files are removed in every case.
-    kept = ['dssr.json', 'dssr.log'] if outcome == 'success' else ['dssr.log']
+    # The workspace gets only the JSON, and only when DSSR produced valid JSON.
+    # The log stays in scratch; side files are removed in every case.
+    kept = ['dssr.json'] if outcome == 'success' else []
     assert sorted(path.name for path in directory.iterdir()) == kept
+    assert sorted(path.name for path in scratch.iterdir()) == ['dssr.log']
     assert not work_directories[0].exists()
 
 

@@ -35,7 +35,10 @@ def main():
     signals.install()
     try:
         with signals.trial_running():
-            loss = run_pipeline(config, dataset, ws_root / 'standalone_trial', fingerprint)
+            loss = run_pipeline(
+                config, dataset, ws_root / 'standalone_trial', fingerprint,
+                keep_logs_in_trial=True,
+            )
     except signals.ControllerStop as stop:
         # run_pipeline has written the failure report; AF3 outputs that are
         # complete are reused when the trial is submitted again.

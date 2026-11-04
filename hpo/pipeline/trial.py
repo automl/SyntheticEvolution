@@ -6,11 +6,14 @@ from pathlib import Path
 from typing import Any, Optional, Union
 import os
 import shutil
+import tempfile
+from contextlib import contextmanager
+from typing import Iterator
 
 import logging
 logger = logging.getLogger(__name__)
 
-from hpo.pipeline.run import Dataset, PIPELINE_DIR, GENERATOR_DIR, normalize_pairs, write_json
+from hpo.pipeline.run import Dataset, PIPELINE_DIR, GENERATOR_DIR, normalize_pairs, scratch_root, write_json
 import hpo.pipeline.dssr as dssr
 import hpo.pipeline.failures as failures
 import hpo.pipeline.scoring as scoring
@@ -47,6 +50,30 @@ def completed_af3_model(output_directory: Union[str, Path]) -> Optional[Path]:
         return None
 
     return model
+
+
+@contextmanager
+def trial_scratch(root: Path) -> Iterator[Path]:
+    """Private scratch directory for one trial, removed when the trial ends.
+
+    Logs and temporary tool files live here, so they never reach the shared
+    workspace. The Slurm job ID in the name identifies leftovers of killed jobs.
+    """
+    root.mkdir(parents=True, exist_ok=True)
+    job = os.environ.get('SLURM_JOB_ID', 'local')
+    path = Path(tempfile.mkdtemp(prefix=f'shs_hpo_{job}_', dir=root))
+    try:
+        yield path
+    finally:
+        shutil.rmtree(path, ignore_errors=True)
+
+
+def keep_logs(scratch: Path, destination: Path) -> None:
+    """Copy all logs from scratch (standalone trials keep their logs)."""
+    for log in sorted(scratch.glob('rna_*/*.log')):
+        target = destination / log.parent.name / log.name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(log, target)
 
 
 def run_af3_tasks(
@@ -96,7 +123,8 @@ def run_af3_tasks(
             shutil.rmtree(output_directory)
 
         output_directory.parent.mkdir(parents=True, exist_ok=True)
-        log_path = output_directory.parent / "af3.log"
+        log_path = Path(task["log"]) if "log" in task else output_directory.parent / "af3.log"
+        log_path.parent.mkdir(parents=True, exist_ok=True)
 
         logger.info("Running AF3 prediction %d/%d for %s", index, len(tasks), input_path)
 
@@ -120,7 +148,7 @@ def run_af3_tasks(
 
         model = completed_af3_model(output_directory)
         if model is None:
-            raise RuntimeError(f"AF3 exited successfully but did not publish a valid success marker for {input_path}. Inspect {log_path}.")
+            raise RuntimeError(f"AF3 exited successfully but did not publish a valid success marker for {input_path}. Inspect af3.log.")
         completed += 1
         
     logger.info(
@@ -136,9 +164,15 @@ def run_pipeline(
     rows: Dataset,
     trial_directory: Union[str, Path],
     identity: str,
-    parameters: Optional[dict[str, Any]] = None
+    parameters: Optional[dict[str, Any]] = None,
+    keep_logs_in_trial: bool = False,
 ) -> float:
-    """Run one parameter configuration across every RNA in the dataset."""
+    """Run one parameter configuration across every RNA in the dataset.
+
+    Tool logs are written to a scratch directory. On failure they are
+    embedded in the failure report; ``keep_logs_in_trial`` (standalone mode)
+    also copies them to ``<trial>/logs/``.
+    """
 
     trial_directory = Path(trial_directory).resolve()
     trial_directory.mkdir(parents=True, exist_ok=True)
@@ -165,21 +199,30 @@ def run_pipeline(
 
     # Stages record where they are, so a failure report can name the stage and RNA.
     progress: dict[str, Any] = {}
-    try:
-        loss = _run_stages(config, rows, trial_directory, trial_parameters, progress)
-    except BaseException as error:
-        # BaseException: timeouts and cancellations must be reported as well.
+    with trial_scratch(scratch_root(config)) as scratch:
         try:
-            report = failures.write_failure_report(trial_directory, rows, progress, error)
-        except Exception:
-            logger.exception('Could not write the failure report for %s', trial_directory)
-        else:
-            logger.error(
-                'Trial FAILED: %s. Report: %s',
-                failures.describe(report),
-                trial_directory / failures.FAILURE_REPORT,
-            )
-        raise
+            loss = _run_stages(config, rows, trial_directory, scratch, trial_parameters, progress)
+        except BaseException as error:
+            # BaseException: timeouts and cancellations must be reported as well.
+            try:
+                report = failures.write_failure_report(
+                    trial_directory, rows, progress, error, log_directory=scratch
+                )
+            except Exception:
+                logger.exception('Could not write the failure report for %s', trial_directory)
+            else:
+                logger.error(
+                    'Trial FAILED: %s. Report: %s',
+                    failures.describe(report),
+                    trial_directory / failures.FAILURE_REPORT,
+                )
+            raise
+        finally:
+            if keep_logs_in_trial:
+                try:
+                    keep_logs(scratch, trial_directory / 'logs')
+                except Exception:
+                    logger.exception('Could not copy the logs to %s', trial_directory / 'logs')
 
     # A report from an earlier failed attempt of this trial no longer applies.
     (trial_directory / failures.FAILURE_REPORT).unlink(missing_ok=True)
@@ -190,10 +233,14 @@ def _run_stages(
     config: dict[str, Any],
     rows: Dataset,
     trial_directory: Path,
+    scratch: Path,
     trial_parameters: dict[str, Any],
     progress: dict[str, Any],
 ) -> float:
-    """Generate, predict and score every RNA, then publish the trial result."""
+    """Generate, predict and score every RNA, then publish the trial result.
+
+    Logs and temporary tool files go to ``scratch/rna_<index>/``.
+    """
     trial_result_path = trial_directory / 'trial_result.json'
 
     logger.info('Trial contains %d RNA rows', len(rows))
@@ -204,6 +251,8 @@ def _run_stages(
         progress.update(stage='generation', rna_index=index)
         task_dir = trial_directory / f"rna_{index:05d}"
         task_dir.mkdir(exist_ok=True)
+        task_scratch = scratch / task_dir.name
+        task_scratch.mkdir(exist_ok=True)
         request_path = task_dir / "shs_generation_request.json"
         af3_input_path = task_dir / "af3_input.json"
         af3_output_directory = task_dir / "af3"
@@ -221,7 +270,7 @@ def _run_stages(
         if not af3_input_path.is_file():
             logger.info("Generating AF3 input %d/%d for %s", index + 1, len(rows), row["id"])
 
-            with (task_dir / 'shs_generation.log').open('w') as log:
+            with (task_scratch / 'shs_generation.log').open('w') as log:
                 subprocess.run(
                     [
                         config['shs_python'],
@@ -242,6 +291,7 @@ def _run_stages(
                 "output": str(af3_output_directory.resolve()),
                 "model_dir": str(
                     Path(config["model_dir"]).expanduser().resolve()),
+                "log": str(task_scratch / "af3.log"),
             })
 
     progress.update(stage='af3', rna_index=None)
@@ -262,7 +312,8 @@ def _run_stages(
             task_dir,
             row['sequence'],
             config['dssr'],
-            config['dssr_timeout_seconds']
+            config['dssr_timeout_seconds'],
+            scratch=scratch / task_dir.name,
         )
         normalized_pairs = normalize_pairs(dssr_predicted_pairs, len(row['sequence']))
     

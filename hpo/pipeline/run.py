@@ -94,6 +94,8 @@ def load_config(path, *, mode, submitting_controller=False):
         if isinstance(value, bool) or not isinstance(value, int) or value < 0:
             raise ValueError(f'{key} must be a nonnegative integer')
 
+    storage_settings(config)
+
     scoring_objective = config.get('scoring_objective', 'f1')
     if scoring_objective not in {'f1', 'wl'}:
         raise ValueError("scoring_objective must be 'f1' or 'wl'")
@@ -152,6 +154,38 @@ def load_config(path, *, mode, submitting_controller=False):
             require_text(controller, key, "controller.")
         require_positive(controller, "cpus", "controller.", integer=True)
     return config
+
+
+STORAGE_KEYS = ('scratch',)
+
+
+def storage_settings(config):
+    """Validate the optional storage section and return it."""
+    storage = config.get('storage')
+    if storage is None:
+        storage = {}
+    if not isinstance(storage, dict):
+        raise ValueError('storage must be a YAML mapping')
+    unknown = storage.keys() - set(STORAGE_KEYS)
+    if unknown:
+        raise ValueError('Unknown storage settings: ' + ', '.join(sorted(map(str, unknown))))
+    scratch = storage.get('scratch')
+    if scratch is not None and (not isinstance(scratch, str) or not Path(scratch).is_absolute()):
+        raise ValueError('storage.scratch must be an absolute path')
+    return storage
+
+
+def scratch_root(config) -> Path:
+    """Directory under which each trial gets its private scratch directory.
+
+    Defaults to /dev/shm (RAM): on Helix, $TMPDIR is on GPFS and would put the
+    same metadata load on the shared filesystem as the workspace.
+    """
+    scratch = storage_settings(config).get('scratch')
+    if scratch is not None:
+        return Path(scratch)
+    shm = Path('/dev/shm')
+    return shm if shm.is_dir() else Path(tempfile.gettempdir())
 
 
 FAILURE_LIMIT_DEFAULTS = dict(min_trials=5, max_rate=0.20, window=50)

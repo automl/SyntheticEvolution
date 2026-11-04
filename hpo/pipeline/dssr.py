@@ -49,21 +49,25 @@ def run_dssr(
     sequence: str,
     executable: str = 'x3dna-dssr',
     timeout: int = 300,
+    scratch: Union[str, Path, None] = None,
 ) -> list[tuple[int, int]]:
     """Run DSSR for one predicted model and parse its JSON pair output.
 
-    Only ``dssr.json`` and ``dssr.log`` are written to ``directory``.
+    Only ``dssr.json`` is written to ``directory``. ``dssr.log`` and DSSR's
+    working directory go to ``scratch`` (default: ``directory``).
     """
     directory = Path(directory).resolve()
     directory.mkdir(parents=True, exist_ok=True)
+    scratch = directory if scratch is None else Path(scratch).resolve()
+    scratch.mkdir(parents=True, exist_ok=True)
     model_path = Path(model).resolve()
-    log_path = directory / 'dssr.log'
+    log_path = scratch / 'dssr.log'
     result_path = directory / 'dssr.json'
 
     # DSSR writes its side files (dssr-*.pdb/.ct/.bpseq/...) into its working
     # directory and has no flag to suppress them, so run it in a temporary
     # directory and keep only the JSON output.
-    with tempfile.TemporaryDirectory(prefix='dssr-') as work_directory:
+    with tempfile.TemporaryDirectory(prefix='dssr-', dir=scratch) as work_directory:
         output_path = Path(work_directory) / 'dssr.json'
         dssr_command = [
             executable,

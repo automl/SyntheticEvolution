@@ -35,6 +35,16 @@ failures:
   window: 50      # last N finished trials; null = all trials
 
 
+# ---- Storage ---------------------------------------------------
+# Logs and temporary tool files go to a per-trial scratch directory that is
+# removed after each trial. Default: /dev/shm (RAM; counts towards the job's
+# memory, a few MB per trial). $TMPDIR is on GPFS on Helix, so it is not used.
+# Failed trials embed their logs in failure_report.json; standalone trials
+# also keep them in standalone_trial/logs/.
+storage:
+  scratch:   # optional absolute path; empty = /dev/shm
+
+
 # ---- Generator config ------------------------------------------
 shs_python: # REQUIRED: SHS Python executable
 # NePS: combine sampled search values with fixed values.

@@ -34,7 +34,10 @@ def test_standalone_passes_prepared_dataset_and_prints_loss(tmp_path, monkeypatc
     run = Mock(return_value=0.25)
     monkeypatch.setattr(entry, 'prepare_run', prepare)
     monkeypatch.setattr(entry, 'run_pipeline', run)
+    monkeypatch.setattr(entry.signals, 'install', lambda: None)
     entry.main()
     prepare.assert_called_once_with(config)
-    run.assert_called_once_with(config, rows, tmp_path / 'standalone_trial', 'identity')
+    # Standalone trials keep their logs; file count does not matter for one trial.
+    run.assert_called_once_with(config, rows, tmp_path / 'standalone_trial', 'identity',
+                                keep_logs_in_trial=True)
     assert capsys.readouterr().out.strip() == '0.25'

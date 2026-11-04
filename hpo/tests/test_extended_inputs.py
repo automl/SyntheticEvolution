@@ -204,7 +204,7 @@ def test_trial_forwards_and_records_complete_row(tmp_path, monkeypatch):
     from types import SimpleNamespace
     # External DSSR and AF3 execution are mocked; real request parsing and scoring run.
     import hpo.pipeline
-    dssr_stub = SimpleNamespace(run_dssr=lambda *args: [[0, 3]])
+    dssr_stub = SimpleNamespace(run_dssr=lambda *args, **kwargs: [[0, 3]])
     monkeypatch.setitem(sys.modules, 'hpo.pipeline.dssr', dssr_stub)
     # Also isolate the package attribute if another test already imported DSSR.
     monkeypatch.setattr(hpo.pipeline, 'dssr', dssr_stub, raising=False)
@@ -226,7 +226,8 @@ def test_trial_forwards_and_records_complete_row(tmp_path, monkeypatch):
     rows = dataset(tmp_path, interactions=[[0, 3, .3]], mutation_rates=[.2]*4)
     config = dict(fixed={'pair_weight_A_C': .5}, shs_seed=42, af3_seed=42,
                   shs_python='python', generator_timeout_seconds=10,
-                  model_dir=str(tmp_path), dssr='dssr', dssr_timeout_seconds=10)
+                  model_dir=str(tmp_path), dssr='dssr', dssr_timeout_seconds=10,
+                  storage=dict(scratch=str(tmp_path / 'scratch')))
     loss = trial.run_pipeline(config, rows, tmp_path/'trial', 'identity', {'pair_weight_A_U': .5})
     assert loss == 0
     assert len(seen) == 1

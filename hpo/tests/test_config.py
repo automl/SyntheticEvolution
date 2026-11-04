@@ -48,6 +48,23 @@ class TestLoadConfig(unittest.TestCase):
         })
         return config
 
+    def test_storage_scratch_is_optional_and_must_be_absolute(self):
+        for mode, config in (('standalone', copy.deepcopy(self.config)), ('neps', self.neps_config())):
+            with self.subTest(mode=mode):
+                config['storage'] = {'scratch': '/dev/shm/custom'}
+                loaded = self.load(config, mode=mode)
+                self.assertEqual(run_pipeline.scratch_root(loaded), Path('/dev/shm/custom'))
+                for storage in ({'scratch': 'relative/path'}, {'scratch': 3}, {'typo': '/x'}, []):
+                    config['storage'] = storage
+                    with self.assertRaisesRegex(ValueError, 'storage'):
+                        self.load(config, mode=mode)
+
+    def test_scratch_defaults_to_shared_memory(self):
+        with patch.object(run_pipeline.Path, 'is_dir', return_value=True):
+            self.assertEqual(run_pipeline.scratch_root({}), Path('/dev/shm'))
+        with patch.object(run_pipeline.Path, 'is_dir', return_value=False):
+            self.assertEqual(run_pipeline.scratch_root({}), Path(run_pipeline.tempfile.gettempdir()))
+
     def test_failure_limit_defaults_and_partial_settings(self):
         config = self.neps_config()
         del config['failures']
