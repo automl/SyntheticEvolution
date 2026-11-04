@@ -1,9 +1,5 @@
-
-# This is an example for generator settings if all parameters should be searched fully
-# to use it paste it into your config file as the generator settings.
-
-# ---- Generator config ------------------------------------------
-shs_python:         # REQUIRED
+# Search over all generator parameters: replace search in your config
+# with this block.
 search:
   N: {type: integer, lower: 2, upper: 512, log: true}
   mutation_rate_paired:   {type: float, lower: 0.0, upper: 1.0}
@@ -40,6 +36,3 @@ search:
   loop_max_insertion_fraction: {type: float, lower: 0.0, upper: 1.0}
   loop_max_deletion_fraction:  {type: float, lower: 0.0, upper: 1.0}
   stem_max_insertion_fraction: {type: float, lower: 0.0, upper: 1.0}
-
-shs_seed: 42
-generator_timeout_seconds: 600 # Per RNA input-generation process

@@ -46,7 +46,8 @@ setting is commented there.
   into `controller.time`.
 - **`fixed` / `search`:** generator parameters; NePS samples `search`,
   standalone trials use `fixed` and the generator defaults.
-- **`ignore_errors: true`:** NePS keeps sampling when a trial fails.
+- **`ignore_errors: true`:** NePS keeps sampling when a trial fails. A failed
+  trial gets the worst loss (1.0), so the optimizer avoids its region.
 - **`failures`:** the failure limit (default: stop when more than 20% of the
   last 50 finished trials failed, after at least 5).
 - **`storage`:** `scratch` (default `/dev/shm`), `keep_artifacts`

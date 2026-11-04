@@ -318,6 +318,10 @@ def main():
             root_directory= neps_root,
             evaluations_to_spend= config.get('evaluations'),  # None: until the time is up
             ignore_errors= config['ignore_errors'],
+            # A failed trial gets the worst loss (every objective is 1 - score),
+            # so the optimizer moves away from it; without this, NePS's GP fills
+            # in the median loss. The trial stays `crashed` and off the trajectory.
+            objective_value_on_error=1.0,
             **space_kwargs,
             **optimizer_kwargs,
         )

@@ -69,10 +69,13 @@ def test_neps_space_and_each_evaluation_reach_trial(neps_case):
     assert config['search']['N']['type'] == 'integer'  # Building space must not mutate YAML data.
 
 
-def test_neps_failure_is_not_replaced_with_a_numeric_loss(neps_case, monkeypatch):
+def test_neps_failure_reaches_neps_which_scores_it_with_the_worst_loss(neps_case, monkeypatch):
     _, fake, _, root, _ = neps_case
     monkeypatch.setattr(entry, 'run_pipeline', Mock(side_effect=RuntimeError('trial failed')))
-    fake.run.side_effect = lambda **kw: kw['evaluate_pipeline'](root / 'evaluation', N=2)
+    def search(**kwargs):
+        assert kwargs['objective_value_on_error'] == 1.0
+        kwargs['evaluate_pipeline'](root / 'evaluation', N=2)
+    fake.run.side_effect = search
     with pytest.raises(RuntimeError, match='trial failed'):
         entry.main()
 
