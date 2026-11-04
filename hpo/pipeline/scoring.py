@@ -19,8 +19,10 @@ import math
 from typing import Iterable
 
 
-SCORING_OBJECTIVES = ("f1", "wl")
+SCORING_OBJECTIVES = ("f1", "f1_soft", "wl")
 DEFAULT_WL_ITERATIONS = 5
+# Soft F1: a pair off by d = |i - i'| + |j - j'| nucleotides earns 1 - d / 4.
+SOFT_F1_CUTOFF = 4
 
 
 def score_pairs(target, predicted):
@@ -44,6 +46,30 @@ def score_pairs(target, predicted):
     fp, fn = len(predicted - target), len(target - predicted)
     f1 = 2 * tp / (2 * tp + fp + fn) if target or predicted else 1.0
     return dict(tp=tp, fp=fp, fn=fn, f1=f1, loss=1.0 - f1)
+
+
+def score_soft_pairs(target, predicted, cutoff=SOFT_F1_CUTOFF):
+    """F1 that gives partial credit to slipped pairs.
+
+    Target and predicted pairs are matched one to one so that the total credit
+    is maximal. A matched pair whose positions differ by
+    ``d = |i - i'| + |j - j'|`` earns ``max(0, 1 - d / cutoff)``: 1 when exact,
+    0.75 / 0.5 / 0.25 when 1 / 2 / 3 nucleotides off (default cutoff 4).
+    ``f1 = 2 * credit / (len(target) + len(predicted))``, so without slipped
+    pairs it equals ``score_pairs``. Both empty counts as perfect.
+    """
+    import numpy as np
+    from scipy.optimize import linear_sum_assignment
+
+    target, predicted = sorted(set(target)), sorted(set(predicted))
+    credit = 0.0
+    if target and predicted:
+        distance = np.abs(np.array(target)[:, None] - np.array(predicted)[None]).sum(-1)
+        earned = np.clip(1 - distance / cutoff, 0, None)
+        rows, cols = linear_sum_assignment(earned, maximize=True)
+        credit = float(earned[rows, cols].sum())
+    f1 = 2 * credit / (len(target) + len(predicted)) if target or predicted else 1.0
+    return dict(credit=credit, f1=f1, loss=1.0 - f1)
 
 
 def _pairs_to_graph_matrix(pairs: Iterable[tuple[int, int]], length: int):
@@ -134,11 +160,15 @@ def aggregate(scores):
 def score_row(row, predicted, *, objective="f1", wl_iterations=DEFAULT_WL_ITERATIONS):
     """Score one dataset row using the selected objective.
 
-    ``objective='f1'`` preserves the existing behavior. ``objective='wl'``
-    uses the reference GraKeL Weisfeiler-Lehman graph kernel.
+    ``objective='f1'`` preserves the existing behavior, ``objective='f1_soft'``
+    gives partial credit to slipped pairs and ``objective='wl'`` uses the
+    reference GraKeL Weisfeiler-Lehman graph kernel.
     """
     if objective == "f1":
         return score_pairs(map(tuple, row["pairs"]), predicted)
+
+    if objective == "f1_soft":
+        return score_soft_pairs(map(tuple, row["pairs"]), predicted)
 
     if objective == "wl":
         return score_wl(

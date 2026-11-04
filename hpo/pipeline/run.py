@@ -99,8 +99,8 @@ def load_config(path, *, mode, submitting_controller=False):
     storage_settings(config)
 
     scoring_objective = config.get('scoring_objective', 'f1')
-    if scoring_objective not in {'f1', 'wl'}:
-        raise ValueError("scoring_objective must be 'f1' or 'wl'")
+    if scoring_objective not in {'f1', 'f1_soft', 'wl'}:
+        raise ValueError("scoring_objective must be 'f1', 'f1_soft' or 'wl'")
 
     if 'wl_iterations' in config:
         require_positive(config, 'wl_iterations', integer=True)

@@ -96,5 +96,5 @@ dssr_timeout_seconds: 300 # Per DSSR invocation
 
 
 # ---- scoring config -----------------------------------------------
-scoring_objective: f1     # Optional; Options: f1 (f1 score, default), wl (weisfeiler-lehman graph kernel) 
+scoring_objective: f1     # Optional; Options: f1 (f1 score, default), f1_soft (f1 with partial credit for slipped pairs), wl (weisfeiler-lehman graph kernel)
 wl_iterations: 5          # Optional

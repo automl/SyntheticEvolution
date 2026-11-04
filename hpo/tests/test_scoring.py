@@ -1,8 +1,8 @@
-"""Scoring objectives (F1, Weisfeiler-Lehman) and the dataset loss."""
+"""Scoring objectives (F1, soft F1, Weisfeiler-Lehman) and the dataset loss."""
 import numpy as np
 import pytest
 
-from hpo.pipeline.scoring import aggregate, score_pairs, score_row, score_wl
+from hpo.pipeline.scoring import aggregate, score_pairs, score_row, score_soft_pairs, score_wl
 
 
 # ---- F1 ---------------------------------------------------------------------
@@ -21,6 +21,35 @@ def test_f1_counts_pairs_and_loss_is_one_minus_f1():
 ])
 def test_f1_empty_cases(target, predicted, loss):
     assert score_pairs(target, predicted)['loss'] == loss
+
+
+# ---- Soft F1 ----------------------------------------------------------------
+
+HELIX = {(0, 20), (1, 19), (2, 18)}
+
+
+@pytest.mark.parametrize('slip,f1', [(0, 1), (1, .75), (2, .5), (3, .25), (4, 0), (6, 0)])
+def test_soft_f1_drops_gradually_with_slippage(slip, f1):
+    slipped = {(i, j - slip) for i, j in HELIX}
+    assert score_soft_pairs(HELIX, slipped)['f1'] == pytest.approx(f1)
+
+
+@pytest.mark.parametrize('predicted', [
+    set(), {(0, 20)}, {(0, 20), (1, 19), (2, 18), (5, 9)}, {(0, 12), (5, 9)}, {(3, 15)},
+])
+def test_soft_f1_equals_f1_without_slipped_pairs(predicted):
+    assert score_soft_pairs(HELIX, predicted)['f1'] == pytest.approx(score_pairs(HELIX, predicted)['f1'])
+
+
+def test_soft_f1_matches_each_pair_at_most_once():
+    # One predicted pair next to two target pairs earns credit only once.
+    assert score_soft_pairs({(0, 20), (1, 20)}, {(0, 19)})['credit'] == .75
+
+
+def test_soft_f1_objective():
+    row = dict(sequence='A' * 21, pairs=[list(p) for p in HELIX])
+    assert score_row(row, {(i, j - 1) for i, j in HELIX}, objective='f1_soft')['loss'] == pytest.approx(.25)
+    assert score_soft_pairs([], [])['f1'] == 1
 
 
 def test_scoring_uses_the_explicit_pairs_not_the_generator_interactions():
