@@ -86,8 +86,14 @@ generator_timeout_seconds: 600 # Per RNA input-generation process
 # ---- AF3 config ------------------------------------------------
 module: bio/alphafold/3.0.1
 model_dir:                  # REQUIRED: AF3 model parameters directory
-af3_timeout_seconds: 9000  # per RNA; one AF3 process predicts all RNAs of a trial
+af3_timeout_seconds: 9000  # per RNA; one AF3 worker per controller predicts all trials
 af3_seed: 42
+# Optional token sizes AF3 pads its inputs to (default: AF3's own, from 256).
+# Smaller buckets make short RNAs much faster (36 nt: 8.4 s -> 3.1 s on an
+# A100) but change the predictions like a different seed; each bucket used by
+# the dataset is compiled once per controller (~25 s). Longer inputs than
+# the last bucket get a bucket of exactly their size, compiled for every new length.
+# af3_buckets: [64, 128, 256, 512, 768, 1024, 1280, 1536, 2048, 2560, 3072, 3584, 4096, 4608, 5120]
 
 
 # ---- DSSR config -----------------------------------------------

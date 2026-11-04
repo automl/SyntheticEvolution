@@ -3,6 +3,7 @@
 import json
 import os
 import re
+import select
 import shutil
 import subprocess
 import tempfile
@@ -42,7 +43,7 @@ def keep_logs(scratch: Path, destination: Path) -> None:
     """Copy all logs from scratch (standalone trials keep their logs).
 
     Per-RNA logs keep their ``rna_<index>/`` folder; the trial's AF3 log
-    (one AF3 process for all RNAs) lands directly in ``destination``.
+    (one for all RNAs) lands directly in ``destination``.
     """
     for log in sorted([*scratch.glob('*.log'), *scratch.glob('rna_*/*.log')]):
         target = destination / log.relative_to(scratch)
@@ -50,18 +51,35 @@ def keep_logs(scratch: Path, destination: Path) -> None:
         shutil.copy2(log, target)
 
 
-def run_af3(af3_inputs: dict[str, Path], output: Path, log_path: Path, config: dict[str, Any]) -> None:
-    """Predict all inputs in one AF3 process.
+# This controller's AF3 worker (af3_worker.py) and the command that started it.
+AF3_WORKER = Path(__file__).resolve().parent / 'af3_worker.py'
+_af3_worker: Optional[tuple[list[str], subprocess.Popen]] = None
 
-    A new AF3 process compiles its model first (~26 s on an A100), which is
-    most of a short prediction (~8 s), so one process per trial compiles once
-    instead of once per RNA. ``af3_inputs`` maps task names to inputs; AF3
-    writes ``output/<name>/``. ``af3_timeout_seconds`` applies per input.
+
+def stop_af3_worker() -> None:
+    """Kill the AF3 worker, e.g. after a timeout or while it predicts."""
+    global _af3_worker
+    if _af3_worker is not None:
+        _af3_worker[1].kill()
+        _af3_worker[1].wait()
+        _af3_worker = None
+
+
+def run_af3(af3_inputs: dict[str, Path], output: Path, log_path: Path, config: dict[str, Any]) -> None:
+    """Predict all inputs with this controller's persistent AF3 worker.
+
+    A new AF3 process loads and compiles its model first (~37 s on an A100,
+    more than a 36-nt prediction takes), so one worker serves every trial of
+    the controller and compiles once per bucket. It starts with the first
+    trial and again after a failure, timeout or stop. ``af3_inputs`` maps task
+    names to inputs; AF3 writes ``output/<name>/`` and its log to
+    ``log_path``. ``af3_timeout_seconds`` applies per input.
 
     The controller job loads the AF3 module (``controller.slurm``), which
-    provides AF3_PYTHON, ALPHAFOLD_BIN_DIR and ALPHAFOLD_DATABASES.
+    provides AF3_PYTHON and ALPHAFOLD_BIN_DIR.
     """
-    names = ('AF3_PYTHON', 'ALPHAFOLD_BIN_DIR', 'ALPHAFOLD_DATABASES')
+    global _af3_worker
+    names = ('AF3_PYTHON', 'ALPHAFOLD_BIN_DIR')
     missing = [name for name in names if not os.environ.get(name)]
     if missing:
         raise RuntimeError(
@@ -72,22 +90,41 @@ def run_af3(af3_inputs: dict[str, Path], output: Path, log_path: Path, config: d
     input_directory.mkdir(parents=True, exist_ok=True)
     for name, path in af3_inputs.items():
         shutil.copy2(path, input_directory / f'{name}.json')
-    with log_path.open('w') as log:
-        subprocess.run(
-            [
-                os.environ['AF3_PYTHON'],
-                str(Path(os.environ['ALPHAFOLD_BIN_DIR']) / 'run_alphafold.py'),
-                f'--input_dir={input_directory}',
-                f'--output_dir={output}',
-                f"--model_dir={Path(config['model_dir']).expanduser().resolve()}",
-                f"--db_dir={os.environ['ALPHAFOLD_DATABASES']}",
-                '--norun_data_pipeline',
-            ],
-            stdout=log,
-            stderr=subprocess.STDOUT,
-            check=True,
-            timeout=config['af3_timeout_seconds'] * len(af3_inputs),
-        )
+    command = [
+        os.environ['AF3_PYTHON'], '-u', str(AF3_WORKER),
+        f"--model_dir={Path(config['model_dir']).expanduser().resolve()}",
+    ]
+    # AF3 draws the diffusion noise for the padded size, so the buckets change
+    # the predictions like a different seed would.
+    if config.get('af3_buckets'):
+        command.append(f"--buckets={','.join(map(str, config['af3_buckets']))}")
+    if _af3_worker is not None and (_af3_worker[0] != command or _af3_worker[1].poll() is not None):
+        stop_af3_worker()
+    if _af3_worker is None:
+        # Start-up output and errors go to the log of the trial that starts it.
+        with log_path.open('a') as log:
+            _af3_worker = command, subprocess.Popen(
+                command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=log, text=True,
+            )
+    process = _af3_worker[1]
+    request = dict(input_dir=str(input_directory), output_dir=str(output), log=str(log_path))
+    timeout = config['af3_timeout_seconds'] * len(af3_inputs)
+    try:
+        process.stdin.write(json.dumps(request) + '\n')
+        process.stdin.flush()
+        ready, _, _ = select.select([process.stdout], [], [], timeout)
+        reply = process.stdout.readline() if ready else None
+    except BaseException:
+        # A stop signal or a dead worker: the model state is unknown.
+        stop_af3_worker()
+        raise
+    if reply is None:
+        stop_af3_worker()
+        raise subprocess.TimeoutExpired(command, timeout)
+    if reply != 'done\n':
+        returncode = process.wait()
+        _af3_worker = None
+        raise subprocess.CalledProcessError(returncode, command)
 
 
 def af3_predictions(output: Path, log_path: Path) -> dict[str, Path]:
@@ -268,7 +305,7 @@ def _run_stages(
     """Predict and score every RNA, then publish the trial result.
 
     1. Generate the AF3 inputs of all RNAs without a readable archive.
-    2. Predict them in one AF3 process and publish each archive; also after
+    2. Predict them with the AF3 worker and publish each archive; also after
        an AF3 failure or stop, for the inputs AF3 finished.
     3. Per RNA, run DSSR, add ``dssr.json`` to the archive and score.
     """
@@ -298,7 +335,7 @@ def _run_stages(
     if af3_inputs:
         pending = list(af3_inputs)
         progress.update(stage='af3', rna_index=None)
-        logger.info('Running AF3 for %d RNA(s) in one process', len(pending))
+        logger.info('Running AF3 for %d RNA(s)', len(pending))
         try:
             run_af3(af3_inputs, scratch / 'af3', scratch / 'af3.log', config)
         except BaseException:

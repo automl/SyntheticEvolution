@@ -96,6 +96,14 @@ def load_config(path, *, mode, submitting_controller=False):
         if isinstance(value, bool) or not isinstance(value, int) or value < 0:
             raise ValueError(f'{key} must be a nonnegative integer')
 
+    buckets = config.get('af3_buckets')
+    if buckets is not None and (
+        not isinstance(buckets, list) or not buckets
+        or any(isinstance(b, bool) or not isinstance(b, int) or b <= 0 for b in buckets)
+        or buckets != sorted(set(buckets))
+    ):
+        raise ValueError('af3_buckets must be a nonempty, strictly increasing list of positive integers')
+
     storage_settings(config)
 
     scoring_objective = config.get('scoring_objective', 'f1')

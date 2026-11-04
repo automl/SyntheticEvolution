@@ -4,7 +4,11 @@ The generator, AF3 and DSSR are replaced by fakes that write what the real
 tools write; no tool installation is needed.
 """
 import json
+import os
+import re
+import signal
 import subprocess
+import sys
 import tarfile
 from pathlib import Path
 from unittest.mock import Mock
@@ -13,6 +17,7 @@ import pytest
 
 import hpo.pipeline.run as run
 import hpo.pipeline.trial as trial
+from hpo.pipeline import signals
 
 
 def fake_prediction(name, input_path, output, log):
@@ -390,32 +395,112 @@ def test_trial_scratch_is_private_and_removed(tmp_path, monkeypatch):
     assert list((tmp_path / 'root').iterdir()) == []
 
 
+# Stands in for af3_worker.py: same protocol, no AF3. Inputs named "*crash"
+# make it exit, "*hang" makes it sleep.
+FAKE_WORKER = r"""
+import json, os, sys, time
+from pathlib import Path
+reply = os.fdopen(os.dup(1), 'w', buffering=1)
+os.dup2(2, 1)
+print('starting', sys.argv[1:])
+for line in sys.stdin:
+    request = json.loads(line)
+    with open(request['log'], 'a') as log:
+        os.dup2(log.fileno(), 1)
+        os.dup2(log.fileno(), 2)
+    print('worker', os.getpid())
+    for path in sorted(Path(request['input_dir']).glob('*.json')):
+        name = json.loads(path.read_text())['name']
+        if name.endswith('crash'):
+            sys.exit(3)
+        if name.endswith('hang'):
+            time.sleep(60)
+        (Path(request['output_dir']) / name).mkdir(parents=True)
+        (Path(request['output_dir']) / name / f'{name}_model.cif').write_text('model')
+        print(f'Done processing fold input {name}.')
+    reply.write('done\n')
+"""
+
+
 @pytest.fixture
 def af3_environment(tmp_path, monkeypatch):
-    for name, value in (('AF3_PYTHON', '/af3/bin/python'), ('ALPHAFOLD_BIN_DIR', '/af3/bin'),
-                        ('ALPHAFOLD_DATABASES', '/af3/db')):
-        monkeypatch.setenv(name, value)
-    return dict(model_dir=str(tmp_path / 'models'), af3_timeout_seconds=10)
+    worker = tmp_path / 'fake_worker.py'
+    worker.write_text(FAKE_WORKER)
+    monkeypatch.setattr(trial, 'AF3_WORKER', worker)
+    monkeypatch.setenv('AF3_PYTHON', sys.executable)
+    monkeypatch.setenv('ALPHAFOLD_BIN_DIR', '/af3/bin')
+    yield dict(model_dir=str(tmp_path / 'models'), af3_timeout_seconds=10)
+    trial.stop_af3_worker()
 
 
-def test_af3_predicts_all_inputs_in_one_process(tmp_path, monkeypatch, af3_environment):
+def predict(tmp_path, trial_name, names, config):
+    """One trial's AF3 call in its own scratch directory; returns its log."""
+    scratch = tmp_path / trial_name
     inputs = {}
-    for name in ('rna_00000', 'rna_00001'):
-        inputs[name] = tmp_path / name / 'af3_input.json'
-        inputs[name].parent.mkdir()
+    for name in names:
+        inputs[name] = scratch / name / 'af3_input.json'
+        inputs[name].parent.mkdir(parents=True)
         inputs[name].write_text(json.dumps({'name': name}))
-    output, log = tmp_path / 'af3', tmp_path / 'af3.log'
-    def predict(args, **kwargs):
-        assert args == ['/af3/bin/python', '/af3/bin/run_alphafold.py', f'--input_dir={tmp_path / "af3_inputs"}',
-                        f'--output_dir={output}', f'--model_dir={tmp_path / "models"}',
-                        '--db_dir=/af3/db', '--norun_data_pipeline']
-        # The timeout applies per input.
-        assert (kwargs['check'], kwargs['timeout'], kwargs['stdout'].name) == (True, 20, str(log))
-        assert sorted(path.name for path in (tmp_path / 'af3_inputs').iterdir()) == ['rna_00000.json', 'rna_00001.json']
-        kwargs['stdout'].write('af3 output\n')
-    monkeypatch.setattr(trial.subprocess, 'run', predict)
-    trial.run_af3(inputs, output, log, af3_environment)
-    assert log.read_text() == 'af3 output\n'
+    trial.run_af3(inputs, scratch / 'af3', scratch / 'af3.log', config)
+    return (scratch / 'af3.log').read_text()
+
+
+def worker_pid(log):
+    return re.search(r'^worker (\d+)$', log, re.MULTILINE).group(1)
+
+
+def test_one_af3_worker_serves_every_trial(tmp_path, af3_environment):
+    first = predict(tmp_path, 'trial_1', ['rna_00000', 'rna_00001'], af3_environment)
+    second = predict(tmp_path, 'trial_2', ['rna_00000'], af3_environment)
+    # The trial that starts the worker also gets its start-up output.
+    assert f"starting ['--model_dir={tmp_path / 'models'}']" in first
+    assert 'starting' not in second
+    assert worker_pid(first) == worker_pid(second)
+    assert sorted(trial.af3_predictions(tmp_path / 'trial_1' / 'af3', tmp_path / 'trial_1' / 'af3.log')) \
+        == ['rna_00000', 'rna_00001']
+
+
+def test_changed_af3_settings_start_a_new_worker(tmp_path, af3_environment):
+    first = predict(tmp_path, 'trial_1', ['rna_00000'], af3_environment)
+    second = predict(tmp_path, 'trial_2', ['rna_00000'], dict(af3_environment, af3_buckets=[64, 128]))
+    assert worker_pid(first) != worker_pid(second)
+    assert "'--buckets=64,128'" in second
+
+
+def test_crashed_af3_worker_fails_the_trial_and_is_replaced(tmp_path, af3_environment):
+    with pytest.raises(subprocess.CalledProcessError) as error:
+        predict(tmp_path, 'trial_1', ['rna_00000', 'rna_00001_crash'], af3_environment)
+    assert error.value.returncode == 3
+    # What AF3 finished before the crash is still in the log.
+    assert 'Done processing fold input rna_00000.' in (tmp_path / 'trial_1' / 'af3.log').read_text()
+    assert 'starting' in predict(tmp_path, 'trial_2', ['rna_00000'], af3_environment)
+
+
+def test_af3_timeout_applies_per_input_and_kills_the_worker(tmp_path, af3_environment):
+    config = dict(af3_environment, af3_timeout_seconds=0.25)
+    with pytest.raises(subprocess.TimeoutExpired) as error:
+        predict(tmp_path, 'trial_1', ['rna_00000', 'rna_00001_hang'], config)
+    assert error.value.timeout == 0.5
+    assert trial._af3_worker is None
+
+
+def test_stop_signal_kills_the_af3_worker(tmp_path, af3_environment, monkeypatch):
+    monkeypatch.setattr(signals, '_requested', None)
+    previous = signal.signal(signal.SIGUSR1, signals._handle)
+    signal.signal(signal.SIGALRM, lambda *args: os.kill(os.getpid(), signal.SIGUSR1))
+    try:
+        signal.setitimer(signal.ITIMER_REAL, 0.5)
+        with pytest.raises(signals.ControllerStop), signals.trial_running():
+            predict(tmp_path, 'trial_1', ['rna_00000', 'rna_00001_hang'], af3_environment)
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        signal.signal(signal.SIGALRM, signal.SIG_DFL)
+        signal.signal(signal.SIGUSR1, previous)
+    log = (tmp_path / 'trial_1' / 'af3.log').read_text()
+    assert 'Done processing fold input rna_00000.' in log
+    assert trial._af3_worker is None
+    with pytest.raises(ProcessLookupError):
+        os.kill(int(worker_pid(log)), 0)
 
 
 @pytest.mark.parametrize('models,done,found', [
@@ -438,6 +523,6 @@ def test_af3_predictions_need_the_done_line_and_one_nonempty_model(tmp_path, mod
 
 
 def test_af3_requires_the_module_environment(tmp_path, monkeypatch, af3_environment):
-    monkeypatch.delenv('ALPHAFOLD_DATABASES')
-    with pytest.raises(RuntimeError, match='ALPHAFOLD_DATABASES not set'):
+    monkeypatch.delenv('ALPHAFOLD_BIN_DIR')
+    with pytest.raises(RuntimeError, match='ALPHAFOLD_BIN_DIR not set'):
         trial.run_af3({}, tmp_path / 'af3', tmp_path / 'af3.log', af3_environment)

@@ -2,9 +2,9 @@
 
 Slurm sends SIGUSR1 shortly before the time limit (``--signal=B:USR1@120``)
 and SIGTERM on ``scancel``. While a trial runs, the handler raises
-ControllerStop, which also kills a running AF3/DSSR child process
-(``subprocess.run`` kills its child when interrupted). Between trials it only
-records the request, so it never interrupts NePS while NePS updates its state.
+ControllerStop, which also kills a running DSSR or generator process
+(``subprocess.run`` kills its child when interrupted) and the AF3 worker.
+Between trials it only records the request, so it never interrupts NePS while NePS updates its state.
 """
 
 import logging

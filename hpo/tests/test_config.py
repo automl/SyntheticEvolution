@@ -125,6 +125,14 @@ def test_neps_requires_a_nonempty_search(load, neps, search):
         load(neps, mode='neps')
 
 
+def test_af3_buckets_are_optional_and_strictly_increasing(load, standalone):
+    assert 'af3_buckets' not in load(standalone)
+    assert load(dict(standalone, af3_buckets=[64, 128]))['af3_buckets'] == [64, 128]
+    for value in ([], [128, 64], [64, 64], [0, 64], [64.0], [True], '64,128'):
+        with pytest.raises(ValueError, match='af3_buckets'):
+            load(dict(standalone, af3_buckets=value))
+
+
 def test_evaluations_are_optional_but_must_be_positive(load, neps):
     del neps['evaluations']
     assert 'evaluations' not in load(neps, mode='neps')

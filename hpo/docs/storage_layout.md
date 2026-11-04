@@ -95,9 +95,9 @@ generator and AF3 again.
 ## Flow of one trial
 
 1. Generate the AF3 inputs of all RNAs without a readable archive (scratch).
-2. Run AF3 once for all of them (`--input_dir`, scratch), so the model is
-   compiled once per trial. Publish the archive of every finished prediction,
-   also after an AF3 failure or stop.
+2. Predict all of them with the controller's AF3 worker (scratch), which
+   loads and compiles the model once per controller. Publish the archive of
+   every finished prediction, also after an AF3 failure or stop.
 3. Per RNA: run DSSR in scratch, add `dssr.json` to the archive and score.
 4. Write `trial_result.json`, remove `trial_metadata.json`, apply retention.
 

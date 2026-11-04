@@ -55,8 +55,12 @@ setting is commented there.
 - **`scoring_objective`:** `f1` (default), `f1_soft` (F1 with partial credit
   for pairs slipped by 1–3 nucleotides: 0.75 / 0.5 / 0.25) or `wl`
   (Weisfeiler-Lehman graph kernel, `wl_iterations`).
-- **`af3_timeout_seconds`:** per RNA; AF3 predicts all RNAs of a trial in one
-  process.
+- **`af3_timeout_seconds`:** per RNA. One AF3 worker per controller loads and
+  compiles the model once and predicts the RNAs of every trial.
+- **`af3_buckets`:** optional token sizes AF3 pads to (default: AF3's, from
+  256). Small buckets speed up short RNAs but change the predictions like a
+  different seed, so they are part of the fingerprint; every bucket the
+  dataset uses is compiled once per controller (~25 s).
 
 ## Dataset
 
