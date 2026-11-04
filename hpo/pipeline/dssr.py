@@ -6,6 +6,7 @@ positions. Verified against the supplied DSSR 2.9.3 output.
 """
 import json
 import subprocess
+import tempfile
 from pathlib import Path
 from typing import Any, Union
 
@@ -49,30 +50,47 @@ def run_dssr(
     executable: str = 'x3dna-dssr',
     timeout: int = 300,
 ) -> list[tuple[int, int]]:
-    """Run DSSR for one predicted model and parse its JSON pair output."""
-    work_directory = Path(directory).resolve()
-    work_directory.mkdir(parents=True, exist_ok=True)
+    """Run DSSR for one predicted model and parse its JSON pair output.
+
+    Only ``dssr.json`` and ``dssr.log`` are written to ``directory``.
+    """
+    directory = Path(directory).resolve()
+    directory.mkdir(parents=True, exist_ok=True)
     model_path = Path(model).resolve()
-    output_path = work_directory / 'dssr.json'
-    log_path = work_directory / 'dssr.log'
-    dssr_command = [
-        executable,
-        f'-i={model_path}',
-        '--json',
-        f'-o={output_path}',
-    ]
+    log_path = directory / 'dssr.log'
+    result_path = directory / 'dssr.json'
 
-    # Keep DSSR's stdout and stderr in the trial directory while allowing a
-    # non-zero exit status to propagate to the pipeline.
-    with log_path.open('w') as log:
-        subprocess.run(
-            dssr_command,
-            cwd=work_directory,
-            stdout=log,
-            stderr=subprocess.STDOUT,
-            check=True,
-            timeout=timeout,
-        )
+    # DSSR writes its side files (dssr-*.pdb/.ct/.bpseq/...) into its working
+    # directory and has no flag to suppress them, so run it in a temporary
+    # directory and keep only the JSON output.
+    with tempfile.TemporaryDirectory(prefix='dssr-') as work_directory:
+        output_path = Path(work_directory) / 'dssr.json'
+        dssr_command = [
+            executable,
+            f'-i={model_path}',
+            '--json',
+            f'-o={output_path}',
+        ]
 
-    # Parse only after DSSR has completed successfully and written its output.
-    return parse_pairs(json.loads(output_path.read_text()), sequence)
+        # Keep DSSR's stdout and stderr in the log while allowing a non-zero
+        # exit status to propagate to the pipeline.
+        with log_path.open('w') as log:
+            subprocess.run(
+                dssr_command,
+                cwd=work_directory,
+                stdout=log,
+                stderr=subprocess.STDOUT,
+                check=True,
+                timeout=timeout,
+            )
+
+        # Parse only after DSSR has completed successfully and written its output.
+        text = output_path.read_text()
+        data = json.loads(text)
+
+    # Publish the JSON for analysis before validating it, so it is also kept
+    # when the residue mapping rejects it.
+    temporary = result_path.with_suffix('.tmp')
+    temporary.write_text(text)
+    temporary.replace(result_path)
+    return parse_pairs(data, sequence)

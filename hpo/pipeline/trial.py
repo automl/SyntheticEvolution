@@ -26,7 +26,9 @@ def completed_af3_model(output_directory: Union[str, Path]) -> Optional[Path]:
 
     try:
         marker_data = json.loads(marker.read_text())
-        model = Path(marker_data["model"]).resolve()
+        # Markers store the model relative to the AF3 output directory; older
+        # absolute paths still resolve because joining keeps an absolute path.
+        model = (output_directory / marker_data["model"]).resolve()
     except (
         OSError,
         KeyError,
@@ -134,7 +136,6 @@ def run_pipeline(
     # Stable files and directories used throughout this trial.
     trial_metadata_path = trial_directory / 'trial_metadata.json'
     trial_result_path = trial_directory / 'trial_result.json'
-    af3_tasks_path = trial_directory / 'af3_tasks.json'
 
     trial_parameters = {**config.get('fixed', {}), **(parameters or {})}
     trial_signature = dict(fingerprint=identity, parameters=trial_parameters)
@@ -198,7 +199,6 @@ def run_pipeline(
                     Path(config["model_dir"]).expanduser().resolve()),
             })
 
-    write_json(af3_tasks_path, af3_tasks)
     run_af3_tasks(af3_tasks, config)
 
     ################################ 3. - DSSR #################################
@@ -212,7 +212,7 @@ def run_pipeline(
         
         dssr_predicted_pairs = dssr.run_dssr(
             predicted_model,
-            task_dir / 'dssr',
+            task_dir,
             row['sequence'],
             config['dssr'],
             config['dssr_timeout_seconds']
@@ -233,10 +233,9 @@ def run_pipeline(
             target_pairs=row['pairs'],
             **{key: row[key] for key in ('interactions', 'mutation_rates') if key in row}, 
             predicted_pairs=sorted(normalized_pairs), 
-            model=str(predicted_model)
+            # Relative to the trial; absolute paths live only in run_metadata.json.
+            model=str(predicted_model.relative_to(trial_directory))
         )
-        write_json(task_dir / 'base_pair_evaluation.json', task_evaluation)
-
         task_evaluations.append(task_evaluation)
         
         logger.info(

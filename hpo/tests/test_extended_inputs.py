@@ -212,7 +212,7 @@ def test_trial_forwards_and_records_complete_row(tmp_path, monkeypatch):
     trial = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(trial)
     monkeypatch.setattr(trial, 'run_af3_tasks', lambda *args: None)
-    monkeypatch.setattr(trial, 'completed_af3_model', lambda *args: tmp_path/'model.cif')
+    monkeypatch.setattr(trial, 'completed_af3_model', lambda *args: tmp_path/'trial/rna_00000/af3/model.cif')
     seen = []
     def generate(args, **kwargs):
         req_path = Path(args[args.index('--request-json')+1])
@@ -233,7 +233,7 @@ def test_trial_forwards_and_records_complete_row(tmp_path, monkeypatch):
     assert seen[0][0]['mutation_rates'] == [.2]*4
     assert seen[0][0]['interactions'] == [[0, 3, .3]]
     assert seen[0][1]['A']['C'] == .5
-    evaluation = json.loads((tmp_path/'trial/rna_00000/base_pair_evaluation.json').read_text())
+    evaluation = json.loads((tmp_path/'trial/trial_result.json').read_text())['scores'][0]
     assert evaluation['interactions'] == rows[0]['interactions']
     assert evaluation['mutation_rates'] == rows[0]['mutation_rates']
 

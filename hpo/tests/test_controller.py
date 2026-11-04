@@ -88,13 +88,6 @@ def trial_case(tmp_path, monkeypatch):
         assert cfg is config
         assert len(tasks) == len(rows)
 
-        # run_pipeline should persist exactly the task collection passed to
-        # run_af3_tasks().
-        saved_tasks = json.loads(
-            (directory / "af3_tasks.json").read_text()
-        )
-        assert saved_tasks == tasks
-
         for task in tasks:
             input_path = Path(task["input"])
             output_directory = Path(task["output"])
@@ -114,7 +107,7 @@ def trial_case(tmp_path, monkeypatch):
 
             run.write_json(
                 output_directory / "af3_success.json",
-                {"model": str(model.resolve())},
+                {"model": str(model.relative_to(output_directory))},
             )
 
     generation = Mock(side_effect=generate)
@@ -154,7 +147,8 @@ def test_fresh_trial_wires_two_rnas_and_averages_scores(trial_case):
         assert request == dict(rows[index], task_name=f'rna_{index:05d}',
                                parameters={'N': 20, 'mutation_rate_paired': 0.3},
                                shs_seed=11, af3_seed=2)
-    tasks = json.loads((directory / 'af3_tasks.json').read_text())
+    assert not (directory / 'af3_tasks.json').exists()
+    tasks = af3.call_args.args[0]
     assert len(tasks) == 2
     for index, task in enumerate(tasks):
         assert task == dict(input=str(directory / f'rna_{index:05d}' / 'af3_input.json'),
@@ -169,8 +163,13 @@ def test_fresh_trial_wires_two_rnas_and_averages_scores(trial_case):
     assert not (directory / 'af3_submission_intent.json').exists()
     assert dssr.call_count == 2
     for index, call in enumerate(dssr.call_args_list):
-        assert call.args[1:] == (directory / f'rna_{index:05d}' / 'dssr', rows[index]['sequence'], 'test-dssr', 10)
+        assert call.args[1:] == (directory / f'rna_{index:05d}', rows[index]['sequence'], 'test-dssr', 10)
     result = json.loads((directory / 'trial_result.json').read_text())
+    # Model paths are stored relative to the trial directory.
+    assert [s['model'] for s in result['scores']] == [
+        f'rna_{index:05d}/af3/prediction/rna_model.cif' for index in range(2)
+    ]
+    assert not list(directory.glob('rna_*/base_pair_evaluation.json'))
     assert result['parameters'] == requests[0]['parameters']
     assert [s['id'] for s in result['scores']] == ['paired', 'unpaired']
     assert [s['loss'] for s in result['scores']] == [0, 1]
@@ -197,7 +196,7 @@ def test_second_rna_failure_does_not_publish_partial_loss(trial_case, failure):
     dssr.side_effect = [[(0, 3)], failure]
     with pytest.raises(type(failure)):
         run_pipeline(trial_case)
-    assert (trial_case[2] / 'rna_00000/base_pair_evaluation.json').exists()
+    assert not (trial_case[2] / 'rna_00000/base_pair_evaluation.json').exists()
     assert not (trial_case[2] / 'trial_result.json').exists()
 
 
@@ -219,7 +218,7 @@ def test_invalid_prediction_cannot_be_scored_as_success(trial_case, broken, expe
             marker.unlink()
         elif broken == 'missing_model':
             marker_data = json.loads(marker.read_text())
-            Path(marker_data["model"]).unlink()
+            (marker.parent / marker_data["model"]).unlink()
     af3.side_effect = damage
     if broken == 'invalid_pairs':
         dssr.side_effect = None
@@ -227,6 +226,26 @@ def test_invalid_prediction_cannot_be_scored_as_success(trial_case, broken, expe
     with pytest.raises(expected_exception):
         run_pipeline(trial_case)
     assert not (directory / 'trial_result.json').exists()
+
+
+def test_af3_marker_stores_model_relative_to_output(tmp_path, monkeypatch):
+    import hpo.pipeline.af3_task as af3_task
+    (tmp_path / 'bin').mkdir()
+    (tmp_path / 'bin' / 'run_alphafold.py').write_text('')
+    monkeypatch.setenv('ALPHAFOLD_BIN_DIR', str(tmp_path / 'bin'))
+    monkeypatch.setenv('ALPHAFOLD_DATABASES', str(tmp_path / 'db'))
+    input_path = tmp_path / 'af3_input.json'
+    input_path.write_text('{}')
+    output = tmp_path / 'af3'
+    def predict(args, **kwargs):
+        model = output / 'rna_00000' / 'rna_00000_model.cif'
+        model.parent.mkdir(parents=True)
+        model.write_text('model')
+    monkeypatch.setattr(af3_task.subprocess, 'run', predict)
+    model = af3_task.run_af3_task(input_path, output, tmp_path / 'models')
+    marker = json.loads((output / 'af3_success.json').read_text())
+    assert marker == {'model': 'rna_00000/rna_00000_model.cif'}
+    assert trial.completed_af3_model(output) == model
 
 
 def test_changed_identity_rejects_cached_result(trial_case):
@@ -331,6 +350,7 @@ class DSSRTests(unittest.TestCase):
             af3_input.write_text('{"name": "rna_00000"}')
 
             # The AF3 stage has already completed and published a valid marker.
+            # Markers written before the rework store an absolute model path.
             af3_output = task_directory / "af3"
             model = af3_output / "model.cif"
             model.parent.mkdir(parents=True)
@@ -375,12 +395,10 @@ class DSSRTests(unittest.TestCase):
                 self.assertEqual(af3.call_count, 1)
                 self.assertEqual(dssr.call_count, 1)
 
-            # run_pipeline should recreate the task manifest.
-            tasks = json.loads(
-                (directory / "af3_tasks.json").read_text()
-            )
+            # run_pipeline passes the task list in memory, without a manifest.
+            self.assertFalse((directory / "af3_tasks.json").exists())
             self.assertEqual(
-                tasks,
+                af3.call_args.args[0],
                 [
                     {
                         "input": str(af3_input.resolve()),

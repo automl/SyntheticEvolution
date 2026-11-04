@@ -69,7 +69,7 @@ def run_af3_task(
     marker = output_directory / "af3_success.json"
     temporary = marker.with_suffix(".tmp")
     temporary.write_text(
-        json.dumps({"model": str(model)}, indent=2)
+        json.dumps({"model": str(model.relative_to(output_directory))}, indent=2)
     )
     temporary.replace(marker)
 
