@@ -3,6 +3,7 @@ import json
 import logging
 logger = logging.getLogger(__name__)
 
+from hpo.pipeline import signals
 from hpo.pipeline.run import load_config, create_dataset, prepare_run
 from hpo.pipeline.trial import run_pipeline
 
@@ -31,7 +32,15 @@ def main():
             "For missing parameters the generators defaults are used."
         )
 
-    loss = run_pipeline(config, dataset, ws_root / 'standalone_trial', fingerprint)
+    signals.install()
+    try:
+        with signals.trial_running():
+            loss = run_pipeline(config, dataset, ws_root / 'standalone_trial', fingerprint)
+    except signals.ControllerStop as stop:
+        # run_pipeline has written the failure report; AF3 outputs that are
+        # complete are reused when the trial is submitted again.
+        logger.error('Standalone trial stopped: %s', stop)
+        raise SystemExit(signals.EXIT_CODE) from stop
     print(loss)
 
 

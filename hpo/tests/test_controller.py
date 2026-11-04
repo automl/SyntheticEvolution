@@ -84,7 +84,7 @@ def trial_case(tmp_path, monkeypatch):
             json.dumps({"name": request["task_name"]})
         )
 
-    def run_af3(tasks, cfg):
+    def run_af3(tasks, cfg, progress=None):
         assert cfg is config
         assert len(tasks) == len(rows)
 
@@ -154,7 +154,8 @@ def test_fresh_trial_wires_two_rnas_and_averages_scores(trial_case):
         assert task == dict(input=str(directory / f'rna_{index:05d}' / 'af3_input.json'),
                             output=str(directory / f'rna_{index:05d}' / 'af3'),
                             model_dir=config['model_dir'])
-    af3.assert_called_once_with(tasks, config)
+    af3.assert_called_once()
+    assert af3.call_args.args[:2] == (tasks, config)
     assert [Path(task['input']) for task in af3.call_args.args[0]] == [
         directory / 'rna_00000' / 'af3_input.json',
         directory / 'rna_00001' / 'af3_input.json',
@@ -246,6 +247,77 @@ def test_af3_marker_stores_model_relative_to_output(tmp_path, monkeypatch):
     marker = json.loads((output / 'af3_success.json').read_text())
     assert marker == {'model': 'rna_00000/rna_00000_model.cif'}
     assert trial.completed_af3_model(output) == model
+
+
+def read_failure_report(directory):
+    return json.loads((directory / 'failure_report.json').read_text())
+
+
+def test_dssr_crash_writes_failure_report(trial_case):
+    (config, rows, directory, requests, generation, af3, dssr) = trial_case
+    def crash_on_second(model, task_dir, *args):
+        if task_dir.name == 'rna_00000':
+            return [(0, 3)]
+        (task_dir / 'dssr.log').write_text('dssr output\n')
+        raise subprocess.CalledProcessError(-11, ['/opt/x3dna-dssr', f'-i={model}', '--json'])
+    dssr.side_effect = crash_on_second
+    with pytest.raises(subprocess.CalledProcessError):
+        run_pipeline(trial_case)
+    report = read_failure_report(directory)
+    assert (report['stage'], report['rna_index'], report['rna_id']) == ('dssr', 1, 'unpaired')
+    assert (report['error_type'], report['returncode'], report['signal']) == ('CalledProcessError', -11, 'SIGSEGV')
+    assert report['timed_out'] is False
+    # Trial paths are relative; only run_metadata.json holds absolute paths.
+    assert report['command'] == ['/opt/x3dna-dssr', '-i=rna_00001/af3/prediction/rna_model.cif', '--json']
+    assert str(directory) not in report['message']
+    assert report['logs'] == {'shs_generation.log': '', 'dssr.log': 'dssr output\n'}
+    assert 'Traceback' in report['traceback']
+    assert {'host', 'slurm_job_id', 'slurm_array_task_id', 'time'} <= report.keys()
+    assert not (directory / 'trial_result.json').exists()
+
+
+def test_generation_timeout_is_reported(trial_case):
+    trial_case[4].side_effect = subprocess.TimeoutExpired('generator', 30)
+    with pytest.raises(subprocess.TimeoutExpired):
+        run_pipeline(trial_case)
+    report = read_failure_report(trial_case[2])
+    assert (report['stage'], report['rna_index'], report['rna_id']) == ('generation', 0, 'paired')
+    assert report['timed_out'] is True
+    assert report['command'] == 'generator'
+
+
+def test_af3_failure_names_the_rna(trial_case):
+    (config, rows, directory, requests, generation, af3, dssr) = trial_case
+    def fail_second(tasks, cfg, progress):
+        progress.update(stage='af3', rna_index=1)
+        (directory / 'rna_00001' / 'af3.log').write_text('x' * 70000 + 'CUDA error')
+        raise subprocess.CalledProcessError(1, ['af3'])
+    af3.side_effect = fail_second
+    with pytest.raises(subprocess.CalledProcessError):
+        run_pipeline(trial_case)
+    report = read_failure_report(directory)
+    assert (report['stage'], report['rna_id'], report['signal']) == ('af3', 'unpaired', None)
+    log = report['logs']['af3.log']
+    # Only the end of a long log is kept, where the error is.
+    assert log.startswith('[... first 4474 bytes truncated ...]') and log.endswith('CUDA error')
+    assert len(log) < 64 * 1024 + 100
+
+
+def test_keyboard_interrupt_is_reported(trial_case):
+    trial_case[6].side_effect = KeyboardInterrupt
+    with pytest.raises(KeyboardInterrupt):
+        run_pipeline(trial_case)
+    assert read_failure_report(trial_case[2])['error_type'] == 'KeyboardInterrupt'
+
+
+def test_successful_retry_removes_old_failure_report(trial_case):
+    (config, rows, directory, requests, generation, af3, dssr) = trial_case
+    dssr.side_effect = [RuntimeError('DSSR failed'), [(0, 3)], [(0, 3)]]
+    with pytest.raises(RuntimeError):
+        run_pipeline(trial_case)
+    assert (directory / 'failure_report.json').exists()
+    assert run_pipeline(trial_case) == pytest.approx(0.5)
+    assert not (directory / 'failure_report.json').exists()
 
 
 def test_changed_identity_rejects_cached_result(trial_case):

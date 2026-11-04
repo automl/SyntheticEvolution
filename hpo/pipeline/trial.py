@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 from hpo.pipeline.run import Dataset, PIPELINE_DIR, GENERATOR_DIR, normalize_pairs, write_json
 import hpo.pipeline.dssr as dssr
+import hpo.pipeline.failures as failures
 import hpo.pipeline.scoring as scoring
 
 
@@ -48,8 +49,16 @@ def completed_af3_model(output_directory: Union[str, Path]) -> Optional[Path]:
     return model
 
 
-def run_af3_tasks(tasks: list[dict[str, str]], config: dict[str, Any]) -> None:
-    """Run all incomplete AF3 tasks inside the controller allocation."""
+def run_af3_tasks(
+    tasks: list[dict[str, str]],
+    config: dict[str, Any],
+    progress: Optional[dict[str, Any]] = None,
+) -> None:
+    """Run all incomplete AF3 tasks inside the controller allocation.
+
+    ``progress`` is updated with the index of the task being run, so a failure
+    report can name the RNA.
+    """
 
     af3_python = os.environ.get("AF3_PYTHON")
     if not af3_python:
@@ -70,6 +79,8 @@ def run_af3_tasks(tasks: list[dict[str, str]], config: dict[str, Any]) -> None:
     reused = 0
 
     for index, task in enumerate(tasks, start=1):
+        if progress is not None:
+            progress.update(stage="af3", rna_index=index - 1)
         input_path = Path(task["input"]).resolve()
         output_directory = Path(task["output"]).resolve()
         model_directory = Path(task["model_dir"]).expanduser().resolve()
@@ -152,11 +163,45 @@ def run_pipeline(
         logger.info('Using existing result from %s', trial_result_path)
         return json.loads(trial_result_path.read_text())['loss']
 
+    # Stages record where they are, so a failure report can name the stage and RNA.
+    progress: dict[str, Any] = {}
+    try:
+        loss = _run_stages(config, rows, trial_directory, trial_parameters, progress)
+    except BaseException as error:
+        # BaseException: timeouts and cancellations must be reported as well.
+        try:
+            report = failures.write_failure_report(trial_directory, rows, progress, error)
+        except Exception:
+            logger.exception('Could not write the failure report for %s', trial_directory)
+        else:
+            logger.error(
+                'Trial FAILED: %s. Report: %s',
+                failures.describe(report),
+                trial_directory / failures.FAILURE_REPORT,
+            )
+        raise
+
+    # A report from an earlier failed attempt of this trial no longer applies.
+    (trial_directory / failures.FAILURE_REPORT).unlink(missing_ok=True)
+    return loss
+
+
+def _run_stages(
+    config: dict[str, Any],
+    rows: Dataset,
+    trial_directory: Path,
+    trial_parameters: dict[str, Any],
+    progress: dict[str, Any],
+) -> float:
+    """Generate, predict and score every RNA, then publish the trial result."""
+    trial_result_path = trial_directory / 'trial_result.json'
+
     logger.info('Trial contains %d RNA rows', len(rows))
     ############################# 1. - generate SHS ###########################
     logger.info('Generating AF3 inputs and request for %d RNA rows', len(rows))
     af3_tasks = []
     for index, row in enumerate(rows):
+        progress.update(stage='generation', rna_index=index)
         task_dir = trial_directory / f"rna_{index:05d}"
         task_dir.mkdir(exist_ok=True)
         request_path = task_dir / "shs_generation_request.json"
@@ -199,12 +244,14 @@ def run_pipeline(
                     Path(config["model_dir"]).expanduser().resolve()),
             })
 
-    run_af3_tasks(af3_tasks, config)
+    progress.update(stage='af3', rna_index=None)
+    run_af3_tasks(af3_tasks, config, progress)
 
     ################################ 3. - DSSR #################################
     logger.info('Scoring %d predicted structures', len(rows))
     task_evaluations = []
     for index, row in enumerate(rows):
+        progress.update(stage='dssr', rna_index=index)
         task_dir = trial_directory / f'rna_{index:05d}'
         predicted_model = completed_af3_model(task_dir / "af3")
         if predicted_model is None:
@@ -220,6 +267,7 @@ def run_pipeline(
         normalized_pairs = normalize_pairs(dssr_predicted_pairs, len(row['sequence']))
     
         ################################ 4. - SCORE #################################
+        progress.update(stage='scoring')
         metrics = scoring.score_row(
             row,
             normalized_pairs,
@@ -244,6 +292,7 @@ def run_pipeline(
             metrics['loss'],
             config.get('scoring_objective', 'f1'),
         )
+    progress.update(stage='aggregation', rna_index=None)
     loss = scoring.aggregate(task_evaluations)
     write_json(
         trial_result_path, 

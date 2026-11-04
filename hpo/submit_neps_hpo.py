@@ -1,5 +1,6 @@
 """Submit controller with YAML resources and workspace logs; run from any cwd."""
 import argparse
+from hpo.pipeline import failures
 from hpo.pipeline.run import (
     ROOT,
     repo_path,
@@ -30,6 +31,12 @@ def main():
     except ValueError as exc:
         raise SystemExit(f'Submission cancelled: {exc}') from exc
 
+    # Checked here as well, so a stopped run does not wait in the GPU queue.
+    try:
+        failures.check_not_stopped(ws_root)
+    except RuntimeError as exc:
+        raise SystemExit(f'Submission cancelled: {exc}') from exc
+
     if existing_run:
         answer = input(
             "A run with matching inputs/code/config already exists. "
@@ -58,6 +65,8 @@ def main():
         '--gres=' + resources['gres'],
         '--output=' + str(logs / (log_name + '.out')),
         '--error=' + str(logs / (log_name + '.err')),
+        # SIGUSR1 10 minutes before the time limit, to report the running trial cleanly.
+        '--signal=B:USR1@600',
     ]
     if count > 1:
         submission.append(f'--array=0-{count - 1}')

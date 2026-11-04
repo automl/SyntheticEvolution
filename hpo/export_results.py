@@ -8,9 +8,12 @@ import argparse
 import json
 import re
 import shutil
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Any
 
+from hpo.pipeline import failures
 from hpo.pipeline.run import get_workspace_path, load_config
 
 EXPORT_DIR_NAME = "results"
@@ -24,6 +27,69 @@ def _confirm_recreate(destination: Path) -> None:
     if answer not in {"", "y", "yes"}:
         raise SystemExit("Export cancelled.")
     shutil.rmtree(destination)
+
+
+def _warn(message: str) -> None:
+    print(f"WARNING: {message}", file=sys.stderr)
+
+
+def _export_errors(neps_dir: Path, destination: Path) -> dict[str, Any]:
+    """Copy all error files and return the failure block for the manifest.
+
+    The block is written also without failures, so it is clear where errors
+    would be listed.
+    """
+    errors_dir = destination / "errors"
+    files: list[str] = []
+    reports: dict[str, dict[str, Any]] = {}
+    stopped: set[str] = set()
+
+    for path in sorted((neps_dir / "configs").glob(
+        f"config_*/artifacts/{failures.FAILURE_REPORT}"
+    )):
+        config_name = path.parent.parent.name
+        target = errors_dir / "reports" / f"{config_name}.json"
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(path, target)
+        files.append(target.relative_to(destination).as_posix())
+        reports[config_name[len("config_"):]] = json.loads(path.read_text())
+
+    # NePS logs every crash; it also covers trials without a failure report
+    # (runs from before the reports existed, or crashes outside the pipeline).
+    shared_errors = neps_dir / "shared_errors.jsonl"
+    if shared_errors.is_file():
+        target = errors_dir / shared_errors.name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(shared_errors, target)
+        files.append(target.relative_to(destination).as_posix())
+        records, skipped = failures.read_jsonl(shared_errors)
+        if skipped:
+            _warn(f"Skipped {skipped} non-JSON line(s) in {shared_errors}")
+        for record in records:
+            trial_id = str(record.get("trial_id"))
+            if trial_id in reports:
+                continue
+            # Trials stopped before they ran are not failures of their config.
+            if failures.is_stop(str(record.get("err", ""))):
+                stopped.add(trial_id)
+                continue
+            signal = re.search(r"Signals\.(SIG\w+)", str(record.get("err", "")))
+            reports[trial_id] = dict(
+                error_type=record.get("err_type"),
+                signal=signal.group(1) if signal else None,
+            )
+
+    finished = sum(
+        1 for path in (neps_dir / "configs").glob("config_*/report.yaml")
+        if path.parent.name[len("config_"):] not in stopped
+    )
+    block = failures.summarize(reports, finished, files)
+    if block["count"]:
+        _warn(
+            failures.summary_line(block)
+            + f". See {errors_dir.relative_to(destination.parent)}/"
+        )
+    return block
 
 
 def export_results(config_path: Path) -> Path:
@@ -111,6 +177,7 @@ def export_results(config_path: Path) -> Path:
         "workspace": str(workspace),
         "exported_at": datetime.now(timezone.utc).isoformat(),
         "config_ids": config_ids,
+        "failures": _export_errors(neps_dir, destination),
         "files": copied,
     }
     (destination / "manifest.json").write_text(

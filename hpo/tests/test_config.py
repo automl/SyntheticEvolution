@@ -43,8 +43,28 @@ class TestLoadConfig(unittest.TestCase):
             'search': {
                 'N': {'type': 'integer', 'lower': 2, 'upper': 128},
             },
+            # Explicit, so loading returns the config unchanged.
+            'failures': {'min_trials': 5, 'max_rate': 0.2, 'window': 50},
         })
         return config
+
+    def test_failure_limit_defaults_and_partial_settings(self):
+        config = self.neps_config()
+        del config['failures']
+        self.assertEqual(self.load(config, mode='neps')['failures'],
+                         {'min_trials': 5, 'max_rate': 0.2, 'window': 50})
+        config['failures'] = {'max_rate': 1, 'window': None}
+        self.assertEqual(self.load(config, mode='neps')['failures'],
+                         {'min_trials': 5, 'max_rate': 1.0, 'window': None})
+
+    def test_failure_limit_rejects_invalid_settings(self):
+        for failures in ([], {'max_rate': 0}, {'max_rate': 1.5}, {'max_rate': True},
+                         {'window': 0}, {'min_trials': 2.5}, {'typo': 1}):
+            with self.subTest(failures=failures):
+                config = self.neps_config()
+                config['failures'] = failures
+                with self.assertRaisesRegex(ValueError, 'failures'):
+                    self.load(config, mode='neps')
 
     def test_standalone_does_not_require_neps_or_controller_settings(self):
         loaded = self.load(self.config)

@@ -210,6 +210,7 @@ def test_controller_submission_resources_and_command(
         "--mem=20G",
         "--gres=gpu:A100:1",
         "--time=03:00:00",
+        "--signal=B:USR1@600",
         (
             "--output="
             + str(workspace / "controller_logs/%j.out")

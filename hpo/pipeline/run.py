@@ -131,6 +131,7 @@ def load_config(path, *, mode, submitting_controller=False):
             require_text(config, 'optimizer')
         if not isinstance(config.get('ignore_errors'), bool):
             raise ValueError('ignore_errors must be a YAML boolean: true or false')
+        config['failures'] = failure_limit_settings(config.get('failures'))
         require_positive
 
     # These settings are used to launch the controller through Slurm.
@@ -151,6 +152,37 @@ def load_config(path, *, mode, submitting_controller=False):
             require_text(controller, key, "controller.")
         require_positive(controller, "cpus", "controller.", integer=True)
     return config
+
+
+FAILURE_LIMIT_DEFAULTS = dict(min_trials=5, max_rate=0.20, window=50)
+
+
+def failure_limit_settings(raw):
+    """Validate the NePS failure limit and fill in defaults.
+
+    ``max_rate: 1.0`` disables the limit; ``window: null`` uses all trials.
+    """
+    if raw is None:
+        raw = {}
+    if not isinstance(raw, dict):
+        raise ValueError('failures must be a YAML mapping')
+    unknown = raw.keys() - FAILURE_LIMIT_DEFAULTS.keys()
+    if unknown:
+        raise ValueError('Unknown failures settings: ' + ', '.join(sorted(map(str, unknown))))
+    settings = {**FAILURE_LIMIT_DEFAULTS, **raw}
+
+    def positive_integer(value):
+        return isinstance(value, int) and not isinstance(value, bool) and value > 0
+
+    if not positive_integer(settings['min_trials']):
+        raise ValueError('failures.min_trials must be a positive integer')
+    if settings['window'] is not None and not positive_integer(settings['window']):
+        raise ValueError('failures.window must be a positive integer or null')
+    rate = settings['max_rate']
+    if isinstance(rate, bool) or not isinstance(rate, (int, float)) or not 0 < rate <= 1:
+        raise ValueError('failures.max_rate must be a number in (0, 1]; 1.0 disables the limit')
+    settings['max_rate'] = float(rate)
+    return settings
 
 
 def write_json(path, value):
@@ -306,6 +338,7 @@ def fingerprint(config, rows):
         'controller', 'evaluations', 'ignore_errors',
         'dssr_timeout_seconds', 'af3_timeout_seconds', 'generator_timeout_seconds',
         'controller_python', 'neps_python', 'shs_python', 
+        'storage', 'failures',
     )
 
     code = {}

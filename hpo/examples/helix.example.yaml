@@ -26,7 +26,13 @@ controller:
 neps_python:   # REQUIRED only for NePS controller submission
 evaluations: 2 # Max number of configs neps will try
 optimizer:     # optional custom optimizer selection
-ignore_errors: false
+ignore_errors: true # keep sampling when a trial fails; failures are reported
+# Stop all controllers when too many trials fail (writes STOPPED.json).
+# Optional; these are the defaults. max_rate: 1.0 disables the limit.
+failures:
+  min_trials: 5   # never stop before this many trials have finished
+  max_rate: 0.20  # stop when more than this share of the window failed
+  window: 50      # last N finished trials; null = all trials
 
 
 # ---- Generator config ------------------------------------------

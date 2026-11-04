@@ -56,6 +56,8 @@ def main():
         '--gres=' + resources['gres'],
         '--output=' + str(logs / '%j.out'),
         '--error=' + str(logs / '%j.err'),
+        # SIGUSR1 10 minutes before the time limit, to report the running trial cleanly.
+        '--signal=B:USR1@600',
         str(ROOT / 'hpo/slurm/controller.slurm'),
         config['module'],
         config['controller_python'],
