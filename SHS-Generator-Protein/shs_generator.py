@@ -85,7 +85,7 @@ class MsaGenerator:
             return self.rng.choice(AMINO_ACIDS_LOWER)
         return ""
 
-    def paired_deletion(self, i, mutated_partner: str, partner_index: float) -> bool:
+    def paired_deletion(self, i, partner_index: float) -> bool:
         """Sample deletion for one pair member.
 
         Single deletions are independent per position. A separate coordinated
@@ -173,7 +173,7 @@ class MsaGenerator:
                 if approach == "covariance":
                     new_nt = self.mutate_cov(nt, seq[prev], new_seq[prev], interactions, partner_mutation_rates,mutation_rate)
                 # optionally override mutation if a deletion happens
-                if self.paired_deletion(i, new_seq[partners[0]], partners[0]):
+                if self.paired_deletion(i, partners[0]):
                     new_nt = "-"
 
             if self.pair_map.is_paired(i-1) and self.pair_map.is_paired(i):
