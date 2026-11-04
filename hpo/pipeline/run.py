@@ -11,6 +11,8 @@ from typing import Any
 from pathlib import Path
 import tempfile
 
+from hpo.pipeline.signals import STOP_MARGIN_SECONDS
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -152,8 +154,48 @@ def load_config(path, *, mode, submitting_controller=False):
         for key in ("partition", "memory", "gres", "time"):
             require_text(controller, key, "controller.")
         require_positive(controller, "cpus", "controller.", integer=True)
+
+        # Slurm asks the controller to stop STOP_MARGIN_SECONDS before the
+        # limit; a shorter job would be stopped before it does any work.
+        seconds = slurm_seconds(controller['time'])
+        if seconds is None:
+            raise ValueError(
+                "controller.time must be a Slurm time limit such as '30', "
+                "'00:30:00' or '1-00:00:00'"
+            )
+        if seconds < STOP_MARGIN_SECONDS + MIN_WORK_SECONDS:
+            raise ValueError(
+                f'controller.time must be at least '
+                f'{(STOP_MARGIN_SECONDS + MIN_WORK_SECONDS) // 60} minutes: the last '
+                f'{STOP_MARGIN_SECONDS} s are reserved for a clean stop'
+            )
     return config
 
+
+# Minimum wall time left for trials after the stop margin.
+MIN_WORK_SECONDS = 300
+
+
+def slurm_seconds(value):
+    """Seconds in a Slurm time limit, math.inf for no limit, None if invalid.
+
+    Formats as in ``sbatch --time``: minutes, minutes:seconds,
+    hours:minutes:seconds, days-hours, days-hours:minutes and
+    days-hours:minutes:seconds.
+    """
+    value = value.strip()
+    if value.lower() in {'infinite', 'unlimited'}:
+        return math.inf
+    match = re.fullmatch(r'(?:(\d+)-)?(\d+)(?::(\d+))?(?::(\d+))?', value)
+    if match is None:
+        return None
+    days, *parts = match.groups()
+    numbers = [int(part) for part in parts if part is not None]
+    if days is None:
+        units = {1: (60,), 2: (60, 1), 3: (3600, 60, 1)}[len(numbers)]
+    else:
+        units = (3600, 60, 1)
+    return int(days or 0) * 86400 + sum(n * unit for n, unit in zip(numbers, units))
 
 STORAGE_KEYS = ('scratch',)
 

@@ -1,5 +1,6 @@
 """Submit a standalone trial with YAML resources and workspace logs; run from any cwd."""
 import argparse
+from hpo.pipeline import signals
 from hpo.pipeline.run import (
     ROOT,
     repo_path,
@@ -56,8 +57,8 @@ def main():
         '--gres=' + resources['gres'],
         '--output=' + str(logs / '%j.out'),
         '--error=' + str(logs / '%j.err'),
-        # SIGUSR1 10 minutes before the time limit, to report the running trial cleanly.
-        '--signal=B:USR1@600',
+        # SIGUSR1 shortly before the time limit, to report the running trial cleanly.
+        signals.SBATCH_SIGNAL,
         str(ROOT / 'hpo/slurm/controller.slurm'),
         config['module'],
         config['controller_python'],

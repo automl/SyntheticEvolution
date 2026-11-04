@@ -1,6 +1,6 @@
 """Submit controller with YAML resources and workspace logs; run from any cwd."""
 import argparse
-from hpo.pipeline import failures
+from hpo.pipeline import failures, signals
 from hpo.pipeline.run import (
     ROOT,
     repo_path,
@@ -65,8 +65,8 @@ def main():
         '--gres=' + resources['gres'],
         '--output=' + str(logs / (log_name + '.out')),
         '--error=' + str(logs / (log_name + '.err')),
-        # SIGUSR1 10 minutes before the time limit, to report the running trial cleanly.
-        '--signal=B:USR1@600',
+        # SIGUSR1 shortly before the time limit, to report the running trial cleanly.
+        signals.SBATCH_SIGNAL,
     ]
     if count > 1:
         submission.append(f'--array=0-{count - 1}')

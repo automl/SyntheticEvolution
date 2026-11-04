@@ -1,6 +1,6 @@
 """Turn Slurm's stop signals into a clean stop of the running trial.
 
-Slurm sends SIGUSR1 shortly before the time limit (``--signal=B:USR1@600``)
+Slurm sends SIGUSR1 shortly before the time limit (``--signal=B:USR1@120``)
 and SIGTERM on ``scancel``. While a trial runs, the handler raises
 ControllerStop, which also kills a running AF3/DSSR child process
 (``subprocess.run`` kills its child when interrupted). Between trials it only
@@ -16,6 +16,11 @@ logger = logging.getLogger(__name__)
 
 STOP_SIGNALS = (signal.SIGUSR1, signal.SIGTERM)
 EXIT_CODE = 4
+
+# Seconds before the time limit at which Slurm sends SIGUSR1. Slurm may send it
+# up to 60 s earlier; the clean stop itself (report, NePS state) takes seconds.
+STOP_MARGIN_SECONDS = 120
+SBATCH_SIGNAL = f'--signal=B:USR1@{STOP_MARGIN_SECONDS}'
 
 _requested: Optional[str] = None
 _in_trial = False

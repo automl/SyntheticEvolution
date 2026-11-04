@@ -168,6 +168,28 @@ def test_invalid_controller_resources_are_rejected(load, neps, key, value):
         load(neps, mode='neps', submitting_controller=True)
 
 
+@pytest.mark.parametrize('time,seconds', [
+    ('10', 600), ('10:30', 630), ('01:02:03', 3723), ('2-3', 183600),
+    ('1-02:03', 93780), ('1-02:03:04', 93784), ('UNLIMITED', float('inf')),
+    ('', None), ('1:2:3:4', None), ('10m', None), ('-5', None),
+])
+def test_slurm_time_limits_are_parsed(time, seconds):
+    assert run.slurm_seconds(time) == seconds
+
+
+@pytest.mark.parametrize('time,accepted', [
+    ('00:07:00', True), ('7', True), ('00:06:59', False), ('00:02:00', False), ('ten', False),
+])
+def test_controller_time_must_leave_room_after_the_stop_margin(load, neps, time, accepted):
+    neps['neps_python'] = '/example/neps/bin/python'
+    neps['controller'] = dict(CONTROLLER, time=time)
+    if accepted:
+        load(neps, mode='neps', submitting_controller=True)
+    else:
+        with pytest.raises(ValueError, match=r'controller\.time'):
+            load(neps, mode='neps', submitting_controller=True)
+
+
 # ---- Export -----------------------------------------------------------------
 
 def test_export_only_requires_the_run_location(load):
