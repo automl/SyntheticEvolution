@@ -146,7 +146,10 @@ def main():
     config = load_config(args.config, mode='neps')
 
     run_root, dataset, fingerprint = prepare_run(config)
-    failures.check_not_stopped(run_root)
+    try:
+        failures.check_not_stopped(run_root)
+    except RuntimeError as exc:
+        raise SystemExit(str(exc)) from exc
     neps_root = run_root / "neps"
     stop_path = run_root / failures.STOPPED
     signals.install()

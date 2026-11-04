@@ -139,8 +139,10 @@ def export_results(config_path: Path) -> Path:
         )
     ]
     if not config_ids:
-        raise ValueError(
-            f"No Config IDs found in {summary_dir / 'best_config_trajectory.txt'}"
+        # No trial succeeded; the errors are then the most important export.
+        _warn(
+            f"No Config IDs found in {summary_dir / 'best_config_trajectory.txt'}: "
+            "no trial succeeded. Exporting summaries and errors only."
         )
 
     for config_id in config_ids:

@@ -43,6 +43,21 @@ def test_failures_block_is_written_without_failures(run, capsys):
     assert 'WARNING' not in capsys.readouterr().err
 
 
+def test_run_without_successful_trials_exports_errors(run, capsys):
+    config, neps = run
+    (neps / 'summary' / 'best_config_trajectory.txt').write_text('')
+    failed = neps / 'configs' / 'config_1'
+    (failed / 'artifacts' / 'failure_report.json').write_text(json.dumps(dict(
+        error_type='CalledProcessError', stage='generation', rna_id='rna_a')))
+    destination = export.export_results(config)
+    data = manifest(destination)
+    assert data['config_ids'] == []
+    assert data['failures']['count'] == 1
+    assert (destination / 'errors' / 'reports' / 'config_1.json').is_file()
+    assert not (destination / 'configs').exists()
+    assert 'no trial succeeded' in capsys.readouterr().err
+
+
 def test_failures_are_copied_and_reported(run, capsys):
     config, neps = run
     failed = neps / 'configs' / 'config_2'
