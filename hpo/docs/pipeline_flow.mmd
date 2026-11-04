@@ -14,7 +14,7 @@ subgraph LoginNode["Login node"]
     Export["hpo/export_results.py"]
 end
 
-subgraph CpuNode["Controller allocation"]
+subgraph CpuNode["Controller allocation (GPU node)"]
 
     subgraph StepController["Controller"]
         Trial["hpo/pipeline/trial.py"]
@@ -27,7 +27,7 @@ subgraph CpuNode["Controller allocation"]
         SHSGenerator["SHS-Generator"]
     end
 
-    subgraph Step2["Step 2: AF3"]
+    subgraph Step2["Step 2: AF3, one process for all RNAs"]
         AF3Task["hpo/pipeline/trial.py: run_af3"]
         AF3[/"AlphaFold 3"/]
     end
@@ -40,6 +40,8 @@ subgraph CpuNode["Controller allocation"]
     subgraph Step4["Step 4: scoring"]
         Scoring["hpo/pipeline/scoring.py"]
     end
+
+    Scratch[("Scratch: /dev/shm\nper trial, removed afterwards")]
 
 end
 
@@ -69,18 +71,19 @@ DSSR --> DSSRTool
 %% Step 4
 Scoring -."loss".-> Trial
 
-%% Workspace access 
-SHSGenerator -."save af3 input".- Workspace
-Trial -."save results".- Workspace
-AF3 -."read af3 input\n save predicted model".- Workspace
-DSSRTool -."save predicted pairs".- Workspace
-Export -."read results".- Workspace
+%% Tools work in scratch; only the trial writes to the workspace.
+SHSGenerator -."af3 input, log".- Scratch
+AF3 -."predictions, log".- Scratch
+DSSRTool -."dssr.json, side files, log".- Scratch
+Trial -."per-RNA archives, trial record,\nfailure report, retention".- Workspace
+Export -."read results, --prune".- Workspace
 
 style User color:#FFFFFF, stroke:#00C853, fill:#003215
 
 style CpuNode fill:#2f2437
 style LoginNode fill:#2f2437
 style Workspace fill:#2f2437
+style Scratch fill:#2f2437
 
 style StepController fill:#202060
 style Step1 fill:#202060

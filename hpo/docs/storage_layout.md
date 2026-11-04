@@ -1,113 +1,130 @@
 # Storage layout
 
-- **Run:** one experiment with shared configuration and dataset. Start with `submit_standalone_trial.py` or `submit_neps_hpo.py`; inside an existing CPU allocation, use `run_standalone_trial.py` or `run_neps_hpo.py`.
-- **Trial:** one parameter configuration evaluated across the entire dataset, producing one aggregate loss. Standalone runs contain one trial; NePS runs evaluate configurations across multiple trials, subject to the evaluation budget.
-- **Task:** processing one RNA within a trial, from SHS generation through AF3 and DSSR to scoring. Each task has one AF3 array element.
+- **Run:** one experiment with one configuration and dataset, in
+  `<workspace>/shs_hpo/<run_name>/`. Standalone runs contain one trial; NePS
+  runs contain one trial per sampled configuration.
+- **Trial:** one parameter configuration evaluated on every RNA of the
+  dataset, producing one aggregate loss.
+- **Scratch:** a private directory per trial in RAM (`/dev/shm`, setting
+  `storage.scratch`) for everything temporary. It is removed when the trial
+  ends. The workspace only receives finished files.
+
+The workspace holds as few files as possible: per trial one record and one
+archive per RNA. Logs and tool side files stay in scratch.
 
 ## Run
 
 ```text
 <workspace>/shs_hpo/<run_name>/
-├── run_metadata.json                 # Configuration, dataset, fingerprint
-├── controller_logs/<job_id>.out/.err  # When submitted through a helper
+├── run_metadata.json              # config, dataset, fingerprint (the only absolute paths)
+├── controller_logs/               # Slurm output of the submitted controllers
+├── STOPPED.json                   # only if the failure limit stopped the run
+├── STOPPED-<n>.json               # earlier stops, renamed to restart the run
 │
-│   # Standalone mode:
-├── standalone_trial/                 # Pipeline trial files directly here
+│   # Standalone mode
+├── standalone_trial/              # one trial, see below; plus logs/
 │
-│   # NePS mode:
-├── controller.lock                   # NePS controller lock
+│   # NePS mode
 └── neps/
-    ├── <NePS-managed search files>
-    └── <NePS-managed trial path>/    # Repeated per trial; see below
+    ├── optimizer_info.yaml, optimizer_state.pkl, pipeline_space.pkl, .trial_cache.pkl
+    ├── shared_errors.jsonl        # every crashed trial (NePS), only if one crashed
+    ├── summary/                   # full.csv, short.csv, best_config.txt, best_config_trajectory.txt
+    └── configs/config_<id>/
+        ├── config.yaml, metadata.json, report.yaml   # NePS
+        └── artifacts/             # one trial, see below
 ```
-
-Standalone and NePS are alternative modes. NePS placeholders indicate ownership, not literal filenames or a verified internal directory structure. `.out/.err` denotes two files.
 
 ## One trial
 
-NePS supplies the trial directory; `artifacts/` separates our pipeline outputs from NePS-managed files. Standalone needs no extra level because its directory contains only pipeline outputs.
-
 ```text
-Standalone:                               NePS:
-standalone_trial/                         <NePS-managed trial path>/
-└── <pipeline trial files>                ├── <NePS-managed files>
-                                          └── artifacts/
-                                              └── <pipeline trial files>
+Successful trial                     Failed trial
+artifacts/                           artifacts/
+├── trial_result.json                ├── trial_metadata.json
+└── rna_<index>.tar.gz               ├── failure_report.json
+    (one per RNA)                    └── rna_<index>.tar.gz
+                                         (RNAs whose AF3 prediction finished)
 ```
 
-Both locations contain the same pipeline trial files:
+A running trial has `trial_metadata.json` (fingerprint and parameters). On
+success, `trial_result.json` replaces it. Standalone trials also keep the
+tool logs in `standalone_trial/logs/` (`af3.log`, `rna_<index>/shs_generation.log`,
+`rna_<index>/dssr.log`).
+
+With `storage.keep_artifacts: trajectory`, successful configs that are
+neither on NePS's best-config trajectory nor among the `keep_top_k` lowest
+losses keep only `trial_result.json`. Failed trials are never pruned.
+
+### Per-RNA archive
+
+`rna_<index>.tar.gz` holds everything kept from one RNA: the complete AF3
+output (without AF3's `<name>/` folder), the generator's effective parameters
+and the DSSR output.
 
 ```text
-<pipeline trial directory>/
-├── trial_metadata.json
-├── trial_result.json
-├── af3_tasks.json
-├── af3_submission_intent.json
-├── af3_job_id.json
-├── logs/<array_id>_<task_index>.out/.err
-└── rna_<index>/                      # Repeated per dataset RNA; see below
+rna_<index>.tar.gz
+├── rna_<index>_model.cif               # top-ranked model, scored with DSSR
+├── rna_<index>_data.json               # AF3 input incl. the synthetic MSA
+├── rna_<index>_confidences.json
+├── rna_<index>_summary_confidences.json
+├── ranking_scores.csv
+├── TERMS_OF_USE.md
+├── seed-<seed>_sample-<n>/             # one per AF3 sample (5)
+│   ├── model.cif
+│   ├── confidences.json
+│   └── summary_confidences.json
+├── shs_effective_parameters.json       # generator parameters after defaults
+└── dssr.json                           # added after DSSR; missing if DSSR crashed
 ```
 
-## One task
-
-Indices follow dataset order: `rna_00000`, `rna_00001`, etc. Original RNA IDs are retained in request and evaluation files.
-
-```text
-rna_<index>/
-├── shs_generation_request.json
-├── shs_generation.log
-├── af3_input.base.json
-├── af3_input.json
-├── base_pair_evaluation.json
-├── af3/
-│   ├── af3_success.json
-│   └── rna_<index>/
-│       ├── rna_<index>_model.cif
-│       ├── rna_<index>_data.json
-│       ├── rna_<index>_confidences.json
-│       ├── rna_<index>_summary_confidences.json
-│       ├── ranking_scores.csv
-│       ├── TERMS_OF_USE.md
-│       └── seed-<seed>_sample-<sample>/  # Repeated per AF3 sample
-│           ├── model.cif
-│           ├── confidences.json
-│           └── summary_confidences.json
-└── dssr/
-    ├── dssr.json
-    ├── dssr.log
-    └── dssr-*                        # Auxiliary outputs; vary by structure
-```
+The archive is published right after AF3 and published again once DSSR has
+written `dssr.json`, before its pairs are validated. Its existence marks a
+finished AF3 prediction: a resumed trial reuses it instead of running the
+generator and AF3 again.
 
 ## File purposes
 
 | File | Purpose |
 | --- | --- |
-| `trial_metadata.json` | Fingerprint and parameter overrides; checked before reuse. |
-| `trial_result.json` | Aggregate loss, all task evaluations, parameters, and job ID. |
-| `af3_tasks.json` | Ordered input/output/model-directory paths for AF3 array tasks. |
-| `af3_submission_intent.json` | Submission command saved before calling `sbatch`. |
-| `af3_job_id.json` | Submitted array ID used to reattach. |
-| `shs_generation_request.json` | RNA, target pairs, parameter overrides, and seeds. |
-| `af3_input.base.json` / `af3_input.json` | Base generator input / final AF3 input with synthetic MSA. |
-| `af3_success.json` | Verified top-level model path used for DSSR scoring. |
-| `dssr.json` | Nucleotide annotations and predicted pairs used for scoring. |
-| `base_pair_evaluation.json` | RNA ID, TP/FP/FN, F1, loss, target/predicted pairs, and model path. Also included in the trial result. |
+| `run_metadata.json` | Run config, dataset and fingerprint; the exporter rebuilds generator requests from it. |
+| `trial_metadata.json` | Fingerprint and parameters of a running or failed trial; checked before reuse. |
+| `trial_result.json` | Fingerprint, parameters, aggregate loss, per-RNA scores (`model` points into the archive), files and bytes published (`storage`) and, in `trajectory` mode, the `retention` decision. |
+| `failure_report.json` | Stage, RNA, error, command, signal, timeout flag, host, Slurm job and the last 64 KB of each log of the failing RNA. |
+| `STOPPED.json` | Reason and rates of a failure-limit stop; the run refuses to start until it is renamed. |
+| `rna_<index>.tar.gz` | See above. |
 
-Logs capture process output. AF3 sample/confidence files and DSSR auxiliary files support inspection. Saved parameters contain overrides, not expanded generator defaults.
+## Flow of one trial
 
-## Recovery and export
+1. Generate the AF3 inputs of all RNAs without a readable archive (scratch).
+2. Run AF3 once for all of them (`--input_dir`, scratch), so the model is
+   compiled once per trial. Publish the archive of every finished prediction,
+   also after an AF3 failure or stop.
+3. Per RNA: run DSSR in scratch, add `dssr.json` to the archive and score.
+4. Write `trial_result.json`, remove `trial_metadata.json`, apply retention.
 
-After metadata checks, an existing trial result returns immediately. Otherwise, a saved job ID skips generation/submission; submission intent without a job ID stops for inspection. Without either, a new array is submitted. Task evaluations are not checkpoints: without a trial result, DSSR/scoring repeats. This does not itself recover the NePS search.
+On a failure, `failure_report.json` is written and the archives already
+published stay.
 
-`export_results.py` targets the configurations in the best-config trajectory,
-writing to a `results/` folder next to the selected config:
+## Export
 
-- `run_metadata.json`: copied run metadata.
-- `summary/`: `best_config_trajectory.txt`, `best_config.txt`, and `short.csv`.
-- `configs/config_<id>/trial_result.json`: result for each trajectory configuration.
-- `configs/config_<id>/shs/rna_<index>/af3_input.json`: generated AF3 input
-  containing the synthetic MSA.
-- `configs/config_<id>/shs/rna_<index>/shs_generation_request.json`: SHS
-  request containing the sequence and target pairs.
+`export_results.py --config <yaml>` writes a snapshot of the best-config
+trajectory into `results/` next to the config:
 
-Raw predictions remain in the workspace; exported model paths still refer there.
+```text
+results/
+├── run_metadata.json
+├── manifest.json                     # export bookkeeping, incl. a failures block
+├── summary/                          # best_config_trajectory.txt, best_config.txt, short.csv
+├── errors/                           # only if trials failed
+│   ├── shared_errors.jsonl
+│   └── reports/config_<id>.json      # every failure_report.json
+└── configs/config_<id>/
+    ├── trial_result.json
+    ├── archives/rna_<index>.tar.gz   # only with --include-archives
+    └── shs/rna_<index>/
+        ├── af3_input.json            # the archive's rna_<index>_data.json
+        └── shs_generation_request.json   # rebuilt from run_metadata.json
+```
+
+`--prune [--dry-run]` instead deletes the archives of configs that are
+neither on the trajectory nor in the top `keep_top_k`, also for a run that
+used `keep_artifacts: all`.

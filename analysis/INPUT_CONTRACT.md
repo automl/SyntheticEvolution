@@ -14,9 +14,13 @@ results/
 │   ├── best_config_trajectory.txt
 │   ├── best_config.txt
 │   └── short.csv
+├── errors/                               # optional: only if trials failed
+│   ├── shared_errors.jsonl
+│   └── reports/config_<id>.json
 └── configs/
     └── config_<id>/
-        └── trial_result.json
+        ├── trial_result.json
+        ├── archives/rna_<index>.tar.gz   # optional: export --include-archives
         └── shs/
             └── rna_<index>/
                 ├── af3_input.json
@@ -28,8 +32,15 @@ results/
 - `run_metadata.json` is created by the HPO pipeline and copied unchanged.
 - The three files in `summary/` are created by NePS and copied unchanged.
 - Each `trial_result.json` is created by the HPO pipeline and copied unchanged.
-- The SHS files are created by the HPO pipeline and copied unchanged for each
-  exported trajectory configuration.
+- The SHS files are derived by the exporter for each exported trajectory
+  configuration: `af3_input.json` is AF3's `<name>_data.json` from the RNA's
+  archive (the AF3 input with the synthetic MSA), and
+  `shs_generation_request.json` is rebuilt from `run_metadata.json` exactly as
+  the pipeline built it for the generator.
+- The optional `errors/` files are NePS's crash log and the pipeline's failure
+  reports, copied unchanged. The optional archives hold the complete AF3
+  output (all samples), the generator's effective parameters and `dssr.json`;
+  see `hpo/docs/storage_layout.md`.
 - `manifest.json` is created by `hpo/export_results.py`; it is not produced by
   the HPO pipeline.
 
@@ -105,6 +116,9 @@ best configuration from trial losses or other summary files.
 ## Manifest
 
 The manifest records the source config path, source workspace, export time,
-exported configuration IDs, and the paths copied into the snapshot. It is
+exported configuration IDs, a `failures` block, and the paths copied into the
+snapshot. The `failures` block is always present: `status` is `none` or
+`found`, with the count, rate, groups by error type, signal, stage and RNA,
+and the copied error files. It is
 bookkeeping for the export and is not required to reproduce the pipeline
 results.
