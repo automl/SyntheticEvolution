@@ -2,7 +2,9 @@
 import argparse
 import json
 import os
+import re
 import socket
+import subprocess
 import time
 from datetime import datetime, timezone
 from importlib.metadata import version
@@ -10,6 +12,7 @@ from pathlib import Path
 from typing import Any, Optional
 
 from hpo.pipeline import failures, retention, signals
+from hpo.pipeline.environment import NEPS_PACKAGE, NEPS_VERSION
 from hpo.pipeline.run import load_config, prepare_run, storage_settings
 from hpo.pipeline.trial import run_pipeline
 
@@ -20,8 +23,29 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-NEPS_PACKAGE = 'neural-pipeline-search'
-NEPS_VERSION = '0.16.0'
+
+
+def parse_slurm_duration(text: str) -> Optional[int]:
+    """Seconds of a Slurm duration ([D-]HH:MM:SS or MM:SS); None for UNLIMITED etc."""
+    match = re.fullmatch(r'(?:(\d+)-)?(?:(\d+):)?(\d+):(\d+)', text.strip())
+    if match is None:
+        return None
+    days, hours, minutes, seconds = (int(group) if group else 0 for group in match.groups())
+    return ((days * 24 + hours) * 60 + minutes) * 60 + seconds
+
+
+def job_time_left() -> Optional[int]:
+    """Seconds until this Slurm job's time limit; None outside Slurm or without a limit."""
+    job = os.environ.get('SLURM_JOB_ID')
+    if not job:
+        return None
+    try:
+        result = subprocess.run(['squeue', '-h', '-j', job, '-o', '%L'],
+                                capture_output=True, text=True, timeout=60, check=True)
+    except (OSError, subprocess.SubprocessError):
+        logger.warning('Could not read the time left of job %s; trials are not checked against it', job)
+        return None
+    return parse_slurm_duration(result.stdout)
 
 
 def read_trials(neps_root: Path) -> dict:
@@ -116,7 +140,8 @@ def stop_trial(trial_id: str, neps_root: Path, message: str, exit_code: int) -> 
         trial_id,
         neps_root,
     )
-    logger.error('Stopping the controller: %s (trial %s reported as crashed)', message, trial_id)
+    log = logger.info if exit_code == 0 else logger.error
+    log('Stopping the controller: %s (trial %s reported as crashed)', message, trial_id)
     raise SystemExit(exit_code)
 
 
@@ -155,8 +180,10 @@ def log_run_summary(neps_root: Path) -> None:
         logger.warning('Could not summarize the run in %s', neps_root, exc_info=True)
         return
     log = logger.error if block['count'] else logger.info
-    extra = f'. {len(stopped)} trial(s) stopped by the controller.' if stopped else ''
-    log('Run summary: %s%s', failures.summary_line(block), extra)
+    line = failures.summary_line(block).rstrip('.') + '.'
+    if stopped:
+        line += f' {len(stopped)} trial(s) stopped by the controller.'
+    log('Run summary: %s', line)
 
 
 def main():
@@ -189,6 +216,10 @@ def main():
     stop_path = run_root / failures.STOPPED
     storage = storage_settings(config)
     signals.install()
+    # Do not start a trial that cannot finish before the stop signal.
+    time_left = job_time_left()
+    deadline = None if time_left is None else time.monotonic() + time_left - signals.STOP_MARGIN_SECONDS
+    trial_durations = []
 
     # Convert YAML search definitions into NePS parameter objects.
     space = {}
@@ -234,7 +265,17 @@ def main():
                 f'{failures.STOPPED_MARKER} failure limit: {reason}',
                 failures.FAILURE_LIMIT_EXIT_CODE,
             )
+        if deadline is not None and trial_durations:
+            remaining = deadline - time.monotonic()
+            if remaining < max(trial_durations):
+                stop_trial(
+                    trial_id, neps_root,
+                    f'{failures.STOPPED_MARKER} not enough time left for another trial '
+                    f'({remaining:.0f} s before the stop signal, longest trial {max(trial_durations):.0f} s)',
+                    0,
+                )
 
+        started = time.monotonic()
         try:
             with signals.trial_running():
                 loss = run_pipeline(
@@ -249,7 +290,10 @@ def main():
             # the failure report was written by run_pipeline.
             if isinstance(error, signals.ControllerStop) or signals.requested():
                 stop_trial(trial_id, neps_root, f'[timeout] {error}', signals.EXIT_CODE)
+            # A failed trial also tells how long trials take.
+            trial_durations.append(time.monotonic() - started)
             raise
+        trial_durations.append(time.monotonic() - started)
 
         if storage['keep_artifacts'] == 'trajectory':
             try:
@@ -272,7 +316,7 @@ def main():
         neps.run(
             evaluate_pipeline= evaluate_pipeline,
             root_directory= neps_root,
-            evaluations_to_spend= config['evaluations'],
+            evaluations_to_spend= config.get('evaluations'),  # None: until the time is up
             ignore_errors= config['ignore_errors'],
             **space_kwargs,
             **optimizer_kwargs,

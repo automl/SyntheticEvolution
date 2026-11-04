@@ -1,5 +1,6 @@
 """Submit controller with YAML resources and workspace logs; run from any cwd."""
 import argparse
+from hpo.pipeline.environment import require_environment
 from hpo.pipeline import failures, signals
 from hpo.pipeline.run import (
     ROOT,
@@ -22,6 +23,8 @@ def main():
         mode='neps',
         submitting_controller=True,
     )
+    # Fail before waiting in the queue if an interpreter, module or path is wrong.
+    require_environment(config, 'neps')
     ws_root = get_workspace_path(config)
     rows = create_dataset(config['input'])
     identity = fingerprint(config, rows)

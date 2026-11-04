@@ -125,6 +125,14 @@ def test_neps_requires_a_nonempty_search(load, neps, search):
         load(neps, mode='neps')
 
 
+def test_evaluations_are_optional_but_must_be_positive(load, neps):
+    del neps['evaluations']
+    assert 'evaluations' not in load(neps, mode='neps')
+    for value in (0, -1, 1.5, True):
+        with pytest.raises(ValueError, match='evaluations'):
+            load(dict(neps, evaluations=value), mode='neps')
+
+
 def test_parameter_cannot_be_both_fixed_and_searched(load, neps):
     neps['fixed'] = {'N': 20}
     with pytest.raises(ValueError, match='both fixed and search'):

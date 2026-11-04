@@ -1,5 +1,6 @@
 """Submit a standalone trial with YAML resources and workspace logs; run from any cwd."""
 import argparse
+from hpo.pipeline.environment import require_environment
 from hpo.pipeline import signals
 from hpo.pipeline.run import (
     ROOT,
@@ -22,6 +23,8 @@ def main():
         mode='standalone',
         submitting_controller=True,
     )
+    # Fail before waiting in the queue if an interpreter, module or path is wrong.
+    require_environment(config, 'standalone')
     ws_root = get_workspace_path(config)
     rows = create_dataset(config['input'])
     identity = fingerprint(config, rows)

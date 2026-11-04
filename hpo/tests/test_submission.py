@@ -134,6 +134,8 @@ def test_controller_submission_resources_and_command(
     monkeypatch.setattr(submission_module, "fingerprint", fingerprint)
     monkeypatch.setattr(submission_module, "check_existing_run", check_existing_run)
     monkeypatch.setattr(submission_module, "load_config", load_config)
+    require_environment = Mock()
+    monkeypatch.setattr(submission_module, "require_environment", require_environment)
     monkeypatch.setattr(submission_module, "get_workspace_path", lambda cfg: workspace)
     monkeypatch.setattr(submission_module, "repo_path", lambda path: config_path)
     monkeypatch.setattr(submission_module, "ROOT", root)
@@ -147,6 +149,8 @@ def test_controller_submission_resources_and_command(
         mode=mode,
         submitting_controller=True,
     )
+    # The environment is checked before anything is submitted.
+    require_environment.assert_called_once_with(config, mode)
     command.assert_called_once()
 
     args = command.call_args.args[0]

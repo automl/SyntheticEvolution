@@ -32,6 +32,7 @@ def neps_case(tmp_path, monkeypatch):
     monkeypatch.setattr(entry.signals, 'install', lambda: None)
     monkeypatch.setattr(entry, 'current_trial', lambda: SimpleNamespace(id='1', metadata=SimpleNamespace(time_sampled=1.0)))
     monkeypatch.setattr(entry, 'check_failure_limit', lambda *args: None)
+    monkeypatch.setattr(entry, 'job_time_left', lambda: None)  # not in a Slurm job
     # An explicit signature catches misplaced positional arguments as well as values.
     calls = []
     def pipeline(config_arg, rows_arg, trial_directory, identity, parameters=None):
@@ -207,3 +208,40 @@ def test_retention_runs_only_in_trajectory_mode_and_never_fails_a_trial(neps_cas
         apply.assert_called_once_with(root / 'neps', '1', 1.0, 0.25, 5)
     else:
         apply.assert_not_called()
+
+
+# ---- Time limit -------------------------------------------------------------
+
+@pytest.mark.parametrize('text,seconds', [
+    ('1-02:03:04', 93784), ('02:03:04', 7384), ('23:59', 1439), ('UNLIMITED', None), ('', None),
+])
+def test_slurm_time_left_is_parsed(text, seconds):
+    assert entry.parse_slurm_duration(text) == seconds
+
+
+def test_no_trial_starts_that_cannot_finish_before_the_stop_signal(neps_case, monkeypatch):
+    config, fake, calls, root, _ = neps_case
+    del config['evaluations']  # no budget: sample until the time is up
+    clock = [0.0]
+    monkeypatch.setattr(entry.time, 'monotonic', lambda: clock[0])
+    # 1000 s before the stop signal: room for two 500 s trials.
+    monkeypatch.setattr(entry, 'job_time_left', lambda: 1000 + entry.signals.STOP_MARGIN_SECONDS)
+    def trial(*args, **kwargs):
+        clock[0] += 500
+        return 0.25
+    monkeypatch.setattr(entry, 'run_pipeline', trial)
+    fake.save_pipeline_results = Mock()
+    def search(**kwargs):
+        assert kwargs['evaluations_to_spend'] is None
+        for index in range(1, 10):
+            kwargs['evaluate_pipeline'](root / f'config_{index}', N=index)
+    fake.run.side_effect = search
+    with pytest.raises(SystemExit) as stop:
+        entry.main()
+    assert stop.value.code == 0
+    # Two trials ran; the third was sampled but stopped before it started.
+    assert clock[0] == 1000
+    [call] = fake.save_pipeline_results.call_args_list
+    result = call.args[0]
+    assert str(result['exception']).startswith('[stopped] not enough time left')
+    assert result['objective_to_minimize'] is None

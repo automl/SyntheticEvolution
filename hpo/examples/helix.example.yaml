@@ -24,7 +24,10 @@ controller:
 
 # Neps config
 neps_python:   # REQUIRED only for NePS controller submission
-evaluations: 2 # Max number of configs neps will try
+# Configs each controller evaluates (NePS counts per controller). Leave it out
+# to evaluate as many as fit into controller.time: a controller does not start
+# a trial that cannot finish before the time limit.
+evaluations: 2
 optimizer:     # optional custom optimizer selection
 ignore_errors: true # keep sampling when a trial fails; failures are reported
 # Stop all controllers when too many trials fail (writes STOPPED.json).

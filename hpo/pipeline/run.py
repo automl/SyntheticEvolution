@@ -130,7 +130,9 @@ def load_config(path, *, mode, submitting_controller=False):
     elif mode == 'neps':
         if not search:
             raise ValueError('NePS mode requires a nonempty search section')
-        require_positive(config, 'evaluations', integer=True)
+        # Without evaluations, each controller samples until its time is up.
+        if config.get('evaluations') is not None:
+            require_positive(config, 'evaluations', integer=True)
         if config.get('optimizer') is not None:
             require_text(config, 'optimizer')
         if not isinstance(config.get('ignore_errors'), bool):
