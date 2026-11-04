@@ -75,14 +75,22 @@ def _plot_config(config_id: int, context: ResultsContext, output_dir: Path, anal
         _write_msa_views(data, task_output := output_dir / f"config_{config_id}" / task_dir.name)
         features = analyzer.Features(data)
         task_output.mkdir(parents=True, exist_ok=True)
-        analyzer.plot_covariance(
-            data.seq, features.covariance, show=False,
-            out=str(task_output / "covariance.png"),
-        )
-        analyzer.plot_covariance_classification(
-            data.seq, features.covariance, pairs=data.pairs, show=False,
-            out=str(task_output / "covariance_classification.png"),
-        )
+        # Covariance needs at least two sample rows.
+        if len(data.aligned) < 2:
+            LOGGER.warning(
+                "Skipping covariance plots for Config ID %d, %s: MSA has only %d sample",
+                config_id, task_dir.name, len(data.aligned),
+            )
+        else:
+            analyzer.plot_covariance(
+                data.seq, features.covariance, show=False,
+                out=str(task_output / "covariance.png"),
+            )
+            analyzer.plot_covariance_classification(
+                data.seq, features.covariance, pairs=data.pairs, show=False,
+                out=str(task_output / "covariance_classification.png"),
+            )
+            plot_count += 2
         analyzer.plot_deletions_and_insertion(
             features.col_deletion_rate,
             features.col_insertion_mean,
@@ -91,7 +99,7 @@ def _plot_config(config_id: int, context: ResultsContext, output_dir: Path, anal
             out=str(task_output / "deletion_insertion.png"),
         )
         plt.close("all")
-        plot_count += 3
+        plot_count += 1
     return plot_count
 
 
@@ -157,7 +165,7 @@ def run(context: ResultsContext, output_dir: Path) -> None:
     generator_dir = Path(__file__).parents[2] / "SHS-Generator-RNA"
     if str(generator_dir) not in sys.path:
         sys.path.insert(0, str(generator_dir))
-    analyzer_path = Path(__file__).parents[1] / "SHS-Analyzer" / "shs_analyzer.py"
+    analyzer_path = Path(__file__).parents[1] / "SHS-Analyzer-RNA" / "shs_analyzer.py"
     analyzer = _load_module("analysis_shs_analyzer", analyzer_path)
     selected_ids = _selected_config_ids(context)
     output_dir.mkdir(parents=True, exist_ok=True)
