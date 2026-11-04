@@ -9,8 +9,8 @@ from importlib.metadata import version
 from pathlib import Path
 from typing import Any, Optional
 
-from hpo.pipeline import failures, signals
-from hpo.pipeline.run import load_config, prepare_run
+from hpo.pipeline import failures, retention, signals
+from hpo.pipeline.run import load_config, prepare_run, storage_settings
 from hpo.pipeline.trial import run_pipeline
 
 import logging
@@ -36,10 +36,46 @@ def error_message(trial) -> Optional[str]:
     return None if report is None or report.err is None else str(report.err)
 
 
-def current_trial_id() -> str:
+def current_trial():
+    """The NePS trial this controller is evaluating (id, metadata.time_sampled)."""
     from neps.runtime import get_in_progress_trial
 
-    return get_in_progress_trial().id
+    return get_in_progress_trial()
+
+
+def apply_retention(neps_root: Path, trial_id: str, time_sampled: float, loss: float, top_k: int) -> None:
+    """Prune the archives of configs that are no longer kept (``trajectory`` mode).
+
+    Only configs that drop out because of this trial can change, so only
+    those are touched: the trial itself, or configs it pushes off the
+    trajectory or out of the top k.
+    """
+    from neps.state import State
+
+    trials = {
+        other_id: (trial.metadata.time_sampled, float(trial.report.objective_to_minimize))
+        for other_id, trial in read_trials(neps_root).items()
+        if trial.metadata.state == State.SUCCESS and trial.report is not None
+        and trial.report.objective_to_minimize is not None
+    }
+    # The current trial is still `evaluating` in NePS's state.
+    trials.pop(trial_id, None)
+    before = retention.kept_trials(trials, top_k)
+    trials[trial_id] = (time_sampled, loss)
+    after = retention.kept_trials(trials, top_k)
+
+    def artifacts(other_id: str) -> Path:
+        return neps_root / 'configs' / f'config_{other_id}' / 'artifacts'
+
+    for other_id in sorted((before.keys() | {trial_id}) - after.keys()):
+        removed = retention.prune(artifacts(other_id))
+        retention.record(artifacts(other_id), None, pruned_by=None if other_id == trial_id else trial_id)
+        logger.info(
+            'Pruned the archives of config_%s (%d files, %d bytes): not on the trajectory or in the top %d',
+            other_id, removed['files'], removed['bytes'], top_k,
+        )
+    if trial_id in after:
+        retention.record(artifacts(trial_id), after[trial_id])
 
 
 def check_failure_limit(run_root: Path, neps_root: Path, settings: dict[str, Any]) -> Optional[dict]:
@@ -151,6 +187,7 @@ def main():
         raise SystemExit(str(exc)) from exc
     neps_root = run_root / "neps"
     stop_path = run_root / failures.STOPPED
+    storage = storage_settings(config)
     signals.install()
 
     # Convert YAML search definitions into NePS parameter objects.
@@ -166,7 +203,8 @@ def main():
         space[name] = parameter_class(**spec)
 
     def evaluate_pipeline(pipeline_directory, **parameters):
-        trial_id = current_trial_id()
+        trial = current_trial()
+        trial_id = trial.id
 
         # Stop before running: a signal arrived between trials, another
         # controller hit the failure limit, or this trial would exceed it.
@@ -199,7 +237,7 @@ def main():
 
         try:
             with signals.trial_running():
-                return run_pipeline(
+                loss = run_pipeline(
                     config,
                     dataset,
                     pipeline_directory / 'artifacts',
@@ -212,6 +250,14 @@ def main():
             if isinstance(error, signals.ControllerStop) or signals.requested():
                 stop_trial(trial_id, neps_root, f'[timeout] {error}', signals.EXIT_CODE)
             raise
+
+        if storage['keep_artifacts'] == 'trajectory':
+            try:
+                apply_retention(neps_root, trial_id, trial.metadata.time_sampled, loss, storage['keep_top_k'])
+            except Exception:
+                # Never fail a finished trial over retention; --prune cleans up later.
+                logger.exception('Retention failed after trial %s; archives are kept', trial_id)
+        return loss
 
     if (neps_root / "pipeline_space.pkl").is_file():
         space_kwargs = {}

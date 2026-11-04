@@ -44,6 +44,15 @@ failures:
 # also keep them in standalone_trial/logs/.
 storage:
   scratch:   # optional absolute path; empty = /dev/shm
+  # Which NePS configs keep their per-RNA archives (AF3 output, MSA, DSSR):
+  # all        every config (default; for scientific runs)
+  # trajectory only configs on NePS's best-config trajectory or among the
+  #            keep_top_k lowest losses; the others keep trial_result.json.
+  #            Pruned during the run; failed trials are always kept.
+  # After a run, `python -m hpo.export_results --config <yaml> --prune [--dry-run]`
+  # applies the trajectory rule exactly, also to an `all` run.
+  keep_artifacts: all
+  keep_top_k: 5
 
 
 # ---- Generator config ------------------------------------------

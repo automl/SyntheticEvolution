@@ -30,7 +30,7 @@ def neps_case(tmp_path, monkeypatch):
     monkeypatch.setattr(entry, 'prepare_run', lambda cfg: (tmp_path, rows, 'fingerprint'))
     # Signal handlers and NePS's trial state are covered by their own tests.
     monkeypatch.setattr(entry.signals, 'install', lambda: None)
-    monkeypatch.setattr(entry, 'current_trial_id', lambda: '1')
+    monkeypatch.setattr(entry, 'current_trial', lambda: SimpleNamespace(id='1', metadata=SimpleNamespace(time_sampled=1.0)))
     monkeypatch.setattr(entry, 'check_failure_limit', lambda *args: None)
     # An explicit signature catches misplaced positional arguments as well as values.
     calls = []
@@ -144,3 +144,66 @@ def test_run_summary_is_logged_when_neps_fails(neps_case, monkeypatch):
     with pytest.raises(RuntimeError):
         entry.main()
     summary.assert_called_once_with(root / 'neps')
+
+
+# ---- Retention (trajectory mode) --------------------------------------------
+
+def finished_run(tmp_path, monkeypatch, losses):
+    """NePS state with successful trials sampled at time = id; all have archives."""
+    import json
+    from enum import Enum
+    State = Enum('State', {'SUCCESS': 'success', 'CRASHED': 'crashed', 'EVALUATING': 'evaluating'})
+    trials = {}
+    for trial_id, loss in losses.items():
+        state = State.SUCCESS if loss is not None else State.CRASHED
+        trials[trial_id] = SimpleNamespace(
+            metadata=SimpleNamespace(state=state, time_sampled=float(trial_id)),
+            report=SimpleNamespace(objective_to_minimize=loss, err=None))
+        artifacts = tmp_path / 'configs' / f'config_{trial_id}' / 'artifacts'
+        artifacts.mkdir(parents=True)
+        (artifacts / 'rna_00000.tar.gz').write_bytes(b'archive')
+        if loss is not None:
+            (artifacts / 'trial_result.json').write_text(json.dumps(dict(loss=loss)))
+    loaded = SimpleNamespace(lock_and_read_trials=lambda: trials)
+    monkeypatch.setitem(sys.modules, 'neps.state', SimpleNamespace(
+        NePSState=SimpleNamespace(create_or_load=Mock(return_value=loaded)), State=State))
+
+
+def archives(tmp_path):
+    return sorted(path.parent.parent.name for path in tmp_path.glob('configs/*/artifacts/*.tar.gz'))
+
+
+def retention_record(tmp_path, trial_id):
+    import json
+    return json.loads((tmp_path / 'configs' / f'config_{trial_id}' / 'artifacts' / 'trial_result.json').read_text())['retention']
+
+
+def test_retention_prunes_a_trial_that_is_not_kept(tmp_path, monkeypatch):
+    # Trials 1-3 are on the trajectory; trial 4 (crashed) is never pruned.
+    finished_run(tmp_path, monkeypatch, {'1': .5, '2': .4, '3': .3, '4': None, '5': .9})
+    entry.apply_retention(tmp_path, '5', 5.0, .9, top_k=0)
+    assert archives(tmp_path) == ['config_1', 'config_2', 'config_3', 'config_4']
+    assert retention_record(tmp_path, '5') == dict(kept=False, reasons=[])
+
+
+def test_retention_prunes_configs_pushed_off_by_an_earlier_sampled_trial(tmp_path, monkeypatch):
+    # Trial 2 was sampled before 3 but finishes later, with a better loss.
+    finished_run(tmp_path, monkeypatch, {'1': .5, '2': .2, '3': .3})
+    entry.apply_retention(tmp_path, '2', 2.0, .2, top_k=0)
+    assert archives(tmp_path) == ['config_1', 'config_2']
+    assert retention_record(tmp_path, '3') == dict(kept=False, reasons=[], pruned_after='2')
+    assert retention_record(tmp_path, '2') == dict(kept=True, reasons=['trajectory'])
+
+
+@pytest.mark.parametrize('mode', ['all', 'trajectory'])
+def test_retention_runs_only_in_trajectory_mode_and_never_fails_a_trial(neps_case, monkeypatch, mode):
+    config, fake, _, root, _ = neps_case
+    config['storage'] = {'keep_artifacts': mode}
+    apply = Mock(side_effect=RuntimeError('broken state'))
+    monkeypatch.setattr(entry, 'apply_retention', apply)
+    fake.run.side_effect = lambda **kw: kw['evaluate_pipeline'](root / 'config_1', N=2)
+    entry.main()
+    if mode == 'trajectory':
+        apply.assert_called_once_with(root / 'neps', '1', 1.0, 0.25, 5)
+    else:
+        apply.assert_not_called()

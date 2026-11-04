@@ -146,3 +146,53 @@ def test_export_rejects_missing_archives(archived_run):
     (neps / 'configs' / 'config_1' / 'artifacts' / 'rna_00001.tar.gz').unlink()
     with pytest.raises(FileNotFoundError, match='Expected 2 RNA archives'):
         export.export_results(config)
+
+
+# ---- Pruning after the run --------------------------------------------------
+
+@pytest.fixture
+def finished_run(tmp_path):
+    """Five configs in the archive layout; 4 crashed, the others succeeded."""
+    import csv
+    workspace = tmp_path / 'workspace'
+    neps = workspace / 'shs_hpo' / 'test-run' / 'neps'
+    (neps / 'summary').mkdir(parents=True)
+    losses = {'1': .5, '2': .3, '3': .6, '4': None, '5': .4}
+    with (neps / 'summary' / 'full.csv').open('w', newline='') as stream:
+        writer = csv.writer(stream)
+        writer.writerow(['id', 'state', 'time_sampled', 'objective_to_minimize'])
+        for trial_id, loss in losses.items():
+            writer.writerow([trial_id, 'crashed' if loss is None else 'success', trial_id, '' if loss is None else loss])
+    (neps / 'summary' / 'best_config_trajectory.txt').write_text('Config ID: 1\nConfig ID: 2\n')
+    for trial_id, loss in losses.items():
+        artifacts = neps / 'configs' / f'config_{trial_id}' / 'artifacts'
+        artifacts.mkdir(parents=True)
+        (artifacts / 'rna_00000.tar.gz').write_bytes(b'x' * 1000)
+        if loss is not None:
+            (artifacts / 'trial_result.json').write_text(json.dumps(dict(loss=loss)))
+    config = tmp_path / 'run.yaml'
+    config.write_text(f'run_name: test-run\nworkspace_name: ws\nworkspace_path: {workspace}\n'
+                      'storage: {keep_top_k: 1}\n')
+    return config, neps
+
+
+def configs_with_archives(neps):
+    return sorted(path.parent.parent.name for path in neps.glob('configs/*/artifacts/*.tar.gz'))
+
+
+def test_prune_keeps_trajectory_top_k_and_failed_trials(finished_run, capsys):
+    config, neps = finished_run
+    totals = export.prune_run(config)
+    # Trajectory 1, 2 and top 1 (config 2) stay; config 4 crashed and stays.
+    assert configs_with_archives(neps) == ['config_1', 'config_2', 'config_4']
+    assert totals == dict(configs=2, files=2, bytes=2000)
+    result = json.loads((neps / 'configs/config_3/artifacts/trial_result.json').read_text())
+    assert result['retention'] == dict(kept=False, reasons=[], pruned_after='export_results --prune')
+    assert 'Removed 2 archives' in capsys.readouterr().out
+
+
+def test_prune_dry_run_changes_nothing(finished_run, capsys):
+    config, neps = finished_run
+    assert export.prune_run(config, dry_run=True)['files'] == 2
+    assert len(configs_with_archives(neps)) == 5
+    assert 'Would remove 2 archives' in capsys.readouterr().out

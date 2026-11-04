@@ -197,23 +197,35 @@ def slurm_seconds(value):
         units = (3600, 60, 1)
     return int(days or 0) * 86400 + sum(n * unit for n, unit in zip(numbers, units))
 
-STORAGE_KEYS = ('scratch',)
+STORAGE_DEFAULTS = dict(scratch=None, keep_artifacts='all', keep_top_k=5)
 
 
 def storage_settings(config):
-    """Validate the optional storage section and return it."""
+    """Validate the optional storage section and return it with defaults.
+
+    ``keep_artifacts``: ``all`` keeps the archives of every config (the
+    default, so a forgotten setting never loses data); ``trajectory`` keeps
+    them only for configs on NePS's best-config trajectory or among the
+    ``keep_top_k`` lowest losses. Failed trials always keep their archives.
+    """
     storage = config.get('storage')
     if storage is None:
         storage = {}
     if not isinstance(storage, dict):
         raise ValueError('storage must be a YAML mapping')
-    unknown = storage.keys() - set(STORAGE_KEYS)
+    unknown = storage.keys() - STORAGE_DEFAULTS.keys()
     if unknown:
         raise ValueError('Unknown storage settings: ' + ', '.join(sorted(map(str, unknown))))
-    scratch = storage.get('scratch')
+    settings = {**STORAGE_DEFAULTS, **{k: v for k, v in storage.items() if v is not None}}
+    scratch = settings['scratch']
     if scratch is not None and (not isinstance(scratch, str) or not Path(scratch).is_absolute()):
         raise ValueError('storage.scratch must be an absolute path')
-    return storage
+    if settings['keep_artifacts'] not in ('all', 'trajectory'):
+        raise ValueError("storage.keep_artifacts must be 'all' or 'trajectory'")
+    top_k = settings['keep_top_k']
+    if isinstance(top_k, bool) or not isinstance(top_k, int) or top_k < 0:
+        raise ValueError('storage.keep_top_k must be a nonnegative integer')
+    return settings
 
 
 def scratch_root(config) -> Path:

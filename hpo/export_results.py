@@ -5,6 +5,7 @@ The export directory is always ``<config directory>/results``. Keep this
 script intentionally small while the exported result contract is evolving.
 """
 import argparse
+import csv
 import json
 import re
 import shutil
@@ -13,8 +14,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from hpo.pipeline import archive, failures
-from hpo.pipeline.run import get_workspace_path, load_config, shs_generation_request
+from hpo.pipeline import archive, failures, retention
+from hpo.pipeline.run import get_workspace_path, load_config, shs_generation_request, storage_settings
 
 EXPORT_DIR_NAME = "results"
 
@@ -151,6 +152,55 @@ def _copy_legacy_shs(source_dir: Path, target_dir: Path) -> list[Path]:
     return written
 
 
+def _trajectory_ids(summary_dir: Path) -> list[str]:
+    return re.findall(
+        r"^Config ID:\s*(\d+)\s*$",
+        (summary_dir / "best_config_trajectory.txt").read_text(),
+        re.MULTILINE,
+    )
+
+
+def prune_run(config_path: Path, dry_run: bool = False) -> dict[str, int]:
+    """Keep archives only for the trajectory and the top k of a finished run.
+
+    Applies the ``trajectory`` retention exactly, also to a run that used
+    ``all``. Uses NePS's summary (``full.csv``, ``best_config_trajectory.txt``),
+    so run it after the run has finished. Failed trials are never pruned.
+    """
+    config = load_config(config_path.expanduser().resolve(), mode="export")
+    top_k = storage_settings(config)["keep_top_k"]
+    neps_dir = get_workspace_path(config) / "neps"
+    with (neps_dir / "summary" / "full.csv").open(newline="") as stream:
+        trials = {
+            row["id"]: (float(row["time_sampled"]), float(row["objective_to_minimize"]))
+            for row in csv.DictReader(stream)
+            if row["state"] == "success"
+        }
+    kept = retention.kept_trials(trials, top_k)
+    # NePS's own trajectory is never pruned, even if the rule above disagreed.
+    trajectory = set(_trajectory_ids(neps_dir / "summary"))
+    if trajectory - kept.keys():
+        _warn(f"NePS trajectory configs kept although the retention rule differs: {sorted(trajectory - kept.keys())}")
+
+    totals = dict(configs=0, files=0, bytes=0)
+    for trial_id in sorted(trials.keys() - kept.keys() - trajectory):
+        artifacts = neps_dir / "configs" / f"config_{trial_id}" / "artifacts"
+        removed = retention.prune(artifacts, dry_run=dry_run)
+        if removed["files"]:
+            totals["configs"] += 1
+            totals["files"] += removed["files"]
+            totals["bytes"] += removed["bytes"]
+            if not dry_run:
+                retention.record(artifacts, None, pruned_by="export_results --prune")
+    action = "Would remove" if dry_run else "Removed"
+    print(
+        f"{action} {totals['files']} archives ({totals['bytes'] / 1e6:.1f} MB) of "
+        f"{totals['configs']} configs; kept {len(kept.keys() | trajectory)} of {len(trials)} "
+        f"successful configs (trajectory and top {top_k})."
+    )
+    return totals
+
+
 def export_results(config_path: Path, include_archives: bool = False) -> Path:
     """Copy the selected run summaries and trajectory trial results.
 
@@ -194,14 +244,7 @@ def export_results(config_path: Path, include_archives: bool = False) -> Path:
     copied.append(run_metadata.name)
     run_metadata_data = json.loads(run_metadata.read_text())
 
-    config_ids = [
-        int(match)
-        for match in re.findall(
-            r"^Config ID:\s*(\d+)\s*$",
-            (summary_dir / "best_config_trajectory.txt").read_text(),
-            re.MULTILINE,
-        )
-    ]
+    config_ids = [int(match) for match in _trajectory_ids(summary_dir)]
     if not config_ids:
         # No trial succeeded; the errors are then the most important export.
         _warn(
@@ -254,7 +297,23 @@ def main() -> None:
         action="store_true",
         help="Also copy the per-RNA archives (AF3 samples, confidences, DSSR output)",
     )
+    parser.add_argument(
+        "--prune",
+        action="store_true",
+        help="Instead of exporting: delete the archives of configs that are neither on "
+             "the trajectory nor in the top storage.keep_top_k (after the run has finished)",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="With --prune: only report what would be removed",
+    )
     args = parser.parse_args()
+    if args.dry_run and not args.prune:
+        parser.error("--dry-run requires --prune")
+    if args.prune:
+        prune_run(args.config, dry_run=args.dry_run)
+        return
 
     destination = export_results(args.config, include_archives=args.include_archives)
     print(destination)

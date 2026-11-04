@@ -76,9 +76,17 @@ def test_fixed_is_optional(load, standalone, neps, mode):
 def test_scratch_is_optional_and_must_be_absolute(load, standalone):
     loaded = load(dict(standalone, storage={'scratch': '/dev/shm/custom'}))
     assert run.scratch_root(loaded) == Path('/dev/shm/custom')
-    for storage in ({'scratch': 'relative/path'}, {'scratch': 3}, {'typo': '/x'}, []):
+    for storage in ({'scratch': 'relative/path'}, {'scratch': 3}, {'typo': '/x'}, [],
+                    {'keep_artifacts': 'none'}, {'keep_top_k': -1}, {'keep_top_k': True}):
         with pytest.raises(ValueError, match='storage'):
             load(dict(standalone, storage=storage))
+
+
+def test_storage_defaults_keep_every_config(standalone):
+    # A forgotten setting must never cost a big run its archives.
+    assert run.storage_settings(standalone) == dict(scratch=None, keep_artifacts='all', keep_top_k=5)
+    assert run.storage_settings({'storage': {'scratch': None, 'keep_artifacts': 'trajectory'}}) == dict(
+        scratch=None, keep_artifacts='trajectory', keep_top_k=5)
 
 
 @pytest.mark.parametrize('shm_exists', [True, False])

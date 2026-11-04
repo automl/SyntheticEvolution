@@ -383,5 +383,7 @@ def _run_stages(
             ),
         ),
     )
-    logger.info('Completed trial %s with aggregate loss %.6f', trial_directory.name, loss)
+    # e.g. config_12/artifacts (NePS) or <run_name>/standalone_trial
+    trial_name = f'{trial_directory.parent.name}/{trial_directory.name}'
+    logger.info('Completed trial %s with aggregate loss %.6f', trial_name, loss)
     return loss
