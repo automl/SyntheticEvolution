@@ -13,7 +13,8 @@ results/
 ├── summary/
 │   ├── best_config_trajectory.txt
 │   ├── best_config.txt
-│   └── short.csv
+│   ├── short.csv
+│   └── full.csv
 ├── errors/                               # optional: only if trials failed
 │   ├── shared_errors.jsonl
 │   └── reports/config_<id>.json
@@ -30,7 +31,7 @@ results/
 ## File ownership
 
 - `run_metadata.json` is created by the HPO pipeline and copied unchanged.
-- The three files in `summary/` are created by NePS and copied unchanged.
+- The four files in `summary/` are created by NePS and copied unchanged.
 - Each `trial_result.json` is created by the HPO pipeline and copied unchanged.
 - The SHS files are derived by the exporter for each exported trajectory
   configuration: `af3_input.json` is AF3's `<name>_data.json` from the RNA's

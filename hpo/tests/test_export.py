@@ -13,7 +13,7 @@ def run(tmp_path):
     root = workspace / 'shs_hpo' / 'test-run'
     neps = root / 'neps'
     (neps / 'summary').mkdir(parents=True)
-    for name in ('best_config.txt', 'short.csv'):
+    for name in ('best_config.txt', 'short.csv', 'full.csv'):
         (neps / 'summary' / name).write_text('summary\n')
     (neps / 'summary' / 'best_config_trajectory.txt').write_text('Config ID: 1\n')
     (root / 'run_metadata.json').write_text('{}')

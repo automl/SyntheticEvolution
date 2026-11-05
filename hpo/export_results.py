@@ -225,6 +225,7 @@ def export_results(config_path: Path, include_archives: bool = False) -> Path:
         "best_config_trajectory.txt",
         "best_config.txt",
         "short.csv",
+        "full.csv",
     )
     copied: list[str] = []
 

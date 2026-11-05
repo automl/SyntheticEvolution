@@ -113,7 +113,7 @@ trajectory into `results/` next to the config:
 results/
 ├── run_metadata.json
 ├── manifest.json                     # export bookkeeping, incl. a failures block
-├── summary/                          # best_config_trajectory.txt, best_config.txt, short.csv
+├── summary/                          # best_config_trajectory.txt, best_config.txt, short.csv, full.csv
 ├── errors/                           # only if trials failed
 │   ├── shared_errors.jsonl
 │   └── reports/config_<id>.json      # every failure_report.json
