@@ -1,0 +1,16 @@
+\begin{table}[t]
+\centering
+\caption{RNAs longer than 200 nt ($n{=}25$, 202--746\,nt). SHS are generated from the reference (DSSR) topology; shuffled and random SHS have the same depth. Mean $\pm$ s.d.\ over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples. Reference-topology SHS recover 63\% of the TM-score gap between no alignment and natural MSA. RMSD on P atoms; TM-score on C3$'$ atoms; all-atom LDDT. Homolog search takes 87\% of AF3's end-to-end runtime on these RNAs (mean 467\,s), SHS generation 6\,s.}
+\label{tab:long_rna}
+\begin{tabular}{lccc}
+\toprule
+AlphaFold~3 input & TM-score ($\uparrow$) & RMSD (\AA, $\downarrow$) & LDDT ($\uparrow$) \\
+\midrule
+Natural MSA & 0.816 $\pm$ 0.230 & 6.458 $\pm$ 14.053 & 0.779 $\pm$ 0.128 \\
+SHS (reference topology) & 0.599 $\pm$ 0.206 & 12.475 $\pm$ 11.836 & 0.673 $\pm$ 0.076 \\
+No alignment & 0.232 $\pm$ 0.040 & 40.277 $\pm$ 6.511 & 0.487 $\pm$ 0.053 \\
+Shuffled SHS & 0.220 $\pm$ 0.066 & 43.397 $\pm$ 7.439 & 0.455 $\pm$ 0.072 \\
+Random SHS & 0.129 $\pm$ 0.010 & 72.427 $\pm$ 2.359 & 0.252 $\pm$ 0.020 \\
+\bottomrule
+\end{tabular}
+\end{table}

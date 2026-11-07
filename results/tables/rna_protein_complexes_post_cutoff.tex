@@ -1,15 +1,17 @@
 \begin{table}[htbp]
 \centering
-\caption{RNA-protein complexes post-cutoff (n=128). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\caption{RNA-protein complexes post-cutoff (n=128). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric. DockQ, ICS and QS-global score the RNA-protein interface; cTM is the complex TM-score; cRMSD over all polymer atoms after superposition, before outlier rejection; cLDDT is all-atom complex LDDT.}
 \label{tab:rna_protein_complexes_post_cutoff}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{lcccccc}
 \toprule
-Input & DockQ ($\uparrow$) & ICS ($\uparrow$) & QS-global ($\uparrow$) & cTM ($\uparrow$) & cRMSD ($\downarrow$) & cLDDT ($\uparrow$) \\
+AlphaFold~3 input & DockQ ($\uparrow$) & ICS ($\uparrow$) & QS-global ($\uparrow$) & cTM ($\uparrow$) & cRMSD (\AA, $\downarrow$) & cLDDT ($\uparrow$) \\
 \midrule
-MSA & 0.318 $\pm$ 0.271 & 0.367 $\pm$ 0.287 & 0.372 $\pm$ 0.319 & 0.806 $\pm$ 0.174 & \textbf{7.002 $\pm$ 11.562} & 0.702 $\pm$ 0.099 \\
-SHS (RNAfold) & 0.289 $\pm$ 0.251 & 0.340 $\pm$ 0.268 & 0.340 $\pm$ 0.294 & 0.802 $\pm$ 0.171 & 7.238 $\pm$ 11.127 & 0.696 $\pm$ 0.091 \\
-SHS (SPOT-RNA) & 0.304 $\pm$ 0.251 & 0.361 $\pm$ 0.265 & 0.369 $\pm$ 0.294 & 0.805 $\pm$ 0.170 & 7.343 $\pm$ 11.617 & 0.700 $\pm$ 0.091 \\
-SHS (RNAformer) & \textbf{0.319 $\pm$ 0.256} & \textbf{0.373 $\pm$ 0.270} & \textbf{0.379 $\pm$ 0.301} & \textbf{0.809 $\pm$ 0.169} & 7.050 $\pm$ 11.380 & \textbf{0.704 $\pm$ 0.094} \\
+Natural MSA & 0.318 $\pm$ 0.271 & 0.367 $\pm$ 0.287 & 0.372 $\pm$ 0.319 & 0.806 $\pm$ 0.174 & \textbf{17.200 $\pm$ 11.386} & 0.702 $\pm$ 0.099 \\
+SHS (RNAfold) & 0.289 $\pm$ 0.251 & 0.340 $\pm$ 0.268 & 0.340 $\pm$ 0.294 & 0.802 $\pm$ 0.171 & 18.528 $\pm$ 10.739 & 0.696 $\pm$ 0.091 \\
+SHS (SPOT-RNA) & 0.304 $\pm$ 0.251 & 0.361 $\pm$ 0.265 & 0.369 $\pm$ 0.294 & 0.805 $\pm$ 0.170 & 18.305 $\pm$ 11.341 & 0.700 $\pm$ 0.091 \\
+SHS (RNAformer) & \textbf{0.319 $\pm$ 0.256} & \textbf{0.373 $\pm$ 0.270} & \textbf{0.379 $\pm$ 0.301} & \textbf{0.809 $\pm$ 0.169} & 17.348 $\pm$ 11.146 & \textbf{0.704 $\pm$ 0.094} \\
 \bottomrule
 \end{tabular}
+}
 \end{table}

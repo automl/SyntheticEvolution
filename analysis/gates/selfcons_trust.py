@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""GT-FREE trust filter for RNAformer-SHS (reviewer point).
+"""Ground-truth-free trust filter for RNAformer-SHS.
 
 self_consistency = inject SHS seed -> predict 3D -> read 2D back -> compare to seed. It needs NO
 ground truth, so it is computable at inference time as a confidence score. When AF3 is self-
@@ -20,7 +20,7 @@ from scipy.stats import wilcoxon
 HERE = Path(__file__).resolve().parent
 NE = HERE.parent
 RAW = NE / "iris_eval_neurips_2026_04_05_2026"
-FIG = NE / "figures" / "reviewer"; FIG.mkdir(parents=True, exist_ok=True)
+FIG = NE / "figures" / "trust"; FIG.mkdir(parents=True, exist_ok=True)
 try:
     import sys; sys.path.insert(0, str(HERE)); import figstyle
     figstyle.write_matplotlibrc(str(HERE / "matplotlibrc")); matplotlib.rc_file(str(HERE / "matplotlibrc"))

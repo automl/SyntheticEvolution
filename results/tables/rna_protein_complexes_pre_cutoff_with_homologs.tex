@@ -1,15 +1,17 @@
 \begin{table}[htbp]
 \centering
-\caption{RNA-protein complexes pre-cutoff with homologs (n=110). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\caption{RNA-protein complexes pre-cutoff with homologs (n=110). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric. DockQ, ICS and QS-global score the RNA-protein interface; cTM is the complex TM-score; cRMSD over all polymer atoms after superposition, before outlier rejection; cLDDT is all-atom complex LDDT.}
 \label{tab:rna_protein_complexes_pre_cutoff_with_homologs}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{lcccccc}
 \toprule
-Input & DockQ ($\uparrow$) & ICS ($\uparrow$) & QS-global ($\uparrow$) & cTM ($\uparrow$) & cRMSD ($\downarrow$) & cLDDT ($\uparrow$) \\
+AlphaFold~3 input & DockQ ($\uparrow$) & ICS ($\uparrow$) & QS-global ($\uparrow$) & cTM ($\uparrow$) & cRMSD (\AA, $\downarrow$) & cLDDT ($\uparrow$) \\
 \midrule
-MSA & \textbf{0.745 $\pm$ 0.165} & \textbf{0.803 $\pm$ 0.149} & \textbf{0.833 $\pm$ 0.198} & \textbf{0.837 $\pm$ 0.212} & \textbf{8.397 $\pm$ 13.836} & \textbf{0.873 $\pm$ 0.066} \\
-SHS (RNAfold) & 0.508 $\pm$ 0.254 & 0.659 $\pm$ 0.261 & 0.693 $\pm$ 0.294 & 0.772 $\pm$ 0.213 & 11.475 $\pm$ 13.845 & 0.772 $\pm$ 0.128 \\
-SHS (SPOT-RNA) & 0.598 $\pm$ 0.228 & 0.714 $\pm$ 0.220 & 0.735 $\pm$ 0.255 & 0.794 $\pm$ 0.212 & 9.917 $\pm$ 13.825 & 0.816 $\pm$ 0.095 \\
-SHS (RNAformer) & 0.677 $\pm$ 0.213 & 0.755 $\pm$ 0.205 & 0.787 $\pm$ 0.242 & 0.822 $\pm$ 0.217 & 9.155 $\pm$ 13.755 & 0.855 $\pm$ 0.077 \\
+Natural MSA & \textbf{0.745 $\pm$ 0.165} & \textbf{0.803 $\pm$ 0.149} & \textbf{0.833 $\pm$ 0.198} & \textbf{0.837 $\pm$ 0.212} & \textbf{10.762 $\pm$ 14.826} & \textbf{0.873 $\pm$ 0.066} \\
+SHS (RNAfold) & 0.508 $\pm$ 0.254 & 0.659 $\pm$ 0.261 & 0.693 $\pm$ 0.294 & 0.772 $\pm$ 0.213 & 15.710 $\pm$ 14.366 & 0.772 $\pm$ 0.128 \\
+SHS (SPOT-RNA) & 0.598 $\pm$ 0.228 & 0.714 $\pm$ 0.220 & 0.735 $\pm$ 0.255 & 0.794 $\pm$ 0.212 & 12.888 $\pm$ 14.732 & 0.816 $\pm$ 0.095 \\
+SHS (RNAformer) & 0.677 $\pm$ 0.213 & 0.755 $\pm$ 0.205 & 0.787 $\pm$ 0.242 & 0.822 $\pm$ 0.217 & 11.552 $\pm$ 14.637 & 0.855 $\pm$ 0.077 \\
 \bottomrule
 \end{tabular}
+}
 \end{table}

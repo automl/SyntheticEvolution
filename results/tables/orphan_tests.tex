@@ -1,0 +1,15 @@
+\begin{table}[t]
+\centering
+\caption{Post-cutoff orphans: RNAformer-seeded SHS vs.\ natural MSA. Paired differences of per-target means (4 AF3 seeds $\times$ 5 samples), 5000$\times$ bootstrap 95\% CI and Wilcoxon signed-rank $p$. Neither difference is significant; SHS and natural MSAs are on par in this regime.}
+\label{tab:orphan_tests}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccccc}
+\toprule
+Subset & $n$ & Natural MSA & SHS & $\Delta$ (SHS $-$ MSA) & 95\% CI & $p$ \\
+\midrule
+Single-chain RNAs (TM-score) & 13 & 0.385 & 0.405 & $+0.019$ & $[-0.025, +0.063]$ & 0.11 \\
+RNA-protein complexes (DockQ) & 96 & 0.303 & 0.307 & $+0.004$ & $[-0.011, +0.019]$ & 0.64 \\
+\bottomrule
+\end{tabular}
+}
+\end{table}

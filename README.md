@@ -1,88 +1,103 @@
-# Reproducing the NeurIPS 2026 SHS paper (camera-ready)
+# SyntheticEvolution: NeurIPS 2026 reproduction
 
-Code and small data to regenerate every AlphaFold 3 table and the rebuttal analyses of
-*"Encoding RNA Topology into Synthetic Alignments for 3D Structure Prediction"*.
-Every AF3 condition is evaluated with **4 AF3 seeds (1, 0, 42, 137) × 5 diffusion samples = 20 predictions per target**;
-a target's score is the mean over its 20 predictions.
+This repository contains the code for the following papers:
 
-Large files are separate downloads from
-<https://ml.informatik.uni-freiburg.de/research-artifacts/SyntheticEvolution/2026_neurips_crc/>
-(`bash download_data.sh` fetches, verifies and unpacks them into `downloads/`):
+* J. K. H. Franke\*, I. K. Tennie\*, M. Uhl, R. Köksal, D. Matus, D. Scheuer, F. Hutter, R. Backofen, F. Runge.
+  *Encoding RNA Topology into Synthetic Alignments for 3D Structure Prediction.* NeurIPS 2026.
+  This branch reproduces the results of this paper.
+* J. K. H. Franke\*, I. K. Tennie\*, M. Uhl, R. Köksal, D. Matus, F. Hutter, R. Backofen, F. Runge.
+  *Synthetic RNA Evolution Enables Accurate Alignment-Free 3D Structure Prediction.* GEM Workshop at ICLR 2026.
+  [OpenReview](https://openreview.net/forum?id=wWKuI35OW7)
 
-| Bundle | Size | Contents |
+\* Equal contribution.
+
+The 3D predictions are scored with an early version of the evaluation pipeline described in
+I. K. Tennie, M. Uhl, J. K. H. Franke, R. Backofen, F. Runge. *AlphaFold 3 Prediction Accuracy and Reliability across
+RNA Structures and Protein-RNA Interfaces.* bioRxiv 2026, [doi:10.64898/2026.11.02.763690](https://doi.org/10.64898/2026.11.02.763690).
+The full version of that pipeline is at [automl/RNA-Protein-3D-Structure-Evaluation](https://github.com/automl/RNA-Protein-3D-Structure-Evaluation).
+RNAformer, the 2D predictor used to build the synthetic alignments, is at [automl/RNAformer](https://github.com/automl/RNAformer).
+
+All AlphaFold 3 results use 4 seeds with 5 diffusion samples each, so 20 predictions per target.
+A target's score is the mean over these 20 predictions.
+
+## Data
+
+The predictions and inputs are too large for git. They are available from
+<https://ml.informatik.uni-freiburg.de/research-artifacts/SyntheticEvolution/2026_neurips_crc/>, and
+`bash download_data.sh` downloads, checks and unpacks them into `downloads/`.
+
+| File | Size | Contents |
 |---|---|---|
-| [`2026_neurips_shs_inputs.zip`](https://ml.informatik.uni-freiburg.de/research-artifacts/SyntheticEvolution/2026_neurips_crc/2026_neurips_shs_inputs.zip) | 26.8 GB | AF3 input JSONs (natural MSA / SHS / controls embedded), reference mmCIFs |
-| [`2026_neurips_shs_outputs.zip`](https://ml.informatik.uni-freiburg.de/research-artifacts/SyntheticEvolution/2026_neurips_crc/2026_neurips_shs_outputs.zip) | 20.1 GB | AF3 structures (`model.cif`) + summary confidences for all seeds/samples, RhoFold+ outputs, metric DBs (`metric_dbs/`); full PAE/pLDDT matrices omitted |
+| [`2026_neurips_shs_inputs.zip`](https://ml.informatik.uni-freiburg.de/research-artifacts/SyntheticEvolution/2026_neurips_crc/2026_neurips_shs_inputs.zip) | 26.8 GB | AlphaFold 3 input files with natural MSAs, SHS and control alignments; reference structures |
+| [`2026_neurips_shs_outputs.zip`](https://ml.informatik.uni-freiburg.de/research-artifacts/SyntheticEvolution/2026_neurips_crc/2026_neurips_shs_outputs.zip) | 20.1 GB | All AlphaFold 3 and RhoFold+ predictions with their confidence files, and the metric databases |
+| [`2026_neurips_shs_extras.zip`](https://ml.informatik.uni-freiburg.de/research-artifacts/SyntheticEvolution/2026_neurips_crc/2026_neurips_shs_extras.zip) | 1.7 MB | The example structures shown in the figures (1SJ4, 4P8Z) that are not in the other two files |
 
-sha256: inputs `2131fa721fa0c38dae15a957d94d08386b0eef9fd62fec381a1310ecb1463aca`,
-outputs `47ca85aacba9814b532d73675dab0ddff130d5dd076e45c175835176a98e276a` (also published as `<zip>.sha256`).
-Unpacked: ~218 GB, ~362k files.
+SHA-256 checksums: inputs `2131fa721fa0c38dae15a957d94d08386b0eef9fd62fec381a1310ecb1463aca`,
+outputs `47ca85aacba9814b532d73675dab0ddff130d5dd076e45c175835176a98e276a`,
+extras `848283cc8741268598eeb69a41317a800757587d29198a7d491032738c532c5e`.
+Each zip also has a `.sha256` file next to it. Unpacked, the data takes about 218 GB.
 
-## Layout
-
-```
-download_data.sh     fetch + verify + unpack the two bundles into downloads/
-config.sh            paths + env names; defaults work out of the box (override in env or config.local.sh)
-data/                target ids, paper splits (neurips_ids.py), RNAformer 2D predictions, analysis inputs
-shs/                 Synthetic Co-evolution Engine (SHS generator) + the recipes used for every input set
-fold/                AF3 inference driver, input selection/re-seeding, the CRC fold submissions
-eval/                scoring engine (US-align + OpenStructure), shard driver, condition registry, RhoFold+ helper
-tables/              table generator, metric export, finalize script
-analysis/            rebuttal / CRC analyses (paired tests, gates, ladders, construction sweep)
-results/             tables/*.tex|csv, metrics_per_prediction.csv.gz, analysis outputs (DBs: download)
-provenance/          versions, checks, origins, sha256 manifests, submission-era table code
-env/                 conda specs: eval_analysis (synEvo), ost, shs_generator (RnaBench)
-```
-
-## Quick path: every number from the downloads
+## Installation
 
 ```bash
-conda env create -f env/eval_analysis.yml          # python 3.9 (env name synEvo); RnaBench env optional (cd-hit-est-2d)
-bash download_data.sh                              # ~47 GB download -> downloads/ (resumable, checksums verified)
-bash tables/finalize.sh                            # tables, metrics export, all analyses, checksums (~1 h, 16 cores)
+conda env create -f env/eval_analysis.yml   # analysis and scoring (env name synEvo)
+conda env create -f env/ost.yml             # OpenStructure, only needed to re-score predictions
+conda env create -f env/shs_generator.yml   # only needed to generate new SHS
+bash eval/build_usalign.sh                  # US-align (finalize.sh builds it too if it is missing)
 ```
 
-`finalize.sh` builds US-align if needed and writes `results/tables/`, `results/metrics_per_prediction.csv.gz` and
-`results/analysis/` (logs in `results/analysis/logs/`). Metric DBs: your own re-scored `results/db*` if present (step 4 below),
-otherwise the shipped `metric_dbs/` of the outputs bundle.
-No path needs editing: everything is resolved relative to the repository and `downloads/`
-(`CRC_DATA`, `CRC_INPUTS`, `CRC_OUTPUTS`, `GT_*`, ... can be overridden in the environment or in an untracked `config.local.sh`).
+AlphaFold 3 (v3.0.0) is only needed if you want to fold the inputs again. Set its paths in `config.sh`.
 
-## Full path: predictions → metrics → tables
+## Reproducing the tables from the downloaded data
 
-1. **Environments**: `env/*.yml`; build US-align with `bash eval/build_usalign.sh`; AF3 paths via `AF3_HOME` etc. (`config.sh`).
-   AlphaFold 3 v3.0.0 (weights from Google DeepMind) is required only to re-fold.
-2. **Inputs**: use the inputs bundle, or regenerate SHS with `shs/generate_shs.sh` (RnaBench env; recipes in `shs/recipes/`).
-   Seed variants: `fold/prepare_inputs.py --seeds 1`.
-3. **Fold**: `fold/fold_array.sh <input_root> <output_dir> <list>` (`--run_data_pipeline=False`);
-   the runs added for the CRC are in `fold/runs/submit_crc_folds.sh`.
-4. **Score**: `eval/make_shards.py` writes one shard per (condition, seed, sample) from `eval/conditions.tsv`
-   (pointing into the unzipped outputs bundle; the Slurm scripts use cluster partition names, adapt the `#SBATCH` lines);
-   `sbatch --array=0-<n-1> --export=CRC_ROOT=$PWD eval/run_eval_array.sh <shards.tsv>` → `results/db/<tag>_<idset>_s<seed>_m<sample>.db`
-   (re-scoring `rnaformer_single_s0_m0` reproduced the shipped DB exactly; see `provenance/PROVENANCE.md`).
-   RhoFold+ outputs: `eval/rhofold/rhofold_to_eval_layout.py`, then the same driver.
-5. **Tables + analyses**: `bash tables/finalize.sh`.
+```bash
+bash download_data.sh      # about 47 GB
+bash tables/finalize.sh    # about 1 hour on 16 cores
+```
 
-## Results map
+This writes all tables to `results/tables/`, all analyses to `results/analysis/`, and every single prediction score to
+`results/metrics_per_prediction.csv.gz`. You do not need to edit any paths. If you want to point to data somewhere
+else, set the variables from `config.sh` in your environment or in a `config.local.sh` file.
 
-| Paper / rebuttal result | Script |
+## Running everything from scratch
+
+1. Take the input files from the inputs zip, or generate new SHS with `shs/generate_shs.sh` (settings in `shs/recipes/`).
+2. Fold them with AlphaFold 3 using `fold/fold_array.sh`. The scripts we used are in `fold/runs/`.
+3. Score the predictions. `eval/make_shards.py` splits the work into one job per condition, seed and sample, and
+   `eval/run_eval_array.sh` runs these jobs as a Slurm array. The results go to `results/db/`.
+   For RhoFold+, first convert the outputs with `eval/rhofold/rhofold_to_eval_layout.py`.
+4. Compute the complex RMSD with `eval/crmsd/run_crmsd_array.sh` (see `eval/crmsd/README.md`).
+5. Self-consistency needs DSSR, which we cannot distribute. With your own DSSR binary, run `eval/selfcons/selfcons.py`.
+6. Run `bash tables/finalize.sh` as above.
+
+Steps 4 and 5 are optional: their results are already in `results/crmsd/` and `results/selfcons/`.
+The Slurm scripts use the partition names of our cluster, so you will need to change the `#SBATCH` lines.
+
+## Where each result comes from
+
+| Result | Script |
 |---|---|
-| All AF3 tables (single chains, RNA-protein complexes, splits, 1v1/multichain, controls, ordering, denoise, SHS+MSA, depth scaling) | `tables/make_crc_tables.py` |
-| SHS depth scaling N=20 … 20000 (single chains, complexes) | `tables/make_crc_tables.py` → `rna_single_chain_scaling`, `rna_protein_complexes_scaling` |
-| Seed robustness (submitted seed 1 vs 4×5) | `tables/make_crc_tables.py` → `results/tables/seed_robustness.csv` |
-| RhoFold+ tables (incl. denoise ladder and native-MSA comparison) | `tables/make_crc_tables.py` from `metric_dbs/rhofold` (re-score: `eval/rhofold/score_rhofold.sh`) |
-| Orphan parity (paired Wilcoxon + bootstrap CI) | `analysis/rebuttal/multiseed_orphan_parity.py` |
-| Near-floor solvable orphans | `analysis/rebuttal/uTY4_q4_near_floor.py` |
-| 2D-accuracy gates, self-consistency, complex bins, ribozymes, family leakage | `analysis/rebuttal/multiseed_nomsa_final.py`, `multiseed_nomsa_cis.py` |
-| Denoising mechanism (AF3) | `analysis/rebuttal/denoise_ms.py` |
-| AF3 confidence (pTM) ladder | `analysis/rebuttal/confidence_ladder.py`, `confidence_ladder_confirm.py` |
-| Long RNAs (>200 nt) ladder; homolog-search runtime | `analysis/rebuttal/general2_long_run_ladder.py`, `general2_runtime.py` |
-| Sequence/structure novelty of post-cutoff targets | `analysis/rebuttal/faN3_q1_similarity.py` (complex structure scan: `finalize.sh --full`) |
-| 4P8Z/6WJS interventions, 91-RNA construction sweep (N=1000 and N=100) | `analysis/construction/eval_intervention_ms.py`, `construct91_eval.py` → `construct91_within.py`, `construct91_plot.py` (`CONSTRUCT_N=100`) |
+| Main AlphaFold 3 and RhoFold+ tables (all splits, controls, denoising, SHS depth, seed robustness) | `tables/make_crc_tables.py` |
+| Remaining tables (orphan benchmark, long RNAs, construction steps, ribozymes, and others) | `tables/make_extra_tables.py` |
+| Statistics quoted in the text (p-values, confidence intervals) | `tables/prose_numbers.py` |
+| Orphan comparison and near-floor orphans | `analysis/benchmark/orphan_parity.py`, `orphan_near_floor.py` |
+| Fig. 3a (3D accuracy against 2D accuracy) | `analysis/benchmark/fig3a_mcc_vs_3d.py` |
+| Fig. 3b (arc diagrams for 1SJ4) | `analysis/benchmark/fig3b_arcs.py --pdb 1SJ4` (needs VARNA) |
+| 2D accuracy groups, self-consistency, ribozymes, family overlap | `analysis/benchmark/twod_gates.py`, `twod_gates_ci.py` |
+| Agreement of predictions with the encoded topology | `analysis/benchmark/encoded_agreement.py` |
+| Denoising | `analysis/benchmark/denoise.py` |
+| AlphaFold 3 confidence | `analysis/benchmark/confidence_ladder.py` |
+| Long RNAs and homology search time | `analysis/benchmark/long_rna_ladder.py`, `long_rna_runtime.py` |
+| Novelty of post-cutoff targets | `analysis/benchmark/postcutoff_novelty.py` (the structure scan runs with `finalize.sh --full`) |
+| Differences between diffusion samples | `analysis/benchmark/across_samples.py` |
+| 4P8Z and 6WJS case studies, construction sweep over 91 RNAs | `analysis/construction/` |
+| 2D accuracy of the construction-sweep predictions | `eval/dssr2d/construction_2d.py` |
 
 ## Notes
 
-* Target sets: 91 single-chain RNAs, 377 RNA–protein complexes, 25 long RNAs (`data/ids/`); splits from `data/splits/neurips_ids.py`.
-* SHS from the reference topology (`dssr`) covers 89/91 single chains (7EFG, 7VFT not folded).
-* AlphaFold 3 outputs in the outputs bundle are subject to the AlphaFold 3 Output Terms of Use.
-* Details, checks and origins: `provenance/PROVENANCE.md`.
+* We evaluate 91 single-chain RNAs, 377 RNA-protein complexes and 25 long RNAs. The ID lists are in `data/ids/` and the
+  splits in `data/splits/neurips_ids.py`.
+* SHS from the reference topology exist for 89 of the 91 single chains (not for 7EFG and 7VFT).
+* The complex RMSD is not the `Complex_RMSD` column of the metric databases. See `eval/crmsd/README.md`.
+* The AlphaFold 3 predictions in the outputs zip fall under the AlphaFold 3 Output Terms of Use.
+* Software versions and our consistency checks are listed in `provenance/PROVENANCE.md`.

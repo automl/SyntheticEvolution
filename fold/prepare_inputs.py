@@ -6,7 +6,7 @@ four characters of the file name are the PDB id).
 
   list mode   (no --seeds): write --list with the matching subdirs relative to src_root (no copies).
   reseed mode (--seeds S..): write <dst_root>/<PDBID>/<same file name> with ONLY `modelSeeds`
-              replaced (as reproduce_rebuttal/scripts/fold/set_seeds.py), and --list with <PDBID>.
+              replaced, and --list with <PDBID>.
 """
 import argparse, json, sys
 from pathlib import Path

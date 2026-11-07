@@ -1,14 +1,14 @@
 \begin{table}[htbp]
 \centering
-\caption{Equal-depth negative controls, RNA single chain (n=91). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\caption{Equal-depth negative controls, RNA single chain (n=91). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric. TM-score on C3$'$ atoms (US-align); RMSD on P atoms; LDDT is all-atom RNA LDDT.}
 \label{tab:rna_single_chain_shuffle}
 \begin{tabular}{lccc}
 \toprule
-Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+AlphaFold~3 input & TM-score ($\uparrow$) & RMSD (\AA, $\downarrow$) & LDDT ($\uparrow$) \\
 \midrule
-MSA removed baseline & 0.519 $\pm$ 0.209 & 6.576 $\pm$ 7.844 & 0.671 $\pm$ 0.155 \\
-SHS (Random) & 0.179 $\pm$ 0.038 & 44.601 $\pm$ 19.536 & 0.307 $\pm$ 0.080 \\
-SHS (Shuffled) & 0.412 $\pm$ 0.144 & 7.629 $\pm$ 6.885 & 0.615 $\pm$ 0.118 \\
+No alignment & 0.519 $\pm$ 0.209 & 6.576 $\pm$ 7.844 & 0.671 $\pm$ 0.155 \\
+Random SHS & 0.179 $\pm$ 0.038 & 44.601 $\pm$ 19.536 & 0.307 $\pm$ 0.080 \\
+Shuffled SHS & 0.412 $\pm$ 0.144 & 7.629 $\pm$ 6.885 & 0.615 $\pm$ 0.118 \\
 SHS (RNAformer) & \textbf{0.605 $\pm$ 0.222} & \textbf{4.230 $\pm$ 5.222} & \textbf{0.736 $\pm$ 0.137} \\
 \bottomrule
 \end{tabular}

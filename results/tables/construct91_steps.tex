@@ -1,0 +1,15 @@
+\begin{table}[t]
+\centering
+\caption{Construction sweep on all 91 single-chain RNAs (SHS depth $N{=}100$). Topologies are built cumulatively from the DSSR reference pairs; recall is the fraction of reference pairs encoded (precision 1 by construction). TM-score: Mean $\pm$ s.d.\ over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples. $\Delta$TM and Wilcoxon $p$ are paired against the Watson--Crick step; the last column counts RNAs with a higher TM-score than at the Watson--Crick step.}
+\label{tab:construct91}
+\begin{tabular}{lccccc}
+\toprule
+Encoded topology & Recall & TM-score ($\uparrow$) & $\Delta$TM & $p$ & Improved \\
+\midrule
+Nested Watson--Crick and G--U pairs & 0.48 & 0.533 $\pm$ 0.197 & -- & -- & -- \\
++ nested non-canonical pairs & 0.57 & 0.504 $\pm$ 0.194 & $-0.029$ & 4.3e-04 & 24/91 \\
++ pseudoknotted pairs & 0.62 & 0.513 $\pm$ 0.188 & $-0.021$ & 1.2e-01 & 37/91 \\
+Full reference (incl.\ multi-partner pairs) & 0.98 & 0.606 $\pm$ 0.228 & $+0.072$ & 4.6e-12 & 71/91 \\
+\bottomrule
+\end{tabular}
+\end{table}

@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """Flatten all metric DBs into one small per-prediction table (git-tracked):
-results/metrics_per_prediction.csv.gz  -- tag, idset, target, seed, sample, metrics (+ AF3 confidences)."""
+results/metrics_per_prediction.csv.gz  -- tag, idset, target, seed, sample, metrics (+ AF3 confidences).
+Complex_RMSD of complex shards is the paper cRMSD from $CRMSD_DIR (as in the tables), not the DB value."""
 import csv, glob, gzip, io, os, re, sqlite3, sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "analysis"))
 from paths import CRC, DB_DIR, DB_LONG, DB_RHOFOLD, idof  # noqa: E402
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from make_crc_tables import COMPLEX, SINGLE, num  # noqa: E402
+from make_crc_tables import COMPLEX, SINGLE, crmsd_values, num  # noqa: E402
 
 EXTRA = ["iLDDT", "af3_rna_pTM", "af3_rna_ipTM", "af3_ranking_score", "af3_rna_pLDDT_avg"]
 COLS = SINGLE + [c for c in COMPLEX if c not in SINGLE] + EXTRA
@@ -25,7 +26,10 @@ with open(out, "wb") as raw, gzip.GzipFile(filename="", mode="wb", fileobj=raw, 
             tbl = "pred_protein_rna" if idset == "complex" else "pred_rna_rna"
             con = sqlite3.connect(f"file:{db}?mode=ro", uri=True); con.row_factory = sqlite3.Row
             cols = {r[1] for r in con.execute(f"pragma table_info({tbl})")}
+            crmsd = crmsd_values(db) if idset == "complex" else None
             for r in con.execute(f"SELECT * FROM {tbl}"):
+                vals = {c: num(r[c]) if c in cols else None for c in COLS}
+                if crmsd is not None: vals["Complex_RMSD"] = crmsd.get(idof(r["FileName"]))
                 w.writerow([tag, idset, idof(r["FileName"]), seed, sample] +
-                           [("" if (v := num(r[c]) if c in cols else None) is None else f"{v:.5g}") for c in COLS]); n += 1
+                           ["" if vals[c] is None else f"{vals[c]:.5g}" for c in COLS]); n += 1
 print(f"{n} predictions -> {out} ({out.stat().st_size/1e6:.1f} MB)")

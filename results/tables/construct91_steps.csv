@@ -1,0 +1,5 @@
+Encoded topology,Recall,TM-score ($\uparrow$),$\Delta$TM,$p$,Improved
+Nested Watson--Crick and G--U pairs,0.48,0.533 $\pm$ 0.197,--,--,--
++ nested non-canonical pairs,0.57,0.504 $\pm$ 0.194,$-0.029$,4.3e-04,24/91
++ pseudoknotted pairs,0.62,0.513 $\pm$ 0.188,$-0.021$,1.2e-01,37/91
+Full reference (incl.\ multi-partner pairs),0.98,0.606 $\pm$ 0.228,$+0.072$,4.6e-12,71/91

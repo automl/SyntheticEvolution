@@ -1,0 +1,19 @@
+\begin{table}[t]
+\centering
+\caption{TM-score of single-chain RNAs ($n{=}91$) by the 2D MCC of the encoded RNAformer topology against the DSSR reference pairs (all base pairs) and by self-consistency (MCC between the encoded topology and the base pairs of the SHS-guided prediction; needs no ground truth). Mean $\pm$ s.d.\ over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; $\Delta$ = SHS $-$ no alignment, paired Wilcoxon $p$.}
+\label{tab:gates}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccccc}
+\toprule
+Subset & $n$ & No alignment & SHS & Natural MSA & $\Delta$ & $p$ \\
+\midrule
+2D MCC $<0.5$ & 9 & 0.265 & 0.267 & 0.293 & $+0.002$ & 8.2e-01 \\
+2D MCC $0.5\text{--}0.8$ & 16 & 0.361 & 0.363 & 0.362 & $+0.002$ & 7.1e-01 \\
+2D MCC $0.8\text{--}0.95$ & 49 & 0.614 & 0.677 & 0.755 & $+0.063$ & 7.4e-01 \\
+2D MCC $>0.95$ & 17 & 0.531 & 0.803 & 0.861 & $+0.272$ & 1.1e-04 \\
+Self-consistency $\ge 0.9$ & 26 & 0.459 & 0.707 & 0.709 & $+0.248$ & 3.2e-05 \\
+Self-consistency $<0.9$ & 65 & 0.544 & 0.564 & 0.640 & $+0.020$ & 8.4e-01 \\
+\bottomrule
+\end{tabular}
+}
+\end{table}

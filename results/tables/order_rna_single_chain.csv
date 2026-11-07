@@ -1,0 +1,7 @@
+3D predictor,SHS source,TM-score ($\uparrow$),"RMSD (\AA, $\downarrow$)",LDDT ($\uparrow$)
+AlphaFold 3,SHS (RNAfold),0.522 $\pm$ 0.199,4.977 $\pm$ 4.555,0.680 $\pm$ 0.143
+AlphaFold 3,SHS (SPOT-RNA),0.511 $\pm$ 0.189,4.892 $\pm$ 4.369,0.672 $\pm$ 0.124
+AlphaFold 3,SHS (RNAformer),\textbf{0.609 $\pm$ 0.220},\textbf{3.959 $\pm$ 4.561},\textbf{0.740 $\pm$ 0.134}
+RhoFold+,SHS (RNAfold),0.368 $\pm$ 0.119,6.477 $\pm$ 4.912,0.527 $\pm$ 0.108
+RhoFold+,SHS (SPOT-RNA),0.402 $\pm$ 0.117,5.246 $\pm$ 4.051,0.555 $\pm$ 0.090
+RhoFold+,SHS (RNAformer),\textbf{0.523 $\pm$ 0.184},\textbf{3.748 $\pm$ 3.532},\textbf{0.624 $\pm$ 0.098}

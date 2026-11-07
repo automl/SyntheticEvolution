@@ -1,162 +1,78 @@
 #!/usr/bin/env python3
-"""Compute the TRUE RNAformer 2D-prediction accuracy vs ground truth (gt_dssr), per eval id.
+"""2D accuracy of the RNAformer topology encoded in the SHS, per target (the gating variable rf2d_pred).
 
-Correct gating variable for "SHS quality depends on how well RNAformer predicts the 2D".
-NOT self_consistency (seed-vs-realised-3D) and NOT _dssr (realised-2D-vs-GT): this is the
-RNAformer SEED prediction scored against gt_dssr.
+Prediction: the topology the SHS generator encodes for predictor `rnaformer`
+  (data/rnaformer/rnaformer_all_preds.pkl; generator lookup by PDB id, else by sequence), verified against the shipped
+  SHS by analysis/benchmark/fig3a_mcc_vs_3d.py (paired positions = conserved alignment columns).
+Reference (DSSR, all base pairs):
+  single chains: data/construct/construct_pairs_91.json (*_all; the topology of the reference-topology SHS)
+  1v1 complexes: data/gates/inputs/rp1v1_2D_full_with_pairs_af3_rnaformerN100_dssr.csv (pairs2)
+Both in the frame of the AF3 query sequence. Metrics over the full symmetric L x L matrix (TN included), with the same
+functions as fig3a_mcc_vs_3d.py, so rf2d_mcc equals the RNAformer x-axis of Fig. 3a.
 
-Prediction pairs (the generator's own lookup, rna_msa_generator_base_pair.py:223-225):
-    df = read_pickle('...rnaformer2025_pdb_id2pairs_mapping.pkl'); df[df.sequence == seq].pairs
-  keyed by the EXACT eval sequence (seq = sequence.upper()). So every eval id has a prediction.
-Ground-truth pairs: pairs2 (reference_method == gt_dssr) from the SS archive (monomers) and the
-  rp1v1 with-pairs csv (1v1). The GT (dssr) sequence can be +-1 nt vs the modelled sequence
-  (a known PDB artefact), so the GT is ALIGNED into the eval-sequence frame by substring before
-  scoring (indices shifted; pairs falling outside the eval sequence are dropped).
-Output: reviewer_analysis/rnaformer_2d_vs_gt.csv  [exp_db_id, group, rf2d_precision/recall/f1/mcc].
+  python analysis/gates/build_rnaformer_2d_gt.py                  # -> data/gates/rnaformer_2d_vs_gt.csv
+  python analysis/gates/build_rnaformer_2d_gt.py --update-master  # also refresh rf2d_pred / pred_bin / has2d in
+                                                                  #    data/gates/master_combined.csv
 """
-import pickle, ast, difflib
-import numpy as np
-import pandas as pd
+import argparse, importlib.util, json, sys
 from pathlib import Path
+import numpy as np, pandas as pd
 
-HERE = Path(__file__).resolve().parent
-NE = HERE.parent
-PKL = NE / "2026_neurips_code" / ("synthetic_msa_selection_max_rna_len_200_min_rna_len_15_"
-                                  "max_protein_len_200_rnaformer2025_pdb_id2pairs_mapping.pkl")
-SS = NE / "ss_results" / "secondary_structure_neurips_2026_rna_rna" / "all_secondary_structure_data_rna_rna.csv"
-MONO = NE / "RNA_Monomer_2D_self_consistency.csv"
-RP = NE / "rp1v1_2D_full_with_pairs_af3_rnaformerN100_dssr.csv"
-
-
-def up(s):
-    return str(s).upper()
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "analysis"))
+from paths import MC_CSV  # noqa: E402
+_spec = importlib.util.spec_from_file_location("fig3a", ROOT / "analysis" / "benchmark" / "fig3a_mcc_vs_3d.py")
+F = importlib.util.module_from_spec(_spec); _spec.loader.exec_module(F)
+OUT = ROOT / "data" / "gates" / "rnaformer_2d_vs_gt.csv"
+CANON = {"AU", "UA", "GC", "CG", "GU", "UG"}
 
 
-def norm(pairs, n):
-    out = set()
-    for p in pairs:
-        try:
-            i, j = int(p[0]), int(p[1])
-        except Exception:
-            continue
-        if i == j or i < 0 or j < 0 or i >= n or j >= n:
-            continue
-        out.add((min(i, j), max(i, j)))
-    return out
-
-
-def align_gt(pred_seq, gt_seq, gt_pairs):
-    """Return GT pairs expressed in the pred-sequence index frame.
-
-    The GT (dssr) sequence can differ from the modelled sequence by a +-1 nt PDB artefact or a
-    single substitution/indel. We map GT positions -> pred positions via the longest-matching
-    blocks (difflib), so any small edit is tolerated; GT pairs whose endpoints fall outside a
-    matched block are dropped (they cannot be scored in the eval frame)."""
-    if not gt_pairs:
-        return []
-    gi2pi = {}
-    for blk in difflib.SequenceMatcher(None, gt_seq, pred_seq, autojunk=False).get_matching_blocks():
-        for k in range(blk.size):
-            gi2pi[blk.a + k] = blk.b + k
-    out = []
-    for p in gt_pairs:
-        try:
-            i, j = int(p[0]), int(p[1])
-        except Exception:
-            continue
-        if i in gi2pi and j in gi2pi:
-            out.append((gi2pi[i], gi2pi[j]))
-    return out
-
-
-def metrics(pred, gt, n):
-    tp = len(pred & gt); fp = len(pred - gt); fn = len(gt - pred)
-    tn = n * (n - 1) // 2 - tp - fp - fn
-    # degenerate case: RNAformer predicted NO pairs (tp+fp==0). That is a total 2D failure vs a GT
-    # that HAS pairs, so score it as 0 (worst) rather than leaving precision/mcc undefined -- this
-    # keeps such ids (e.g. 7MKT) in the low-2D-quality bin instead of dropping them.
-    prec = tp / (tp + fp) if (tp + fp) else 0.0
-    rec = tp / (tp + fn) if (tp + fn) else np.nan          # GT has no pairs -> recall undefined
-    f1 = 2 * prec * rec / (prec + rec) if (prec and rec and not np.isnan(rec)) else 0.0
-    den = np.sqrt(float(tp + fp) * (tp + fn) * (tn + fp) * (tn + fn))
-    mcc = (tp * tn - fp * fn) / den if den else 0.0        # degenerate 0/0 -> 0 (paper convention)
-    return prec, rec, f1, mcc
-
-
-def pred_in_frame(es, exact, items):
-    """RNAformer predicted pairs mapped into the eval-sequence (es) index frame.
-    Exact sequence hit first (monomers, by construction); else align the closest pkl sequence
-    (rp1v1 can differ by the same +-1 nt PDB artefact) and remap pair indices. None if no match."""
-    if es in exact:
-        return norm(exact[es], len(es))
-    best, br = None, 0.0
-    for s, pairs in items:
-        if abs(len(s) - len(es)) > 3:
-            continue
-        r = difflib.SequenceMatcher(None, s, es, autojunk=False).ratio()
-        if r > br:
-            br, best = r, (s, pairs)
-    if best is None or br < 0.9:
-        return None
-    s, pairs = best
-    m = {}
-    for blk in difflib.SequenceMatcher(None, s, es, autojunk=False).get_matching_blocks():
-        for k in range(blk.size):
-            m[blk.a + k] = blk.b + k
-    out = set()
-    for p in pairs:
-        i, j = int(p[0]), int(p[1])
-        if i in m and j in m:
-            out.add((min(m[i], m[j]), max(m[i], m[j])))
-    return out
+def references():
+    ref = {r["pdb_id"].lower(): ("rna-only", F.parse_pairs(r["pairs"]))
+           for r in json.load(open(ROOT / "data" / "construct" / "construct_pairs_91.json")) if r["id"].endswith("_all")}
+    ids_1v1 = set(pd.read_csv(MC_CSV).query("group == '1v1'").exp_db_id.str.lower())
+    d = pd.read_csv(ROOT / "data" / "gates" / "inputs" / "rp1v1_2D_full_with_pairs_af3_rnaformerN100_dssr.csv")
+    for r in d[d.method == "rnaformer"].itertuples():
+        if r.pdbid.lower() in ids_1v1: ref[r.pdbid.lower()] = ("1v1", F.parse_pairs(r.pairs2))
+    return ref
 
 
 def main():
-    pk = pickle.load(open(PKL, "rb"))
-    pk["us"] = pk.sequence.map(up)
-    exact = {s: g.pairs.iloc[0] for s, g in pk.groupby("us")}
-    items = list(exact.items())
-
-    # ---- ground-truth records: (exp_db_id, group, gt_seq, gt_pairs) ----
-    recs = []
-    ss = pd.read_csv(SS).dropna(subset=["pairs2", "sequence"])
-    ss["base"] = ss.pdbid.astype(str).str.slice(0, 4).str.upper()
-    gt_ss = {b: (up(g.sequence.iloc[0]), ast.literal_eval(g.pairs2.iloc[0])) for b, g in ss.groupby("base")}
-    # eval sequence per monomer (matches the pkl exactly, by construction)
-    mono = pd.read_csv(MONO)
-    mono["base"] = mono.pdbid.str.upper().str.slice(0, 4)
-    eval_seq = {r.base: up(r.sequence) for _, r in mono.drop_duplicates("base").iterrows()}
-    for b, es in eval_seq.items():
-        if b in gt_ss:
-            recs.append((b, "rna-only", es, gt_ss[b]))
-    if RP.exists():
-        rp = pd.read_csv(RP).dropna(subset=["pairs2", "sequence"])
-        for _, r in rp.drop_duplicates("pdbid").iterrows():
-            s = up(r.sequence)
-            recs.append((str(r.pdbid).upper(), "1v1", s, (s, ast.literal_eval(r.pairs2))))
-
-    # PAPER CONVENTION: keep degenerate cases (GT has 0 base pairs, or RNAformer predicted 0 pairs)
-    # scored as mcc=0 -> they land in the <0.5 (untrustworthy) bin instead of being dropped.
-    rows, no_pred, degen = [], [], 0
-    for eid, grp, es, gt in recs:
-        pred = pred_in_frame(es, exact, items)
-        if pred is None:
-            no_pred.append(eid); continue
-        n = len(es)
-        gt_seq, gt_pairs = gt
-        gt_set = norm(align_gt(es, gt_seq, gt_pairs), n)
-        is_degen = (not gt_set) or (not pred)   # GT has 0 pairs, or RNAformer predicted 0 pairs
-        degen += int(is_degen)
-        prec, rec, f1, mcc = metrics(pred, gt_set, n)
-        rows.append({"exp_db_id": eid, "group": grp, "n_res": n,
-                     "rf2d_precision": prec, "rf2d_recall": rec, "rf2d_f1": f1, "rf2d_mcc": mcc,
-                     "rf2d_degenerate": is_degen, "n_gt_pairs": len(gt_set), "n_pred_pairs": len(pred)})
-    out = pd.DataFrame(rows).drop_duplicates("exp_db_id")
-    out.to_csv(HERE / "rnaformer_2d_vs_gt.csv", index=False)
-    print(f"matched {len(out)} ids | no-pred {len(no_pred)} {no_pred} | degenerate(mcc=0) {degen}")
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--update-master", action="store_true")
+    a = ap.parse_args()
+    preds = F.table_from(ROOT / "data" / "rnaformer" / "rnaformer_all_preds.pkl")
+    rows = []
+    for pid, (group, R) in sorted(references().items()):
+        idset = "single" if group == "rna-only" else "complex"
+        seq, _ = F.query_and_msa("rnaformer", idset, pid)
+        if seq is None: continue
+        P = F.lookup(preds, pid, seq); L = len(seq)
+        p, t = F.matrix(P, L), F.matrix(R, L)
+        tp = int((p & t).sum() // 2); fp = int((p & ~t).sum() // 2); fn = int((~p & t).sum() // 2)
+        prec = tp / (tp + fp) if tp + fp else 0.0; rec = tp / (tp + fn) if tp + fn else 0.0
+        rows.append(dict(exp_db_id=pid.upper(), group=group, rf2d_precision=prec, rf2d_recall=rec,
+                         rf2d_f1=2 * prec * rec / (prec + rec) if prec + rec else 0.0, rf2d_mcc=F.mcc(p, t),
+                         rf2d_degenerate=not R or not P, n_gt_pairs=int(t.sum() // 2), n_pred_pairs=int(p.sum() // 2),
+                         ref_canonical_frac=np.mean([seq[i] + seq[j] in CANON for i, j in R if i < L and j < L]) if R else np.nan))
+    out = pd.DataFrame(rows); out.to_csv(OUT, index=False)
     for g, d in out.groupby("group"):
         print(f"  {g:9s} n={len(d):3d} | f1 {d.rf2d_f1.mean():.3f}  mcc {d.rf2d_mcc.mean():.3f}  "
-              f"prec {d.rf2d_precision.mean():.3f}  rec {d.rf2d_recall.mean():.3f}")
+              f"precision {d.rf2d_precision.mean():.3f}  recall {d.rf2d_recall.mean():.3f}  "
+              f"reference pairs complementary in query frame {d.ref_canonical_frac.mean():.3f}")
+    print(f"-> {OUT}")
+    if a.update_master:
+        # rewrite only rf2d_pred / has2d / pred_bin; every other column is kept byte-identical
+        mc = pd.read_csv(MC_CSV, dtype=str, keep_default_na=False)
+        new = out.set_index(out.exp_db_id.str.upper()).rf2d_mcc
+        v = mc.exp_db_id.str.upper().map(new)
+        old = pd.to_numeric(mc.rf2d_pred, errors="coerce")
+        changed = int((~np.isclose(old, v, equal_nan=True)).sum())
+        mc["rf2d_pred"] = [repr(float(x)) if pd.notna(x) else "" for x in v]
+        mc["has2d"] = ["True" if pd.notna(x) else "False" for x in v]
+        mc["pred_bin"] = pd.cut(v, [-1.01, .5, .8, .95, 1.01], labels=["<0.5", "0.5-0.8", "0.8-0.95", ">0.95"]).astype(object).where(lambda b: b.notna(), "")
+        mc.to_csv(MC_CSV, index=False)
+        print(f"updated rf2d_pred in {MC_CSV}: {changed} rows changed, {int(v.notna().sum())} non-null")
 
 
 if __name__ == "__main__":

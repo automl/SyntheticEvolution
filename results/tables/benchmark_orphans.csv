@@ -1,0 +1,5 @@
+AlphaFold 3 input,RNA_TM (single),RNA_RMSD (single),RNA_LDDT_allAtom (single),Dockq (complex),Complex_RMSD (complex),Complex_LDDT_allAtom (complex)
+Natural MSA,0.385 $\pm$ 0.228,6.897 $\pm$ 5.937,0.630 $\pm$ 0.234,0.303 $\pm$ 0.285,16.454 $\pm$ 10.356,\textbf{0.705 $\pm$ 0.098}
+SHS (RNAfold),0.301 $\pm$ 0.147,9.285 $\pm$ 5.828,0.594 $\pm$ 0.200,0.279 $\pm$ 0.265,17.019 $\pm$ 9.707,0.702 $\pm$ 0.091
+SHS (SPOT-RNA),0.333 $\pm$ 0.181,8.043 $\pm$ 5.708,0.636 $\pm$ 0.185,0.292 $\pm$ 0.264,16.812 $\pm$ 10.083,0.704 $\pm$ 0.091
+SHS (RNAformer),\textbf{0.405 $\pm$ 0.209},\textbf{6.809 $\pm$ 5.896},\textbf{0.681 $\pm$ 0.214},\textbf{0.307 $\pm$ 0.267},\textbf{15.971 $\pm$ 9.697},\textbf{0.705 $\pm$ 0.095}

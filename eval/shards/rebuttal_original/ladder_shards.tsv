@@ -1,5 +1,0 @@
-af3	af_output/[ab]2021_rnaonly_predictions/@ID@_s1/seed-1_sample-0/model.cif
-dssr	af_output/neurips_dssr_rna_long_runs/@ID@_*/seed-1_sample-0/model.cif
-shuffle	af_output/neurips_shuffle_rna_long_runs/@ID@_*/seed-1_sample-0/model.cif
-random	af_output/neurips_random_rna_long_runs/@ID@_*/seed-1_sample-0/model.cif
-nomsa	af_output/neurips_nomsa_rna_long_runs/@ID@_*/seed-1_sample-0/model.cif

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Download, verify and unpack the two data bundles of the NeurIPS 2026 SHS camera-ready package.
+# Download, verify and unpack the data bundles of the NeurIPS 2026 SHS camera-ready package.
 #
-#   bash download_data.sh             # -> downloads/2026_neurips_shs_{inputs,outputs}/  (zips are deleted after unpacking)
+#   bash download_data.sh             # -> downloads/2026_neurips_shs_{inputs,outputs,extras}/  (zips are deleted after unpacking)
 #   bash download_data.sh --keep-zips # keep the .zip files
 #   CRC_DATA=/big/disk bash download_data.sh   # download somewhere else (config.sh reads the same variable)
 #
@@ -16,7 +16,8 @@ KEEP=0; [ "${1:-}" = "--keep-zips" ] && KEEP=1
 
 # name  sha256  (the published .sha256 files must agree with these values)
 BUNDLES="2026_neurips_shs_inputs.zip 2131fa721fa0c38dae15a957d94d08386b0eef9fd62fec381a1310ecb1463aca
-2026_neurips_shs_outputs.zip 47ca85aacba9814b532d73675dab0ddff130d5dd076e45c175835176a98e276a"
+2026_neurips_shs_outputs.zip 47ca85aacba9814b532d73675dab0ddff130d5dd076e45c175835176a98e276a
+2026_neurips_shs_extras.zip 848283cc8741268598eeb69a41317a800757587d29198a7d491032738c532c5e"
 
 fetch() {  # fetch <url> <file>  (resumes partial downloads)
   if command -v curl > /dev/null; then curl -fL --retry 5 -C - -o "$2" "$1"

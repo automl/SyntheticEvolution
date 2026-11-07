@@ -1,0 +1,16 @@
+\begin{table}[t]
+\centering
+\caption{AF3 confidence (pTM) on single-chain RNAs ($n{=}91$) by alignment input. Per-target mean over 4 AF3 seeds $\times$ 5 samples; mean $\pm$ s.d.\ over targets; $\Delta$ and paired Wilcoxon $p$ relative to no alignment. With SHS, pTM tracks the TM-score of the prediction (Spearman $\rho{=}0.90$).}
+\label{tab:confidence}
+\begin{tabular}{lccc}
+\toprule
+AlphaFold~3 input & pTM & $\Delta$ vs.\ no alignment & $p$ \\
+\midrule
+Natural MSA & 0.422 $\pm$ 0.158 & $+0.085$ & 2.9e-07 \\
+SHS (RNAformer) & 0.408 $\pm$ 0.149 & $+0.071$ & 1.6e-06 \\
+No alignment & 0.337 $\pm$ 0.116 & -- & -- \\
+Shuffled SHS & 0.301 $\pm$ 0.112 & $-0.036$ & 7.6e-06 \\
+Random SHS & 0.181 $\pm$ 0.045 & $-0.156$ & 7.1e-16 \\
+\bottomrule
+\end{tabular}
+\end{table}

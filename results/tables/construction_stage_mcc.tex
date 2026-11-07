@@ -1,0 +1,15 @@
+\begin{table}[t]
+\centering
+\caption{2D accuracy of the AF3 predictions along the construction sweep: MCC between the base pairs DSSR extracts from the predicted structure and the DSSR reference pairs, for SHS encoding progressively richer topologies. Per SHS depth, mean over 4 AF3 seeds $\times$ 5 samples; values are mean $\pm$ s.d.\ across the 14 depths ($N\in\{2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 15000, 20000\}$). Each nucleotide carries at most one encoded partner, so ``+ multi-partner pairs'' re-assigns partners rather than encoding base triples.}
+\label{tab:intervention_stage_secondary_structure_summary_all}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccccc}
+\toprule
+Target & Local WC only & Global WC topology & + non-canonical & + pseudoknots & + multi-partner pairs & Full reference \\
+\midrule
+4P8Z & 0.643 $\pm$ 0.108 & 0.772 $\pm$ 0.082 & 0.777 $\pm$ 0.118 & 0.779 $\pm$ 0.111 & 0.819 $\pm$ 0.088 & 0.824 $\pm$ 0.048 \\
+6WJS & 0.864 $\pm$ 0.032 & 0.881 $\pm$ 0.024 & 0.876 $\pm$ 0.003 & 0.900 $\pm$ 0.006 & 0.902 $\pm$ 0.004 & 0.922 $\pm$ 0.007 \\
+\bottomrule
+\end{tabular}
+}
+\end{table}

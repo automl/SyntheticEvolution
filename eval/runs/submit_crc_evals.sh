@@ -1,6 +1,6 @@
 #!/bin/bash
 # CRC evaluation shards (DBs land in $DB_DIR). Seeds 0/42/137 of the original conditions are already scored
-# (results/db, copied from the rebuttal run); this adds seed 1 everywhere plus the new CRC folds.
+# (results/db); this adds seed 1 everywhere plus the additional folds.
 #   Stage A: seed 1 for conditions whose seed-1 folds exist           (submit now)
 #   Stage B: conditions folded for the CRC (after the fold arrays)    (needs fold job ids)
 # Usage: bash eval/runs/submit_crc_evals.sh <natmsa_fold> <n10k_single_fold> <n5k_cplx_fold> <n20k_cplx_fold> <n10k_cplx_fold>

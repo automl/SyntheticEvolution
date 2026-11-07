@@ -1,20 +1,20 @@
 \begin{table}[htbp]
 \centering
-\caption{SHS depth scaling (RNAformer SHS, N=20 to 20000), RNA single chain (n=91). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric.}
+\caption{SHS depth scaling (RNAformer SHS, N=20 to 20000), RNA single chain (n=91). Mean $\pm$ s.d. over targets of the per-target mean over 4 AF3 seeds $\times$ 5 samples; bold = best mean per metric. TM-score on C3$'$ atoms (US-align); RMSD on P atoms; LDDT is all-atom RNA LDDT.}
 \label{tab:rna_single_chain_scaling}
 \begin{tabular}{lccc}
 \toprule
-Input & TM Score ($\uparrow$) & RMSD ($\downarrow$) & LDDT ($\uparrow$) \\
+AlphaFold~3 input & TM-score ($\uparrow$) & RMSD (\AA, $\downarrow$) & LDDT ($\uparrow$) \\
 \midrule
-MSA & \textbf{0.660 $\pm$ 0.248} & \textbf{3.323 $\pm$ 4.103} & \textbf{0.771 $\pm$ 0.152} \\
-SHS (RNAformer, N=20) & 0.596 $\pm$ 0.218 & 4.364 $\pm$ 5.402 & 0.734 $\pm$ 0.139 \\
-SHS (RNAformer) & 0.605 $\pm$ 0.222 & 4.230 $\pm$ 5.222 & 0.736 $\pm$ 0.137 \\
-SHS (RNAformer, N=500) & 0.609 $\pm$ 0.225 & 4.310 $\pm$ 5.520 & 0.736 $\pm$ 0.139 \\
-SHS (RNAformer, N=1000) & 0.609 $\pm$ 0.226 & 4.282 $\pm$ 5.221 & 0.735 $\pm$ 0.141 \\
-SHS (RNAformer, N=5000) & 0.608 $\pm$ 0.224 & 4.247 $\pm$ 5.178 & 0.734 $\pm$ 0.140 \\
-SHS (RNAformer, N=10000) & 0.608 $\pm$ 0.224 & 4.249 $\pm$ 5.214 & 0.734 $\pm$ 0.140 \\
-SHS (RNAformer, N=15000) & 0.608 $\pm$ 0.224 & 4.237 $\pm$ 5.167 & 0.734 $\pm$ 0.140 \\
-SHS (RNAformer, N=20000) & 0.608 $\pm$ 0.224 & 4.234 $\pm$ 5.165 & 0.734 $\pm$ 0.140 \\
+Natural MSA & \textbf{0.660 $\pm$ 0.248} & \textbf{3.323 $\pm$ 4.103} & \textbf{0.771 $\pm$ 0.152} \\
+SHS (RNAformer, $N{=}20$) & 0.596 $\pm$ 0.218 & 4.364 $\pm$ 5.402 & 0.734 $\pm$ 0.139 \\
+SHS (RNAformer, $N{=}100$) & 0.605 $\pm$ 0.222 & 4.230 $\pm$ 5.222 & 0.736 $\pm$ 0.137 \\
+SHS (RNAformer, $N{=}500$) & 0.609 $\pm$ 0.225 & 4.310 $\pm$ 5.520 & 0.736 $\pm$ 0.139 \\
+SHS (RNAformer, $N{=}1000$) & 0.609 $\pm$ 0.226 & 4.282 $\pm$ 5.221 & 0.735 $\pm$ 0.141 \\
+SHS (RNAformer, $N{=}5000$) & 0.608 $\pm$ 0.224 & 4.247 $\pm$ 5.178 & 0.734 $\pm$ 0.140 \\
+SHS (RNAformer, $N{=}10000$) & 0.608 $\pm$ 0.224 & 4.249 $\pm$ 5.214 & 0.734 $\pm$ 0.140 \\
+SHS (RNAformer, $N{=}15000$) & 0.608 $\pm$ 0.224 & 4.237 $\pm$ 5.167 & 0.734 $\pm$ 0.140 \\
+SHS (RNAformer, $N{=}20000$) & 0.608 $\pm$ 0.224 & 4.234 $\pm$ 5.165 & 0.734 $\pm$ 0.140 \\
 \bottomrule
 \end{tabular}
 \end{table}

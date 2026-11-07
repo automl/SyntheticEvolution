@@ -1,5 +1,5 @@
 #!/bin/bash
-# CRC runs added after the rebuttal (4 AF3 seeds x 5 samples for every main-table condition).
+# Additional AF3 runs (4 AF3 seeds x 5 samples for every main-table condition).
 #   1. natural-MSA AF3, seed 1, 468 targets (same input JSONs/MSAs/templates as seeds 0/42/137)
 #   2. SHS RNAformer N=10000 single chains, seed 1 (91)
 #   3. depth scaling on RNA-protein complexes: N=5000 / N=20000 seeds 0/42/137 (seed 1 exists),

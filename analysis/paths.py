@@ -7,7 +7,7 @@ Everything is resolved relative to the repository or from environment variables 
   DB_DIR        per-shard metric DBs        (default: <repo>/results/db, else the bundle's metric_dbs/benchmark)
 Optional, only for the authors' original cluster layout: AF_OUTPUT / AF_INPUT (+ eval/conditions.tsv dir names).
 """
-import csv, glob, importlib.util, os, re, sqlite3, statistics as st
+import csv, glob, gzip, importlib.util, os, re, sqlite3, statistics as st
 from pathlib import Path
 
 CRC = Path(os.environ.get("CRC_ROOT", Path(__file__).resolve().parents[1]))
@@ -29,6 +29,8 @@ def _db(own, shipped):  # own re-scored DBs if present, else the ones shipped in
 DB_DIR = os.environ.get("DB_DIR", _db("db", "benchmark"))
 DB_LONG = os.environ.get("DB_LONG", _db("db_long", "long_rna"))
 DB_RHOFOLD = os.environ.get("DB_RHOFOLD", _db("db_rhofold", "rhofold"))   # RhoFold+ runs: <tag>_single_s1_m0.db
+CRMSD_DIR = os.environ.get("CRMSD_DIR", str(CRC / "results" / "crmsd"))   # paper cRMSD per prediction (eval/crmsd)
+SELFCONS_DIR = os.environ.get("SELFCONS_DIR", str(CRC / "results" / "selfcons"))   # encoded-vs-predicted 2D MCC (eval/selfcons)
 OUT_ROOT = str(CRC / "results" / "analysis")
 CONSTRUCT_DIR = str(CRC / "results" / "analysis" / "construction")   # construction-sweep outputs
 CONSTRUCT_DATA = str(CRC / "data" / "construct")                      # construction-sweep inputs
@@ -110,6 +112,19 @@ def split_ids(name):
 def idof(s):
     m = re.search(r"([0-9][A-Za-z0-9]{3})", s or "")
     return m.group(1).lower() if m else None
+
+
+def selfcons_means(tag="rnaformer_single"):
+    """{id: mean over 4 seeds x 5 samples} of the MCC between the encoded RNAformer topology and the DSSR pairs of the
+    predictions of condition <tag> (eval/selfcons). For rnaformer_single this is the self-consistency score."""
+    acc = {}
+    for f in sorted(glob.glob(f"{SELFCONS_DIR}/{tag}_s*_m*.tsv.gz")):
+        for r in csv.DictReader(gzip.open(f, "rt"), delimiter="\t"):
+            if r["status"] == "ok":
+                acc.setdefault(r["id"].lower(), []).append(float(r["selfcons_mcc"]))
+    if not acc:
+        raise FileNotFoundError(f"no {tag}_s*_m*.tsv.gz in {SELFCONS_DIR}")
+    return {i: sum(v) / len(v) for i, v in acc.items()}
 
 
 def db_values(tag, idset, col, seeds=SEEDS, db_dir=None):

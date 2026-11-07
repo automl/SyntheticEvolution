@@ -26,3 +26,6 @@ results/analysis/construction/construct91_datafiles/
 results/analysis/construction/construct_pairs_91.json
 results/analysis/construction/*_idxmap.tsv
 results/analysis/construction/*_fold.list
+
+# DSSR runtime outputs (never commit DSSR files)
+dssr-*

@@ -1,0 +1,11 @@
+Input,Set,Metric,$n$,Seed 1,Seed 0,Seed 42,Seed 137,4$\times$5,s.d.\ seeds,s.d.\ samples
+Natural MSA,single,TM,91,0.661,0.660,0.658,0.660,0.660,0.0010,0.023
+Natural MSA,complex,DockQ,377,0.584,0.586,0.585,0.585,0.585,0.0008,0.021
+No alignment,single,TM,91,0.520,0.523,0.514,0.520,0.519,0.0032,0.031
+SHS (RNAfold),single,TM,91,0.522,0.515,0.518,0.519,0.518,0.0023,0.027
+SHS (RNAfold),complex,DockQ,377,0.482,0.472,0.478,0.481,0.479,0.0040,0.028
+SHS (SPOT-RNA),single,TM,91,0.514,0.501,0.510,0.507,0.508,0.0048,0.028
+SHS (SPOT-RNA),complex,DockQ,377,0.518,0.517,0.515,0.518,0.517,0.0014,0.030
+SHS (RNAformer),single,TM,91,0.608,0.604,0.602,0.605,0.605,0.0020,0.027
+SHS (RNAformer),complex,DockQ,377,0.548,0.543,0.544,0.545,0.545,0.0020,0.025
+SHS (reference topology),single,TM,89,0.617,0.617,0.613,0.614,0.615,0.0017,0.027
