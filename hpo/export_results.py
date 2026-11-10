@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Copy the first portable snapshot of a completed HPO run.
+"""Copy the first portable snapshot of a completed HPO run or check run.
 
 The export directory is always ``<config directory>/results``. Keep this
 script intentionally small while the exported result contract is evolving.
@@ -104,7 +104,8 @@ def _export_shs(
 
     Both are derived instead of stored: AF3's ``data.json`` in the RNA's
     archive is the AF3 input with the synthetic MSA, and the request is
-    rebuilt from the dataset and seeds in ``run_metadata.json``.
+    rebuilt from the dataset in ``run_metadata.json`` and the trial's seeds
+    (results from before the seeds were recorded: the run's seeds).
     """
     archives = sorted(source_dir.glob(f"rna_*{archive.SUFFIX}"))
     if not archives:
@@ -121,10 +122,8 @@ def _export_shs(
         task_target = target_dir / "shs" / task_name
         task_target.mkdir(parents=True, exist_ok=True)
         (task_target / "af3_input.json").write_bytes(archive.read_data_json(path))
-        request = shs_generation_request(
-            rows[index], index, result["parameters"],
-            run_metadata["config"]["shs_seed"], run_metadata["config"]["af3_seed"],
-        )
+        seeds = [result.get(key, run_metadata["config"][key]) for key in ("shs_seed", "af3_seed")]
+        request = shs_generation_request(rows[index], index, result["parameters"], *seeds)
         (task_target / "shs_generation_request.json").write_text(json.dumps(request, indent=2) + "\n")
         written += [task_target / "af3_input.json", task_target / "shs_generation_request.json"]
         if include_archives:
@@ -152,6 +151,58 @@ def _copy_legacy_shs(source_dir: Path, target_dir: Path) -> list[Path]:
     return written
 
 
+def _export_trials(
+    config: dict[str, Any],
+    workspace: Path,
+    destination: Path,
+    run_metadata: dict[str, Any],
+    include_archives: bool,
+) -> tuple[list[str], dict[str, Any]]:
+    """Standalone run with ``trials``: each trial's result and SHS files.
+
+    Returns the copied files and the failure block. The trial list comes from
+    the given config (trials can be added after the run started); each result
+    must match its trial's parameters and seeds.
+    """
+    copied: list[str] = []
+    reports: dict[str, dict[str, Any]] = {}
+    report_files: list[str] = []
+    finished = 0
+    for trial in config["trials"]:
+        name = trial["name"]
+        source_dir = workspace / "trials" / name
+        source = source_dir / "trial_result.json"
+        report = source_dir / failures.FAILURE_REPORT
+        if source.is_file():
+            result = json.loads(source.read_text())
+            expected = dict(
+                parameters={**config.get("fixed", {}), **trial.get("parameters", {})},
+                **{key: trial.get(key, config[key]) for key in ("shs_seed", "af3_seed")},
+            )
+            if {key: result.get(key) for key in expected} != expected:
+                raise ValueError(f"Trial {name} in {source_dir} does not match its entry in the config")
+            target = destination / "trials" / name / "trial_result.json"
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source, target)
+            written = [target] + _export_shs(source_dir, target.parent, result, run_metadata, include_archives)
+            copied += [path.relative_to(destination).as_posix() for path in written]
+        elif report.is_file():
+            target = destination / "errors" / "reports" / f"{name}.json"
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(report, target)
+            report_files.append(target.relative_to(destination).as_posix())
+            reports[name] = json.loads(report.read_text())
+        else:
+            _warn(f"Trial {name} has not finished; it is not exported")
+            continue
+        finished += 1
+
+    block = failures.summarize(reports, finished, report_files)
+    if block["count"]:
+        _warn(failures.summary_line(block) + f". See {(destination / 'errors').relative_to(destination.parent)}/")
+    return copied, block
+
+
 def _trajectory_ids(summary_dir: Path) -> list[str]:
     return re.findall(
         r"^Config ID:\s*(\d+)\s*$",
@@ -168,6 +219,8 @@ def prune_run(config_path: Path, dry_run: bool = False) -> dict[str, int]:
     so run it after the run has finished. Failed trials are never pruned.
     """
     config = load_config(config_path.expanduser().resolve(), mode="export")
+    if "trials" in config:
+        raise SystemExit("--prune applies to NePS runs only")
     top_k = storage_settings(config)["keep_top_k"]
     neps_dir = get_workspace_path(config) / "neps"
     with (neps_dir / "summary" / "full.csv").open(newline="") as stream:
@@ -219,6 +272,27 @@ def export_results(config_path: Path, include_archives: bool = False) -> Path:
         _confirm_recreate(destination)
     destination.mkdir(parents=True, exist_ok=True)
 
+    run_metadata = workspace / "run_metadata.json"
+    if not run_metadata.is_file():
+        raise FileNotFoundError(f"Expected run metadata does not exist: {run_metadata}")
+    shutil.copy2(run_metadata, destination / run_metadata.name)
+    copied: list[str] = [run_metadata.name]
+    run_metadata_data = json.loads(run_metadata.read_text())
+    manifest = {
+        "config": str(config_path),
+        "workspace": str(workspace),
+        "exported_at": datetime.now(timezone.utc).isoformat(),
+    }
+
+    # Check run (standalone with `trials`): results under trials/<name>/.
+    if "trials" in config:
+        files, manifest["failures"] = _export_trials(
+            config, workspace, destination, run_metadata_data, include_archives,
+        )
+        manifest.update(trials=config["trials"], files=copied + files)
+        (destination / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+        return destination
+
     neps_dir = workspace / "neps"
     summary_dir = neps_dir / "summary"
     summary_files = (
@@ -227,7 +301,6 @@ def export_results(config_path: Path, include_archives: bool = False) -> Path:
         "short.csv",
         "full.csv",
     )
-    copied: list[str] = []
 
     for filename in summary_files:
         source = summary_dir / filename
@@ -237,13 +310,6 @@ def export_results(config_path: Path, include_archives: bool = False) -> Path:
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, target)
         copied.append(target.relative_to(destination).as_posix())
-
-    run_metadata = workspace / "run_metadata.json"
-    if not run_metadata.is_file():
-        raise FileNotFoundError(f"Expected run metadata does not exist: {run_metadata}")
-    shutil.copy2(run_metadata, destination / run_metadata.name)
-    copied.append(run_metadata.name)
-    run_metadata_data = json.loads(run_metadata.read_text())
 
     config_ids = [int(match) for match in _trajectory_ids(summary_dir)]
     if not config_ids:
@@ -269,14 +335,11 @@ def export_results(config_path: Path, include_archives: bool = False) -> Path:
         )
         copied += [path.relative_to(destination).as_posix() for path in written]
 
-    manifest = {
-        "config": str(config_path),
-        "workspace": str(workspace),
-        "exported_at": datetime.now(timezone.utc).isoformat(),
-        "config_ids": config_ids,
-        "failures": _export_errors(neps_dir, destination),
-        "files": copied,
-    }
+    manifest.update(
+        config_ids=config_ids,
+        failures=_export_errors(neps_dir, destination),
+        files=copied,
+    )
     (destination / "manifest.json").write_text(
         json.dumps(manifest, indent=2) + "\n"
     )
@@ -291,7 +354,7 @@ def main() -> None:
         "--config",
         required=True,
         type=Path,
-        help="YAML configuration file identifying the completed HPO run",
+        help="YAML configuration file identifying the completed HPO run or check run",
     )
     parser.add_argument(
         "--include-archives",

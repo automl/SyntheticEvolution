@@ -20,7 +20,7 @@ Run from the repository root with the controller environment
 | `python -m hpo.submit_neps_hpo --config <yaml>` | Submit `controller.count` NePS controllers (a Slurm array). |
 | `python -m hpo.run_standalone_trial --config <yaml> [--validate-only]` | Run a standalone run inside an existing allocation; `--validate-only` only prints the parsed dataset. |
 | `python -m hpo.run_neps_hpo --config <yaml>` | Run one NePS controller inside an existing allocation. |
-| `python -m hpo.export_results --config <yaml> [--include-archives]` | Copy the trajectory configs into `results/` next to the config, for `analysis/`. |
+| `python -m hpo.export_results --config <yaml> [--include-archives]` | Copy the trajectory configs (check run: every finished trial) into `results/` next to the config, for `analysis/`. |
 | `python -m hpo.export_results --config <yaml> --prune [--dry-run]` | After a run: delete the archives of configs that are neither on the trajectory nor in the top `keep_top_k`. |
 | `python -m hpo.make_checks <results> [--heldout <csv>]` | Locally, after an export: write a check run for the best configs (see below). |
 

@@ -134,3 +134,31 @@ snapshot. The `failures` block is always present: `status` is `none` or
 and the copied error files. It is
 bookkeeping for the export and is not required to reproduce the pipeline
 results.
+
+## Check runs
+
+`analysis/analyze_checks.py` (planned) reads the `results/` of a check run:
+a standalone run with `trials`, written by `hpo/make_checks.py` and exported
+by `hpo/export_results.py`.
+
+```text
+checks/results/
+├── run_metadata.json                 # config (incl. trials) and dataset
+├── manifest.json                     # `trials`: the config's trial list; failures block
+├── errors/reports/<name>.json        # optional: failed trials
+└── trials/<name>/
+    ├── trial_result.json             # parameters, shs_seed, af3_seed, loss, scores
+    ├── archives/rna_<index>.tar.gz   # optional: export --include-archives
+    └── shs/rna_<index>/{af3_input.json, shs_generation_request.json}
+```
+
+- The trial list is `manifest.json`'s `trials`, not `run_metadata.json`'s
+  config: trials may be added after the run started. Each entry has `name`
+  and `parameters`; trials written by `make_checks` also have `check`
+  (`reproduction`, `seed` or `baseline`), `base` (the HPO config id) and the seeds.
+- Trials listed without a `trials/<name>/` directory have failed or not run;
+  failed ones have an error report.
+- Training vs held-out RNAs: an RNA is *train* if it is in the HPO run's
+  dataset (the HPO export's `run_metadata.json`, matched by id and sequence),
+  otherwise *held-out*. The analysis therefore also reads the HPO export.
+

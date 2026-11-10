@@ -123,9 +123,21 @@ results/
     ├── archives/rna_<index>.tar.gz   # only with --include-archives
     └── shs/rna_<index>/
         ├── af3_input.json            # the archive's rna_<index>_data.json
-        └── shs_generation_request.json   # rebuilt from run_metadata.json
+        └── shs_generation_request.json   # rebuilt from run_metadata.json and the trial's seeds
 ```
 
-`--prune [--dry-run]` instead deletes the archives of configs that are
+A check run (standalone config with `trials`) exports every finished trial
+instead; the trial list comes from the given config, and each result must
+match its trial's parameters and seeds:
+
+```text
+results/
+├── run_metadata.json
+├── manifest.json                     # incl. `trials` (the config's list) and a failures block
+├── errors/reports/<name>.json        # only if trials failed
+└── trials/<name>/                    # trial_result.json, shs/, archives/ as above
+```
+
+`--prune [--dry-run]` (NePS runs only) instead deletes the archives of configs that are
 neither on the trajectory nor in the top `keep_top_k`, also for a run that
 used `keep_artifacts: all`.

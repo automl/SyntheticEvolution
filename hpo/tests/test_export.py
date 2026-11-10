@@ -196,3 +196,74 @@ def test_prune_dry_run_changes_nothing(finished_run, capsys):
     assert export.prune_run(config, dry_run=True)['files'] == 2
     assert len(configs_with_archives(neps)) == 5
     assert 'Would remove 2 archives' in capsys.readouterr().out
+
+
+# ---- Check runs (standalone with trials) -------------------------------------
+
+@pytest.fixture
+def check_run(tmp_path):
+    """A check run: one finished trial, one failed, one not started."""
+    from hpo.pipeline import archive
+    workspace = tmp_path / 'workspace'
+    root = workspace / 'shs_hpo' / 'check-run'
+    rows = [dict(id='ex_1', sequence='ACGU', pairs=[[0, 3]])]
+    (root / 'trials').mkdir(parents=True)
+    (root / 'run_metadata.json').write_text(json.dumps(dict(
+        fingerprint='f', config=dict(shs_seed=42, af3_seed=42), dataset=rows)))
+    finished = root / 'trials' / 'c7_s1'
+    finished.mkdir()
+    (finished / 'trial_result.json').write_text(json.dumps(dict(
+        loss=0.5, parameters={'N': 64, 'mutation_rate_paired': 0.3}, shs_seed=1, af3_seed=2)))
+    content = tmp_path / 'content'
+    content.mkdir()
+    (content / 'rna_00000_model.cif').write_text('model')
+    (content / 'rna_00000_data.json').write_text(json.dumps({'msa': 0}))
+    archive.publish(content, finished / 'rna_00000.tar.gz')
+    failed = root / 'trials' / 'nomsa_s1'
+    failed.mkdir()
+    (failed / 'failure_report.json').write_text(json.dumps(dict(
+        error_type='CalledProcessError', stage='dssr', rna_id='ex_1')))
+    trials = [
+        dict(name='c7_s1', check='seed', base=7, shs_seed=1, af3_seed=2, parameters={'mutation_rate_paired': 0.3}),
+        dict(name='nomsa_s1', check='baseline', shs_seed=1, af3_seed=1, parameters={'N': 1}),
+        dict(name='later', parameters={}),
+    ]
+    config = tmp_path / 'checks' / 'config.yaml'
+    config.parent.mkdir()
+    config.write_text(json.dumps(dict(run_name='check-run', workspace_name='ws', workspace_path=str(workspace),
+                                      shs_seed=42, af3_seed=42, fixed={'N': 64}, trials=trials)))
+    return config, finished, trials, rows
+
+
+def test_check_run_exports_every_finished_trial(check_run, capsys):
+    config, _, trials, rows = check_run
+    destination = export.export_results(config)
+    assert destination == config.parent / 'results'
+    trial = destination / 'trials' / 'c7_s1'
+    assert json.loads((trial / 'trial_result.json').read_text())['loss'] == 0.5
+    # The generator request is rebuilt with the trial's own seeds.
+    assert json.loads((trial / 'shs' / 'rna_00000' / 'shs_generation_request.json').read_text()) == dict(
+        rows[0], task_name='rna_00000', parameters={'N': 64, 'mutation_rate_paired': 0.3}, shs_seed=1, af3_seed=2)
+    data = manifest(destination)
+    assert data['trials'] == trials
+    assert data['files'][:2] == ['run_metadata.json', 'trials/c7_s1/trial_result.json']
+    assert (data['failures']['count'], data['failures']['finished']) == (1, 2)
+    assert data['failures']['files'] == ['errors/reports/nomsa_s1.json']
+    assert (destination / 'errors' / 'reports' / 'nomsa_s1.json').is_file()
+    assert not (destination / 'summary').exists()
+    err = capsys.readouterr().err
+    assert 'Trial later has not finished' in err
+    assert '1 of 2 trials failed' in err
+
+
+def test_check_run_rejects_a_result_that_does_not_match_its_trial(check_run):
+    config, finished, *_ = check_run
+    result = json.loads((finished / 'trial_result.json').read_text())
+    (finished / 'trial_result.json').write_text(json.dumps(dict(result, shs_seed=5)))
+    with pytest.raises(ValueError, match='Trial c7_s1'):
+        export.export_results(config)
+
+
+def test_check_runs_cannot_be_pruned(check_run):
+    with pytest.raises(SystemExit, match='NePS runs only'):
+        export.prune_run(check_run[0])
