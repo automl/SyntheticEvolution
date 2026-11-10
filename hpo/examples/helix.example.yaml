@@ -79,6 +79,13 @@ fixed:
   loop_long_insertion_prob: 0.0
   loop_single_deletion_prob: 0.0
   loop_long_deletion_prob: 0.0
+# Standalone only, optional: several named trials in one job (one AF3 worker),
+# each in trials/<name>/. parameters go over fixed; shs_seed/af3_seed default
+# to the run's. Other keys (e.g. base) are kept for analysis. Trials may be
+# added to an existing run; finished trials are not rerun.
+# trials:
+#   - {name: best_s1, base: 412, shs_seed: 1, af3_seed: 1, parameters: {N: 64}}
+#   - {name: nomsa_s1, shs_seed: 1, af3_seed: 1, parameters: {N: 1}}
 shs_seed: 42
 generator_timeout_seconds: 600 # Per RNA input-generation process
 

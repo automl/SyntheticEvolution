@@ -25,26 +25,48 @@ def main():
         return
 
     ws_root, dataset, fingerprint = prepare_run(config)
-    if 'search' in config:
-        logger.warning(
-            "You are running the pipeline in Standalone mode." 
-            "Using 'fixed' parameters from settings and ignoring 'search' parameters."
-            "For missing parameters the generators defaults are used."
-        )
 
-    signals.install()
-    try:
-        with signals.trial_running():
-            loss = run_pipeline(
-                config, dataset, ws_root / 'standalone_trial', fingerprint,
-                keep_logs_in_trial=True,
+    # Without `trials`, one trial of the `fixed` parameters that keeps its logs.
+    # Each listed trial runs in trials/<name>/ with its own parameters and
+    # seeds; its logs are not kept (many files), a failure report holds them.
+    if 'trials' in config:
+        trials = [
+            (
+                trial['name'], ws_root / 'trials' / trial['name'],
+                {**config, **{key: trial[key] for key in ('shs_seed', 'af3_seed') if key in trial}},
+                trial.get('parameters'), False,
             )
-    except signals.ControllerStop as stop:
-        # run_pipeline has written the failure report; AF3 outputs that are
-        # complete are reused when the trial is submitted again.
-        logger.error('Standalone trial stopped: %s', stop)
-        raise SystemExit(signals.EXIT_CODE) from stop
-    print(loss)
+            for trial in config['trials']
+        ]
+    else:
+        trials = [('standalone_trial', ws_root / 'standalone_trial', config, None, True)]
+
+    # All trials share this controller's AF3 worker. A failed trial does not
+    # stop the others; submitting again reruns only unfinished trials.
+    signals.install()
+    failed = []
+    for name, directory, trial_config, parameters, keep_logs in trials:
+        if signals.requested():
+            logger.error('Stopped before trial %s: %s received', name, signals.requested())
+            raise SystemExit(signals.EXIT_CODE)
+        try:
+            with signals.trial_running():
+                loss = run_pipeline(
+                    trial_config, dataset, directory, fingerprint, parameters,
+                    keep_logs_in_trial=keep_logs,
+                )
+        except signals.ControllerStop as stop:
+            # run_pipeline has written the failure report; AF3 outputs that are
+            # complete are reused when the run is submitted again.
+            logger.error('Standalone trial %s stopped: %s', name, stop)
+            raise SystemExit(signals.EXIT_CODE) from stop
+        except Exception:
+            logger.exception('Standalone trial %s failed', name)
+            failed.append(name)
+            continue
+        print(name, loss, flush=True)
+    if failed:
+        raise SystemExit(f"Failed trials: {', '.join(failed)}. Submit again to rerun them.")
 
 
 if __name__ == '__main__':

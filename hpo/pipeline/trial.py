@@ -168,7 +168,11 @@ def run_pipeline(
     trial_result_path = trial_directory / 'trial_result.json'
 
     trial_parameters = {**config.get('fixed', {}), **(parameters or {})}
-    trial_signature = dict(fingerprint=identity, parameters=trial_parameters)
+    # Seeds are part of the signature: standalone trials may set their own.
+    trial_signature = dict(
+        fingerprint=identity, parameters=trial_parameters,
+        shs_seed=config['shs_seed'], af3_seed=config['af3_seed'],
+    )
 
     # A finished trial keeps only its result, which also holds the signature.
     if trial_result_path.exists():
@@ -420,7 +424,7 @@ def _run_stages(
             ),
         ),
     )
-    # e.g. config_12/artifacts (NePS) or <run_name>/standalone_trial
+    # e.g. config_12/artifacts (NePS), <run_name>/standalone_trial or trials/<name>
     trial_name = f'{trial_directory.parent.name}/{trial_directory.name}'
     logger.info('Completed trial %s with aggregate loss %.6f', trial_name, loss)
     return loss

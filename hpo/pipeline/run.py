@@ -91,10 +91,13 @@ def load_config(path, *, mode, submitting_controller=False):
     ):
         require_positive(config, key)
 
-    for key in ('shs_seed', 'af3_seed'):
-        value = config.get(key)
-        if isinstance(value, bool) or not isinstance(value, int) or value < 0:
-            raise ValueError(f'{key} must be a nonnegative integer')
+    def require_seeds(settings, prefix=''):
+        for key in ('shs_seed', 'af3_seed'):
+            value = settings.get(key)
+            if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+                raise ValueError(f'{prefix}{key} must be a nonnegative integer')
+
+    require_seeds(config)
 
     buckets = config.get('af3_buckets')
     if buckets is not None and (
@@ -128,6 +131,29 @@ def load_config(path, *, mode, submitting_controller=False):
             'Parameters cannot appear in both fixed and search: '
             + ', '.join(sorted(map(str, overlap)))
         )
+
+    # Standalone trials: named variants, each with parameters over `fixed`
+    # and optional own seeds. Other keys (e.g. `base`) are kept for analysis.
+    trials = config.get('trials')
+    if trials is not None:
+        if mode != 'standalone':
+            raise ValueError('trials is only used in standalone mode')
+        if not isinstance(trials, list) or not trials:
+            raise ValueError('trials must be a nonempty list')
+        names = set()
+        for trial in trials:
+            if not isinstance(trial, dict):
+                raise ValueError('Each trial must be a YAML mapping')
+            name = trial.get('name')
+            if not isinstance(name, str) or not re.fullmatch(r'[A-Za-z0-9_-]+', name) or name in names:
+                raise ValueError(
+                    f'Trial names must be unique and contain only letters, digits, '
+                    f'underscore or hyphen: {name!r}'
+                )
+            names.add(name)
+            if not isinstance(trial.get('parameters', {}), dict):
+                raise ValueError(f'trials.{name}.parameters must be a YAML mapping')
+            require_seeds({**config, **trial}, f'trials.{name}.')
 
     if mode == 'standalone':
         if 'search' in config:
@@ -447,6 +473,9 @@ def fingerprint(config, rows):
         'dssr_timeout_seconds', 'af3_timeout_seconds', 'generator_timeout_seconds',
         'controller_python', 'neps_python', 'shs_python', 
         'storage', 'failures',
+        # Each trial's signature holds its parameters and seeds, so trials
+        # can be added to a standalone run and the run resumed.
+        'trials',
     )
 
     code = {}

@@ -173,7 +173,8 @@ def test_fresh_trial_publishes_one_archive_per_rna(trial_case):
 
     result = json.loads((directory / 'trial_result.json').read_text())
     # The result replaces trial_metadata.json and carries the trial signature.
-    assert (result['fingerprint'], result['parameters']) == ('identity', requests[0]['parameters'])
+    assert (result['fingerprint'], result['parameters'], result['shs_seed'], result['af3_seed']) == (
+        'identity', requests[0]['parameters'], 11, 2)
     assert [s['id'] for s in result['scores']] == ['paired', 'unpaired']
     assert [s['loss'] for s in result['scores']] == [0, 1]
     # Optional dataset columns are recorded with the scores.
@@ -201,6 +202,10 @@ def test_changed_identity_rejects_cached_result(trial_case):
     with pytest.raises(ValueError):
         trial.run_pipeline(trial_case[0], trial_case[1], trial_case[2], 'identity',
                            {'mutation_rate_paired': 0.4})
+    # Standalone trials may set their own seeds.
+    with pytest.raises(ValueError):
+        trial.run_pipeline(dict(trial_case[0], shs_seed=12), trial_case[1], trial_case[2], 'identity',
+                           {'mutation_rate_paired': 0.3})
 
 
 def test_without_fixed_or_sampled_parameters_the_generator_defaults_apply(trial_case):

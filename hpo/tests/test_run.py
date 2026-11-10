@@ -29,7 +29,7 @@ def test_fingerprint_covers_scientific_settings_only():
     # Resources, timeouts, retention and failure handling may change within a run.
     for key, value in [('controller', {'count': 4}), ('evaluations', 99), ('ignore_errors', True),
                        ('af3_timeout_seconds', 1), ('storage', {'scratch': '/x'}),
-                       ('failures', {'max_rate': 1.0})]:
+                       ('failures', {'max_rate': 1.0}), ('trials', [{'name': 'a'}])]:
         assert fingerprint(dict(base, **{key: value}), ROWS) == identity, key
 
 

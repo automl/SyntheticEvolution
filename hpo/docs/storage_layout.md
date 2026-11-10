@@ -1,7 +1,7 @@
 # Storage layout
 
 - **Run:** one experiment with one configuration and dataset, in
-  `<workspace>/shs_hpo/<run_name>/`. Standalone runs contain one trial; NePS
+  `<workspace>/shs_hpo/<run_name>/`. Standalone runs contain one trial or the listed `trials`; NePS
   runs contain one trial per sampled configuration.
 - **Trial:** one parameter configuration evaluated on every RNA of the
   dataset, producing one aggregate loss.
@@ -23,6 +23,7 @@ archive per RNA. Logs and tool side files stay in scratch.
 │
 │   # Standalone mode
 ├── standalone_trial/              # one trial, see below; plus logs/
+├── trials/<name>/                 # instead, with `trials`: one trial per name, no logs/
 │
 │   # NePS mode
 └── neps/
@@ -45,8 +46,8 @@ artifacts/                           artifacts/
                                          (RNAs whose AF3 prediction finished)
 ```
 
-A running trial has `trial_metadata.json` (fingerprint and parameters). On
-success, `trial_result.json` replaces it. Standalone trials also keep the
+A running trial has `trial_metadata.json` (fingerprint, parameters and
+seeds). On success, `trial_result.json` replaces it. `standalone_trial/` also keeps the
 tool logs in `standalone_trial/logs/` (`af3.log`, `rna_<index>/shs_generation.log`,
 `rna_<index>/dssr.log`).
 
@@ -86,8 +87,8 @@ generator and AF3 again.
 | File | Purpose |
 | --- | --- |
 | `run_metadata.json` | Run config, dataset and fingerprint; the exporter rebuilds generator requests from it. |
-| `trial_metadata.json` | Fingerprint and parameters of a running or failed trial; checked before reuse. |
-| `trial_result.json` | Fingerprint, parameters, aggregate loss, per-RNA scores (`model` points into the archive), files and bytes published (`storage`) and, in `trajectory` mode, the `retention` decision. |
+| `trial_metadata.json` | Fingerprint, parameters and seeds of a running or failed trial; checked before reuse. |
+| `trial_result.json` | Fingerprint, parameters, seeds, aggregate loss, per-RNA scores (`model` points into the archive), files and bytes published (`storage`) and, in `trajectory` mode, the `retention` decision. |
 | `failure_report.json` | Stage, RNA, error, command, signal, timeout flag, host, Slurm job and the last 64 KB of each log of the failing RNA. |
 | `STOPPED.json` | Reason and rates of a failure-limit stop; the run refuses to start until it is renamed. |
 | `rna_<index>.tar.gz` | See above. |

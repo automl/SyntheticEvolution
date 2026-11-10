@@ -111,6 +111,33 @@ def test_standalone_warns_about_search_and_keeps_fixed(load, neps, caplog):
 
 # ---- NePS -------------------------------------------------------------------
 
+def test_standalone_trials_are_named_variants_with_optional_seeds(load, standalone):
+    trials = [{'name': 'best_s1', 'base': 7, 'shs_seed': 1, 'af3_seed': 1, 'parameters': {'N': 8}},
+              {'name': 'nomsa', 'parameters': {'N': 1}}]
+    assert load(dict(standalone, trials=trials))['trials'] == trials
+
+
+@pytest.mark.parametrize('trials, match', [
+    ([], 'nonempty list'),
+    ({'name': 'a'}, 'nonempty list'),
+    (['a'], 'mapping'),
+    ([{'parameters': {}}], 'unique'),
+    ([{'name': 'a/b'}], 'unique'),
+    ([{'name': 'a'}, {'name': 'a'}], 'unique'),
+    ([{'name': 'a', 'parameters': [1]}], 'trials.a.parameters'),
+    ([{'name': 'a', 'shs_seed': -1}], 'trials.a.shs_seed'),
+    ([{'name': 'a', 'af3_seed': True}], 'trials.a.af3_seed'),
+])
+def test_invalid_trials_are_rejected(load, standalone, trials, match):
+    with pytest.raises(ValueError, match=match):
+        load(dict(standalone, trials=trials))
+
+
+def test_trials_are_only_for_standalone_runs(load, neps):
+    with pytest.raises(ValueError, match='only used in standalone'):
+        load(dict(neps, trials=[{'name': 'a'}]), mode='neps')
+
+
 def test_neps_needs_no_submission_settings(load, neps):
     assert load(neps, mode='neps') == neps
 

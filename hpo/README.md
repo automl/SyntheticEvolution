@@ -16,9 +16,9 @@ Run from the repository root with the controller environment
 
 | Command | What it does |
 | --- | --- |
-| `python -m hpo.submit_standalone_trial --config <yaml>` | Submit one controller job that evaluates the `fixed` parameters once. |
+| `python -m hpo.submit_standalone_trial --config <yaml>` | Submit one controller job that evaluates the `fixed` parameters once, or every trial in `trials`. |
 | `python -m hpo.submit_neps_hpo --config <yaml>` | Submit `controller.count` NePS controllers (a Slurm array). |
-| `python -m hpo.run_standalone_trial --config <yaml> [--validate-only]` | Run a standalone trial inside an existing allocation; `--validate-only` only prints the parsed dataset. |
+| `python -m hpo.run_standalone_trial --config <yaml> [--validate-only]` | Run a standalone run inside an existing allocation; `--validate-only` only prints the parsed dataset. |
 | `python -m hpo.run_neps_hpo --config <yaml>` | Run one NePS controller inside an existing allocation. |
 | `python -m hpo.export_results --config <yaml> [--include-archives]` | Copy the trajectory configs into `results/` next to the config, for `analysis/`. |
 | `python -m hpo.export_results --config <yaml> --prune [--dry-run]` | After a run: delete the archives of configs that are neither on the trajectory nor in the top `keep_top_k`. |
@@ -46,6 +46,11 @@ setting is commented there.
   into `controller.time`.
 - **`fixed` / `search`:** generator parameters; NePS samples `search`,
   standalone trials use `fixed` and the generator defaults.
+- **`trials`** (standalone only, optional): named trials that run one after
+  another in one job with one AF3 worker, each with `parameters` over `fixed`
+  and optionally its own `shs_seed` / `af3_seed`. Other keys are kept for
+  analysis. Not part of the fingerprint: trials can be added and the run
+  resubmitted. A failed trial does not stop the others.
 - **`ignore_errors: true`:** NePS keeps sampling when a trial fails. A failed
   trial gets the worst loss (1.0), so the optimizer avoids its region.
 - **`failures`:** the failure limit (default: stop when more than 20% of the
@@ -119,7 +124,7 @@ Details: [docs/storage_layout.md](docs/storage_layout.md).
   is stopped and reported as failed, and the controller exits with code 4.
   Finished AF3 predictions are kept.
 - **Resume:** submitting the same config again resumes the run. A standalone
-  trial reuses its archives and only reruns what is missing; NePS never reruns
+  run skips finished trials, reuses archives and only reruns what is missing; NePS never reruns
   a finished or failed trial.
 
 ## Tests
