@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[2]
     'hpo.submit_standalone_trial',
     'hpo.submit_neps_hpo',
     'hpo.export_results',
+    'hpo.make_checks',
 ])
 def test_entry_point_shows_help(module):
     result = subprocess.run([sys.executable, '-m', module, '--help'],

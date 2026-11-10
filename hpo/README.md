@@ -22,6 +22,7 @@ Run from the repository root with the controller environment
 | `python -m hpo.run_neps_hpo --config <yaml>` | Run one NePS controller inside an existing allocation. |
 | `python -m hpo.export_results --config <yaml> [--include-archives]` | Copy the trajectory configs into `results/` next to the config, for `analysis/`. |
 | `python -m hpo.export_results --config <yaml> --prune [--dry-run]` | After a run: delete the archives of configs that are neither on the trajectory nor in the top `keep_top_k`. |
+| `python -m hpo.make_checks <results> [--heldout <csv>]` | Locally, after an export: write a check run for the best configs (see below). |
 
 The submit scripts check the config and the environment (interpreters and
 their packages, DSSR, AF3 models and module) and report every problem before
@@ -66,6 +67,24 @@ setting is commented there.
   256). Small buckets speed up short RNAs but change the predictions like a
   different seed, so they are part of the fingerprint; every bucket the
   dataset uses is compiled once per controller (~25 s).
+
+## Check runs
+
+A check run tests whether the best configs of an HPO run hold up. Its loss is
+the minimum of many single-seed losses and therefore optimistic.
+`make_checks` reads an export and writes `checks/config.yaml` (a standalone
+config with `trials`) and `checks/dataset/` next to `results/`:
+
+- `c<id>_hpo`: each of the top `--top-n` configs (default 3) with the HPO seeds;
+  reproduces the HPO loss with the same GPU type, AF3 module and buckets,
+- `c<id>_s<seed>`: the same configs with `--seeds` new seed pairs (default 5),
+- `nomsa_s<seed>`: baseline `N: 1` (only the query sequence, i.e. AF3 without MSA).
+
+The dataset holds the HPO training rows (`1_train.csv`, from
+`run_metadata.json`) and the optional held-out RNAs (`2_heldout.csv`). The
+`input` written into the config is the Helix path `checks/dataset` next to the
+HPO input (`--input` overrides it). Commit the check directory to the thesis
+repo, pull it on Helix and submit the config with `submit_standalone_trial`.
 
 ## Dataset
 
