@@ -85,6 +85,9 @@ The dataset holds the HPO training rows (`1_train.csv`, from
 `input` written into the config is the Helix path `checks/dataset` next to the
 HPO input (`--input` overrides it). Commit the check directory to the thesis
 repo, pull it on Helix and submit the config with `submit_standalone_trial`.
+After the run: `export_results --config checks/config.yaml`, then
+`python -m analysis.analyze_checks checks/results` (see
+`analysis/INPUT_CONTRACT.md`, "Check runs").
 
 ## Dataset
 
