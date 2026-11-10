@@ -223,7 +223,7 @@ def main():
 
     # Convert YAML search definitions into NePS parameter objects.
     space = {}
-    for name, raw in config['search'].items():
+    for name, raw in config['generators'][config['optimize']]['search'].items():
         spec = dict(raw)
         kind = spec.pop('type')
         parameter_class = {

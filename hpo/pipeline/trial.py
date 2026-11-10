@@ -15,10 +15,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 from hpo.pipeline.run import (
-    Dataset, GENERATOR_DIR, normalize_pairs, scratch_root, shs_generation_request, write_json,
+    Dataset, GENERATOR_DIRS, normalize_pairs, scratch_root, shs_generation_request, typed_parameters,
+    write_json,
 )
 import hpo.pipeline.archive as archive
-import hpo.pipeline.dssr as dssr
+import hpo.pipeline.extraction as extraction
 import hpo.pipeline.failures as failures
 import hpo.pipeline.scoring as scoring
 
@@ -167,7 +168,7 @@ def run_pipeline(
     trial_metadata_path = trial_directory / 'trial_metadata.json'
     trial_result_path = trial_directory / 'trial_result.json'
 
-    trial_parameters = {**config.get('fixed', {}), **(parameters or {})}
+    trial_parameters = typed_parameters(config, rows, parameters)
     # Seeds are part of the signature: standalone trials may set their own.
     trial_signature = dict(
         fingerprint=identity, parameters=trial_parameters,
@@ -240,10 +241,14 @@ def _generate(
     config: dict[str, Any],
     row: dict[str, Any],
     index: int,
-    trial_parameters: dict[str, Any],
+    trial_parameters: dict[str, dict[str, Any]],
     task_scratch: Path,
 ) -> Path:
-    """Generate the AF3 input with the synthetic MSA in scratch."""
+    """Generate the AF3 input with the synthetic MSA in scratch.
+
+    The generator and its parameters are chosen by the chain's type.
+    """
+    chain_type = row['type']
     request_path = task_scratch / 'shs_generation_request.json'
     af3_input_path = task_scratch / 'af3_input.json'
     write_json(request_path, shs_generation_request(
@@ -255,8 +260,8 @@ def _generate(
     with (task_scratch / 'shs_generation.log').open('w') as log:
         subprocess.run(
             [
-                config['shs_python'],
-                str((GENERATOR_DIR / 'shs_generator.py').resolve()),
+                config['generators'][chain_type]['python'],
+                str((GENERATOR_DIRS[chain_type] / 'shs_generator.py').resolve()),
                 '--request-json', str(request_path),
                 '--output-json', str(af3_input_path),
             ],
@@ -311,7 +316,8 @@ def _run_stages(
     1. Generate the AF3 inputs of all RNAs without a readable archive.
     2. Predict them with the AF3 worker and publish each archive; also after
        an AF3 failure or stop, for the inputs AF3 finished.
-    3. Per RNA, run DSSR, add ``dssr.json`` to the archive and score.
+    3. Per chain, extract the pairs (DSSR for RNA, contacts for protein), add
+       ``dssr.json`` or ``contacts.json`` to the archive and score.
     """
     trial_result_path = trial_directory / 'trial_result.json'
     trial_parameters = trial_signature['parameters']
@@ -365,24 +371,25 @@ def _run_stages(
         rna_archive = archive.path_for(trial_directory, task_name)
         model_name = archive.model_name(rna_archive)
 
-        ################################ 3. - DSSR #################################
-        progress.update(stage='dssr', rna_index=index)
-        (content / 'dssr.json').unlink(missing_ok=True)
+        ############################## 3. - EXTRACTION #############################
+        progress.update(stage='extraction', rna_index=index)
+        for stale in extraction.RESULT_FILES:
+            (content / stale).unlink(missing_ok=True)
         try:
-            dssr_predicted_pairs = dssr.run_dssr(
+            extracted_pairs = extraction.extract_pairs(
+                row['type'],
                 content / model_name,
                 content,
                 row['sequence'],
-                config['dssr'],
-                config['dssr_timeout_seconds'],
+                config['extraction'],
                 scratch=task_scratch,
             )
         finally:
             # dssr.json is written before its pairs are validated; keep it for
             # analysis, also when the validation fails.
-            if (content / 'dssr.json').is_file():
+            if any((content / name).is_file() for name in extraction.RESULT_FILES):
                 archive.publish(content, rna_archive)
-        normalized_pairs = normalize_pairs(dssr_predicted_pairs, len(row['sequence']))
+        normalized_pairs = normalize_pairs(extracted_pairs, len(row['sequence']))
 
         ################################ 4. - SCORE #################################
         progress.update(stage='scoring')

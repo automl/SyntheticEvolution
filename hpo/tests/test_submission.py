@@ -107,7 +107,7 @@ def test_controller_submission_resources_and_command(
     config = {
         "module": "bio/alphafold/3.0.1",
         "neps_python": "/env/neps space/bin/python",
-        "shs_python": "/env/shs space/bin/python",
+        "optimize": "rna", "generators": {"rna": {"python": "/env/shs space/bin/python"}},
         "input": {"test": "placeholder"},
         "controller_python": (
             "/env/controller space/bin/python"

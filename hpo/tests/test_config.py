@@ -32,14 +32,15 @@ def standalone():
 
 @pytest.fixture
 def neps(standalone):
-    return dict(
+    config = copy.deepcopy(dict(
         standalone,
         evaluations=2,
         optimizer='bayesian_optimization',
-        search={'N': {'type': 'integer', 'lower': 2, 'upper': 128}},
         # Explicit, so loading returns the config unchanged.
         failures={'min_trials': 5, 'max_rate': 0.2, 'window': 50},
-    )
+    ))
+    config['generators']['rna']['search'] = {'N': {'type': 'integer', 'lower': 2, 'upper': 128}}
+    return config
 
 
 # ---- Shared settings --------------------------------------------------------
@@ -53,10 +54,32 @@ def test_config_must_be_a_mapping(load, value):
 @pytest.mark.parametrize('value', ['missing', '', None])
 def test_required_value_cannot_be_missing_empty_or_null(load, standalone, value):
     if value == 'missing':
-        del standalone['dssr']
+        del standalone['model_dir']
     else:
-        standalone['dssr'] = value
-    with pytest.raises(ValueError, match='dssr'):
+        standalone['model_dir'] = value
+    with pytest.raises(ValueError, match='model_dir'):
+        load(standalone)
+
+
+def test_optimized_generator_must_exist_and_have_a_python(load, standalone):
+    standalone['optimize'] = 'protein'
+    with pytest.raises(ValueError, match='optimize'):
+        load(standalone)
+    standalone['generators']['protein'] = {}
+    with pytest.raises(ValueError, match='generators.protein.python'):
+        load(standalone)
+
+
+def test_unknown_generator_type_is_rejected(load, standalone):
+    standalone['generators']['dna'] = {'python': '/example/dna/bin/python'}
+    with pytest.raises(ValueError, match='Unknown generator type: dna'):
+        load(standalone)
+
+
+@pytest.mark.parametrize('protein', [{'cutoff': 0}, {'min_separation': 1.5}, {'atom': ''}, 'CA'])
+def test_protein_extraction_settings_are_validated(load, standalone, protein):
+    standalone['extraction']['protein'] = protein
+    with pytest.raises(ValueError, match='extraction.protein'):
         load(standalone)
 
 
@@ -69,7 +92,7 @@ def test_run_name_must_be_a_safe_folder_name(load, standalone, name):
 @pytest.mark.parametrize('mode', ['standalone', 'neps'])
 def test_fixed_is_optional(load, standalone, neps, mode):
     config = neps if mode == 'neps' else standalone
-    config.pop('fixed', None)
+    config['generators']['rna'].pop('fixed', None)
     assert load(config, mode=mode) == config
 
 
@@ -103,10 +126,10 @@ def test_standalone_needs_no_neps_settings(load, standalone):
 
 
 def test_standalone_warns_about_search_and_keeps_fixed(load, neps, caplog):
-    neps['fixed'] = {'mutation_rate_paired': 0.2}
+    neps['generators']['rna']['fixed'] = {'mutation_rate_paired': 0.2}
     loaded = load(neps)
     assert "ignoring 'search'" in caplog.text
-    assert loaded['fixed'] == neps['fixed']
+    assert loaded['generators']['rna']['fixed'] == neps['generators']['rna']['fixed']
 
 
 # ---- NePS -------------------------------------------------------------------
@@ -145,10 +168,10 @@ def test_neps_needs_no_submission_settings(load, neps):
 @pytest.mark.parametrize('search', ['missing', {}])
 def test_neps_requires_a_nonempty_search(load, neps, search):
     if search == 'missing':
-        del neps['search']
+        del neps['generators']['rna']['search']
     else:
-        neps['search'] = search
-    with pytest.raises(ValueError, match='search'):
+        neps['generators']['rna']['search'] = search
+    with pytest.raises(ValueError, match='generators.rna.search'):
         load(neps, mode='neps')
 
 
@@ -169,9 +192,27 @@ def test_evaluations_are_optional_but_must_be_positive(load, neps):
 
 
 def test_parameter_cannot_be_both_fixed_and_searched(load, neps):
-    neps['fixed'] = {'N': 20}
+    neps['generators']['rna']['fixed'] = {'N': 20}
     with pytest.raises(ValueError, match='both fixed and search'):
         load(neps, mode='neps')
+
+
+def test_search_of_a_generator_that_is_not_optimized_is_ignored_with_a_warning(load, neps, caplog):
+    neps['generators']['protein'] = {
+        'python': '/example/protein/bin/python',
+        'search': {'N': {'type': 'integer', 'lower': 2, 'upper': 8}},
+    }
+    assert load(neps, mode='neps') == neps
+    assert 'generators.protein.search' in caplog.text
+
+
+def test_neps_searches_only_the_optimized_generator(load, neps):
+    neps['optimize'] = 'protein'
+    neps['generators']['protein'] = {'python': '/example/protein/bin/python'}
+    with pytest.raises(ValueError, match='generators.protein.search'):
+        load(neps, mode='neps')
+    neps['generators']['protein']['search'] = {'N': {'type': 'integer', 'lower': 2, 'upper': 8}}
+    assert load(neps, mode='neps') == neps
 
 
 def test_failure_limit_defaults_and_partial_settings(load, neps):

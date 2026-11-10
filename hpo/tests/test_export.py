@@ -103,14 +103,17 @@ def archived_run(run):
     from hpo.pipeline import archive
     config, neps = run
     root = neps.parent
-    rows = [dict(id='ex_1', sequence='ACGU', pairs=[[0, 3]]),
-            dict(id='ex_2', sequence='AAAA', pairs=[])]
+    # As create_dataset saves them: one RNA and one protein.
+    rows = [dict(id='ex_1', chains=[dict(id='A', type='rna', sequence='ACGU')],
+                 type='rna', sequence='ACGU', pairs=[[0, 3]]),
+            dict(id='ex_2', chains=[dict(id='A', type='protein', sequence='MKTA')],
+                 type='protein', sequence='MKTA', pairs=[])]
     (root / 'run_metadata.json').write_text(json.dumps(dict(
         fingerprint='f', config=dict(shs_seed=11, af3_seed=2), dataset=rows)))
     artifacts = neps / 'configs' / 'config_1' / 'artifacts'
     import shutil
     shutil.rmtree(artifacts / 'rna_00000')
-    (artifacts / 'trial_result.json').write_text(json.dumps(dict(loss=0.5, parameters={'N': 20})))
+    (artifacts / 'trial_result.json').write_text(json.dumps(dict(loss=0.5, parameters={'rna': {'N': 20}, 'protein': {'N': 5}})))
     for index in range(2):
         content = root.parent / f'content_{index}'
         content.mkdir()
@@ -128,8 +131,10 @@ def test_export_derives_shs_files_from_archives(archived_run):
         task = shs / f'rna_{index:05d}'
         assert json.loads((task / 'af3_input.json').read_text()) == {'msa': index}
         # Rebuilt exactly as the trial built it for the generator.
+        # The generators accept neither the type nor the chains; parameters are the row type's.
+        row = {key: value for key, value in rows[index].items() if key not in ('type', 'chains')}
         assert json.loads((task / 'shs_generation_request.json').read_text()) == dict(
-            rows[index], task_name=f'rna_{index:05d}', parameters={'N': 20}, shs_seed=11, af3_seed=2)
+            row, task_name=f'rna_{index:05d}', parameters={'N': (20, 5)[index]}, shs_seed=11, af3_seed=2)
     assert not (destination / 'configs' / 'config_1' / 'archives').exists()
     assert 'configs/config_1/shs/rna_00001/af3_input.json' in manifest(destination)['files']
 
@@ -206,14 +211,15 @@ def check_run(tmp_path):
     from hpo.pipeline import archive
     workspace = tmp_path / 'workspace'
     root = workspace / 'shs_hpo' / 'check-run'
-    rows = [dict(id='ex_1', sequence='ACGU', pairs=[[0, 3]])]
+    rows = [dict(id='ex_1', chains=[dict(id='A', type='rna', sequence='ACGU')],
+                 type='rna', sequence='ACGU', pairs=[[0, 3]])]
     (root / 'trials').mkdir(parents=True)
     (root / 'run_metadata.json').write_text(json.dumps(dict(
         fingerprint='f', config=dict(shs_seed=42, af3_seed=42), dataset=rows)))
     finished = root / 'trials' / 'c7_s1'
     finished.mkdir()
     (finished / 'trial_result.json').write_text(json.dumps(dict(
-        loss=0.5, parameters={'N': 64, 'mutation_rate_paired': 0.3}, shs_seed=1, af3_seed=2)))
+        loss=0.5, parameters={'rna': {'N': 64, 'mutation_rate_paired': 0.3}}, shs_seed=1, af3_seed=2)))
     content = tmp_path / 'content'
     content.mkdir()
     (content / 'rna_00000_model.cif').write_text('model')
@@ -231,7 +237,8 @@ def check_run(tmp_path):
     config = tmp_path / 'checks' / 'config.yaml'
     config.parent.mkdir()
     config.write_text(json.dumps(dict(run_name='check-run', workspace_name='ws', workspace_path=str(workspace),
-                                      shs_seed=42, af3_seed=42, fixed={'N': 64}, trials=trials)))
+                                      shs_seed=42, af3_seed=42, optimize='rna',
+                                      generators={'rna': {'fixed': {'N': 64}}}, trials=trials)))
     return config, finished, trials, rows
 
 
@@ -243,7 +250,8 @@ def test_check_run_exports_every_finished_trial(check_run, capsys):
     assert json.loads((trial / 'trial_result.json').read_text())['loss'] == 0.5
     # The generator request is rebuilt with the trial's own seeds.
     assert json.loads((trial / 'shs' / 'rna_00000' / 'shs_generation_request.json').read_text()) == dict(
-        rows[0], task_name='rna_00000', parameters={'N': 64, 'mutation_rate_paired': 0.3}, shs_seed=1, af3_seed=2)
+        {k: v for k, v in rows[0].items() if k not in ('type', 'chains')}, task_name='rna_00000',
+        parameters={'N': 64, 'mutation_rate_paired': 0.3}, shs_seed=1, af3_seed=2)
     data = manifest(destination)
     assert data['trials'] == trials
     assert data['files'][:2] == ['run_metadata.json', 'trials/c7_s1/trial_result.json']

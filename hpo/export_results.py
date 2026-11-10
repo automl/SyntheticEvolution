@@ -15,7 +15,9 @@ from pathlib import Path
 from typing import Any
 
 from hpo.pipeline import archive, failures, retention
-from hpo.pipeline.run import get_workspace_path, load_config, shs_generation_request, storage_settings
+from hpo.pipeline.run import (
+    get_workspace_path, load_config, shs_generation_request, storage_settings, typed_parameters,
+)
 
 EXPORT_DIR_NAME = "results"
 
@@ -176,7 +178,7 @@ def _export_trials(
         if source.is_file():
             result = json.loads(source.read_text())
             expected = dict(
-                parameters={**config.get("fixed", {}), **trial.get("parameters", {})},
+                parameters=typed_parameters(config, run_metadata["dataset"], trial.get("parameters")),
                 **{key: trial.get(key, config[key]) for key in ("shs_seed", "af3_seed")},
             )
             if {key: result.get(key) for key in expected} != expected:

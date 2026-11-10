@@ -36,23 +36,22 @@ def fake_prediction(name, input_path, output, log):
 def trial_case(tmp_path, monkeypatch):
     """A two-RNA trial whose fake tools write what the real tools write."""
     config = {
-        "fixed": {"N": 20},
-        "shs_python": "/test/shs/bin/python",
+        "optimize": "rna",
+        "generators": {"rna": {"python": "/test/shs/bin/python", "fixed": {"N": 20}}},
+        "extraction": {"dssr": "test-dssr", "dssr_timeout_seconds": 10},
         "shs_seed": 11,
         "af3_seed": 2,
         "model_dir": str(tmp_path / "models"),
         "generator_timeout_seconds": 30,
         "af3_timeout_seconds": 60,
-        "dssr": "test-dssr",
-        "dssr_timeout_seconds": 10,
         "storage": {"scratch": str(tmp_path / "scratch")},
         "module": "bio/alphafold/3.0.1",
     }
 
     rows = [
-        {"id": "paired", "sequence": "ACGU", "pairs": [[0, 3]],
+        {"id": "paired", "type": "rna", "sequence": "ACGU", "pairs": [[0, 3]],
          "interactions": [[0, 3, 0.3]], "mutation_rates": [0.2] * 4},
-        {"id": "unpaired", "sequence": "AAAA", "pairs": []},
+        {"id": "unpaired", "type": "rna", "sequence": "AAAA", "pairs": []},
     ]
 
     directory = tmp_path / "trial with spaces"
@@ -60,8 +59,8 @@ def trial_case(tmp_path, monkeypatch):
 
     def generate(args, **kwargs):
         assert args[:2] == [
-            config["shs_python"],
-            str((run.GENERATOR_DIR / "shs_generator.py").resolve()),
+            config["generators"]["rna"]["python"],
+            str((run.GENERATOR_DIRS["rna"] / "shs_generator.py").resolve()),
         ]
         assert args[2] == "--request-json"
         assert args[4] == "--output-json"
@@ -99,7 +98,8 @@ def trial_case(tmp_path, monkeypatch):
 
     monkeypatch.setattr(trial.subprocess, "run", generation)
     monkeypatch.setattr(trial, "run_af3", af3)
-    monkeypatch.setattr(trial.dssr, "run_dssr", dssr)
+    # The real extractor dispatch runs; only the DSSR binary wrapper is replaced.
+    monkeypatch.setattr(trial.extraction, "run_dssr", dssr)
 
     return config, rows, directory, requests, generation, af3, dssr
 
@@ -158,7 +158,9 @@ def test_fresh_trial_publishes_one_archive_per_rna(trial_case):
     assert json.loads(member_text(directory / 'rna_00000.tar.gz', 'rna_00000_data.json'))['msa'] == 'synthetic'
 
     for index, request in enumerate(requests):
-        assert request == dict(rows[index], task_name=f'rna_{index:05d}',
+        # The generator gets neither the chain type nor the other row bookkeeping.
+        assert request == dict({k: v for k, v in rows[index].items() if k != 'type'},
+                               task_name=f'rna_{index:05d}',
                                parameters={'N': 20, 'mutation_rate_paired': 0.3},
                                shs_seed=11, af3_seed=2)
     # One AF3 process predicts all RNAs, so the model is compiled once.
@@ -174,7 +176,7 @@ def test_fresh_trial_publishes_one_archive_per_rna(trial_case):
     result = json.loads((directory / 'trial_result.json').read_text())
     # The result replaces trial_metadata.json and carries the trial signature.
     assert (result['fingerprint'], result['parameters'], result['shs_seed'], result['af3_seed']) == (
-        'identity', requests[0]['parameters'], 11, 2)
+        'identity', {'rna': requests[0]['parameters']}, 11, 2)
     assert [s['id'] for s in result['scores']] == ['paired', 'unpaired']
     assert [s['loss'] for s in result['scores']] == [0, 1]
     # Optional dataset columns are recorded with the scores.
@@ -210,7 +212,7 @@ def test_changed_identity_rejects_cached_result(trial_case):
 
 def test_without_fixed_or_sampled_parameters_the_generator_defaults_apply(trial_case):
     config, rows, directory, requests, *_ = trial_case
-    del config['fixed']
+    del config['generators']['rna']['fixed']
     assert trial.run_pipeline(config, rows, directory, 'identity') == pytest.approx(0.5)
     assert [request['parameters'] for request in requests] == [{}, {}]
 
@@ -269,7 +271,7 @@ def test_dssr_crash_keeps_published_archives_and_reports(trial_case):
     assert 'rna_00001_model.cif' in members(directory / 'rna_00001.tar.gz')
 
     report = read_failure_report(directory)
-    assert (report['stage'], report['rna_index'], report['rna_id']) == ('dssr', 1, 'unpaired')
+    assert (report['stage'], report['rna_index'], report['rna_id']) == ('extraction', 1, 'unpaired')
     assert (report['error_type'], report['returncode'], report['signal']) == ('CalledProcessError', -11, 'SIGSEGV')
     assert report['timed_out'] is False
     # Scratch paths are marked; only run_metadata.json holds absolute paths.
@@ -293,7 +295,7 @@ def test_rejected_dssr_output_is_kept_in_the_archive(trial_case):
     with pytest.raises(ValueError):
         run_pipeline(trial_case)
     assert json.loads(member_text(directory / 'rna_00000.tar.gz', 'dssr.json')) == {'model': 'rna_00000_model.cif'}
-    assert read_failure_report(directory)['stage'] == 'dssr'
+    assert read_failure_report(directory)['stage'] == 'extraction'
 
 
 def fail_af3_on_second(case, failure, log_text=''):
@@ -531,3 +533,50 @@ def test_af3_requires_the_module_environment(tmp_path, monkeypatch, af3_environm
     monkeypatch.delenv('ALPHAFOLD_BIN_DIR')
     with pytest.raises(RuntimeError, match='ALPHAFOLD_BIN_DIR not set'):
         trial.run_af3({}, tmp_path / 'af3', tmp_path / 'af3.log', af3_environment)
+
+
+# ---- Mixed chain types ------------------------------------------------------
+
+def test_mixed_dataset_uses_each_chain_types_generator_parameters_and_extractor(trial_case, monkeypatch):
+    """Only the optimized generator is sampled; the protein chain gets its own tools and archive file."""
+    config, rows, directory, requests, generation, af3, dssr = trial_case
+    config['generators']['protein'] = {'python': '/test/protein/bin/python', 'fixed': {'N': 5}}
+    rows[1] = {'id': 'protein', 'type': 'protein', 'sequence': 'MKTA', 'pairs': [[0, 3]]}
+    commands = []
+
+    def generate(args, **kwargs):
+        commands.append(args[:2])
+        request = json.loads(Path(args[3]).read_text())
+        requests.append(request)
+        Path(args[5]).write_text(json.dumps({'name': request['task_name']}))
+    generation.side_effect = generate
+    contacts = Mock(return_value=[(0, 3)])
+    monkeypatch.setattr(trial.extraction, 'contact_pairs', contacts)
+
+    assert run_pipeline(trial_case) == 0
+
+    assert commands == [
+        ['/test/shs/bin/python', str(run.GENERATOR_DIRS['rna'] / 'shs_generator.py')],
+        ['/test/protein/bin/python', str(run.GENERATOR_DIRS['protein'] / 'shs_generator.py')],
+    ]
+    assert requests[0]['parameters'] == {'N': 20, 'mutation_rate_paired': 0.3}
+    assert requests[1]['parameters'] == {'N': 5}   # the protein generator is not optimized
+    assert 'type' not in requests[1]
+    # DSSR only for the RNA, contacts only for the protein; each file lands in its own archive.
+    assert dssr.call_count == 1
+    assert contacts.call_args.args[1] == 'MKTA'
+    assert contacts.call_args.kwargs == {'atom': 'CA', 'cutoff': 8.0, 'min_separation': 6}
+    assert 'dssr.json' in members(directory / 'rna_00000.tar.gz')
+    assert 'contacts.json' not in members(directory / 'rna_00000.tar.gz')
+    assert 'contacts.json' in members(directory / 'rna_00001.tar.gz')
+    assert 'dssr.json' not in members(directory / 'rna_00001.tar.gz')
+    result = json.loads((directory / 'trial_result.json').read_text())
+    assert result['parameters'] == {'rna': requests[0]['parameters'], 'protein': {'N': 5}}
+
+
+def test_parameters_are_stored_only_for_chain_types_in_the_dataset(trial_case):
+    config, rows, directory, *_ = trial_case
+    config['generators']['protein'] = {'python': '/test/protein/bin/python', 'fixed': {'N': 5}}
+    run_pipeline(trial_case)
+    result = json.loads((directory / 'trial_result.json').read_text())
+    assert list(result['parameters']) == ['rna']

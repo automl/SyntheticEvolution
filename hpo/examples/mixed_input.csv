@@ -1,0 +1,4 @@
+id,chain_id,type,sequence,pairs
+example_1,A,rna,AGUAGUAGUAGUAGA,"[[0,14],[1,13],[7,12]]"
+example_2,A,rna,AGUAGUAGUAGUAGA,"[]"
+protein_1,A,protein,MKTAYIAKQRQISFVKSHFSRQ,"[[0,12],[2,15],[4,18]]"

@@ -40,7 +40,8 @@ results/
   the pipeline built it for the generator.
 - The optional `errors/` files are NePS's crash log and the pipeline's failure
   reports, copied unchanged. The optional archives hold the complete AF3
-  output (all samples), the generator's effective parameters and `dssr.json`;
+  output (all samples), the generator's effective parameters and `dssr.json`
+  (RNA) or `contacts.json` (protein);
   see `hpo/docs/storage_layout.md`.
 - `manifest.json` is created by `hpo/export_results.py`; it is not produced by
   the HPO pipeline.
@@ -83,7 +84,8 @@ results/
 - The trajectory dot-bracket analysis uses each exported
   `configs/config_<id>/trial_result.json` and writes its combined output under
   the module's analysis directory.
-- The trial comparison analysis compares `parameters` and the per-RNA
+- The trial comparison analysis compares `parameters` (saved per chain type,
+  shown as `rna.N` etc.) and the per-RNA
   `scores[].predicted_pairs` of all trajectory configurations and writes
   `trial_comparison.txt`. It is skipped when the trajectory has only one
   configuration.
@@ -147,7 +149,7 @@ checks/results/
 ├── manifest.json                     # `trials`: the config's trial list; failures block
 ├── errors/reports/<name>.json        # optional: failed trials
 └── trials/<name>/
-    ├── trial_result.json             # parameters, shs_seed, af3_seed, loss, scores
+    ├── trial_result.json             # parameters (per chain type), shs_seed, af3_seed, loss, scores
     ├── archives/rna_<index>.tar.gz   # optional: export --include-archives
     └── shs/rna_<index>/{af3_input.json, shs_generation_request.json}
 ```

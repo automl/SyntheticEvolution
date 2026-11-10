@@ -1,12 +1,13 @@
 # SHS hyperparameter search on Helix
 
 Searches the parameters of the synthetic MSA generator (SHS) with NePS. Each
-trial generates an MSA for every RNA of a dataset, predicts the structure with
-AlphaFold 3, extracts the base pairs with DSSR and scores them against the
-target pairs. The trial loss is the mean per-RNA loss.
+trial generates an MSA for every RNA or protein chain of a dataset, predicts
+the structure with AlphaFold 3, extracts the pairs (RNA: base pairs with DSSR;
+protein: C-alpha contacts with Biopython) and scores them against the target
+pairs. The trial loss is the mean per-entry loss.
 
 ```text
-NePS samples a config → SHS generator → AlphaFold 3 → x3dna-dssr → F1 / WL loss → NePS
+NePS samples a config → SHS generator → AlphaFold 3 → DSSR / contacts → F1 / WL loss → NePS
 ```
 
 ## Entry points
@@ -16,7 +17,7 @@ Run from the repository root with the controller environment
 
 | Command | What it does |
 | --- | --- |
-| `python -m hpo.submit_standalone_trial --config <yaml>` | Submit one controller job that evaluates the `fixed` parameters once, or every trial in `trials`. |
+| `python -m hpo.submit_standalone_trial --config <yaml>` | Submit one controller job that evaluates the `fixed` parameters of each generator once, or every trial in `trials`. |
 | `python -m hpo.submit_neps_hpo --config <yaml>` | Submit `controller.count` NePS controllers (a Slurm array). |
 | `python -m hpo.run_standalone_trial --config <yaml> [--validate-only]` | Run a standalone run inside an existing allocation; `--validate-only` only prints the parsed dataset. |
 | `python -m hpo.run_neps_hpo --config <yaml>` | Run one NePS controller inside an existing allocation. |
@@ -45,13 +46,27 @@ setting is commented there.
   `controller.count: 4` evaluates up to 4 × `evaluations` configs, and every
   resubmission adds that again. Leave it out to evaluate as many configs as fit
   into `controller.time`.
-- **`fixed` / `search`:** generator parameters; NePS samples `search`,
-  standalone trials use `fixed` and the generator defaults.
+- **`generators`, `optimize`:** one SHS generator per chain type (`rna`,
+  `protein`), each with its `python`, `fixed` and `search`. Each dataset chain
+  uses the generator of its `type`. Only the generator named by `optimize` is
+  searched (both together would need too many hyperparameters): NePS samples
+  its `search`, every other generator and standalone trials use `fixed` and
+  the generator defaults. Trial parameters are saved per chain type, e.g.
+  `{"rna": {...}}`.
 - **`trials`** (standalone only, optional): named trials that run one after
-  another in one job with one AF3 worker, each with `parameters` over `fixed`
-  and optionally its own `shs_seed` / `af3_seed`. Other keys are kept for
-  analysis. Not part of the fingerprint: trials can be added and the run
-  resubmitted. A failed trial does not stop the others.
+  another in one job with one AF3 worker, each with `parameters` over the
+  `fixed` values of the optimized generator and optionally its own `shs_seed` /
+  `af3_seed`. Other keys are kept for analysis. Not part of the fingerprint:
+  trials can be added and the run resubmitted. A failed trial does not stop the
+  others.
+- **`extraction`:** `dssr` and `dssr_timeout_seconds` for RNA chains, and
+  optional `protein` settings (`atom`, `cutoff`, `min_separation`) for contacts.
+  Protein extraction needs `biopython` and `numpy` in the controller
+  environment.
+- **Dataset CSV:** one row per chain with `id,chain_id,type,sequence,pairs`;
+  `type` (`rna` or `protein`) defaults to `rna` and `chain_id` to `A`. Complexes
+  (several chains per `id`) are not supported yet. Task directories and
+  archives are named `rna_<index>` for every chain type.
 - **`ignore_errors: true`:** NePS keeps sampling when a trial fails. A failed
   trial gets the worst loss (1.0), so the optimizer avoids its region.
 - **`failures`:** the failure limit (default: stop when more than 20% of the
@@ -80,8 +95,12 @@ config with `trials`) and `checks/dataset/` next to `results/`:
 - `c<id>_s<seed>`: the same configs with `--seeds` new seed pairs (default 5),
 - `nomsa_s<seed>`: baseline `N: 1` (only the query sequence, i.e. AF3 without MSA).
 
+Trial `parameters` apply to the optimized generator (`optimize`), like NePS's
+sampled values; the other generators keep their `fixed` values. The written
+config keeps the generators' `python` and `fixed` and drops every `search`.
+
 The dataset holds the HPO training rows (`1_train.csv`, from
-`run_metadata.json`) and the optional held-out RNAs (`2_heldout.csv`). The
+`run_metadata.json`, with their `chain_id` and `type`) and the optional held-out RNAs (`2_heldout.csv`). The
 `input` written into the config is the Helix path `checks/dataset` next to the
 HPO input (`--input` overrides it). Commit the check directory to the thesis
 repo, pull it on Helix and submit the config with `submit_standalone_trial`.
@@ -113,7 +132,8 @@ they never become an empty prediction.
 ## Storage
 
 The workspace gets one archive per RNA (complete AF3 output incl. all samples,
-the MSA, the generator's effective parameters and `dssr.json`) and one trial
+the MSA, the generator's effective parameters and `dssr.json` or
+`contacts.json`) and one trial
 record; logs and temporary files stay in a per-trial scratch directory in RAM.
 Details: [docs/storage_layout.md](docs/storage_layout.md).
 

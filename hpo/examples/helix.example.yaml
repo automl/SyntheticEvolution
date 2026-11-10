@@ -9,7 +9,7 @@
 # Use a new name for a new experiment. Existing compatible trial 
 # files can be reused; NePS search recovery is separate.
 run_name: test-run
-input: hpo/examples/example_input.csv # CSV file or directory of CSVs; see example for format
+input: hpo/examples/example_input.csv # CSV file or directory of CSVs; one row per chain (id,chain_id,type,sequence,pairs); see example
 workspace_name:                       # REQUIRED: Existing Helix workspace name for the run folder
 controller_python:                    # REQUIRED for controller submission
 
@@ -59,35 +59,70 @@ storage:
 
 
 # ---- Generator config ------------------------------------------
-shs_python: # REQUIRED: SHS Python executable
+# One SHS generator per chain type (rna, protein). Each dataset chain uses the
+# generator of its `type` column.
+#
+# IMPORTANT: only ONE generator is optimized per run. Searching the RNA and the
+# protein generator together would need far too many hyperparameters, so
+# `optimize` names the generator whose `search` space NePS samples. Every other
+# generator runs with its `fixed` values (or generator defaults) and its `search`
+# section is ignored with a warning. To tune the protein generator instead, set
+# `optimize: protein`; it then needs its own `search` section.
+#
 # NePS: combine sampled search values with fixed values.
 # Standalone: ignore search with a warning; use fixed values.
 # Both modes: use generator defaults for parameters not supplied.
-search:
-  N: {type: integer, lower: 2, upper: 128, log: true}
-  mutation_rate_unpaired: {type: float, lower: 0.0, upper: 1.0}
-  mutation_rate_paired: {type: float, lower: 0.0, upper: 1.0}
-  pair_mutation_approach:
-    type: categorical
-    choices: [covariance, watson_crick, watson_crick_cov, none]
-fixed:
-  stem_single_insertion_prob: 0.0
-  stem_long_insertion_prob: 0.0
-  stem_single_deletion_prob: 0.0
-  stem_pair_deletion_prob: 0.0
-  loop_single_insertion_prob: 0.0
-  loop_long_insertion_prob: 0.0
-  loop_single_deletion_prob: 0.0
-  loop_long_deletion_prob: 0.0
+optimize: rna  # rna | protein
+generators:
+  rna:
+    python:    # REQUIRED for RNA chains: SHS-Generator-RNA Python executable
+    search:
+      N: {type: integer, lower: 2, upper: 128, log: true}
+      mutation_rate_unpaired: {type: float, lower: 0.0, upper: 1.0}
+      mutation_rate_paired: {type: float, lower: 0.0, upper: 1.0}
+      pair_mutation_approach:
+        type: categorical
+        choices: [covariance, watson_crick, watson_crick_cov, none]
+    fixed:
+      stem_single_insertion_prob: 0.0
+      stem_long_insertion_prob: 0.0
+      stem_single_deletion_prob: 0.0
+      stem_pair_deletion_prob: 0.0
+      loop_single_insertion_prob: 0.0
+      loop_long_insertion_prob: 0.0
+      loop_single_deletion_prob: 0.0
+      loop_long_deletion_prob: 0.0
+  protein:
+    python:    # REQUIRED for protein chains: SHS-Generator-Protein Python executable
+    # Not optimized in this config (optimize: rna). Move these values to `fixed`
+    # entries or keep as the search space for `optimize: protein`. The protein
+    # generator only knows pair_mutation_approach in [covariance, none] and has
+    # no wobble_prob / pair_weight_* parameters.
+    search:
+      N: {type: integer, lower: 2, upper: 128, log: true}
+      mutation_rate_unpaired: {type: float, lower: 0.0, upper: 1.0}
+      mutation_rate_paired: {type: float, lower: 0.0, upper: 1.0}
+      pair_mutation_approach:
+        type: categorical
+        choices: [covariance, none]
+    fixed:
+      stem_single_insertion_prob: 0.0
+      stem_long_insertion_prob: 0.0
+      stem_single_deletion_prob: 0.0
+      stem_pair_deletion_prob: 0.0
+      loop_single_insertion_prob: 0.0
+      loop_long_insertion_prob: 0.0
+      loop_single_deletion_prob: 0.0
+      loop_long_deletion_prob: 0.0
 # Standalone only, optional: several named trials in one job (one AF3 worker),
-# each in trials/<name>/. parameters go over fixed; shs_seed/af3_seed default
+# each in trials/<name>/. parameters go over the optimized generator's fixed values; shs_seed/af3_seed default
 # to the run's. Other keys (e.g. base) are kept for analysis. Trials may be
 # added to an existing run; finished trials are not rerun.
 # trials:
 #   - {name: best_s1, base: 412, shs_seed: 1, af3_seed: 1, parameters: {N: 64}}
 #   - {name: nomsa_s1, shs_seed: 1, af3_seed: 1, parameters: {N: 1}}
 shs_seed: 42
-generator_timeout_seconds: 600 # Per RNA input-generation process
+generator_timeout_seconds: 600 # Per input-generation process
 
 
 # ---- AF3 config ------------------------------------------------
@@ -103,9 +138,16 @@ af3_seed: 42
 af3_buckets: [64, 128, 256, 512, 768, 1024, 1280, 1536, 2048, 2560, 3072, 3584, 4096, 4608, 5120]
 
 
-# ---- DSSR config -----------------------------------------------
-dssr:                     # REQUIRED: DSSR executable
-dssr_timeout_seconds: 300 # Per DSSR invocation
+# ---- Extraction config -----------------------------------------
+# Turns each predicted model into a pair list: RNA -> DSSR base pairs,
+# protein -> Biopython contacts (needs biopython + numpy in the controller env).
+extraction:
+  dssr:                     # REQUIRED for RNA chains: DSSR executable
+  dssr_timeout_seconds: 300 # Per DSSR invocation
+  protein:                  # Optional; shown values are the defaults
+    atom: CA                # Atom used as residue position
+    cutoff: 8.0             # Contact if distance <= cutoff (Angstrom)
+    min_separation: 6       # Ignore pairs closer than this in sequence
 
 
 # ---- scoring config -----------------------------------------------

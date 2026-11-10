@@ -3,14 +3,17 @@
 - **Run:** one experiment with one configuration and dataset, in
   `<workspace>/shs_hpo/<run_name>/`. Standalone runs contain one trial or the listed `trials`; NePS
   runs contain one trial per sampled configuration.
-- **Trial:** one parameter configuration evaluated on every RNA of the
-  dataset, producing one aggregate loss.
+- **Trial:** one parameter configuration evaluated on every entry of the
+  dataset (RNA or protein chain), producing one aggregate loss. Parameters
+  are stored per chain type, e.g. `{"rna": {...}}`; only the optimized
+  generator receives sampled values.
 - **Scratch:** a private directory per trial in RAM (`/dev/shm`, setting
   `storage.scratch`) for everything temporary. It is removed when the trial
   ends. The workspace only receives finished files.
 
 The workspace holds as few files as possible: per trial one record and one
-archive per RNA. Logs and tool side files stay in scratch.
+archive per entry (task directories and archives are named
+`rna_<index>` for every chain type). Logs and tool side files stay in scratch.
 
 ## Run
 
@@ -74,11 +77,12 @@ rna_<index>.tar.gz
 │   ├── confidences.json
 │   └── summary_confidences.json
 ├── shs_effective_parameters.json       # generator parameters after defaults
-└── dssr.json                           # added after DSSR; missing if DSSR crashed
+└── dssr.json                           # RNA: added after DSSR; missing if DSSR crashed
+                                        # (protein: contacts.json with options and pairs instead)
 ```
 
-The archive is published right after AF3 and published again once DSSR has
-written `dssr.json`, before its pairs are validated. Its existence marks a
+The archive is published right after AF3 and published again once the extractor has
+written `dssr.json` or `contacts.json`, before its pairs are validated. Its existence marks a
 finished AF3 prediction: a resumed trial reuses it instead of running the
 generator and AF3 again.
 
@@ -99,7 +103,9 @@ generator and AF3 again.
 2. Predict all of them with the controller's AF3 worker (scratch), which
    loads and compiles the model once per controller. Publish the archive of
    every finished prediction, also after an AF3 failure or stop.
-3. Per RNA: run DSSR in scratch, add `dssr.json` to the archive and score.
+3. Per entry: extract the pairs (RNA: DSSR in scratch; protein: C-alpha
+   contacts with Biopython), add `dssr.json` or `contacts.json` to the archive
+   and score.
 4. Write `trial_result.json`, remove `trial_metadata.json`, apply retention.
 
 On a failure, `failure_report.json` is written and the archives already

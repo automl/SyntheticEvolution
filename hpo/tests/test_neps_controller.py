@@ -13,9 +13,10 @@ from hpo import run_neps_hpo as entry
 
 @pytest.fixture
 def neps_case(tmp_path, monkeypatch):
-    config = dict(search={'N': dict(type='integer', lower=1, upper=30),
-                          'rate': dict(type='float', lower=0.0, upper=1.0),
-                          'approach': dict(type='categorical', choices=['a', 'b'])},
+    search = {'N': dict(type='integer', lower=1, upper=30),
+              'rate': dict(type='float', lower=0.0, upper=1.0),
+              'approach': dict(type='categorical', choices=['a', 'b'])}
+    config = dict(optimize='rna', generators=dict(rna=dict(search=search)),
                   evaluations=2, ignore_errors=False, optimizer='random_search',
                   failures=dict(min_trials=5, max_rate=0.2, window=50))
     rows = [dict(id='rna', sequence='ACGU', pairs=[[0, 3]])]
@@ -66,7 +67,7 @@ def test_neps_space_and_each_evaluation_reach_trial(neps_case):
     fake.Categorical.assert_called_once_with(choices=['a', 'b'])
     assert calls == [(root / 'evaluation_1/artifacts', dict(N=10, rate=0.1, approach='a')),
                      (root / 'evaluation_2/artifacts', dict(N=20, rate=0.2, approach='b'))]
-    assert config['search']['N']['type'] == 'integer'  # Building space must not mutate YAML data.
+    assert config['generators']['rna']['search']['N']['type'] == 'integer'  # Building space must not mutate YAML data.
 
 
 def test_neps_failure_reaches_neps_which_scores_it_with_the_worst_loss(neps_case, monkeypatch):

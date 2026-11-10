@@ -10,21 +10,26 @@ def msa_to_a3m(msa: Sequence[str]) -> str:
                      [f'>sample_{i}\n{row}' for i, row in enumerate(msa[1:])])
 
 
-def build_input_json(rna_seq: str, msa=None, *, name='default_name',
+def build_input_json(sequence: str, msa=None, *, name='default_name',
                      model_seeds=None) -> Dict[str, Any]:
-    """Return an RNA-only native AF3 input (chain A).
+    """Return a protein-only native AF3 input (chain A).
 
-    The existing build_input_json(rna_seq) call still creates a query-only MSA.
+    Without a data pipeline AF3 needs the MSAs and templates in the input, so the
+    paired MSA is empty and no templates are given. Defaults to a query-only MSA.
     The generator validates sequences and alignments before this serialization.
     """
-    rna_seq = rna_seq.upper()
+    sequence = sequence.upper()
     return dict(
-        name=name, 
+        name=name,
         modelSeeds=[1] if model_seeds is None else list(model_seeds),
-        sequences=[{'rna': dict(sequence=rna_seq, modifications=[], 
-                    id='A',
-                    unpairedMsa=msa_to_a3m([rna_seq] if msa is None else msa))
-                    }],
+        sequences=[{'protein': dict(
+            id='A',
+            sequence=sequence,
+            modifications=[],
+            unpairedMsa=msa_to_a3m([sequence] if msa is None else msa),
+            pairedMsa='',
+            templates=[],
+        )}],
         dialect='alphafold3', version=1,
     )
 

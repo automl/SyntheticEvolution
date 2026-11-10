@@ -24,7 +24,7 @@ subgraph CpuNode["Controller allocation (GPU node)"]
     end
 
     subgraph Step1["Step 1: SHS generation"]
-        SHSGenerator["SHS-Generator"]
+        SHSGenerator["SHS-Generator (RNA or protein, per chain type)"]
     end
 
     subgraph Step2["Step 2: AF3, one process for all RNAs"]
@@ -32,9 +32,10 @@ subgraph CpuNode["Controller allocation (GPU node)"]
         AF3[/"AlphaFold 3"/]
     end
 
-    subgraph Step3["Step 3: DSSR interpretation"]
-        DSSR["hpo/pipeline/dssr.py"]
-        DSSRTool[/"x3dna-dssr"/]
+    subgraph Step3["Step 3: pair extraction"]
+        Extraction["hpo/pipeline/extraction.py"]
+        DSSRTool[/"x3dna-dssr (RNA)"/]
+        Biopython[/"Biopython CA contacts (protein)"/]
     end
 
     subgraph Step4["Step 4: scoring"]
@@ -61,13 +62,14 @@ Trial -."aggregated loss".-> NePS
 %% trial.py executes the four stages in order.
 Trial --"1"--> SHSGenerator 
 Trial --"2"--> AF3Task
-Trial --"3"--> DSSR 
+Trial --"3"--> Extraction
 Trial --"4"--> Scoring
 %% Step 1
 %% Step 2
 AF3Task --> AF3
 %% Step 3
-DSSR --> DSSRTool
+Extraction --"rna"--> DSSRTool
+Extraction --"protein"--> Biopython
 %% Step 4
 Scoring -."loss".-> Trial
 
@@ -75,6 +77,7 @@ Scoring -."loss".-> Trial
 SHSGenerator -."af3 input, log".- Scratch
 AF3 -."predictions, log".- Scratch
 DSSRTool -."dssr.json, side files, log".- Scratch
+Biopython -."contacts.json".- Scratch
 Trial -."per-RNA archives, trial record,\nfailure report, retention".- Workspace
 Export -."read results, --prune".- Workspace
 

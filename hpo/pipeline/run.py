@@ -19,7 +19,13 @@ logger = logging.getLogger(__name__)
 PIPELINE_DIR = Path(__file__).resolve().parent  # SyntheticEvolution/hpo/pipeline
 HPO_DIR = PIPELINE_DIR.parent                   # SyntheticEvolution/hpo
 ROOT = HPO_DIR.parent                           # SyntheticEvolution
-GENERATOR_DIR = ROOT / 'SHS-Generator-RNA'
+GENERATOR_DIRS = {
+    'rna': ROOT / 'SHS-Generator-RNA',
+    'protein': ROOT / 'SHS-Generator-Protein',
+}
+
+# Allowed residues per chain type, mirroring each generator's validate_sequence.
+ALPHABETS = {'rna': 'ACGU', 'protein': 'ACDEFGHIKLMNPQRSTVWY'}
 
 Dataset = list[dict[str, Any]]
 
@@ -81,14 +87,10 @@ def load_config(path, *, mode, submitting_controller=False):
     if mode == 'export':
         return config
 
-    for key in (
-        'input', 'shs_python', 'module', 'model_dir', 'dssr',
-    ):
+    for key in ('input', 'module', 'model_dir'):
         require_text(config, key)
 
-    for key in (
-        'generator_timeout_seconds', 'dssr_timeout_seconds', 'af3_timeout_seconds'
-    ):
+    for key in ('generator_timeout_seconds', 'af3_timeout_seconds'):
         require_positive(config, key)
 
     def require_seeds(settings, prefix=''):
@@ -96,6 +98,54 @@ def load_config(path, *, mode, submitting_controller=False):
             value = settings.get(key)
             if isinstance(value, bool) or not isinstance(value, int) or value < 0:
                 raise ValueError(f'{prefix}{key} must be a nonnegative integer')
+
+    # One generator per chain type; only the optimized one is searched.
+    generators = require_mapping('generators')
+    for chain_type, settings in generators.items():
+        if chain_type not in ALPHABETS:
+            raise ValueError(f'Unknown generator type: {chain_type}')
+        if not isinstance(settings, dict):
+            raise ValueError(f'generators.{chain_type} must be a YAML mapping')
+        for key in ('fixed', 'search'):
+            if key in settings and not isinstance(settings[key], dict):
+                raise ValueError(
+                    f'generators.{chain_type}.{key} must be a YAML mapping; '
+                    'use {} for an empty section'
+                )
+        overlap = settings.get('fixed', {}).keys() & settings.get('search', {}).keys()
+        if overlap:
+            raise ValueError(
+                f'Parameters cannot appear in both fixed and search for {chain_type}: '
+                + ', '.join(sorted(map(str, overlap)))
+            )
+
+    optimize = config.get('optimize')
+    if optimize not in generators:
+        raise ValueError(
+            'optimize must name one configured generator: '
+            + ', '.join(sorted(generators))
+        )
+    require_text(generators[optimize], 'python', f'generators.{optimize}.')
+    for chain_type, settings in generators.items():
+        if chain_type != optimize and settings.get('search'):
+            logger.warning(
+                "Ignoring generators.%s.search: only the '%s' generator is optimized.",
+                chain_type, optimize,
+            )
+
+    extraction = require_mapping('extraction')
+    if 'dssr' in extraction:
+        require_text(extraction, 'dssr', 'extraction.')
+        require_positive(extraction, 'dssr_timeout_seconds', 'extraction.')
+    protein = extraction.get('protein', {})
+    if not isinstance(protein, dict):
+        raise ValueError('extraction.protein must be a YAML mapping')
+    if 'cutoff' in protein:
+        require_positive(protein, 'cutoff', 'extraction.protein.')
+    if 'min_separation' in protein:
+        require_positive(protein, 'min_separation', 'extraction.protein.', integer=True)
+    if 'atom' in protein:
+        require_text(protein, 'atom', 'extraction.protein.')
 
     require_seeds(config)
 
@@ -116,21 +166,7 @@ def load_config(path, *, mode, submitting_controller=False):
     if 'wl_iterations' in config:
         require_positive(config, 'wl_iterations', integer=True)
 
-    # Optional parameter sections must have the expected structure.
-    for key in ('fixed', 'search'):
-        if key in config and not isinstance(config[key], dict):
-            raise ValueError(
-                f'{key} must be a YAML mapping; use {{}} for an empty section'
-            )
-
-    fixed = config.get('fixed', {})
-    search = config.get('search', {})
-    overlap = fixed.keys() & search.keys()
-    if overlap:
-        raise ValueError(
-            'Parameters cannot appear in both fixed and search: '
-            + ', '.join(sorted(map(str, overlap)))
-        )
+    search = generators[optimize].get('search', {})
 
     # Standalone trials: named variants, each with parameters over `fixed`
     # and optional own seeds. Other keys (e.g. `base`) are kept for analysis.
@@ -156,14 +192,16 @@ def load_config(path, *, mode, submitting_controller=False):
             require_seeds({**config, **trial}, f'trials.{name}.')
 
     if mode == 'standalone':
-        if 'search' in config:
+        if search:
             logger.warning(
                 "Standalone mode: ignoring 'search'. Using 'fixed' values "
                 "and generator defaults for all remaining parameters."
             )
     elif mode == 'neps':
         if not search:
-            raise ValueError('NePS mode requires a nonempty search section')
+            raise ValueError(
+                f'NePS mode requires a nonempty generators.{optimize}.search section'
+            )
         # Without evaluations, each controller samples until its time is up.
         if config.get('evaluations') is not None:
             require_positive(config, 'evaluations', integer=True)
@@ -387,12 +425,38 @@ def validate_probability(value, name):
         raise ValueError(f'{name} must be a finite number between 0 and 1')
 
 
+def typed_parameters(config, rows, parameters=None):
+    """Generator parameters per chain type present in ``rows``.
+
+    ``parameters`` (sampled by NePS, or a standalone trial's own) belong to the
+    optimized generator only; every other generator runs with its fixed values.
+    This is what trial results store, so the exporter recomputes it the same way.
+    """
+    optimize = config['optimize']
+    return {
+        chain_type: {
+            **settings.get('fixed', {}),
+            **((parameters or {}) if chain_type == optimize else {}),
+        }
+        for chain_type, settings in config['generators'].items()
+        if any(row['type'] == chain_type for row in rows)
+    }
+
+
+# Row fields the generators accept; they reject unknown fields such as type/chains.
+GENERATOR_ROW_KEYS = ('id', 'sequence', 'pairs', 'interactions', 'mutation_rates')
+
+
 def shs_generation_request(row, index, parameters, shs_seed, af3_seed):
-    """The generator's input for one RNA; the exporter rebuilds it the same way."""
+    """The generator's input for one chain; the exporter rebuilds it the same way.
+
+    ``parameters`` maps chain type to generator parameters, as stored in the
+    trial result; the row's own type selects its entry.
+    """
     return dict(
-        **row,   # contains (id=, sequence=, pairs=)
-        task_name=f'rna_{index:05d}',
-        parameters=parameters,
+        **{key: row[key] for key in GENERATOR_ROW_KEYS if key in row},
+        task_name=f'rna_{index:05d}',  # task directories keep this name for every type
+        parameters=parameters[row['type']],
         shs_seed=shs_seed,
         af3_seed=af3_seed,
     )
@@ -400,55 +464,98 @@ def shs_generation_request(row, index, parameters, shs_seed, af3_seed):
 
 def create_dataset(path) -> Dataset:
     """Create a dataset from a path.
+
+    The CSV mirrors AF3's ``sequences`` list: one row per chain, rows sharing an
+    ``id`` form one entry. Columns: id, chain_id (default A), type (rna|protein,
+    default rna), sequence, pairs, interactions, mutation_rates. Pairs,
+    interactions and mutation_rates describe the entry and are read from its
+    chain row.
     ### Input:
     @path : single file or dir of files.
     ### returns
-    dataset = list of dicts for each line with
+    dataset = list of dicts, one per entry, with
 
         id : identifying string
-        sequence : RNA sequence str containing only ACGU
+        chains : [{id, type, sequence}] in file order
+        type, sequence : aliases of the only chain (single chains only for now)
         pairs : sorted scoring targets; derived from positive interactions if absent
         interactions, mutation_rates : optional validated generator inputs
     ### Raises
-    ValueError for empty dataset or duplicate ids or invalid sequences
+    ValueError for empty dataset, duplicate ids/chains, invalid sequences, or
+    entries with more than one chain (complexes are not supported yet).
     """
     path = repo_path(path)
     files = sorted(path.glob('*.csv')) if path.is_dir() else [path]
-    rows, seen = [], set()
+    groups: dict[str, list[dict]] = {}
     for file in files:
         with file.open(newline='') as stream:
             for row in csv.DictReader(stream):
-                name, seq = row['id'].strip(), row['sequence'].strip().upper()
-                if not name or name in seen or not seq or set(seq) - set('ACGU'):
-                    raise ValueError(f'Invalid/duplicate ID or RNA sequence in {file}: {name}')
-                seen.add(name)
-                item = dict(id=name, sequence=seq)
-                interaction_text = (row.get('interactions') or '').strip()
-                pair_text = (row.get('pairs') or '').strip()
-                if interaction_text:
-                    item['interactions'] = normalize_interactions(json.loads(interaction_text), len(seq))
-                if pair_text:
-                    raw_pairs = json.loads(pair_text)
-                    if not isinstance(raw_pairs, list):
-                        raise ValueError('pairs must be a JSON list')
-                    pairs = sorted(normalize_pairs(raw_pairs, len(seq)))
-                elif interaction_text:
-                    pairs = [(a, b) for a, b, strength in item['interactions'] if strength > 0]
-                else:
-                    raise ValueError(f'Provide pairs or interactions for {name}; use [] for no pairs')
-                item['pairs'] = pairs
-                rates_text = (row.get('mutation_rates') or '').strip()
-                if rates_text:
-                    rates = json.loads(rates_text)
-                    if not isinstance(rates, list) or len(rates) != len(seq):
-                        raise ValueError('mutation_rates must have exactly one rate per RNA position')
-                    for rate in rates:
-                        validate_probability(rate, 'mutation rate')
-                    item['mutation_rates'] = rates
-                rows.append(item)
+                name = row['id'].strip()
+                if name in groups and any(
+                    other['_file'] != file for other in groups[name]
+                ):
+                    raise ValueError(f'Duplicate ID across files in {file}: {name}')
+                row['_file'] = file
+                groups.setdefault(name, []).append(row)
+
+    rows = []
+    for name, chain_rows in groups.items():
+        file = chain_rows[0]['_file']
+        chains = []
+        for row in chain_rows:
+            chain_type = (row.get('type') or 'rna').strip().lower()
+            seq = row['sequence'].strip().upper()
+            chain_id = (row.get('chain_id') or 'A').strip()
+            if (not name or chain_type not in ALPHABETS or not seq
+                    or set(seq) - set(ALPHABETS[chain_type])
+                    or any(chain_id == c['id'] for c in chains)):
+                raise ValueError(f'Invalid/duplicate ID, chain or sequence in {file}: {name}')
+            chains.append(dict(id=chain_id, type=chain_type, sequence=seq))
+        if len(chains) > 1:
+            raise ValueError(
+                f'{name}: complexes (multiple chains per id) are not supported yet'
+            )
+        row, chain = chain_rows[0], chains[0]
+        seq = chain['sequence']
+        item = dict(id=name, chains=chains, type=chain['type'], sequence=seq)
+        interaction_text = (row.get('interactions') or '').strip()
+        pair_text = (row.get('pairs') or '').strip()
+        if interaction_text:
+            item['interactions'] = normalize_interactions(json.loads(interaction_text), len(seq))
+        if pair_text:
+            raw_pairs = json.loads(pair_text)
+            if not isinstance(raw_pairs, list):
+                raise ValueError('pairs must be a JSON list')
+            pairs = sorted(normalize_pairs(raw_pairs, len(seq)))
+        elif interaction_text:
+            pairs = [(a, b) for a, b, strength in item['interactions'] if strength > 0]
+        else:
+            raise ValueError(f'Provide pairs or interactions for {name}; use [] for no pairs')
+        item['pairs'] = pairs
+        rates_text = (row.get('mutation_rates') or '').strip()
+        if rates_text:
+            rates = json.loads(rates_text)
+            if not isinstance(rates, list) or len(rates) != len(seq):
+                raise ValueError('mutation_rates must have exactly one rate per position')
+            for rate in rates:
+                validate_probability(rate, 'mutation rate')
+            item['mutation_rates'] = rates
+        rows.append(item)
     if not rows:
         raise ValueError('Dataset is empty')
     return rows
+
+
+def validate_config_for_dataset(config, rows: Dataset) -> None:
+    """Require generator and extractor settings for every chain type in the data."""
+    for chain_type in sorted({row['type'] for row in rows}):
+        generator = config['generators'].get(chain_type)
+        if generator is None:
+            raise ValueError(f'Dataset has {chain_type} chains but generators.{chain_type} is not configured')
+        if not isinstance(generator.get('python'), str) or not generator['python'].strip():
+            raise ValueError(f'generators.{chain_type}.python must be a nonempty string')
+        if chain_type == 'rna' and 'dssr' not in config['extraction']:
+            raise ValueError('RNA chains need extraction.dssr and extraction.dssr_timeout_seconds')
 
 
 def get_workspace_path(config) -> Path: 
@@ -466,12 +573,12 @@ def fingerprint(config, rows):
 
     - Dataset rows
     - Scientific configuration
-    - Relevant source code ('PIPELINE_DIR/*.py', 'generator/*.py')
+    - Relevant source code ('PIPELINE_DIR/*.py', all generator '*.py')
     """
     non_scientific_configurations = (
         'controller', 'evaluations', 'ignore_errors',
-        'dssr_timeout_seconds', 'af3_timeout_seconds', 'generator_timeout_seconds',
-        'controller_python', 'neps_python', 'shs_python', 
+        'af3_timeout_seconds', 'generator_timeout_seconds',
+        'controller_python', 'neps_python',
         'storage', 'failures',
         # Each trial's signature holds its parameters and seeds, so trials
         # can be added to a standalone run and the run resumed.
@@ -481,9 +588,19 @@ def fingerprint(config, rows):
     code = {}
     for file in sorted(PIPELINE_DIR.glob('*.py')):
         code[str(file.relative_to(ROOT))] = hashlib.sha256(file.read_bytes()).hexdigest()
-    for file in sorted(repo_path(GENERATOR_DIR).glob('*.py')):
-        code[str(file)] = hashlib.sha256(file.read_bytes()).hexdigest()
-    scientific = {k:v for k,v in config.items() if k not in non_scientific_configurations}
+    for generator_dir in GENERATOR_DIRS.values():
+        for file in sorted(generator_dir.glob('*.py')):
+            code[str(file)] = hashlib.sha256(file.read_bytes()).hexdigest()
+    scientific = {k: v for k, v in config.items() if k not in non_scientific_configurations}
+    # Executable paths and timeouts do not change results.
+    scientific['generators'] = {
+        t: {k: v for k, v in g.items() if k != 'python'}
+        for t, g in config['generators'].items()
+    }
+    scientific['extraction'] = {
+        k: v for k, v in config['extraction'].items()
+        if k not in ('dssr', 'dssr_timeout_seconds')
+    }
     return hashlib.sha256(json.dumps([scientific, rows, code], sort_keys=True).encode()).hexdigest()
 
 
@@ -501,9 +618,11 @@ def prepare_run(config) -> tuple[Path, Dataset, str]:
     logger.info('Preparing run <%s>.', config['run_name'])
     rows = create_dataset(config['input'])
 
-    for name in ('shs_generator.py', 'pair_map.py', 'json_generator.py'):
-        if not (repo_path(GENERATOR_DIR) / name).is_file():
-            raise FileNotFoundError(GENERATOR_DIR / name)
+    validate_config_for_dataset(config, rows)
+    for chain_type in {row['type'] for row in rows}:
+        for name in ('shs_generator.py', 'pair_map.py', 'json_generator.py'):
+            if not (GENERATOR_DIRS[chain_type] / name).is_file():
+                raise FileNotFoundError(GENERATOR_DIRS[chain_type] / name)
 
     ws_root = get_workspace_path(config)
     ws_root.mkdir(parents=True, exist_ok=True)

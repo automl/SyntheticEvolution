@@ -1,5 +1,8 @@
-# Search over all generator parameters: replace search in your config
-# with this block.
+# Search over all RNA generator parameters. Paste this `search` block under
+# `generators.rna` in your config (indent it) and set `optimize: rna`.
+# Only one generator is optimized per run; the protein generator has fewer
+# parameters (no wobble_prob or pair_weight_*, pair_mutation_approach only
+# covariance or none).
 search:
   N: {type: integer, lower: 2, upper: 512, log: true}
   mutation_rate_paired:   {type: float, lower: 0.0, upper: 1.0}

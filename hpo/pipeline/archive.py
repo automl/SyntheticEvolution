@@ -1,8 +1,8 @@
 """Per-RNA archives: one workspace file for everything kept from one RNA.
 
 An archive holds the complete AF3 output (flattened, without AF3's
-``<name>/`` folder), ``shs_effective_parameters.json`` and, once DSSR ran,
-``dssr.json``. Its existence marks a completed AF3 prediction.
+``<name>/`` folder), ``shs_effective_parameters.json`` and, once the pairs were extracted,
+``dssr.json`` (RNA) or ``contacts.json`` (protein). Its existence marks a completed AF3 prediction.
 """
 
 import os

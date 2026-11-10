@@ -69,15 +69,25 @@ def _check_module(module: str) -> list[str]:
 
 
 def check_environment(config: dict[str, Any], mode: str) -> list[str]:
-    """Problems that would make the controller job fail; empty if none."""
-    controller_key = 'neps_python' if mode == 'neps' else 'controller_python'
-    problems = []
-    for key in (controller_key, 'shs_python'):
-        problems += _check_executable(key, config[key])
+    """Problems that would make the controller job fail; empty if none.
 
-    dssr = config['dssr']
-    if shutil.which(str(Path(dssr).expanduser())) is None:
-        problems.append(f'dssr: {dssr} is neither an executable path nor on PATH')
+    Every generator with a ``python`` configured is checked, and DSSR if
+    ``extraction.dssr`` is set. Protein extraction needs biopython and numpy in
+    the controller environment.
+    """
+    controller_key = 'neps_python' if mode == 'neps' else 'controller_python'
+    generators = {
+        chain_type: settings['python']
+        for chain_type, settings in config['generators'].items()
+        if settings.get('python')
+    }
+    problems = _check_executable(controller_key, config[controller_key])
+    for chain_type, python in generators.items():
+        problems += _check_executable(f'generators.{chain_type}.python', python)
+
+    dssr = config['extraction'].get('dssr')
+    if dssr and shutil.which(str(Path(dssr).expanduser())) is None:
+        problems.append(f'extraction.dssr: {dssr} is neither an executable path nor on PATH')
 
     model_dir = Path(config['model_dir']).expanduser()
     if not model_dir.is_dir() or not any(model_dir.iterdir()):
@@ -90,10 +100,16 @@ def check_environment(config: dict[str, Any], mode: str) -> list[str]:
         modules = ['yaml']
         if config.get('scoring_objective', 'f1') == 'wl':
             modules += ['numpy', 'grakel']
+        if 'protein' in generators:
+            modules += ['numpy', 'Bio']
         packages = {NEPS_PACKAGE: NEPS_VERSION} if mode == 'neps' else {}
-        problems += _check_interpreter(controller_key, config[controller_key], modules, packages)
-    if not any(problem.startswith('shs_python:') for problem in problems):
-        problems += _check_interpreter('shs_python', config['shs_python'], ['numpy'], {})
+        problems += _check_interpreter(
+            controller_key, config[controller_key], list(dict.fromkeys(modules)), packages
+        )
+    for chain_type, python in generators.items():
+        key = f'generators.{chain_type}.python'
+        if not any(problem.startswith(f'{key}:') for problem in problems):
+            problems += _check_interpreter(key, python, ['numpy'], {})
     return problems
 
 

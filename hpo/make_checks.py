@@ -19,8 +19,9 @@ import yaml
 
 from hpo.pipeline.run import create_dataset
 
-# HPO settings a standalone run does not use.
-NEPS_ONLY = ('search', 'evaluations', 'optimizer', 'ignore_errors', 'failures', 'neps_python')
+# HPO settings a standalone run does not use. The search spaces sit in
+# generators.<type>.search and are removed separately.
+NEPS_ONLY = ('evaluations', 'optimizer', 'ignore_errors', 'failures', 'neps_python')
 
 
 def top_configs(full_csv: Path, search: dict, n: int) -> list[tuple[int, float, dict]]:
@@ -49,16 +50,19 @@ def top_configs(full_csv: Path, search: dict, n: int) -> list[tuple[int, float, 
 
 def write_rows(rows: list[dict], path: Path) -> None:
     """Write validated dataset rows back as an input CSV."""
-    columns = ['id', 'sequence', 'pairs'] + [
+    columns = ['id', 'chain_id', 'type', 'sequence', 'pairs'] + [
         key for key in ('interactions', 'mutation_rates') if any(key in row for row in rows)
     ]
     with path.open('w', newline='') as stream:
         writer = csv.DictWriter(stream, fieldnames=columns)
         writer.writeheader()
         for row in rows:
+            # One chain per entry (complexes are not supported yet).
+            (chain,) = row['chains']
+            values = {**row, 'chain_id': chain['id']}
             writer.writerow({
-                key: row[key] if key in ('id', 'sequence') else json.dumps(row[key])
-                for key in columns if key in row
+                key: values[key] if key in ('id', 'chain_id', 'type', 'sequence') else json.dumps(values[key])
+                for key in columns if key in values
             })
 
 
@@ -69,7 +73,7 @@ def make_checks(results: Path, out: Path, heldout: Path = None, top_n: int = 3,
     if (out / 'config.yaml').exists():
         raise SystemExit(f'{out / "config.yaml"} exists; delete it to write a new check run.')
 
-    configs = top_configs(results / 'summary' / 'full.csv', hpo['search'], top_n)
+    configs = top_configs(results / 'summary' / 'full.csv', hpo['generators'][hpo['optimize']]['search'], top_n)
     hpo_seeds = (hpo['shs_seed'], hpo['af3_seed'])
     new_seeds = list(islice((seed for seed in count(1) if seed not in hpo_seeds), seeds))
     trials = []
@@ -96,7 +100,8 @@ def make_checks(results: Path, out: Path, heldout: Path = None, top_n: int = 3,
         # The config runs on Helix: by default the dataset lies in checks/ next to the HPO dataset.
         input=input_path or str(PurePosixPath(hpo['input']).parent / 'checks' / 'dataset'),
         controller={k: v for k, v in hpo['controller'].items() if k != 'count'},
-        **{k: v for k, v in hpo.items() if k not in (*NEPS_ONLY, 'run_name', 'input', 'controller')},
+        **{k: v for k, v in hpo.items() if k not in (*NEPS_ONLY, 'run_name', 'input', 'controller', 'generators')},
+        generators={t: {k: v for k, v in g.items() if k != 'search'} for t, g in hpo['generators'].items()},
         trials=trials,
     )
     (out / 'config.yaml').write_text(

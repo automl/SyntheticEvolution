@@ -28,7 +28,7 @@ def test_validate_only_does_not_prepare_workspace_or_run_trial(monkeypatch, caps
 
 
 def test_standalone_passes_prepared_dataset_and_prints_loss(tmp_path, monkeypatch, capsys):
-    config = {'fixed': {'N': 20}}
+    config = {'optimize': 'rna', 'generators': {'rna': {'fixed': {'N': 20}}}}
     rows = [dict(id='rna', sequence='ACGU', pairs=[])]
     monkeypatch.setattr(sys, 'argv', ['standalone', '--config', 'input.yaml'])
     monkeypatch.setattr(entry, 'load_config', Mock(return_value=config))

@@ -38,7 +38,8 @@ def test_invalid_pairs_are_rejected(pairs):
 
 def test_csv_normalizes_case_whitespace_and_reversed_pairs(tmp_path):
     path = write_csv(tmp_path / 'input.csv', [(' one ', ' acgu ', '[[3,0],[0,3]]')])
-    assert create_dataset(path) == [dict(id='one', sequence='ACGU', pairs=[(0, 3)])]
+    assert create_dataset(path) == [dict(id='one', chains=[dict(id='A', type='rna', sequence='ACGU')],
+                                         type='rna', sequence='ACGU', pairs=[(0, 3)])]
 
 
 def test_folder_input_reads_every_csv(tmp_path):
@@ -63,6 +64,33 @@ def test_invalid_row_is_rejected(tmp_path, row):
         create_dataset(write_csv(tmp_path / 'input.csv', [row]))
 
 
+# ---- Chain types ------------------------------------------------------------
+
+def test_csv_groups_chain_rows_and_reads_the_chain_type(tmp_path):
+    path = tmp_path / 'chains.csv'
+    path.write_text('id,chain_id,type,sequence,pairs\n'
+                    'r,A,rna,ACGU,"[[0,3]]"\n'
+                    'p,A,protein,MKTAYI,"[[0,5]]"\n')
+    rows = create_dataset(path)
+    assert [(r['id'], r['type'], r['sequence']) for r in rows] == [
+        ('r', 'rna', 'ACGU'), ('p', 'protein', 'MKTAYI')]
+    assert rows[1]['chains'] == [dict(id='A', type='protein', sequence='MKTAYI')]
+
+
+@pytest.mark.parametrize('text, message', [
+    ('id,chain_id,type,sequence,pairs\nx,A,rna,ACGT,[]\n', 'Invalid'),            # T is not RNA
+    ('id,chain_id,type,sequence,pairs\nx,A,protein,ACGU,[]\n', 'Invalid'),       # U is not an amino acid
+    ('id,chain_id,type,sequence,pairs\nx,A,dna,ACGT,[]\n', 'Invalid'),           # unknown type
+    ('id,chain_id,type,sequence,pairs\nx,A,rna,ACGU,[]\nx,A,rna,ACGU,[]\n', 'Invalid'),  # duplicate chain
+    ('id,chain_id,type,sequence,pairs\nx,A,rna,ACGU,[]\nx,B,protein,MKT,[]\n', 'complexes'),
+])
+def test_invalid_chain_rows_are_rejected(tmp_path, text, message):
+    path = tmp_path / 'bad.csv'
+    path.write_text(text)
+    with pytest.raises(ValueError, match=message):
+        create_dataset(path)
+
+
 def test_empty_csv_is_rejected(tmp_path):
     with pytest.raises(ValueError):
         create_dataset(write_csv(tmp_path / 'empty.csv', []))
@@ -84,7 +112,7 @@ def test_explicit_pairs_take_precedence_over_interactions(tmp_path):
 
 def test_blank_optional_columns_are_ignored(tmp_path):
     [row] = dataset(tmp_path, pairs=[[0, 3]], interactions='', mutation_rates='')
-    assert set(row) == {'id', 'sequence', 'pairs'}
+    assert set(row) == {'id', 'chains', 'type', 'sequence', 'pairs'}
 
 
 @pytest.mark.parametrize('values', [

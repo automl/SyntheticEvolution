@@ -17,6 +17,20 @@ LOGGER = logging.getLogger("analysis.trial_comparison")
 MISSING = object()
 
 
+def _flatten_parameters(parameters: dict[str, Any]) -> dict[str, Any]:
+    """Per-chain-type parameters ({'rna': {'N': 8}}) become {'rna.N': 8}.
+
+    Generator parameters are scalars, so a dict value marks the per-type format.
+    """
+    flat = {}
+    for key, value in parameters.items():
+        if isinstance(value, dict):
+            flat.update({f"{key}.{name}": item for name, item in value.items()})
+        else:
+            flat[key] = value
+    return flat
+
+
 def _parse_trial(result: dict[str, Any]) -> tuple[dict[str, Any], dict[str, frozenset]]:
     if not isinstance(result.get("parameters"), dict):
         raise ValueError("Expected a 'parameters' object")
@@ -43,7 +57,7 @@ def _parse_trial(result: dict[str, Any]) -> tuple[dict[str, Any], dict[str, froz
                 raise ValueError(f"{rna_id}: invalid pair {pair!r}")
             pairs.add(tuple(sorted(pair)))
         predictions[rna_id] = frozenset(pairs)
-    return result["parameters"], predictions
+    return _flatten_parameters(result["parameters"]), predictions
 
 
 def _display(value: Any) -> str:

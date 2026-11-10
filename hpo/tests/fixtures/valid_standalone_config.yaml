@@ -2,16 +2,20 @@
 run_name: test-run
 workspace_name: alphafold
 input: hpo/example_input.csv
-shs_python: /example/shs/bin/python
+optimize: rna
+generators:
+  rna:
+    python: /example/shs/bin/python
+extraction:
+  dssr: /example/x3dna-dssr
+  dssr_timeout_seconds: 300
 ignore_errors: false
 module: bio/alphafold/3.0.1
 model_dir: /example/models
-dssr: /example/x3dna-dssr
 shs_seed: 42
 af3_seed: 42
 generator_timeout_seconds: 600
 af3_timeout_seconds: 9000
-dssr_timeout_seconds: 300
 controller:
   count: 1
   partition: gpu-single
