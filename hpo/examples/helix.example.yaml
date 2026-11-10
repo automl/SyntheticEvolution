@@ -15,25 +15,25 @@ controller_python:                    # REQUIRED for controller submission
 
 # Slurm resource requests
 controller:
-  count: 4           # number of controllers to submit
+  count: 2           # number of controllers to submit
   partition: gpu-single
-  cpus: 1
+  cpus: 2
   memory: 20G
   gres: gpu:A100:1
-  time: '24:00:00'   # total wall time; the last 2 min are reserved for a clean stop (min. 7 min)
+  time: '05:00:00'   # total wall time; the last 2 min are reserved for a clean stop (min. 7 min)
 
 # Neps config
 neps_python:   # REQUIRED only for NePS controller submission
 # Configs each controller evaluates (NePS counts per controller). Leave it out
 # to evaluate as many as fit into controller.time: a controller does not start
 # a trial that cannot finish before the time limit.
-evaluations: 2
+evaluations: 400
 optimizer:     # optional custom optimizer selection
 ignore_errors: true # keep sampling when a trial fails; failures are reported
 # Stop all controllers when too many trials fail (writes STOPPED.json).
 # Optional; these are the defaults. max_rate: 1.0 disables the limit.
 failures:
-  min_trials: 5   # never stop before this many trials have finished
+  min_trials: 25  # never stop before this many trials have finished
   max_rate: 0.20  # stop when more than this share of the window failed
   window: 50      # last N finished trials; null = all trials
 
@@ -93,7 +93,7 @@ af3_seed: 42
 # A100) but change the predictions like a different seed; each bucket used by
 # the dataset is compiled once per controller (~25 s). Longer inputs than
 # the last bucket get a bucket of exactly their size, compiled for every new length.
-# af3_buckets: [64, 128, 256, 512, 768, 1024, 1280, 1536, 2048, 2560, 3072, 3584, 4096, 4608, 5120]
+af3_buckets: [64, 128, 256, 512, 768, 1024, 1280, 1536, 2048, 2560, 3072, 3584, 4096, 4608, 5120]
 
 
 # ---- DSSR config -----------------------------------------------
