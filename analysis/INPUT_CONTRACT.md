@@ -87,6 +87,13 @@ results/
   `scores[].predicted_pairs` of all trajectory configurations and writes
   `trial_comparison.txt`. It is skipped when the trajectory has only one
   configuration.
+- The optimization history analysis reads `summary/full.csv` (every trial)
+  and writes `loss_over_time.png` (loss and best-so-far over wall-clock time,
+  crashed trials as ticks), `loss_histogram.png` and `parameters_vs_loss.png`.
+  It is skipped with a warning when `full.csv` is missing (older exports).
+- The per-RNA analysis plots each trajectory configuration's per-RNA
+  `scores[].loss` as `per_rna_heatmap.png` and `per_rna_lines.png` (one line
+  per RNA chain, plus the trial loss).
 - SHS analysis uses the exported `shs/rna_<index>/` files and never reads the
   original HPO workspace.
 
