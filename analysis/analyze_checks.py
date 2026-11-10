@@ -10,7 +10,10 @@ losses and the training RNAs). Writes into ``analysis/`` next to ``results/``:
 - ``stability.csv``: per config and RNA, the mean pairwise F1 between the
   seeds' predicted pairs (1 = the same prediction for every seed), and the
   mean and standard deviation of the RNA's loss.
-- ``seed_spread.png`` and ``stability.png``.
+- ``predictions.txt``: per RNA the target and every trial's prediction in
+  dot-bracket notation, with its loss.
+- ``seed_spread.png``, ``per_rna_loss.png`` (where a config gains over the
+  baseline) and ``stability.png``.
 """
 
 import argparse
@@ -32,11 +35,14 @@ if __package__ in {None, ""}:
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from analysis.analyze_results import _configure_logging, prepare_output_directory
+from analysis.modules.dotbracket import pairs_to_dotbracket
 
 LOGGER = logging.getLogger("analyze_checks")
 SERIES = "#2a78d6"
 INK = "#0b0b0b"
 MUTED = "#52514e"
+# Categorical slots in fixed order; the first three stay apart for color-blind readers.
+CATEGORICAL = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#6250d6", "#e34948"]
 
 
 def _mean(values):
@@ -51,8 +57,8 @@ def _f1(a: set, b: set) -> float:
     return 1.0 if not a and not b else 2 * len(a & b) / (len(a) + len(b))
 
 
-def load(results: Path, hpo_results: Path) -> tuple[list[dict], dict[str, float], dict[str, str]]:
-    """Trials with their results, HPO losses by config id, split by RNA id."""
+def load(results: Path, hpo_results: Path) -> tuple[list[dict], dict[str, float], dict[str, str], dict[str, str]]:
+    """Trials with their results, HPO losses by config id, split and sequence by RNA id."""
     manifest = json.loads((results / "manifest.json").read_text())
     dataset = json.loads((results / "run_metadata.json").read_text())["dataset"]
     hpo_rows = {row["id"]: row["sequence"] for row in json.loads(
@@ -77,7 +83,7 @@ def load(results: Path, hpo_results: Path) -> tuple[list[dict], dict[str, float]
         base = trial.get("base")
         group = f"c{base}" if base is not None else "no MSA" if trial.get("check") == "baseline" else trial["name"]
         trials.append(dict(trial, group=group, check=trial.get("check", "seed"), result=result))
-    return trials, hpo_losses, split
+    return trials, hpo_losses, split, {row["id"]: row["sequence"] for row in dataset}
 
 
 def trial_rows(trials: list[dict], split: dict[str, str]) -> list[dict]:
@@ -133,6 +139,31 @@ def stability_rows(trials: list[dict], split: dict[str, str]) -> list[dict]:
     return rows
 
 
+def write_predictions(trials: list[dict], split: dict[str, str], sequences: dict[str, str], path: Path) -> None:
+    """Target and every trial's prediction per RNA as dot-bracket lines.
+
+    Pairs that dot-bracket cannot show (crossing, or a base in two pairs) are
+    left out and counted at the end of the line.
+    """
+    width = max(len(t["name"]) for t in trials)
+    lines = []
+    for rna_id, sequence in sequences.items():
+        lines.append(f"{rna_id} ({split[rna_id]})")
+        lines.append(f"  {'sequence':<{width}}  {sequence}")
+        target = None
+        for trial in trials:
+            score = next(s for s in trial["result"]["scores"] if s["id"] == rna_id)
+            if target is None:
+                structure, skipped = pairs_to_dotbracket(score["target_pairs"], len(sequence))
+                lines.append(f"  {'target':<{width}}  {structure}" + (f"  [{len(skipped)} pairs not shown]" if skipped else ""))
+                target = structure
+            structure, skipped = pairs_to_dotbracket(score["predicted_pairs"], len(sequence))
+            note = f"  [{len(skipped)} pairs not shown]" if skipped else ""
+            lines.append(f"  {trial['name']:<{width}}  {structure}  loss {score['loss']:.3f}{note}")
+        lines.append("")
+    path.write_text("\n".join(lines))
+
+
 def write_csv(rows: list[dict], path: Path) -> None:
     with path.open("w", newline="") as stream:
         writer = csv.DictWriter(stream, fieldnames=list(rows[0]))
@@ -169,7 +200,9 @@ def plot_seed_spread(rows: list[dict], summary: list[dict], path: Path) -> None:
                 ax.hlines(_mean(seeds), x - 0.25, x + 0.25, color=INK, linewidth=2, zorder=4, label="seed mean")
             if part == "train":
                 row = summary[x]
-                ax.scatter([x + 0.3], [row["hpo_loss"]], marker="D", s=40, color=MUTED, zorder=4, label="HPO loss")
+                if not math.isnan(row["hpo_loss"]):
+                    ax.hlines(row["hpo_loss"], x - 0.35, x + 0.35, color=MUTED, linewidth=1.5,
+                              linestyles="dashed", zorder=4, label="HPO loss")
                 ax.scatter([x + 0.3], [row["reproduction_train"]], marker="o", s=70, facecolor="none",
                            edgecolor=INK, linewidth=1.5, zorder=5, label="reproduction (HPO seeds)")
         ax.set_xticks(range(len(groups)), groups)
@@ -180,6 +213,50 @@ def plot_seed_spread(rows: list[dict], summary: list[dict], path: Path) -> None:
     fig.legend(unique.values(), unique.keys(), loc="upper center", ncol=len(unique), frameon=False,
                bbox_to_anchor=(0.5, 1.0))
     fig.tight_layout(rect=(0, 0, 1, 0.92))
+    fig.savefig(path, dpi=150)
+    plt.close(fig)
+
+
+def plot_per_rna(trials: list[dict], split: dict[str, str], path: Path) -> None:
+    """Loss per RNA: each config's seed mean (dot) and range (line); baseline as ring.
+
+    Shows on which RNAs a config gains over the baseline, and where it depends on the seed.
+    """
+    seeds = [t for t in trials if t["check"] != "reproduction"]
+    groups = list(dict.fromkeys(t["group"] for t in seeds))
+    rna_ids = list(split)
+    losses = {}
+    for trial in seeds:
+        for score in trial["result"]["scores"]:
+            losses.setdefault((trial["group"], score["id"]), []).append(score["loss"])
+    configs = [g for g in groups if g != "no MSA"]
+    step = 0.6 / max(len(groups) - 1, 1)
+    fig, ax = plt.subplots(figsize=(7, 1.2 + 0.45 * len(rna_ids)))
+    _style(ax)
+    ax.grid(axis="y", visible=False)
+    ax.grid(axis="x", color="#e5e4e0", linewidth=0.8)
+    for index, group in enumerate(groups):
+        offset = -0.3 + index * step if len(groups) > 1 else 0
+        baseline = group == "no MSA"
+        color = MUTED if baseline else CATEGORICAL[configs.index(group) % len(CATEGORICAL)]
+        for y, rna_id in enumerate(rna_ids):
+            values = losses.get((group, rna_id))
+            if not values:
+                continue
+            ax.hlines(y + offset, min(values), max(values), color=color, linewidth=1.5, zorder=3)
+            ax.scatter([_mean(values)], [y + offset], s=40, zorder=4, linewidth=1.5,
+                       facecolor="none" if baseline else color, edgecolor=color if baseline else "white",
+                       label=group if y == 0 else None)
+    heldout = [y for y, rna_id in enumerate(rna_ids) if split[rna_id] == "heldout"]
+    if heldout:
+        ax.axhline(heldout[0] - 0.5, color=MUTED, linewidth=0.8)
+    ax.set_yticks(range(len(rna_ids)), [f"{r} (held-out)" if split[r] == "heldout" else r for r in rna_ids])
+    ax.invert_yaxis()
+    ax.set_xlim(-0.02, 1.02)
+    ax.set_xlabel("loss (dot: mean over seeds, line: seed range)", color=INK)
+    ax.set_title("Loss per RNA", color=INK, loc="left")
+    fig.legend(loc="upper center", ncol=len(groups), frameon=False)
+    fig.tight_layout(rect=(0, 0, 1, 1 - 0.5 / (1.2 + 0.45 * len(rna_ids))))
     fig.savefig(path, dpi=150)
     plt.close(fig)
 
@@ -206,7 +283,7 @@ def plot_stability(rows: list[dict], path: Path) -> None:
 
 
 def analyze(results: Path, hpo_results: Path, output: Path) -> list[dict]:
-    trials, hpo_losses, split = load(results, hpo_results)
+    trials, hpo_losses, split, sequences = load(results, hpo_results)
     if not trials:
         raise ValueError(f"No finished trials in {results}")
     rows = trial_rows(trials, split)
@@ -215,7 +292,9 @@ def analyze(results: Path, hpo_results: Path, output: Path) -> list[dict]:
     write_csv(rows, output / "trials.csv")
     write_csv(summary, output / "summary.csv")
     write_csv(stability, output / "stability.csv")
+    write_predictions(trials, split, sequences, output / "predictions.txt")
     plot_seed_spread(rows, summary, output / "seed_spread.png")
+    plot_per_rna(trials, split, output / "per_rna_loss.png")
     plot_stability(stability, output / "stability.png")
     for row in summary:
         LOGGER.info(

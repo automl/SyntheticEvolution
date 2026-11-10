@@ -173,4 +173,7 @@ checks/results/
   `summary.csv` (per group: HPO loss, reproduction and its difference to the
   HPO loss, mean and SD over seeds on train and held-out RNAs),
   `stability.csv` (per group and RNA: mean pairwise F1 between the seeds'
-  predicted pairs, loss mean and SD), `seed_spread.png`, `stability.png`.
+  predicted pairs, loss mean and SD), `predictions.txt` (per RNA: target and
+  every trial's prediction as dot-bracket with its loss; pairs dot-bracket
+  cannot show are counted), `seed_spread.png`, `per_rna_loss.png`
+  (per RNA: each group's seed mean and range, baseline as ring) and `stability.png`.

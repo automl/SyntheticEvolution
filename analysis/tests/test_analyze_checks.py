@@ -44,8 +44,8 @@ def exports(tmp_path):
     for name, (loss_a, pred_a, loss_b, pred_b) in values.items():
         write(checks / 'trials' / name / 'trial_result.json', dict(
             loss=(loss_a + loss_b) / 2, shs_seed=1, af3_seed=1,
-            scores=[dict(id='a', loss=loss_a, predicted_pairs=pred_a),
-                    dict(id='b', loss=loss_b, predicted_pairs=pred_b)]))
+            scores=[dict(id='a', loss=loss_a, target_pairs=TRAIN['pairs'], predicted_pairs=pred_a),
+                    dict(id='b', loss=loss_b, target_pairs=HELDOUT['pairs'], predicted_pairs=pred_b)]))
     return checks, hpo
 
 
@@ -74,8 +74,11 @@ def test_summary_splits_train_and_heldout_and_compares_with_hpo(exports, tmp_pat
     assert (stability['c7a']['split'], float(stability['c7a']['pairwise_f1'])) == ('train', 0.0)
     assert stability['c7b']['split'] == 'heldout'
     assert stability['no MSAa']['pairwise_f1'] == 'nan'  # one seed: nothing to compare
+    predictions = (output / 'predictions.txt').read_text().splitlines()
+    assert predictions[:4] == ['a (train)', '  sequence  ACGU', '  target    (..)', '  c7_hpo    (..)  loss 0.250']
+    assert '  nomsa_s1  ....  loss 1.000' in predictions
     assert sorted(path.name for path in output.iterdir()) == [
-        'seed_spread.png', 'stability.csv', 'stability.png', 'summary.csv', 'trials.csv']
+        'per_rna_loss.png', 'predictions.txt', 'seed_spread.png', 'stability.csv', 'stability.png', 'summary.csv', 'trials.csv']
 
 
 def test_an_rna_id_with_another_sequence_than_in_the_hpo_dataset_is_an_error(exports, tmp_path):
