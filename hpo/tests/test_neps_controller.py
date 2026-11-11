@@ -11,6 +11,14 @@ import pytest
 from hpo import run_neps_hpo as entry
 
 
+class FakeNePSError(Exception):
+    pass
+
+
+SPACE_MISMATCH = ('The pipeline space on disk does not match the one provided.\n'
+                  'Pipeline space is saved at: ...')
+
+
 @pytest.fixture
 def neps_case(tmp_path, monkeypatch):
     config = dict(search={'N': dict(type='integer', lower=1, upper=30),
@@ -23,6 +31,7 @@ def neps_case(tmp_path, monkeypatch):
                            Float=Mock(return_value='float-space'),
                            Categorical=Mock(return_value='category-space'), run=Mock())
     monkeypatch.setitem(sys.modules, 'neps', fake)
+    monkeypatch.setitem(sys.modules, 'neps.exceptions', SimpleNamespace(NePSError=FakeNePSError))
     monkeypatch.setattr(sys, 'argv', ['run_neps_hpo', '--config', 'config.yaml'])
     monkeypatch.setattr(entry, 'version', lambda name: '0.16.0')
     load = Mock(return_value=config)
@@ -78,6 +87,38 @@ def test_neps_failure_reaches_neps_which_scores_it_with_the_worst_loss(neps_case
     fake.run.side_effect = search
     with pytest.raises(RuntimeError, match='trial failed'):
         entry.main()
+
+
+def test_controller_that_loses_the_space_race_loads_the_space_from_disk(neps_case):
+    # Another controller wrote pipeline_space.pkl between our check and neps.run.
+    _, fake, _, root, _ = neps_case
+    def search(**kwargs):
+        if 'pipeline_space' in kwargs:
+            (root / 'neps').mkdir()
+            (root / 'neps' / 'pipeline_space.pkl').write_bytes(b'other')
+            raise FakeNePSError(SPACE_MISMATCH)
+    fake.run.side_effect = search
+    entry.main()
+    first, second = fake.run.call_args_list
+    assert 'pipeline_space' in first.kwargs and 'pipeline_space' not in second.kwargs
+    assert {k: v for k, v in first.kwargs.items() if k != 'pipeline_space'} == second.kwargs
+
+
+@pytest.mark.parametrize('message, space_on_disk', [
+    (SPACE_MISMATCH, False),          # nothing to load: a real error
+    ('something else broke', True),   # not the space check
+])
+def test_other_neps_errors_are_not_retried(neps_case, message, space_on_disk):
+    _, fake, _, root, _ = neps_case
+    def search(**kwargs):
+        if space_on_disk:
+            (root / 'neps').mkdir(exist_ok=True)
+            (root / 'neps' / 'pipeline_space.pkl').write_bytes(b'other')
+        raise FakeNePSError(message)
+    fake.run.side_effect = search
+    with pytest.raises(FakeNePSError):
+        entry.main()
+    assert fake.run.call_count == 1
 
 
 def test_wrong_neps_version_stops_before_loading_run(neps_case, monkeypatch):
