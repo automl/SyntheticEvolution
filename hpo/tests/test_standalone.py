@@ -41,7 +41,7 @@ def test_standalone_passes_prepared_dataset_and_prints_loss(tmp_path, monkeypatc
     prepare.assert_called_once_with(config)
     # Standalone trials keep their logs; file count does not matter for one trial.
     run.assert_called_once_with(config, rows, tmp_path / 'standalone_trial', 'identity', None,
-                                keep_logs_in_trial=True)
+                                keep_logs_in_trial=True, score_failed_rnas=False)
     assert capsys.readouterr().out.strip() == 'standalone_trial 0.25'
 
 
@@ -65,11 +65,11 @@ def test_each_trial_runs_in_its_directory_with_its_parameters_and_seeds(tmp_path
     run_trials(tmp_path, monkeypatch, run)
     calls = [(c.args[0]['shs_seed'], c.args[0]['af3_seed'], c.args[2], c.args[4], c.kwargs)
              for c in run.call_args_list]
-    # Seeds default to the run's; logs of many trials are not kept.
+    # Seeds default to the run's; logs of many trials are not kept; a failed RNA keeps the others.
     assert calls == [
-        (42, 42, tmp_path / 'trials' / 'best', {'N': 8}, {'keep_logs_in_trial': False}),
-        (1, 2, tmp_path / 'trials' / 'best_s1', {'N': 8}, {'keep_logs_in_trial': False}),
-        (42, 3, tmp_path / 'trials' / 'nomsa', {'N': 1}, {'keep_logs_in_trial': False}),
+        (42, 42, tmp_path / 'trials' / 'best', {'N': 8}, {'keep_logs_in_trial': False, 'score_failed_rnas': True}),
+        (1, 2, tmp_path / 'trials' / 'best_s1', {'N': 8}, {'keep_logs_in_trial': False, 'score_failed_rnas': True}),
+        (42, 3, tmp_path / 'trials' / 'nomsa', {'N': 1}, {'keep_logs_in_trial': False, 'score_failed_rnas': True}),
     ]
     assert capsys.readouterr().out.split('\n')[:3] == ['best 0.1', 'best_s1 0.2', 'nomsa 0.3']
 

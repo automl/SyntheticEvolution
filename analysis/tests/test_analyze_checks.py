@@ -32,6 +32,7 @@ def exports(tmp_path):
         dict(name='c7_s2', check='seed', base=7),
         dict(name='nomsa_s1', check='baseline'),
         dict(name='nomsa_s2', check='baseline'),  # failed: no result
+        dict(name='nomsa_s3', check='baseline'),
     ]
     write(checks / 'manifest.json', dict(trials=trials))
     # (loss of a, prediction of a, loss of b, prediction of b) per trial
@@ -40,12 +41,16 @@ def exports(tmp_path):
         'c7_s1': (0.0, [[0, 3]], 0.5, [[0, 3]]),
         'c7_s2': (0.5, [], 0.25, [[1, 2]]),
         'nomsa_s1': (1.0, [], 1.0, []),
+        'nomsa_s3': (1.0, [], 0.5, [[0, 3]]),  # DSSR failed on a
     }
     for name, (loss_a, pred_a, loss_b, pred_b) in values.items():
         write(checks / 'trials' / name / 'trial_result.json', dict(
             loss=(loss_a + loss_b) / 2, shs_seed=1, af3_seed=1,
             scores=[dict(id='a', loss=loss_a, target_pairs=TRAIN['pairs'], predicted_pairs=pred_a),
                     dict(id='b', loss=loss_b, target_pairs=HELDOUT['pairs'], predicted_pairs=pred_b)]))
+    result = json.loads((checks / 'trials' / 'nomsa_s3' / 'trial_result.json').read_text())
+    result['scores'][0]['error'] = 'CalledProcessError: dssr exit 1'
+    write(checks / 'trials' / 'nomsa_s3' / 'trial_result.json', result)
     return checks, hpo
 
 
@@ -65,18 +70,22 @@ def test_summary_splits_train_and_heldout_and_compares_with_hpo(exports, tmp_pat
     assert (c7['train_mean'], c7['heldout_mean']) == (0.25, 0.375)
     assert c7['train_sd'] == pytest.approx(math.sqrt(0.125))
     baseline = summary['no MSA']
-    assert math.isnan(baseline['hpo_loss']) and math.isnan(baseline['train_sd'])
-    assert (baseline['seeds'], baseline['train_mean']) == (1, 1.0)
+    assert math.isnan(baseline['hpo_loss'])
+    # The failed RNA counts with loss 1.0.
+    assert (baseline['seeds'], baseline['train_mean'], baseline['heldout_mean']) == (2, 1.0, 0.75)
     assert 'nomsa_s2 has no result' in caplog.text
 
     stability = read(output / 'stability.csv')
     # Seeds only: a: {(0,3)} vs {} -> 0; b: {(0,3)} vs {(1,2)} -> 0.
     assert (stability['c7a']['split'], float(stability['c7a']['pairwise_f1'])) == ('train', 0.0)
     assert stability['c7b']['split'] == 'heldout'
-    assert stability['no MSAa']['pairwise_f1'] == 'nan'  # one seed: nothing to compare
+    # a: only one prediction left (the other seed failed): nothing to compare.
+    assert stability['no MSAa']['pairwise_f1'] == 'nan'
+    assert stability['no MSAa']['loss_mean'] == '1.0'
     predictions = (output / 'predictions.txt').read_text().splitlines()
     assert predictions[:4] == ['a (train)', '  sequence  ACGU', '  target    (..)', '  c7_hpo    (..)  loss 0.250']
     assert '  nomsa_s1  ....  loss 1.000' in predictions
+    assert '  nomsa_s3  (scoring failed)  loss 1.000  [CalledProcessError: dssr exit 1]' in predictions
     assert sorted(path.name for path in output.iterdir()) == [
         'per_rna_loss.png', 'predictions.txt', 'seed_spread.png', 'stability.csv', 'stability.png', 'summary.csv', 'trials.csv']
 

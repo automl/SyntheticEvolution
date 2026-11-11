@@ -296,6 +296,27 @@ def test_rejected_dssr_output_is_kept_in_the_archive(trial_case):
     assert read_failure_report(directory)['stage'] == 'dssr'
 
 
+@pytest.mark.parametrize('failure', [
+    subprocess.CalledProcessError(1, ['x3dna-dssr']), ValueError('Inconsistent DSSR pair count'),
+], ids=['crash', 'rejected'])
+def test_check_runs_score_an_rna_whose_dssr_fails_and_keep_the_others(trial_case, failure):
+    directory = trial_case[2]
+    fail_dssr_on_second(trial_case, failure)
+    # RNA 1 is perfect (0), RNA 2 failed (1.0).
+    assert run_pipeline(trial_case, score_failed_rnas=True) == pytest.approx(0.5)
+    assert workspace_files(directory) == ['rna_00000.tar.gz', 'rna_00001.tar.gz', 'trial_result.json']
+    failed = json.loads((directory / 'trial_result.json').read_text())['scores'][1]
+    assert failed == dict(id='unpaired', loss=1.0, error=f'{type(failure).__name__}: {failure}',
+                          target_pairs=[], predicted_pairs=[], model='rna_00001.tar.gz/rna_00001_model.cif')
+
+
+def test_a_stop_still_stops_a_check_run(trial_case):
+    fail_dssr_on_second(trial_case, KeyboardInterrupt())
+    with pytest.raises(KeyboardInterrupt):
+        run_pipeline(trial_case, score_failed_rnas=True)
+    assert read_failure_report(trial_case[2])['stage'] == 'dssr'
+
+
 def fail_af3_on_second(case, failure, log_text=''):
     """AF3 finishes the first input, then fails while predicting the second."""
     def run_af3(af3_inputs, output, log_path, cfg):

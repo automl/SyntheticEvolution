@@ -149,6 +149,7 @@ def run_pipeline(
     identity: str,
     parameters: Optional[dict[str, Any]] = None,
     keep_logs_in_trial: bool = False,
+    score_failed_rnas: bool = False,
 ) -> float:
     """Run one parameter configuration across every RNA in the dataset.
 
@@ -156,7 +157,10 @@ def run_pipeline(
     ``trial_result.json`` on success; ``trial_metadata.json`` while running and
     after a failure, together with ``failure_report.json``. Everything else
     lives in a scratch directory. ``keep_logs_in_trial`` (standalone mode)
-    copies the tool logs to ``<trial>/logs/``.
+    copies the tool logs to ``<trial>/logs/``. ``score_failed_rnas`` (check
+    runs) scores an RNA whose DSSR stage fails with loss 1.0 and an ``error``
+    instead of failing the trial; NePS trials fail as a whole, so the optimizer
+    avoids regions that crash.
     """
 
     trial_directory = Path(trial_directory).resolve()
@@ -195,7 +199,8 @@ def run_pipeline(
     with trial_scratch(scratch_root(config)) as scratch:
         try:
             loss = _run_stages(
-                config, rows, trial_directory, scratch, trial_signature, progress
+                config, rows, trial_directory, scratch, trial_signature, progress,
+                score_failed_rnas,
             )
         except BaseException as error:
             # BaseException: timeouts and cancellations must be reported as well.
@@ -305,6 +310,7 @@ def _run_stages(
     scratch: Path,
     trial_signature: dict[str, Any],
     progress: dict[str, Any],
+    score_failed_rnas: bool = False,
 ) -> float:
     """Predict and score every RNA, then publish the trial result.
 
@@ -369,20 +375,32 @@ def _run_stages(
         progress.update(stage='dssr', rna_index=index)
         (content / 'dssr.json').unlink(missing_ok=True)
         try:
-            dssr_predicted_pairs = dssr.run_dssr(
-                content / model_name,
-                content,
-                row['sequence'],
-                config['dssr'],
-                config['dssr_timeout_seconds'],
-                scratch=task_scratch,
-            )
-        finally:
-            # dssr.json is written before its pairs are validated; keep it for
-            # analysis, also when the validation fails.
-            if (content / 'dssr.json').is_file():
-                archive.publish(content, rna_archive)
-        normalized_pairs = normalize_pairs(dssr_predicted_pairs, len(row['sequence']))
+            try:
+                dssr_predicted_pairs = dssr.run_dssr(
+                    content / model_name,
+                    content,
+                    row['sequence'],
+                    config['dssr'],
+                    config['dssr_timeout_seconds'],
+                    scratch=task_scratch,
+                )
+            finally:
+                # dssr.json is written before its pairs are validated; keep it for
+                # analysis, also when the validation fails.
+                if (content / 'dssr.json').is_file():
+                    archive.publish(content, rna_archive)
+            normalized_pairs = normalize_pairs(dssr_predicted_pairs, len(row['sequence']))
+        except Exception as error:
+            # Exception only: a stop signal still stops the trial.
+            if not score_failed_rnas:
+                raise
+            logger.warning('DSSR failed for %s; scored with loss 1.0: %s', row['id'], error)
+            task_evaluations.append(dict(
+                id=row['id'], loss=1.0, error=f'{type(error).__name__}: {error}',
+                target_pairs=row['pairs'], predicted_pairs=[],
+                model=f'{rna_archive.name}/{model_name}',
+            ))
+            continue
 
         ################################ 4. - SCORE #################################
         progress.update(stage='scoring')

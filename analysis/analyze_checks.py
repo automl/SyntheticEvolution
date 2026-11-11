@@ -8,8 +8,9 @@ losses and the training RNAs). Writes into ``analysis/`` next to ``results/``:
 - ``summary.csv``: per config (and baseline), HPO loss, reproduction, and the
   mean and standard deviation over the new seeds on train and held-out RNAs.
 - ``stability.csv``: per config and RNA, the mean pairwise F1 between the
-  seeds' predicted pairs (1 = the same prediction for every seed), and the
-  mean and standard deviation of the RNA's loss.
+  seeds' predicted pairs (1 = the same prediction for every seed; RNAs whose
+  scoring failed are left out), and the mean and standard deviation of the
+  RNA's loss (a failed RNA counts with loss 1.0).
 - ``predictions.txt``: per RNA the target and every trial's prediction in
   dot-bracket notation, with its loss.
 - ``seed_spread.png``, ``per_rna_loss.png`` (where a config gains over the
@@ -126,10 +127,11 @@ def stability_rows(trials: list[dict], split: dict[str, str]) -> list[dict]:
         by_rna = {}
         for trial in seeds:
             for score in trial["result"]["scores"]:
-                pairs = {tuple(pair) for pair in score["predicted_pairs"]}
+                # A failed RNA (scoring error) has no prediction to compare.
+                pairs = None if "error" in score else {tuple(pair) for pair in score["predicted_pairs"]}
                 by_rna.setdefault(score["id"], []).append((pairs, score["loss"]))
         for rna_id, entries in by_rna.items():
-            predictions = [pairs for pairs, _ in entries]
+            predictions = [pairs for pairs, _ in entries if pairs is not None]
             losses = [loss for _, loss in entries]
             rows.append(dict(
                 group=group, rna_id=rna_id, split=split[rna_id], seeds=len(entries),
@@ -159,6 +161,8 @@ def write_predictions(trials: list[dict], split: dict[str, str], sequences: dict
                 target = structure
             structure, skipped = pairs_to_dotbracket(score["predicted_pairs"], len(sequence))
             note = f"  [{len(skipped)} pairs not shown]" if skipped else ""
+            if "error" in score:
+                structure, note = f"{'(scoring failed)':<{len(sequence)}}", f"  [{score['error'][:80]}]"
             lines.append(f"  {trial['name']:<{width}}  {structure}  loss {score['loss']:.3f}{note}")
         lines.append("")
     path.write_text("\n".join(lines))

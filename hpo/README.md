@@ -51,7 +51,9 @@ setting is commented there.
   another in one job with one AF3 worker, each with `parameters` over `fixed`
   and optionally its own `shs_seed` / `af3_seed`. Other keys are kept for
   analysis. Not part of the fingerprint: trials can be added and the run
-  resubmitted. A failed trial does not stop the others.
+  resubmitted. A failed trial does not stop the others. If DSSR fails on one
+  RNA, only that RNA is scored with loss 1.0 and an `error`; the trial
+  continues (NePS trials fail as a whole, so the optimizer avoids the region).
 - **`ignore_errors: true`:** NePS keeps sampling when a trial fails. A failed
   trial gets the worst loss (1.0), so the optimizer avoids its region.
 - **`failures`:** the failure limit (default: stop when more than 20% of the

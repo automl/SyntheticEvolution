@@ -159,6 +159,9 @@ checks/results/
   (`reproduction`, `seed` or `baseline`), `base` (the HPO config id) and the seeds.
 - Trials listed without a `trials/<name>/` directory have failed or not run;
   failed ones have an error report.
+- A score with an `error` key is an RNA whose DSSR stage failed: loss 1.0,
+  no predicted pairs. It counts in the losses but not in the agreement
+  between seeds, and `predictions.txt` marks it.
 - Training vs held-out RNAs: an RNA is *train* if it is in the HPO run's
   dataset (the HPO export's `run_metadata.json`, matched by id and sequence),
   otherwise *held-out*. The analysis therefore also reads the HPO export.

@@ -54,6 +54,8 @@ def main():
                 loss = run_pipeline(
                     trial_config, dataset, directory, fingerprint, parameters,
                     keep_logs_in_trial=keep_logs,
+                    # Check runs keep the other RNAs when DSSR fails on one.
+                    score_failed_rnas='trials' in config,
                 )
         except signals.ControllerStop as stop:
             # run_pipeline has written the failure report; AF3 outputs that are
