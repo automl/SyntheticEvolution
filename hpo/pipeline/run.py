@@ -134,7 +134,7 @@ def load_config(path, *, mode, submitting_controller=False):
             )
 
     extraction = require_mapping('extraction')
-    if 'dssr' in extraction:
+    if extraction.get('dssr') is not None:
         require_text(extraction, 'dssr', 'extraction.')
         require_positive(extraction, 'dssr_timeout_seconds', 'extraction.')
     protein = extraction.get('protein', {})
@@ -554,7 +554,7 @@ def validate_config_for_dataset(config, rows: Dataset) -> None:
             raise ValueError(f'Dataset has {chain_type} chains but generators.{chain_type} is not configured')
         if not isinstance(generator.get('python'), str) or not generator['python'].strip():
             raise ValueError(f'generators.{chain_type}.python must be a nonempty string')
-        if chain_type == 'rna' and 'dssr' not in config['extraction']:
+        if chain_type == 'rna' and config['extraction'].get('dssr') is None:
             raise ValueError('RNA chains need extraction.dssr and extraction.dssr_timeout_seconds')
 
 

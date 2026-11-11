@@ -13,7 +13,6 @@ from hpo.pipeline.run import (
     check_existing_run,
 )
 
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', default='hpo/examples/helix.example.yaml')
