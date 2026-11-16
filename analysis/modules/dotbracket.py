@@ -12,15 +12,32 @@ logger = logging.getLogger("analysis.dotbracket")
 
 def run(context, output_dir):
     """Create dot-bracket output for every exported trajectory configuration."""
+    # Protein contacts are not nested, so dot-bracket covers RNA chains only.
+    protein_ids = {
+        row["id"] for row in context.run_metadata.get("dataset", [])
+        if row.get("type") == "protein"
+    }
+    config_results = {
+        config_id: {
+            **context.trial_results[config_id],
+            "scores": [
+                score for score in context.trial_results[config_id]["scores"]
+                if score.get("id") not in protein_ids
+            ],
+        }
+        for config_id in context.config_ids
+    }
+    if protein_ids:
+        logger.info("Skipping protein chains: %s", ", ".join(sorted(protein_ids)))
+    if not any(result["scores"] for result in config_results.values()):
+        logger.info("No RNA chains; no dot-bracket output.")
+        return
     trajectory_path = context.results_dir / "summary" / "best_config_trajectory.txt"
     output_dir.mkdir(parents=True, exist_ok=True)
     warning_count = write_trajectory(
         trajectory_path,
         output_dir / "dotbracket_trajectory.txt",
-        config_results={
-            config_id: context.trial_results[config_id]
-            for config_id in context.config_ids
-        },
+        config_results=config_results,
     )
     if warning_count:
         logger.warning(

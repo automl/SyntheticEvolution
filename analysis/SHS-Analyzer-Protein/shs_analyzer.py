@@ -14,11 +14,7 @@ import importlib
 import sys
 import warnings
 
-_roots = (Path.cwd(), *Path.cwd().parents)
-REPO_ROOT = next((p for p in _roots if (p / "SHS-Generator-Protein" / "shs_generator.py").exists()), None)
-if REPO_ROOT is None:
-    raise FileNotFoundError("Could not find the SyntheticEvolution repository root.")
-SHS_DIR = (REPO_ROOT / "SHS-Generator-Protein").resolve()
+SHS_DIR = Path(__file__).resolve().parents[2] / "SHS-Generator-Protein"
 if str(SHS_DIR) not in sys.path:
     sys.path.insert(0, str(SHS_DIR))
 
