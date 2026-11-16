@@ -15,13 +15,19 @@ def test_controller_script_starts_requested_module(tmp_path):
     assert script.is_file(), f"Missing controller script: {script}"
 
     # Bash reads BASH_ENV before executing the script.
-    # Provide a fake module command without loading cluster software.
+    # Provide a fake module command without loading cluster software. Like the
+    # real AF3 module, it puts a python on PATH.
+    af3_bin = tmp_path / "af3_bin"
+    af3_bin.mkdir()
+    (af3_bin / "python").write_text("#!/bin/bash\n")
+    (af3_bin / "python").chmod(0o755)
     bash_env = tmp_path / "bash_env.sh"
     bash_env.write_text(
         'module() {\n'
         '    [[ "$#" -eq 2 && "$1" == "load" '
         '&& "$2" == "bio/alphafold/3.0.1" ]] || return 1\n'
         '    export TEST_MODULE_LOADED=1\n'
+        f'    export PATH="{af3_bin}:$PATH"\n'
         '}\n'
     )
 
