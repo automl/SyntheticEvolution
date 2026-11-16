@@ -186,6 +186,12 @@ def log_run_summary(neps_root: Path) -> None:
     log('Run summary: %s', line)
 
 
+def is_space_mismatch(error: Exception) -> bool:
+    """NePS refused the given pipeline space because the one on disk differs."""
+    message = str(error)
+    return 'on disk do' in message and 'not match' in message
+
+
 def main():
     """Load the search configuration and run the NePS controller."""
     parser = argparse.ArgumentParser()
@@ -204,6 +210,7 @@ def main():
             f'found {installed_neps_version}'
         )
     import neps
+    from neps.exceptions import NePSError
 
     config = load_config(args.config, mode='neps')
 
@@ -312,19 +319,32 @@ def main():
     if config.get('optimizer') is not None:
         optimizer_kwargs['optimizer'] = config['optimizer']
 
+    run_kwargs = dict(
+        evaluate_pipeline= evaluate_pipeline,
+        root_directory= neps_root,
+        evaluations_to_spend= config.get('evaluations'),  # None: until the time is up
+        ignore_errors= config['ignore_errors'],
+        # A failed trial gets the worst loss (every objective is 1 - score),
+        # so the optimizer moves away from it; without this, NePS's GP fills
+        # in the median loss. The trial stays `crashed` and off the trajectory.
+        objective_value_on_error=1.0,
+        **optimizer_kwargs,
+    )
     try:
-        neps.run(
-            evaluate_pipeline= evaluate_pipeline,
-            root_directory= neps_root,
-            evaluations_to_spend= config.get('evaluations'),  # None: until the time is up
-            ignore_errors= config['ignore_errors'],
-            # A failed trial gets the worst loss (every objective is 1 - score),
-            # so the optimizer moves away from it; without this, NePS's GP fills
-            # in the median loss. The trial stays `crashed` and off the trajectory.
-            objective_value_on_error=1.0,
-            **space_kwargs,
-            **optimizer_kwargs,
-        )
+        try:
+            neps.run(**run_kwargs, **space_kwargs)
+        except NePSError as exc:
+            # Controllers that start together all see no pipeline_space.pkl and
+            # pass their space. NePS compares it with the one another controller
+            # has just written by pickled bytes, and categorical choices can come
+            # out in a different order per process, so it refuses an identical
+            # space. Load the space from disk instead.
+            if not (space_kwargs and is_space_mismatch(exc)
+                    and (neps_root / "pipeline_space.pkl").is_file()):
+                raise
+            logger.warning('Another controller created the search space first; '
+                           'loading it from disk (%s)', str(exc).splitlines()[0])
+            neps.run(**run_kwargs)
     finally:
         log_run_summary(neps_root)
 

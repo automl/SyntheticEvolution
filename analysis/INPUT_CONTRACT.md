@@ -139,7 +139,8 @@ results.
 
 ## Check runs
 
-`analysis/analyze_checks.py` (planned) reads the `results/` of a check run:
+`python -m analysis.analyze_checks <checks/results> [--hpo-results <results>]`
+reads the `results/` of a check run:
 a standalone run with `trials`, written by `hpo/make_checks.py` and exported
 by `hpo/export_results.py`.
 
@@ -160,7 +161,24 @@ checks/results/
   (`reproduction`, `seed` or `baseline`), `base` (the HPO config id) and the seeds.
 - Trials listed without a `trials/<name>/` directory have failed or not run;
   failed ones have an error report.
+- A score with an `error` key is an RNA whose DSSR stage failed: loss 1.0,
+  no predicted pairs. It counts in the losses but not in the agreement
+  between seeds, and `predictions.txt` marks it.
 - Training vs held-out RNAs: an RNA is *train* if it is in the HPO run's
   dataset (the HPO export's `run_metadata.json`, matched by id and sequence),
   otherwise *held-out*. The analysis therefore also reads the HPO export.
-
+- `--hpo-results` defaults to `results/` two levels up
+  (`<version>/checks/results` → `<version>/results`); it needs
+  `run_metadata.json` and `summary/full.csv` (HPO loss per config id).
+- Groups: `c<base>` for trials with a `base`, `no MSA` for `check: baseline`,
+  otherwise the trial name. Trials with `check: reproduction` are not part of
+  the seed statistics.
+- Output (default `analysis/` next to `results/`, recreated after asking):
+  `trials.csv` (loss on all, train and held-out RNAs per trial),
+  `summary.csv` (per group: HPO loss, reproduction and its difference to the
+  HPO loss, mean and SD over seeds on train and held-out RNAs),
+  `stability.csv` (per group and RNA: mean pairwise F1 between the seeds'
+  predicted pairs, loss mean and SD), `predictions.txt` (per RNA: target and
+  every trial's prediction as dot-bracket with its loss; pairs dot-bracket
+  cannot show are counted), `seed_spread.png`, `per_rna_loss.png`
+  (per RNA: each group's seed mean and range, baseline as ring) and `stability.png`.

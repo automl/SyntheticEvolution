@@ -58,7 +58,9 @@ setting is commented there.
   `fixed` values of the optimized generator and optionally its own `shs_seed` /
   `af3_seed`. Other keys are kept for analysis. Not part of the fingerprint:
   trials can be added and the run resubmitted. A failed trial does not stop the
-  others.
+  others. If extraction (e.g. DSSR) fails on one chain, only that chain is
+  scored with loss 1.0 and an `error`; the trial continues (NePS trials fail
+  as a whole, so the optimizer avoids the region).
 - **`extraction`:** `dssr` and `dssr_timeout_seconds` for RNA chains, and
   optional `protein` settings (`atom`, `cutoff`, `min_separation`) for contacts.
   Protein extraction needs `biopython` and `numpy` in the controller
@@ -104,6 +106,9 @@ The dataset holds the HPO training rows (`1_train.csv`, from
 `input` written into the config is the Helix path `checks/dataset` next to the
 HPO input (`--input` overrides it). Commit the check directory to the thesis
 repo, pull it on Helix and submit the config with `submit_standalone_trial`.
+After the run: `export_results --config checks/config.yaml`, then
+`python -m analysis.analyze_checks checks/results` (see
+`analysis/INPUT_CONTRACT.md`, "Check runs").
 
 ## Dataset
 
