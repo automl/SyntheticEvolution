@@ -25,7 +25,9 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
-VALID_BASES = list(AMINO_ACIDS) + ['-']
+# Real sequences can hold ambiguous or rare residues (B, J, O, U, X, Z); the
+# features only compare residues with the query and '-', so they are kept.
+VALID_BASES = list(AMINO_ACIDS + 'BJOUXZ') + ['-']
 
 
 # ---------------------------------------------------------------------------
