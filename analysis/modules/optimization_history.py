@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 from analysis.results_loader import ResultsContext
 
 LOGGER = logging.getLogger("analysis.optimization_history")
+HPO_ONLY = True  # reads the NePS summary; skipped for standalone runs
 
 
 def _float(value: str) -> float:

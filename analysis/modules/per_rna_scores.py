@@ -24,6 +24,7 @@ def run(context: ResultsContext, output_dir: Path) -> None:
     losses = _losses(context)
     rna_ids = list(losses)
     labels = [str(config_id) for config_id in context.config_ids]
+    xlabel = "trial" if context.standalone else "trajectory config ID"
     output_dir.mkdir(parents=True, exist_ok=True)
 
     fig, ax = plt.subplots(figsize=(1 + 0.55 * len(labels), 1 + 0.4 * len(rna_ids)))
@@ -32,9 +33,9 @@ def run(context: ResultsContext, output_dir: Path) -> None:
         for column, value in enumerate(losses[rna_id]):
             ax.text(column, row, f"{value:.2f}", ha="center", va="center", fontsize=7,
                     color="white" if value > 0.5 else "black")
-    ax.set_xticks(range(len(labels)), labels, fontsize=8)
+    ax.set_xticks(range(len(labels)), labels, fontsize=8, rotation=45 if context.standalone else 0)
     ax.set_yticks(range(len(rna_ids)), rna_ids, fontsize=8)
-    ax.set_xlabel("trajectory config ID")
+    ax.set_xlabel(xlabel)
     fig.colorbar(image, ax=ax, label="loss")
     fig.tight_layout()
     fig.savefig(output_dir / "per_rna_heatmap.png", dpi=150)
@@ -45,8 +46,8 @@ def run(context: ResultsContext, output_dir: Path) -> None:
         ax.plot(range(len(labels)), losses[rna_id], marker="o", markersize=3, label=rna_id)
     mean = [context.trial_results[config_id]["loss"] for config_id in context.config_ids]
     ax.plot(range(len(labels)), mean, color="black", linewidth=2.5, label="trial loss")
-    ax.set_xticks(range(len(labels)), labels, fontsize=8)
-    ax.set_xlabel("trajectory config ID")
+    ax.set_xticks(range(len(labels)), labels, fontsize=8, rotation=45 if context.standalone else 0)
+    ax.set_xlabel(xlabel)
     ax.set_ylabel("loss")
     ax.legend(fontsize=7, bbox_to_anchor=(1.01, 1), loc="upper left")
     fig.tight_layout()

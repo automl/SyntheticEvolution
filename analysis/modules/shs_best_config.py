@@ -43,7 +43,7 @@ def _selected_config_ids(context: ResultsContext) -> list[int]:
     top_n = config.get("top_n", 1)
     if not isinstance(top_n, int) or isinstance(top_n, bool) or top_n < 1:
         raise ValueError("Analysis config field 'shs.top_n' must be a positive integer")
-    if top_n == 1:
+    if top_n == 1 and not context.standalone:
         return [_best_config_id(context.best_config_text)]
     return sorted(
         context.config_ids,
@@ -63,8 +63,8 @@ def _shs_modules(chain_type: str) -> tuple[Any, Any]:
     return pair_map, analyzer
 
 
-def _plot_config(config_id: int, context: ResultsContext, output_dir: Path, modules: dict[str, Any]) -> int:
-    config_dir = context.results_dir / "configs" / f"config_{config_id}" / "shs"
+def _plot_config(config_id: Any, context: ResultsContext, output_dir: Path, modules: dict[str, Any]) -> int:
+    config_dir = context.trial_dirs[config_id] / "shs"
     task_dirs = sorted(path for path in config_dir.glob("rna_*") if path.is_dir())
     if not task_dirs:
         raise FileNotFoundError(f"No exported SHS tasks found for Config ID {config_id}")
@@ -88,13 +88,13 @@ def _plot_config(config_id: int, context: ResultsContext, output_dir: Path, modu
             json.dumps(af3_input),
             pairs=pair_map,
         )
-        _write_msa_views(data, task_output := output_dir / f"config_{config_id}" / task_dir.name)
+        _write_msa_views(data, task_output := output_dir / context.trial_dirs[config_id].name / task_dir.name)
         features = analyzer.Features(data)
         task_output.mkdir(parents=True, exist_ok=True)
         # Covariance needs at least two sample rows.
         if len(data.aligned) < 2:
             LOGGER.warning(
-                "Skipping covariance plots for Config ID %d, %s: MSA has only %d sample",
+                "Skipping covariance plots for Config ID %s, %s: MSA has only %d sample",
                 config_id, task_dir.name, len(data.aligned),
             )
         else:

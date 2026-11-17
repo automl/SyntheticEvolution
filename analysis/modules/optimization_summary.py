@@ -7,6 +7,8 @@ from typing import Any
 from analysis.results_loader import ResultsContext
 
 
+HPO_ONLY = True  # the NePS trajectory and best config; skipped for standalone runs
+
 def run(context: ResultsContext, output_dir: Path) -> None:
     """Write trajectory losses and the NePS best-configuration text."""
     trajectory = [

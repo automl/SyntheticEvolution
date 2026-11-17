@@ -102,7 +102,10 @@ def run_analysis(
     _ensure_separate_directories(results_dir, output_dir)
     LOGGER.info("Loading exported results from %s", results_dir)
     context = load_results(results_dir, output_dir, analysis_config_path)
-    LOGGER.info("Loaded %d trajectory configurations", len(context.config_ids))
+    LOGGER.info(
+        "Loaded %d %s", len(context.config_ids),
+        "standalone trials" if context.standalone else "trajectory configurations",
+    )
 
     modules = discover_modules()
     if not modules:
@@ -112,6 +115,9 @@ def run_analysis(
     for module in modules:
         name = module.__name__.rsplit(".", maxsplit=1)[-1]
         module_output = output_dir / name
+        if context.standalone and getattr(module, "HPO_ONLY", False):
+            LOGGER.info("[SKIP] module: %s (HPO runs only)", name)
+            continue
         LOGGER.info("[START] module: %s", name)
         try:
             run = module.run

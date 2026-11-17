@@ -142,7 +142,7 @@ def run(context: ResultsContext, output_dir: Path) -> None:
             len(context.config_ids),
         )
         return
-    names = [f"config_{config_id}" for config_id in context.config_ids]
+    names = [context.trial_dirs[config_id].name for config_id in context.config_ids]
     trials = []
     for name, config_id in zip(names, context.config_ids):
         try:

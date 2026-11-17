@@ -2,7 +2,6 @@
 
 import json
 import logging
-import re
 from collections import Counter
 from pathlib import Path
 
@@ -11,7 +10,7 @@ logger = logging.getLogger("analysis.dotbracket")
 
 
 def run(context, output_dir):
-    """Create dot-bracket output for every exported trajectory configuration."""
+    """Create dot-bracket output for every exported trajectory configuration or trial."""
     # Protein contacts are not nested, so dot-bracket covers RNA chains only.
     protein_ids = {
         row["id"] for row in context.run_metadata.get("dataset", [])
@@ -32,10 +31,8 @@ def run(context, output_dir):
     if not any(result["scores"] for result in config_results.values()):
         logger.info("No RNA chains; no dot-bracket output.")
         return
-    trajectory_path = context.results_dir / "summary" / "best_config_trajectory.txt"
     output_dir.mkdir(parents=True, exist_ok=True)
     warning_count = write_trajectory(
-        trajectory_path,
         output_dir / "dotbracket_trajectory.txt",
         config_results=config_results,
     )
@@ -232,54 +229,11 @@ def format_prediction(prediction, warnings):
     )
 
 
-def parse_config_ids(trajectory_path):
-    """Return Config IDs in the order they appear."""
-    logger.info(
-        "Reading configuration trajectory: %s",
-        trajectory_path,
-    )
-
-    text = trajectory_path.read_text()
-
-    config_ids = [
-        int(match)
-        for match in re.findall(
-            r"^Config ID:\s*(\d+)\s*$",
-            text,
-            re.MULTILINE,
-        )
-    ]
-
-    logger.info(
-        "Found %d Config IDs in trajectory: %s",
-        len(config_ids),
-        config_ids,
-    )
-
-    if not config_ids:
-        raise ValueError(
-            f"No Config IDs found in {trajectory_path}"
-        )
-
-    return config_ids
-
-
-def write_trajectory(input_path, output_path, config_results=None):
-    logger.info("Mode: trajectory")
-    logger.info("Input: %s", input_path)
+def write_trajectory(output_path, config_results):
+    """Write targets and predictions of ``config_results`` in their order
+    (the trajectory of an HPO run, or the trials of a standalone run)."""
     logger.info("Output: %s", output_path)
-
-    # best_config_trajectory.txt:
-    #
-    # neps/
-    # ├── summary/
-    # │   └── best_config_trajectory.txt
-    # └── configs/
-    #
-    if config_results is None:
-        raise ValueError("config_results are required for adapter execution")
-
-    config_ids = parse_config_ids(input_path)
+    config_ids = list(config_results)
 
     trajectory_results = []
     warning_count = Counter()
@@ -291,7 +245,7 @@ def write_trajectory(input_path, output_path, config_results=None):
     ):
         logger.info(
             "Processing trajectory entry %d/%d: "
-            "Config ID %d",
+            "Config ID %s",
             config_number,
             len(config_ids),
             config_id,
@@ -303,7 +257,7 @@ def write_trajectory(input_path, output_path, config_results=None):
         try:
             results = load_trial_result_from_data(config_results[config_id], config_id)
         except Exception:
-            logger.exception("Failed processing Config ID %d", config_id)
+            logger.exception("Failed processing Config ID %s", config_id)
             raise
 
         # Log invalid predictions with configuration context.
@@ -323,7 +277,7 @@ def write_trajectory(input_path, output_path, config_results=None):
     sequence_ids = list(first_results.keys())
 
     logger.info(
-        "Using Config ID %d as sequence reference",
+        "Using Config ID %s as sequence reference",
         first_config_id,
     )
 
@@ -343,7 +297,7 @@ def write_trajectory(input_path, output_path, config_results=None):
             extra = actual_ids - expected_ids
 
             logger.error(
-                "Sequence mismatch in Config ID %d. "
+                "Sequence mismatch in Config ID %s. "
                 "Missing: %s; Extra: %s",
                 config_id,
                 sorted(missing),

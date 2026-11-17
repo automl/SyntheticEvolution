@@ -1,4 +1,4 @@
-"""Load and validate an exported HPO results directory."""
+"""Load and validate an exported HPO or standalone results directory."""
 
 import json
 import re
@@ -17,14 +17,20 @@ _SUMMARY_FILES = (
 
 @dataclass(frozen=True)
 class ResultsContext:
-    """Shared read-only input for analysis modules."""
+    """Shared read-only input for analysis modules.
+
+    A standalone run has no NePS summaries (their texts are empty); its
+    ``config_ids`` are the names of the exported trials.
+    """
 
     results_dir: Path
     output_dir: Path
     run_metadata: dict[str, Any]
     manifest: dict[str, Any]
-    config_ids: list[int]
-    trial_results: dict[int, dict[str, Any]]
+    config_ids: list[Any]
+    trial_results: dict[Any, dict[str, Any]]
+    trial_dirs: dict[Any, Path]
+    standalone: bool
     best_config_text: str
     trajectory_text: str
     short_csv_text: str
@@ -70,30 +76,55 @@ def load_results(
 
     run_metadata_path = _required_file(results_dir, "run_metadata.json")
     manifest_path = _required_file(results_dir, "manifest.json")
+    if analysis_config_path is None:
+        analysis_config = {}
+    else:
+        analysis_config = _read_json(analysis_config_path)
+    manifest = _read_json(manifest_path)
+
+    if "trials" in manifest:
+        # Failed or unfinished trials have no trials/<name>/ directory.
+        trial_dirs = {
+            trial["name"]: results_dir / "trials" / trial["name"]
+            for trial in manifest["trials"]
+            if (results_dir / "trials" / trial["name"] / "trial_result.json").is_file()
+        }
+        if not trial_dirs:
+            raise ValueError(f"No finished trials in {results_dir / 'trials'}")
+        return ResultsContext(
+            results_dir=results_dir,
+            output_dir=output_dir,
+            run_metadata=_read_json(run_metadata_path),
+            manifest=manifest,
+            config_ids=list(trial_dirs),
+            trial_results={name: _read_json(path / "trial_result.json") for name, path in trial_dirs.items()},
+            trial_dirs=trial_dirs,
+            standalone=True,
+            best_config_text="",
+            trajectory_text="",
+            short_csv_text="",
+            analysis_config=analysis_config,
+        )
+
     trajectory_path = _required_file(
         results_dir, "summary/best_config_trajectory.txt"
     )
     best_config_path = _required_file(results_dir, "summary/best_config.txt")
     short_csv_path = _required_file(results_dir, "summary/short.csv")
-    if analysis_config_path is None:
-        analysis_config = {}
-    else:
-        analysis_config = _read_json(analysis_config_path)
 
     trajectory_text = trajectory_path.read_text()
     config_ids = _parse_config_ids(trajectory_text, trajectory_path)
-    manifest = _read_json(manifest_path)
     manifest_config_ids = manifest.get("config_ids")
     if manifest_config_ids is not None and manifest_config_ids != config_ids:
         raise ValueError(
             "Manifest configuration IDs do not match the best-config trajectory"
         )
 
-    trial_results: dict[int, dict[str, Any]] = {}
-    for config_id in config_ids:
-        relative_path = f"configs/config_{config_id}/trial_result.json"
-        trial_path = _required_file(results_dir, relative_path)
-        trial_results[config_id] = _read_json(trial_path)
+    trial_dirs = {config_id: results_dir / "configs" / f"config_{config_id}" for config_id in config_ids}
+    trial_results = {
+        config_id: _read_json(_required_file(results_dir, f"configs/config_{config_id}/trial_result.json"))
+        for config_id in config_ids
+    }
 
     return ResultsContext(
         results_dir=results_dir,
@@ -102,6 +133,8 @@ def load_results(
         manifest=manifest,
         config_ids=config_ids,
         trial_results=trial_results,
+        trial_dirs=trial_dirs,
+        standalone=False,
         best_config_text=best_config_path.read_text(),
         trajectory_text=trajectory_text,
         short_csv_text=short_csv_path.read_text(),

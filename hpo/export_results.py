@@ -160,19 +160,20 @@ def _export_trials(
     run_metadata: dict[str, Any],
     include_archives: bool,
 ) -> tuple[list[str], dict[str, Any]]:
-    """Standalone run with ``trials``: each trial's result and SHS files.
+    """Standalone run: each trial's result and SHS files under ``trials/<name>/``.
 
     Returns the copied files and the failure block. The trial list comes from
     the given config (trials can be added after the run started); each result
-    must match its trial's parameters and seeds.
+    must match its trial's parameters and seeds. Without ``trials``, the one
+    trial in ``standalone_trial/`` is exported as trial ``standalone_trial``.
     """
     copied: list[str] = []
     reports: dict[str, dict[str, Any]] = {}
     report_files: list[str] = []
     finished = 0
-    for trial in config["trials"]:
+    for trial in config.get("trials", [{"name": "standalone_trial"}]):
         name = trial["name"]
-        source_dir = workspace / "trials" / name
+        source_dir = workspace / "trials" / name if "trials" in config else workspace / name
         source = source_dir / "trial_result.json"
         report = source_dir / failures.FAILURE_REPORT
         if source.is_file():
@@ -286,12 +287,14 @@ def export_results(config_path: Path, include_archives: bool = False) -> Path:
         "exported_at": datetime.now(timezone.utc).isoformat(),
     }
 
-    # Check run (standalone with `trials`): results under trials/<name>/.
-    if "trials" in config:
+    # Standalone run: results under trials/<name>/; there are no NePS summaries.
+    if "trials" in config or (workspace / "standalone_trial").is_dir():
         files, manifest["failures"] = _export_trials(
             config, workspace, destination, run_metadata_data, include_archives,
         )
-        manifest.update(trials=config["trials"], files=copied + files)
+        manifest.update(
+            trials=config.get("trials", [{"name": "standalone_trial"}]), files=copied + files,
+        )
         (destination / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
         return destination
 
