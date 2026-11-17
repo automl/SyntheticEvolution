@@ -287,3 +287,9 @@ def test_controller_time_must_leave_room_after_the_stop_margin(load, neps, time,
 def test_export_only_requires_the_run_location(load):
     config = {'run_name': 'test-run', 'workspace_name': 'alphafold'}
     assert load(config, mode='export') == config
+
+
+def test_msa_database_supports_only_protein_chains(standalone):
+    rows = [dict(id='r', type='rna', sequence='GGGAAACCC', pairs=[[0, 8]])]
+    with pytest.raises(ValueError, match='only protein'):
+        run.validate_config_for_dataset(dict(standalone, af3_msa_database='db.fasta'), rows)

@@ -11,6 +11,8 @@ import subprocess
 from pathlib import Path
 from typing import Any
 
+from hpo.pipeline.run import repo_path
+
 NEPS_PACKAGE = 'neural-pipeline-search'
 NEPS_VERSION = '0.16.0'
 
@@ -94,6 +96,10 @@ def check_environment(config: dict[str, Any], mode: str) -> list[str]:
         problems.append(f'model_dir: {config["model_dir"]} is missing or empty')
 
     problems += _check_module(config['module'])
+
+    database = config.get('af3_msa_database')
+    if database and not repo_path(database).is_file():
+        problems.append(f'af3_msa_database: {database} does not exist')
 
     # Import checks only for interpreters that exist.
     if not any(problem.startswith(f'{controller_key}:') for problem in problems):

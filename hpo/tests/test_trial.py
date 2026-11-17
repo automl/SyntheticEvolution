@@ -601,3 +601,12 @@ def test_parameters_are_stored_only_for_chain_types_in_the_dataset(trial_case):
     run_pipeline(trial_case)
     result = json.loads((directory / 'trial_result.json').read_text())
     assert list(result['parameters']) == ['rna']
+
+
+def test_msa_database_input_has_no_msa_and_no_templates(tmp_path):
+    """AF3 then searches the database itself and cannot copy a template."""
+    config = dict(af3_msa_database='db.fasta', af3_seed=7)
+    row = dict(id='p', type='protein', sequence='MKTAYIAK')
+    data = json.loads(trial._generate(config, row, 3, {}, tmp_path).read_text())
+    assert data['name'] == 'rna_00003' and data['modelSeeds'] == [7]
+    assert data['sequences'] == [{'protein': dict(id='A', sequence='MKTAYIAK', templates=[])}]

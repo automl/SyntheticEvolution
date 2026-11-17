@@ -15,7 +15,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from hpo.pipeline.run import (
-    Dataset, GENERATOR_DIRS, normalize_pairs, scratch_root, shs_generation_request, typed_parameters,
+    Dataset, GENERATOR_DIRS, normalize_pairs, repo_path, scratch_root, shs_generation_request, typed_parameters,
     write_json,
 )
 import hpo.pipeline.archive as archive
@@ -99,6 +99,8 @@ def run_af3(af3_inputs: dict[str, Path], output: Path, log_path: Path, config: d
     # the predictions like a different seed would.
     if config.get('af3_buckets'):
         command.append(f"--buckets={','.join(map(str, config['af3_buckets']))}")
+    if config.get('af3_msa_database'):
+        command.append(f'--msa_database={_local_msa_database(config)}')
     if _af3_worker is not None and (_af3_worker[0] != command or _af3_worker[1].poll() is not None):
         stop_af3_worker()
     if _af3_worker is None:
@@ -126,6 +128,20 @@ def run_af3(af3_inputs: dict[str, Path], output: Path, log_path: Path, config: d
         returncode = process.wait()
         _af3_worker = None
         raise subprocess.CalledProcessError(returncode, command)
+
+
+def _local_msa_database(config: dict[str, Any]) -> Path:
+    """Copy the MSA database into scratch (RAM by default) once per job.
+
+    jackhmmer reads the whole file for every chain; GPFS should serve it once.
+    """
+    source = repo_path(config['af3_msa_database'])
+    job = os.environ.get('SLURM_JOB_ID', 'local')
+    target = scratch_root(config) / f'shs_hpo_{job}_msa_database' / source.name
+    if not target.is_file():
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, target)
+    return target
 
 
 def af3_predictions(output: Path, log_path: Path) -> dict[str, Path]:
@@ -251,11 +267,21 @@ def _generate(
 ) -> Path:
     """Generate the AF3 input with the synthetic MSA in scratch.
 
-    The generator and its parameters are chosen by the chain's type.
+    The generator and its parameters are chosen by the chain's type. With
+    ``af3_msa_database`` there is no generator: the input has no MSA, so AF3
+    searches the database, and ``templates: []``, so AF3 cannot copy a known
+    structure.
     """
     chain_type = row['type']
     request_path = task_scratch / 'shs_generation_request.json'
     af3_input_path = task_scratch / 'af3_input.json'
+    if config.get('af3_msa_database'):
+        write_json(af3_input_path, dict(
+            name=f'rna_{index:05d}', modelSeeds=[config['af3_seed']],
+            sequences=[{'protein': dict(id='A', sequence=row['sequence'], templates=[])}],
+            dialect='alphafold3', version=1,
+        ))
+        return af3_input_path
     write_json(request_path, shs_generation_request(
         row, index, trial_parameters, config['shs_seed'], config['af3_seed']
     ))

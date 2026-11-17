@@ -157,6 +157,9 @@ def load_config(path, *, mode, submitting_controller=False):
     ):
         raise ValueError('af3_buckets must be a nonempty, strictly increasing list of positive integers')
 
+    if config.get('af3_msa_database') is not None:
+        require_text(config, 'af3_msa_database')
+
     storage_settings(config)
 
     scoring_objective = config.get('scoring_objective', 'f1')
@@ -554,6 +557,8 @@ def validate_config_for_dataset(config, rows: Dataset) -> None:
             raise ValueError(f'Dataset has {chain_type} chains but generators.{chain_type} is not configured')
         if not isinstance(generator.get('python'), str) or not generator['python'].strip():
             raise ValueError(f'generators.{chain_type}.python must be a nonempty string')
+        if chain_type != 'protein' and config.get('af3_msa_database'):
+            raise ValueError('af3_msa_database supports only protein chains')
         if chain_type == 'rna' and config['extraction'].get('dssr') is None:
             raise ValueError('RNA chains need extraction.dssr and extraction.dssr_timeout_seconds')
 
