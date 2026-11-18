@@ -1,9 +1,18 @@
 """Environment check before submitting: interpreters, packages, DSSR, models, AF3 module."""
+import json
 import sys
 
 import pytest
 
 from hpo.pipeline import environment
+
+
+def fake_probe(monkeypatch, versions):
+    """Make every probed interpreter report all modules importable and these package
+    versions, so a test does not depend on what the test interpreter has installed.
+    The interpreter still starts and its output is parsed and compared as usual."""
+    output = json.dumps(dict(missing=[], versions=versions))
+    monkeypatch.setattr(environment, '_PROBE', f'print({json.dumps(output)})')
 
 
 def executable(path, text='#!/bin/sh\n'):
@@ -24,7 +33,7 @@ def setup(tmp_path, monkeypatch):
     monkeypatch.setenv('MODULEPATH', f'/nonexistent:{modules}')
     executable(tmp_path / 'bin' / 'x3dna-dssr')
     monkeypatch.setenv('PATH', f"{tmp_path / 'bin'}:/usr/bin:/bin")
-    # The test interpreter has no NePS; the NePS mode test fakes the probe.
+    # Tests that need specific packages fake the probe (fake_probe), not the interpreter.
     return dict(controller_python=sys.executable, neps_python=sys.executable,
                 generators=dict(rna=dict(python=sys.executable)),
                 extraction=dict(dssr='x3dna-dssr'),
@@ -77,9 +86,11 @@ def test_neps_mode_requires_the_pinned_neps_version(setup, monkeypatch):
     assert found['generators.rna.python'] == (['numpy'], {})
 
 
-def test_wrong_neps_version_is_reported(setup):
+@pytest.mark.parametrize('installed,reported', [(None, 'none'), ('0.15.0', '0.15.0')])
+def test_wrong_neps_version_is_reported(setup, monkeypatch, installed, reported):
+    fake_probe(monkeypatch, {'neural-pipeline-search': installed})
     problems = environment.check_environment(setup, 'neps')
-    assert problems == [f'neps_python: neural-pipeline-search 0.16.0 required in {sys.executable}, found none']
+    assert problems == [f'neps_python: neural-pipeline-search 0.16.0 required in {sys.executable}, found {reported}']
 
 
 def test_module_cannot_be_checked_outside_the_cluster(setup, monkeypatch):
@@ -107,7 +118,9 @@ def test_generator_without_python_and_missing_dssr_setting_are_skipped(setup):
     assert environment.check_environment(setup, 'standalone') == []
 
 
-def test_missing_protein_interpreter_is_reported(setup, tmp_path):
+def test_missing_protein_interpreter_is_reported(setup, tmp_path, monkeypatch):
+    # A protein generator also requires biopython in the controller; fake it as installed.
+    fake_probe(monkeypatch, {})
     setup['generators']['protein'] = dict(python=str(tmp_path / 'nope'))
     assert environment.check_environment(setup, 'standalone') == [
         f'generators.protein.python: {tmp_path / "nope"} does not exist',
