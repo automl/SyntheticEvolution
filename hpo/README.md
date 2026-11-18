@@ -58,9 +58,7 @@ setting is commented there.
   `fixed` values of the optimized generator and optionally its own `shs_seed` /
   `af3_seed`. Other keys are kept for analysis. Not part of the fingerprint:
   trials can be added and the run resubmitted. A failed trial does not stop the
-  others. If extraction (e.g. DSSR) fails on one chain, only that chain is
-  scored with loss 1.0 and an `error`; the trial continues (NePS trials fail
-  as a whole, so the optimizer avoids the region).
+  others.
 - **`extraction`:** `dssr` and `dssr_timeout_seconds` for RNA chains, and
   optional `protein` settings (`atom`, `cutoff`, `min_separation`) for contacts.
   Protein extraction needs `biopython` and `numpy` in the controller
@@ -131,8 +129,9 @@ Optional `mutation_rates`: one rate per position. Examples:
 DSSR's full `pairs` list is used, including noncanonical pairs, mapped through
 its nucleotide records (single chain A, residues 1..N, matching sequence).
 F1 loss: `1 - 2TP / (2TP + FP + FN)`; both empty gives 0, exactly one empty
-gives 1. Every RNA has equal weight. Tool or parser failures fail the trial;
-they never become an empty prediction.
+gives 1. Every RNA has equal weight. If extraction fails on one chain (e.g.
+DSSR crashes on a tangled AF3 model), that chain is scored with loss 1.0 and
+an `error` and the trial continues. Generator and AF3 failures fail the trial.
 
 ## Storage
 

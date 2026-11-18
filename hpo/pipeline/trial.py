@@ -166,7 +166,6 @@ def run_pipeline(
     identity: str,
     parameters: Optional[dict[str, Any]] = None,
     keep_logs_in_trial: bool = False,
-    score_failed_rnas: bool = False,
 ) -> float:
     """Run one parameter configuration across every RNA in the dataset.
 
@@ -174,10 +173,7 @@ def run_pipeline(
     ``trial_result.json`` on success; ``trial_metadata.json`` while running and
     after a failure, together with ``failure_report.json``. Everything else
     lives in a scratch directory. ``keep_logs_in_trial`` (standalone mode)
-    copies the tool logs to ``<trial>/logs/``. ``score_failed_rnas`` (check
-    runs) scores an RNA whose DSSR stage fails with loss 1.0 and an ``error``
-    instead of failing the trial; NePS trials fail as a whole, so the optimizer
-    avoids regions that crash.
+    copies the tool logs to ``<trial>/logs/``.
     """
 
     trial_directory = Path(trial_directory).resolve()
@@ -217,7 +213,6 @@ def run_pipeline(
         try:
             loss = _run_stages(
                 config, rows, trial_directory, scratch, trial_signature, progress,
-                score_failed_rnas,
             )
         except BaseException as error:
             # BaseException: timeouts and cancellations must be reported as well.
@@ -341,7 +336,6 @@ def _run_stages(
     scratch: Path,
     trial_signature: dict[str, Any],
     progress: dict[str, Any],
-    score_failed_rnas: bool = False,
 ) -> float:
     """Predict and score every RNA, then publish the trial result.
 
@@ -349,7 +343,8 @@ def _run_stages(
     2. Predict them with the AF3 worker and publish each archive; also after
        an AF3 failure or stop, for the inputs AF3 finished.
     3. Per chain, extract the pairs (DSSR for RNA, contacts for protein), add
-       ``dssr.json`` or ``contacts.json`` to the archive and score.
+       ``dssr.json`` or ``contacts.json`` to the archive and score. A chain
+       whose extraction fails is scored with loss 1.0 and an ``error``.
     """
     trial_result_path = trial_directory / 'trial_result.json'
     trial_parameters = trial_signature['parameters']
@@ -424,9 +419,10 @@ def _run_stages(
                     archive.publish(content, rna_archive)
             normalized_pairs = normalize_pairs(extracted_pairs, len(row['sequence']))
         except Exception as error:
-            # Exception only: a stop signal still stops the trial.
-            if not score_failed_rnas:
-                raise
+            # DSSR fails on some tangled AF3 models of long RNAs, whatever the
+            # MSA. That costs this chain, not the trial, so the optimizer does
+            # not see the whole config as a crash. Exception only: a stop
+            # signal still stops the trial.
             logger.warning('Extraction failed for %s; scored with loss 1.0: %s', row['id'], error)
             task_evaluations.append(dict(
                 id=row['id'], loss=1.0, error=f'{type(error).__name__}: {error}',

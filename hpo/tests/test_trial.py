@@ -221,10 +221,10 @@ def test_without_fixed_or_sampled_parameters_the_generator_defaults_apply(trial_
 def test_standalone_trial_keeps_logs(trial_case, fails):
     directory = trial_case[2]
     if fails:
-        fail_dssr_on_second(trial_case, RuntimeError('DSSR failed'))
+        fail_dssr_on_second(trial_case, KeyboardInterrupt())
     try:
         run_pipeline(trial_case, keep_logs_in_trial=True)
-    except RuntimeError:
+    except KeyboardInterrupt:
         assert fails
     logs = [name for name in workspace_files(directory) if name.endswith('.log')]
     assert logs == ['logs/af3.log'] + [
@@ -249,41 +249,28 @@ def test_generation_failure_never_submits(trial_case, failure):
     assert report['storage'] == {'files': 1, 'bytes': (trial_case[2] / 'trial_metadata.json').stat().st_size}
 
 
-def test_dssr_crash_keeps_published_archives_and_reports(trial_case):
+def test_tool_crash_report_names_the_rna_signal_command_and_log(trial_case):
     directory = trial_case[2]
-    dssr = trial_case[6]
-    def crash_on_second(model, directory, sequence, exe, timeout, scratch):
-        if model.name == 'rna_00000_model.cif':
-            (directory / 'dssr.json').write_text('{}')
-            return [(0, 3)]
-        (scratch / 'dssr.log').write_text('dssr output\n')
-        raise subprocess.CalledProcessError(-11, ['/opt/x3dna-dssr', f'-i={model}', '--json'])
-    dssr.side_effect = crash_on_second
+    generate = trial_case[4].side_effect
+    def crash_on_second(args, **kwargs):
+        if 'rna_00001' not in args[3]:
+            return generate(args, **kwargs)
+        kwargs['stdout'].write('generator output\n')
+        raise subprocess.CalledProcessError(-11, ['/opt/shs', f'--request-json={args[3]}'])
+    trial_case[4].side_effect = crash_on_second
     with pytest.raises(subprocess.CalledProcessError):
         run_pipeline(trial_case)
 
-    # AF3 output of both RNAs survives: the archive is published before DSSR.
-    assert workspace_files(directory) == [
-        'failure_report.json', 'rna_00000.tar.gz', 'rna_00001.tar.gz', 'trial_metadata.json',
-    ]
-    assert 'dssr.json' in members(directory / 'rna_00000.tar.gz')
-    assert 'dssr.json' not in members(directory / 'rna_00001.tar.gz')
-    assert 'rna_00001_model.cif' in members(directory / 'rna_00001.tar.gz')
-
     report = read_failure_report(directory)
-    assert (report['stage'], report['rna_index'], report['rna_id']) == ('extraction', 1, 'unpaired')
+    assert (report['stage'], report['rna_index'], report['rna_id']) == ('generation', 1, 'unpaired')
     assert (report['error_type'], report['returncode'], report['signal']) == ('CalledProcessError', -11, 'SIGSEGV')
     assert report['timed_out'] is False
     # Scratch paths are marked; only run_metadata.json holds absolute paths.
-    assert report['command'] == ['/opt/x3dna-dssr', '-i=<scratch>/rna_00001/archive/rna_00001_model.cif', '--json']
+    assert report['command'] == ['/opt/shs', '--request-json=<scratch>/rna_00001/shs_generation_request.json']
     assert str(directory) not in report['message']
-    # The trial's AF3 log covers all RNAs.
-    assert report['logs']['shs_generation.log'] == 'generated rna_00001\n'
-    assert report['logs']['dssr.log'] == 'dssr output\n'
-    assert report['logs']['af3.log'].endswith('Done processing fold input rna_00001.\n')
+    assert report['logs'] == {'shs_generation.log': 'generator output\n'}
     assert 'Traceback' in report['traceback']
     assert {'host', 'slurm_job_id', 'slurm_array_task_id', 'time'} <= report.keys()
-    assert report['storage']['files'] == 3
     assert list(scratch_root(trial_case).iterdir()) == []
 
 
@@ -292,31 +279,27 @@ def test_rejected_dssr_output_is_kept_in_the_archive(trial_case):
     dssr = trial_case[6]
     score = dssr.side_effect
     dssr.side_effect = lambda *args, **kwargs: (score(*args, **kwargs), [(0, 99)])[1]
-    with pytest.raises(ValueError):
-        run_pipeline(trial_case)
+    assert run_pipeline(trial_case) == pytest.approx(1.0)
     assert json.loads(member_text(directory / 'rna_00000.tar.gz', 'dssr.json')) == {'model': 'rna_00000_model.cif'}
-    assert read_failure_report(directory)['stage'] == 'extraction'
+    scores = json.loads((directory / 'trial_result.json').read_text())['scores']
+    assert [score['error'].split(':')[0] for score in scores] == ['ValueError', 'ValueError']
 
 
 @pytest.mark.parametrize('failure', [
     subprocess.CalledProcessError(1, ['x3dna-dssr']), ValueError('Inconsistent DSSR pair count'),
 ], ids=['crash', 'rejected'])
-def test_check_runs_score_an_rna_whose_dssr_fails_and_keep_the_others(trial_case, failure):
+def test_an_rna_whose_dssr_fails_is_scored_and_the_others_kept(trial_case, failure):
     directory = trial_case[2]
     fail_dssr_on_second(trial_case, failure)
     # RNA 1 is perfect (0), RNA 2 failed (1.0).
-    assert run_pipeline(trial_case, score_failed_rnas=True) == pytest.approx(0.5)
+    assert run_pipeline(trial_case) == pytest.approx(0.5)
     assert workspace_files(directory) == ['rna_00000.tar.gz', 'rna_00001.tar.gz', 'trial_result.json']
+    # The AF3 model of the failed RNA is kept: the archive is published before DSSR.
+    assert 'rna_00001_model.cif' in members(directory / 'rna_00001.tar.gz')
+    assert 'dssr.json' not in members(directory / 'rna_00001.tar.gz')
     failed = json.loads((directory / 'trial_result.json').read_text())['scores'][1]
     assert failed == dict(id='unpaired', loss=1.0, error=f'{type(failure).__name__}: {failure}',
                           target_pairs=[], predicted_pairs=[], model='rna_00001.tar.gz/rna_00001_model.cif')
-
-
-def test_a_stop_still_stops_a_check_run(trial_case):
-    fail_dssr_on_second(trial_case, KeyboardInterrupt())
-    with pytest.raises(KeyboardInterrupt):
-        run_pipeline(trial_case, score_failed_rnas=True)
-    assert read_failure_report(trial_case[2])['stage'] == 'extraction'
 
 
 def fail_af3_on_second(case, failure, log_text=''):
@@ -365,6 +348,7 @@ def test_interruption_is_reported_like_a_failure(trial_case):
     with pytest.raises(KeyboardInterrupt):
         run_pipeline(trial_case)
     report = read_failure_report(trial_case[2])
+    assert (report['stage'], report['rna_id']) == ('extraction', 'unpaired')
     assert (report['error_type'], report['logs']['dssr.log']) == ('KeyboardInterrupt', 'segfault soon\n')
     assert list(scratch_root(trial_case).iterdir()) == []
 
@@ -374,8 +358,8 @@ def test_interruption_is_reported_like_a_failure(trial_case):
 def test_resume_reuses_archives_and_replaces_the_failure_record(trial_case):
     config, rows, directory, requests, generation, af3, dssr = trial_case
     score = dssr.side_effect
-    fail_dssr_on_second(trial_case, RuntimeError('DSSR failed'))
-    with pytest.raises(RuntimeError):
+    fail_dssr_on_second(trial_case, KeyboardInterrupt())
+    with pytest.raises(KeyboardInterrupt):
         run_pipeline(trial_case)
     assert (generation.call_count, af3.call_count) == (2, 1)
 
