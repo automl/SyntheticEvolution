@@ -97,7 +97,7 @@ generators:
     # Not optimized in this config (optimize: rna). Move these values to `fixed`
     # entries or keep as the search space for `optimize: protein`. The protein
     # generator only knows pair_mutation_approach in [covariance, none] and has
-    # no wobble_prob / pair_weight_* parameters.
+    # no wobble_prob / pair_wc_prob / pair_wobble_prob parameters.
     search:
       N: {type: integer, lower: 2, upper: 128, log: true}
       mutation_rate_unpaired: {type: float, lower: 0.0, upper: 1.0}

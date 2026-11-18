@@ -1,4 +1,4 @@
-"""SHS generator internals, imported in-process: requests, pair map, weights, sampling.
+"""SHS generator internals, imported in-process: requests, pair map, pair probabilities, sampling.
 
 The generator's command-line contract is in ``test_generator_cli.py``.
 """
@@ -18,9 +18,14 @@ import shs_generator  # noqa: E402
 from shs_generator import MsaGenerator, load_request, parse_args  # noqa: E402
 
 ROW = dict(id='example', sequence='ACGU', pairs=[[0, 3]])
-# Deliberately distinct rows catch transposition, row reuse and global normalization.
-RAW_WEIGHTS = {'A': [1, 0, .5, .5], 'C': [.25, .5, .75, 1], 'G': [0, 1, 0, 0], 'U': [.6, .2, 0, .2]}
-WEIGHTS = {f'pair_weight_{a}_{b}': value for a, row in RAW_WEIGHTS.items() for b, value in zip('ACGU', row)}
+# Distinct WC / wobble / mismatch values catch swapped or misplaced entries.
+PAIR_PROBS = dict(pair_wc_prob=.6, pair_wobble_prob=.25)
+EXPECTED_ROWS = {
+    'A': dict(A=.4 / 3, C=.4 / 3, G=.4 / 3, U=.6),
+    'C': dict(A=.4 / 3, C=.4 / 3, G=.6, U=.4 / 3),
+    'G': dict(A=.2, C=.45, G=.2, U=.15),
+    'U': dict(A=.45, C=.2, G=.15, U=.2),
+}
 
 
 def request(tmp_path, row, parameters=None):
@@ -77,62 +82,72 @@ def test_request_is_validated_independently_of_the_csv_reader(tmp_path, override
 
 def test_request_execution_records_effective_parameters(tmp_path, monkeypatch):
     request(tmp_path, dict(ROW, interactions=[[0, 3, .2]], mutation_rates=[0, 1, 0, 1]),
-            dict(N=3, pair_weight_A_C=1))
+            dict(N=3, pair_wc_prob=.4))
     monkeypatch.setitem(sys.modules, 'json_generator', SimpleNamespace(
         build_input_json=lambda sequence, msa, **kwargs: dict(sequence=sequence, msa=msa, **kwargs)))
     data = shs_generator.prepare_af3_json(parse_args(['--request-json', str(tmp_path / 'request.json')]))
     assert len(data['msa']) == 3
     effective = json.loads((tmp_path / 'shs_effective_parameters.json').read_text())
     assert effective['mutation_rates'] == [0, 1, 0, 1]
-    assert effective['pair_mutation_probabilities']['A']['C'] == .5
+    assert effective['parameters']['pair_wc_prob'] == .4
+    assert effective['pair_mutation_probabilities']['A']['C'] == pytest.approx(.2)
 
 
-# ---- Pair weights -----------------------------------------------------------
+# ---- Pair probabilities -----------------------------------------------------
 
-def test_weight_matrix_normalizes_each_partner_row_independently():
-    expected = {
-        'A': dict(A=.5, C=0, G=.25, U=.25),
-        'C': dict(A=.1, C=.2, G=.3, U=.4),
-        'G': dict(A=0, C=1, G=0, U=0),
-        'U': dict(A=.6, C=.2, G=0, U=.2),
-    }
-    parameters, _, _ = split_parameters(WEIGHTS)
+def test_pair_probabilities_split_wc_wobble_and_mismatches():
+    parameters, _, _ = split_parameters(PAIR_PROBS)
     matrix = parameters.pair_mutation_probabilities()
     assert set(matrix) == set('ACGU')
     for base in 'ACGU':
-        assert matrix[base] == pytest.approx(expected[base])
+        assert matrix[base] == pytest.approx(EXPECTED_ROWS[base])
+        assert sum(matrix[base].values()) == pytest.approx(1)
 
 
-@pytest.mark.parametrize('base', 'ACGU')
-def test_all_zero_weight_row_is_rejected(base):
-    with pytest.raises(ValueError, match='positive sum'):
-        MutationParameters(**{f'pair_weight_{base}_{other}': 0 for other in 'ACGU'})
+def test_default_pair_probabilities_match_the_former_default_weights():
+    matrix = MutationParameters().pair_mutation_probabilities()
+    assert matrix == dict(A=dict(A=0, C=0, G=0, U=1), C=dict(A=0, C=0, G=1, U=0),
+                          G=dict(A=0, C=.75, G=0, U=.25), U=dict(A=.75, C=0, G=.25, U=0))
 
 
+@pytest.mark.parametrize('wobble', [0, .5, 1])
+def test_zero_wc_prob_gives_only_mismatches(wobble):
+    matrix = MutationParameters(pair_wc_prob=0, pair_wobble_prob=wobble).pair_mutation_probabilities()
+    assert matrix['A'] == pytest.approx(dict(A=1 / 3, C=1 / 3, G=1 / 3, U=0))
+    assert matrix['G'] == pytest.approx(dict(A=.5, C=0, G=.5, U=0))
+
+
+def test_full_wobble_prob_replaces_wc_for_g_and_u_partners_only():
+    matrix = MutationParameters(pair_wc_prob=1, pair_wobble_prob=1).pair_mutation_probabilities()
+    assert matrix['G'] == dict(A=0, C=0, G=0, U=1)
+    assert matrix['U'] == dict(A=0, C=0, G=1, U=0)
+    assert matrix['A'] == dict(A=0, C=0, G=0, U=1)
+
+
+@pytest.mark.parametrize('name', ['pair_wc_prob', 'pair_wobble_prob'])
 @pytest.mark.parametrize('value', [-.1, 1.1, True, float('nan'), float('inf'), '0.5'])
-def test_invalid_weight_is_rejected(value):
+def test_invalid_pair_probability_is_rejected(name, value):
     with pytest.raises(ValueError):
-        MutationParameters(pair_weight_U_A=value)
+        MutationParameters(**{name: value})
 
 
-def test_cli_accepts_every_weight():
-    for base in 'ACGU':
-        for candidate in 'ACGU':
-            args = parse_args(['--rna-seq', 'ACGU', '--structure', '....',
-                               f'--pair-weight-{base}-{candidate}', '.7'])
-            assert getattr(args, f'pair_weight_{base}_{candidate}') == .7
+def test_former_pair_weights_are_unknown_parameters():
+    with pytest.raises(ValueError, match='Unknown generator parameters'):
+        split_parameters(dict(pair_weight_A_U=1))
+
+
+def test_cli_accepts_the_pair_probabilities():
+    args = parse_args(['--rna-seq', 'ACGU', '--structure', '....',
+                       '--pair-wc-prob', '.7', '--pair-wobble-prob', '.1'])
+    assert (args.pair_wc_prob, args.pair_wobble_prob) == (.7, .1)
 
 
 # ---- Sampling ---------------------------------------------------------------
 
-@pytest.mark.parametrize('partner,expected', [
-    ('A', dict(A=.50001, C=.00001, U=.25001)),
-    ('C', dict(A=.10001, C=.20001, U=.40001)),
-    ('G', dict(A=.00001, C=1.00001, U=.00001)),
-    ('U', dict(A=.60001, C=.20001, U=.20001)),
-])
-def test_sampling_uses_the_partner_row_and_excludes_the_current_base(partner, expected):
-    generator = MsaGenerator(MutationParameters(**WEIGHTS))
+@pytest.mark.parametrize('partner', 'ACGU')
+def test_sampling_uses_the_partner_row_and_excludes_the_current_base(partner):
+    expected = {base: p + .00001 for base, p in EXPECTED_ROWS[partner].items() if base != 'G'}
+    generator = MsaGenerator(MutationParameters(**PAIR_PROBS))
     rng = mock_rng(generator)
     result = generator.mutate_wc('G', np.array(['U']), np.array([partner]),
                                  np.array([1.]), np.array([1.]), 1., False)
@@ -161,11 +176,11 @@ def test_zero_mutation_rate_samples_no_replacement():
 
 
 @pytest.mark.parametrize('approach', ['watson_crick', 'watson_crick_cov'])
-def test_generate_uses_the_configured_pair_weights(approach):
+def test_generate_uses_the_configured_pair_probabilities(approach):
     no_indels = {f'{region}_{kind}_prob': 0 for region in ('stem', 'loop')
                  for kind in ('single_insertion', 'long_insertion', 'single_deletion')}
     parameters = MutationParameters(
-        N=2, pair_mutation_approach=approach, pair_weight_A_U=0, pair_weight_A_C=1,
+        N=2, pair_mutation_approach=approach, pair_wc_prob=0,
         stem_pair_deletion_prob=0, loop_long_deletion_prob=0, **no_indels,
     )
     generator = MsaGenerator(parameters)
@@ -173,5 +188,6 @@ def test_generate_uses_the_configured_pair_weights(approach):
     rng.choice.side_effect = lambda candidates: candidates[0]
     rng.choices.side_effect = lambda candidates, weights: [candidates[int(np.argmax(weights))]]
     pairs = build_pair_map('AG', [[0, 1]], mutation_rates=[0, 1])
-    assert generator.generate('AG', pairs) == ['AG', 'AC']
+    # pair_wc_prob=0: the WC partner U of A gets no weight, mismatches tie, first wins.
+    assert generator.generate('AG', pairs) == ['AG', 'AA']
     rng.choices.assert_called_once()

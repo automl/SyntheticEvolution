@@ -160,7 +160,7 @@ class MsaGenerator:
     def mutate_wc(self, nt: str, partners_original: np.ndarray, partners_mutated: np.ndarray, 
                   interactions: np.ndarray, partner_mutation_rates: np.ndarray, mutation_rate: float, increase_cov: bool) -> str:
         """Try to maximize the number of watson crick base pairs while also trying to leave no partner.
-        This uses the normalized partner-conditioned weights in the parameters."""
+        The replacement base is drawn from pair_wc_prob / pair_wobble_prob given the mutated partners."""
         # first in the multiplet is random with mutation rate
         if len(partners_original) == 0:
             return self.mutate_random(nt, mutation_rate)

@@ -13,6 +13,8 @@ from pair_map import (
 )
 
 APPROACHES = ('watson_crick', 'covariance', 'watson_crick_cov', 'original', 'none')
+WATSON_CRICK = {'A': 'U', 'C': 'G', 'G': 'C', 'U': 'A'}
+WOBBLE = {'G': 'U', 'U': 'G'}
 
 
 def validate_seed(seed, name='seed', allow_none=True):
@@ -44,34 +46,29 @@ class MutationParameters:
     loop_max_deletion_fraction: float = 0.1
     stem_max_insertion_fraction: float = 0.1
 
-
-    # Partner base -> candidate base weights; normalized separately for each row.
-    pair_weight_A_A: float = 0.0
-    pair_weight_A_C: float = 0.0
-    pair_weight_A_G: float = 0.0
-    pair_weight_A_U: float = 1.0
-    pair_weight_C_A: float = 0.0
-    pair_weight_C_C: float = 0.0
-    pair_weight_C_G: float = 1.0
-    pair_weight_C_U: float = 0.0
-    pair_weight_G_A: float = 0.0
-    pair_weight_G_C: float = 0.75
-    pair_weight_G_G: float = 0.0
-    pair_weight_G_U: float = 0.25
-    pair_weight_U_A: float = 0.75
-    pair_weight_U_C: float = 0.0
-    pair_weight_U_G: float = 0.25
-    pair_weight_U_U: float = 0.0
+    # Replacement base for a mutated pair member, given its (mutated) partner
+    # (watson_crick and watson_crick_cov only). With pair_wc_prob the new base
+    # pairs canonically with the partner, otherwise it is a mismatch (uniform over
+    # the non-canonical bases). For G and U partners, a canonical replacement is
+    # the G-U wobble with pair_wobble_prob and Watson-Crick otherwise. The defaults
+    # give the former default (pure WC for A/C partners, 3:1 WC:wobble for G/U).
+    pair_wc_prob: float = 1.0
+    pair_wobble_prob: float = 0.25
 
     def pair_mutation_probabilities(self):
-        """Resolve partner-conditioned preferences; these are not final frequencies."""
+        """Partner base -> probability of each replacement base.
+
+        These are the sampling preferences, not final MSA frequencies: the current
+        base is excluded when sampling, and multiplets mix several partner rows.
+        """
+        wc, wobble = self.pair_wc_prob, self.pair_wobble_prob
         matrix = {}
-        for base in "ACGU":
-            weights = {other: getattr(self, f"pair_weight_{base}_{other}") for other in "ACGU"}
-            total = sum(weights.values())
-            if total <= 0:
-                raise ValueError(f"Pair weight row {base} must have a positive sum")
-            matrix[base] = {other: weight / total for other, weight in weights.items()}
+        for partner in 'ACGU':
+            canonical = {WATSON_CRICK[partner]: wc}
+            if partner in WOBBLE:
+                canonical = {WATSON_CRICK[partner]: wc * (1 - wobble), WOBBLE[partner]: wc * wobble}
+            mismatches = [base for base in 'ACGU' if base not in canonical]
+            matrix[partner] = {base: canonical.get(base, (1 - wc) / len(mismatches)) for base in 'ACGU'}
         return matrix
 
     def __post_init__(self):
@@ -82,7 +79,6 @@ class MutationParameters:
         for field in fields(self):
             if field.name not in ('N', 'pair_mutation_approach'):
                 probability(getattr(self, field.name), field.name)
-        self.pair_mutation_probabilities()
 
 
 def split_parameters(values):
