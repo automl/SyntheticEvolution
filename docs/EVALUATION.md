@@ -6,7 +6,7 @@ However, for reproducibility, we also provide scripts for rerunning our evaluati
 
 You can run the evaluation of 3D predictions with 
 ```
-./analysis/old_scripts/run_evaluation.sh <prediction_data_dir> <true_data_dir> <sample type; either rna_rna (includes RNA monomers) or protein_rna>
+./evaluation/run_evaluation.sh <prediction_data_dir> <true_data_dir> <sample type; either rna_rna (includes RNA monomers) or protein_rna>
 ```
 The ouput are two csvs saved to the ```results``` directory, ```pred_protein_rna.csv``` (or ```pred_rna_rna.csv```) with the computed metrics for the prediction and ```exp_protein_rna.csv``` (or ```exp_rna_rna.csv```) for further information on each sample.
 

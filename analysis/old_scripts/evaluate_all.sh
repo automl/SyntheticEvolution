@@ -2,7 +2,7 @@
 
 echo "Evaluate RNAformer N100 RNA only"
 
-./run_evaluation.sh evaluation/predictions/rnaformerN100/ evaluation/predictions/gt/ rna_rna
+./evaluation/run_evaluation.sh evaluation/predictions/rnaformerN100/ evaluation/predictions/gt/ rna_rna
 
 cd results
 
@@ -17,7 +17,7 @@ cd ..
 
 echo "Evaluate RNAformer N5000 RNA only"
 
-./run_evaluation.sh evaluation/predictions/rnaformerN5000/ evaluation/predictions/gt/ rna_rna
+./evaluation/run_evaluation.sh evaluation/predictions/rnaformerN5000/ evaluation/predictions/gt/ rna_rna
 
 cd results
 
@@ -32,7 +32,7 @@ cd ..
 
 echo "Evaluate RNAformer N20000 RNA only"
 
-./run_evaluation.sh evaluation/predictions/rnaformerN20000/ evaluation/predictions/gt/ rna_rna
+./evaluation/run_evaluation.sh evaluation/predictions/rnaformerN20000/ evaluation/predictions/gt/ rna_rna
 
 cd results
 
@@ -47,7 +47,7 @@ cd ..
 
 echo "Evaluate RNAformer N100 Protein-RNA"
 
-./run_evaluation.sh evaluation/predictions/rnaformerN100/ evaluation/predictions/gt/ protein_rna
+./evaluation/run_evaluation.sh evaluation/predictions/rnaformerN100/ evaluation/predictions/gt/ protein_rna
 
 cd results
 
@@ -62,7 +62,7 @@ cd ..
 
 echo "Evaluate RNAformer N5000 Protein-RNA"
 
-./run_evaluation.sh evaluation/predictions/rnaformerN5000/ evaluation/predictions/gt/ protein_rna
+./evaluation/run_evaluation.sh evaluation/predictions/rnaformerN5000/ evaluation/predictions/gt/ protein_rna
 
 cd results
 
@@ -77,7 +77,7 @@ cd ..
 
 echo "Evaluate RNAformer N20000 Protein-RNA"
 
-./run_evaluation.sh evaluation/predictions/rnaformerN20000/ evaluation/predictions/gt/ protein_rna
+./evaluation/run_evaluation.sh evaluation/predictions/rnaformerN20000/ evaluation/predictions/gt/ protein_rna
 
 cd results
 

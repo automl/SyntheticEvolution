@@ -15,7 +15,5 @@ Archived root-level scripts:
 - `plot_results.py` — plots grouped evaluation results and statistics.
 - `plot_rna_monomer_sec_vs_3d.py` — compares monomer secondary-structure and 3D results.
 - `plot_secondary_structures.py` — plots secondary structures from prediction data.
-- `prepare_evaluation_data.py` — prepares evaluation inputs from prediction and reference data.
 - `rna_msa_generator_base_pair.py` — generates MSA sequences constrained by base pairs.
-- `run_evaluation.sh` — runs secondary-structure evaluation for supplied prediction directories.
 - `summarize_secondary_structure_results.py` — summarizes secondary-structure evaluation results.

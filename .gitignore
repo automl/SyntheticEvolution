@@ -1,5 +1,8 @@
 /data/
-/evaluation/
+# evaluation/ holds code; ignore the downloaded data (download.sh) and the Rfam models
+/evaluation/predictions/
+/evaluation/dssr/
+/evaluation/data/
 /RnaBench/
 /results/
 /database/

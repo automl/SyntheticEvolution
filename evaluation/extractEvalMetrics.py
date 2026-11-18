@@ -1,7 +1,9 @@
 import os
 import sys
 
-ROOT = os.path.dirname(os.path.dirname(__file__))
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# Build for Linux: g++ -O3 -ffast-math -o evaluation/USalign/USalign evaluation/USalign/USalign.cpp
+USALIGN = os.path.join(ROOT, 'evaluation', 'USalign', 'USalign')
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
@@ -40,6 +42,7 @@ def truncate_chain_ids(structure):
                 chain.id = chain.id[0]
 
 def get_rmsd_tm_lddt_scores(file_name_cif_pdb, file_name_cif_af):
+    cmd.reinitialize()  # an earlier file that failed midway leaves its objects behind
     cif_parser = MMCIFParser(QUIET=True)
     structure_reference = cif_parser.get_structure(file_name_cif_pdb, os.path.join(pdb_folder, file_name_cif_pdb))
     structure_predicted = cif_parser.get_structure(file_name_cif_af, os.path.join(af_folder, file_name_cif_af))
@@ -198,7 +201,7 @@ def get_rmsd_tm_lddt_scores(file_name_cif_pdb, file_name_cif_af):
             # -mm 0: For monomeric structures (single chain)
             # -ter 2: Only align the first chain (default for monomeric cases)
             os.system(
-                f"./USalign/USalign {protein_aligned_reference_pdb} {protein_aligned_predicted_pdb} "
+                f"{USALIGN} {protein_aligned_reference_pdb} {protein_aligned_predicted_pdb} "
                 f"-mol prot -mm 0 -ter 2 > {tm_output_path_protein}"
             )
             with open(tm_output_path_protein, 'r') as file:
@@ -247,7 +250,7 @@ def get_rmsd_tm_lddt_scores(file_name_cif_pdb, file_name_cif_af):
             tm_output_path_rna = os.path.join(af_folder, f'{pdb_id}_rna_tm_output.txt')
             # os.system(f'./RNAalign/RNAalign {rna_aligned_reference_pdb} {rna_aligned_predicted_pdb} > {tm_output_path_rna}')
             os.system(
-                f"./USalign/USalign {rna_aligned_reference_pdb} {rna_aligned_predicted_pdb} "
+                f"{USALIGN} {rna_aligned_reference_pdb} {rna_aligned_predicted_pdb} "
                 f"-mol RNA -mm 0 -ter 2 > {tm_output_path_rna}"
             )
 
@@ -309,7 +312,7 @@ def get_rmsd_tm_lddt_scores(file_name_cif_pdb, file_name_cif_af):
 
     tm_output_path_complex = os.path.join(af_folder, f'{pdb_id}_complex_tm_output.txt')
     os.system(
-        f"./USalign/USalign {temp_pdb_file_ref_path} {temp_pdb_file_tgt_path} "
+        f"{USALIGN} {temp_pdb_file_ref_path} {temp_pdb_file_tgt_path} "
         f"-mol auto -mm 1 -ter 0 > {tm_output_path_complex}"
     )
 

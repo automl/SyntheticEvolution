@@ -10,8 +10,8 @@ if [[ $# -ne 3 ]]; then
   usage
 fi
 
-PRED_DIR="$1"
-GT_DIR="$2"
+PRED_DIR="$(realpath "$1")"
+GT_DIR="$(realpath "$2")"
 TYPE="$3"
 
 if [[ "$TYPE" != "rna_rna" && "$TYPE" != "protein_rna" ]]; then
@@ -19,11 +19,15 @@ if [[ "$TYPE" != "rna_rna" && "$TYPE" != "protein_rna" ]]; then
   usage
 fi
 
+# The script lives in evaluation/; everything below runs from the repo root.
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-PROJECT_ROOT="$SCRIPT_DIR"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$PROJECT_ROOT"
 
-python prepare_evaluation_data.py \
+# Start from an empty data/<type>/ so models of an earlier run are not evaluated again.
+rm -rf "data/$TYPE"
+
+python "$SCRIPT_DIR/prepare_evaluation_data.py" \
   --pred_data_dir "$PRED_DIR" \
   --gt_data_dir   "$GT_DIR"
 
