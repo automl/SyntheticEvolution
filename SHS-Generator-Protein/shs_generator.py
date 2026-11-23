@@ -25,7 +25,7 @@ from pair_map import PairMap, AMINO_ACIDS
 
 AMINO_ACIDS_LOWER = AMINO_ACIDS.lower()
 from generator_config import (
-    MutationParameters, APPROACHES, build_pair_map, split_parameters,
+    MutationParameters, APPROACHES, BACKGROUNDS, build_pair_map, split_parameters,
     validate_seed, validate_sequence,
 )
 
@@ -43,6 +43,8 @@ class MsaGenerator:
         validate_seed(seed)
         self.rng = random.Random(None if seed is None else int(seed))
         self.pair_map = None
+        self.background = None
+        self.residue_table = self.parameters.residue_table()
         self._paired_deletions = {}
 
     def generate(self, rna_sequence: str, pair_map: PairMap) -> List[str]:
@@ -58,6 +60,11 @@ class MsaGenerator:
         if not np.array_equal(matrix, matrix.T):
             raise ValueError('PairMap must be symmetric')
         self.pair_map = pair_map
+        if self.parameters.substitution_background == 'query':
+            counts = np.array([sequence.count(aa) for aa in AMINO_ACIDS])
+            self.background = (counts + 1) / (len(sequence) + len(AMINO_ACIDS))
+        else:
+            self.background = np.full(len(AMINO_ACIDS), 1 / len(AMINO_ACIDS))
         self.loop_max_insertion_length = max(int(len(sequence) * self.parameters.loop_max_insertion_fraction), 2)
         self.loop_max_deletion_length = max(int(len(sequence) * self.parameters.loop_max_deletion_fraction), 2)
         self.stem_max_insertion_length = max(int(len(sequence) * self.parameters.stem_max_insertion_fraction), 2)
@@ -113,9 +120,21 @@ class MsaGenerator:
         return self._paired_deletions[pair][0 if i == pair[0] else 1]
 
 
+    def draw_replacement(self, aa: str, energy) -> str:
+        """Draw a residue other than aa: P(b) ~ background_b * exp(-energy_b), P(aa) = 0.
+
+        Excluding aa keeps every mutation probability meaning 'probability of change'.
+        """
+        energy = np.asarray(energy, dtype=float)
+        weights = self.background * np.exp(energy.min() - energy)
+        weights[AMINO_ACIDS.index(aa)] = 0
+        return self.rng.choices(AMINO_ACIDS, weights=weights.tolist())[0]
+
     def mutate_random(self, aa: str, prob: float):
         if self.rng.random() < prob:
-            return self.rng.choice([c for c in AMINO_ACIDS if c != aa])
+            if self.parameters.substitution_background == 'uniform':
+                return self.rng.choice([c for c in AMINO_ACIDS if c != aa])
+            return self.draw_replacement(aa, 0.0)
         return aa
     
     def mutate_unpaired(self, nt: str, loop_long_del_len: int, mutation_rate: float) -> tuple[str, int]:
@@ -142,11 +161,33 @@ class MsaGenerator:
                 prob += ((m * (1 - pm)) - inter * m * (1 - pm)) / (1 - min(pm, 0.9999))
         return self.mutate_random(nt, prob / (len(opts)+1))
 
+    def mutate_residue_class(self, nt: str, partners_original: np.ndarray, partners_mutated: np.ndarray,
+                             interactions: np.ndarray, partner_mutation_rates: np.ndarray,
+                             mutation_rate: float, increase_cov: bool) -> str:
+        """Covariance (or the plain rate) decides whether nt mutates; the residue-class table decides to what.
+
+        E(a) = sum_j w_ij * T[a, s_j] over the earlier partners j, with s_j their already
+        generated residue and w_ij the interaction strength. Deleted partners ('-') are
+        skipped: gaps are outside the table. The first-visited member of a contact has no
+        earlier partner and draws from the background alone.
+        """
+        if increase_cov:
+            mutate = self.mutate_cov(nt, partners_original, partners_mutated, interactions,
+                                     partner_mutation_rates, mutation_rate) != nt
+        else:
+            mutate = self.rng.random() < mutation_rate
+        if not mutate:
+            return nt
+        present = partners_mutated != '-'
+        columns = [AMINO_ACIDS.index(p) for p in partners_mutated[present]]
+        energy = self.residue_table[:, columns] @ interactions[present]
+        return self.draw_replacement(nt, energy)
+
 
 
     def mutate_sequence(self, seq: str) -> str:
         approach = self.parameters.pair_mutation_approach
-        if approach not in ["covariance", "none"]:
+        if approach not in APPROACHES:
             logging.error("Unknown input for --pair-mutation-approach, '%s', please use one of the provided options", self.parameters.pair_mutation_approach)
             raise ValueError()
         seq = np.array(list(seq))
@@ -172,6 +213,9 @@ class MsaGenerator:
                     new_nt = self.mutate_random(nt, self.pair_map.mutation_rate(i))
                 if approach == "covariance":
                     new_nt = self.mutate_cov(nt, seq[prev], new_seq[prev], interactions, partner_mutation_rates,mutation_rate)
+                if approach in ("residue_class_pref", "covariance_residue_class_pref"):
+                    new_nt = self.mutate_residue_class(nt, seq[prev], new_seq[prev], interactions, partner_mutation_rates,
+                                                       mutation_rate, approach == "covariance_residue_class_pref")
                 # optionally override mutation if a deletion happens
                 if self.paired_deletion(i, partners[0]):
                     new_nt = "-"
@@ -229,6 +273,8 @@ def parse_args(argv=None):
             parser.add_argument('-N', type=int)
         elif name == 'pair_mutation_approach':
             parser.add_argument('--pair-mutation-approach', choices=APPROACHES)
+        elif name == 'substitution_background':
+            parser.add_argument('--substitution-background', choices=BACKGROUNDS)
         else:
             flag = name.replace('_', '-')
             parser.add_argument('--' + flag, type=float)

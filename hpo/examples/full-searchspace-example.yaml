@@ -1,8 +1,9 @@
 # Search over all RNA generator parameters. Paste this `search` block under
 # `generators.rna` in your config (indent it) and set `optimize: rna`.
-# Only one generator is optimized per run; the protein generator has fewer
-# parameters (no wobble_prob or pair_wc_prob / pair_wobble_prob, pair_mutation_approach only
-# covariance or none).
+# Only one generator is optimized per run. The protein generator has no
+# wobble_prob, pair_wc_prob or pair_wobble_prob; its own extra entries
+# (pair_mutation_approach choices, substitution_background, residue-class table
+# r_*/o_*) are printed by `python SHS-Generator-Protein/generator_config.py`.
 search:
   N: {type: integer, lower: 2, upper: 512, log: true}
   mutation_rate_paired:   {type: float, lower: 0.0, upper: 1.0}

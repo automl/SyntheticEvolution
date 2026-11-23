@@ -1,0 +1,1850 @@
+[
+ {
+  "id": "none-pairs-7",
+  "sequence": "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+  "pairs": [
+   [
+    0,
+    20
+   ],
+   [
+    2,
+    18
+   ],
+   [
+    4,
+    30
+   ],
+   [
+    7,
+    25
+   ],
+   [
+    10,
+    28
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "none"
+  },
+  "seed": 7,
+  "msa": [
+   "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+   "FqRYGLIAGQRQI-FEKSHDqSRQLECRLTLtIWKQ",
+   "MKNI-QAKQRAISFVKtShHESRQLEERLGLW-V-",
+   "M-iTAY-AAQRIk--gFVK--DSRQVEEfRaLtvGV-SVQc",
+   "MKDAYIrpl-KlQ-RISqFvVKSIFSRRLEEAtLGLIGK-",
+   "-KTKlCIAKQ-QIkSFsVKSHN--QLTENvRyGESEVQ",
+   "Qrn-LLNqngI-KQ-QISFNKSHFSPQLEEALRfLtIE-Q",
+   "MKTAYIAFQifRR-SA-ywrKcSHWScRQSLER-GIIqiEgV-",
+   "wCKTlAYIAKQRNISFaVKSYFSRQLEERpLGKIEVqQ",
+   "tgmMvKHAYdLAQQRQIkSFwLaP-SFSRQLTNRyPsGqLIEVQ",
+   "M-TAYIAKwQRQIdhSY-WaSH-SEQLEEPKGLIEVQrvd",
+   "MKLAcYIScKQRMIS-hFKTHFSR-LEYTLGLIEVqQ"
+  ]
+ },
+ {
+  "id": "none-pairs-42",
+  "sequence": "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+  "pairs": [
+   [
+    0,
+    20
+   ],
+   [
+    2,
+    18
+   ],
+   [
+    4,
+    30
+   ],
+   [
+    7,
+    25
+   ],
+   [
+    10,
+    28
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "none"
+  },
+  "seed": 42,
+  "msa": [
+   "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+   "Mh-AAHIAiKQgRQIYFVcKQHFSKQVEERLGLaIEVQ",
+   "MKPvAVIAKwQRQDSFhVKSHGSRmRL-EL-GLRRVQ",
+   "HkKKqAVIAKQRQK--V--FFSRQLERQ-GLIQV-",
+   "Sni-TFYAAKWRQISF-Kq-HFSRQLEvECLsGcDIEVQ",
+   "MKRKYIDKQRQIDFN-SdieHFSRQLEERLGL-EVQ",
+   "M-TcANIAKQRLISFVlKSHFSPWLEEcRWGRIEkVQ",
+   "NK-CY-AKySRVISF-CSH-SRkQLE-RL-LIEHgfpQ",
+   "M-TAQIAsFQRQdPSFEr-SHNSYQLqE-TLGLnIEVQ",
+   "Q-TAY-sAakKQIflQIVp-DvKSSFhSCQLEEQLQLDYVgQ",
+   "MDTAYWAK-RVISFVCvSHDSNQ-EEpRsLeGLIEVQ",
+   "MKL-YIAqfqIQ-TISFVKSHFSqRQLdEgERLMLIFMQe"
+  ]
+ },
+ {
+  "id": "none-multiplet-7",
+  "sequence": "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+  "pairs": [
+   [
+    1,
+    9,
+    1.0
+   ],
+   [
+    1,
+    14,
+    0.5
+   ],
+   [
+    9,
+    20,
+    0.8
+   ],
+   [
+    3,
+    22,
+    1.0
+   ],
+   [
+    5,
+    11,
+    0.3
+   ],
+   [
+    11,
+    25,
+    1.0
+   ],
+   [
+    8,
+    23,
+    0.9
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "none"
+  },
+  "seed": 7,
+  "msa": [
+   "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+   "GqC-iIDHKRHWSWLIVSQPTGYGCDEKY-",
+   "TSAkWDEKRCNnYFLIVNQ--PRGCDGKRH",
+   "GSHEDLKRtyPD-GLIiANVLTts-SGCDk-KgRH",
+   "dsGdHHVDVKRAA-F-IV-skQ-TdtTAGCDsEKRA",
+   "GEHMREKRHWVYLIVNQVVcPGGEL-IRHm",
+   "tdGHHI-EGPCWSFLHmKN-SfyTPAGeEDEKRHk",
+   "GSyMMDEK-CWYF-IEWQDsFPATVI-KR-",
+   "nTSNyVTEKRCWYFLItIN-SAPfrTGADcEeK--",
+   "qTSHMDkEKRCAYAFYVNlQSnTPAYhMesCEKDH",
+   "GSHYDEKRFLYFLIYNQST-AGCDPCRH",
+   "GFHMLTKaNEWYFLIVmNQyNsTRAGCDEcMR-t"
+  ]
+ },
+ {
+  "id": "none-multiplet-42",
+  "sequence": "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+  "pairs": [
+   [
+    1,
+    9,
+    1.0
+   ],
+   [
+    1,
+    14,
+    0.5
+   ],
+   [
+    9,
+    20,
+    0.8
+   ],
+   [
+    3,
+    22,
+    1.0
+   ],
+   [
+    5,
+    11,
+    0.3
+   ],
+   [
+    11,
+    25,
+    1.0
+   ],
+   [
+    8,
+    23,
+    0.9
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "none"
+  },
+  "seed": 42,
+  "msa": [
+   "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+   "-qS-MRnEKRiCWYHL-VNQSTPvkWkGCMVKsRH",
+   "GSaHMKEKRCW-WLIVvLTiGdTPAGhCDE-EH",
+   "mRSDCDFKRCWYkILIQqNm--TPlYGCDEiMRH",
+   "GSHSDE-IRWNFLIVRQaS-AGGClMEKRHse",
+   "GVHMNEq-RCWYELIlWNsQ-iTPAGCD-IRKg",
+   "GSHMDVKRQWYFLIVNQSTPAGKDEKRH",
+   "GSDIDPQRSWYFL-VNQlSTPAKCQEvKRCv",
+   "GSnHSDE-WfvCGcfYFVISNQSTPAqGPDEKRH",
+   "GSFADCKRQWYFNAVlNQSKTAGCD-KwReH",
+   "r-SmHEGEKqRCFYFLIVNQsFVPA-eCDEakKRK",
+   "VAt-pMEEKrRIWYPT-VNQSyTIYFCDEgTMH"
+  ]
+ },
+ {
+  "id": "covariance-pairs-7",
+  "sequence": "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+  "pairs": [
+   [
+    0,
+    20
+   ],
+   [
+    2,
+    18
+   ],
+   [
+    4,
+    30
+   ],
+   [
+    7,
+    25
+   ],
+   [
+    10,
+    28
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "covariance"
+  },
+  "seed": 7,
+  "msa": [
+   "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+   "FqRYGLIAGQRQI-FEKSHDqSYQLEEhNLGEIWKQ",
+   "MKNI-QAKQRAISFVKtShHESRQLEERLGNI-V-",
+   "M-iTAY-AAQRIk--gFVK--DSRQVEEnIvLDV-EVF",
+   "TKdtrTdATIAKARQISqFvVKSIFSMQLEER-QLES--",
+   "MMI-mYtdhIAM--QpVdSISKSy-LSR-LfyiEhEcGR-LIEVkY",
+   "EyMTAYqngI-KQ-QISFNKSHFSPQLEEALRfLtIE-Q",
+   "MKTAYIAFQifRR-SA-ywrKcSHWScRQSLEHLGLaIEV-",
+   "wCKTlAYIAKQRNISFaVKSYFSIQLEME-GqwLIEQQ",
+   "MKWnAYkI-KQHFTS---YhdHLSRWLE-R-GL-EVQ",
+   "RKSWLIrAK-aReQpIS-EKSHcL-PQLEEM--LLEVQ",
+   "MKPAYsIAKQRnCyIS-VKSNMSRQP-ERLLLVEVL"
+  ]
+ },
+ {
+  "id": "covariance-pairs-42",
+  "sequence": "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+  "pairs": [
+   [
+    0,
+    20
+   ],
+   [
+    2,
+    18
+   ],
+   [
+    4,
+    30
+   ],
+   [
+    7,
+    25
+   ],
+   [
+    10,
+    28
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "covariance"
+  },
+  "seed": 42,
+  "msa": [
+   "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+   "Mh-AAHIAiKQgRQIYFVcKQHEkQRQLP-TLGLIA-I",
+   "qMKTSYIkrlQKQRQISFRKSHFSRQLS-CLGLImEVQ",
+   "kIKKAYmIMMQRQIsSFVKSHSSKQfLEEA-GL--PQ",
+   "Q-CAYMYMQNQIRNV--HMSLQLKClTC-L-EVE",
+   "GiKTgAYIiAK-YQI-qchFkVKS-FSRQLEERLGL-EVQ",
+   "M-TcANIAKQRLISFVlKSHFSRQLEERCSWTPV-",
+   "HWfvTiAYIAA-RQISFe-CSHFSQQME-GC-LYhQKW",
+   "CKRAGIEKQtRSISCGKSHF-PQqL-GRLnHIIEVH",
+   "MKtTKYdI-qKtTiwqRDp-DvFVSSINST-LEEpRLDYIE-Q",
+   "MKTAYIANFGVISwFvVK-HFSlRQLpEsEeTLWWIEVQ",
+   "L-TAS--fVQRQISFVSSHFSRQ-EERMGLSNV-"
+  ]
+ },
+ {
+  "id": "covariance-multiplet-7",
+  "sequence": "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+  "pairs": [
+   [
+    1,
+    9,
+    1.0
+   ],
+   [
+    1,
+    14,
+    0.5
+   ],
+   [
+    9,
+    20,
+    0.8
+   ],
+   [
+    3,
+    22,
+    1.0
+   ],
+   [
+    5,
+    11,
+    0.3
+   ],
+   [
+    11,
+    25,
+    1.0
+   ],
+   [
+    8,
+    23,
+    0.9
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "covariance"
+  },
+  "seed": 7,
+  "msa": [
+   "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+   "GqC-iIDHKRHWSWLIVSQPTGYGCWDCHH",
+   "-GHMDEaTNCAYFLFVNQHTPA-CDEHRH",
+   "GSl-MDEK-NWYFLkdIV--HTATGCGpLKmvS-",
+   "GDVMVEKRskFD-LL-VNQSTPEGCAENRHe",
+   "GS-MDEKGCWqYFLIVRPSR-ADLMEsRI-",
+   "GHHMCgEpKdRFWYFLIMNQTTPvAyGFDEKRkH",
+   "GSIDDhGK-CW-AqeLIWNPCTPAGvCDEKAH",
+   "SF-MDKKRDKYWLIYN--TAFGCV-CRcH",
+   "GRHCDLQRCLEGw-IVD-STPFhMesDDEKRQ",
+   "GSHMDEKRCLpYF--VNQSTMFGCDEKqnRH",
+   "DSHWDEKRGLYFLIVSQST-AGPI-KRH"
+  ]
+ },
+ {
+  "id": "covariance-multiplet-42",
+  "sequence": "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+  "pairs": [
+   [
+    1,
+    9,
+    1.0
+   ],
+   [
+    1,
+    14,
+    0.5
+   ],
+   [
+    9,
+    20,
+    0.8
+   ],
+   [
+    3,
+    22,
+    1.0
+   ],
+   [
+    5,
+    11,
+    0.3
+   ],
+   [
+    11,
+    25,
+    1.0
+   ],
+   [
+    8,
+    23,
+    0.9
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "covariance"
+  },
+  "seed": 42,
+  "msa": [
+   "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+   "-qS-MRnEKRiCWYHL-VNQSTPvkWkGCMVE-W",
+   "GSHdYKEKRCW-WLIVvLTiGdTPAGh-DE-EH",
+   "mRSDCDFKRCWYkILIQqNm--TPlYGVDEiKRH",
+   "GSHSDE-IRWNFLIVRQaS-AGGClMEKRHse",
+   "GVHMNEq-RCTYWLIlVNsQ-iTPAGCD-IRKg",
+   "GSHMDVKRQWYFLIVNQSTPAGKDEKRH",
+   "GSDIDPQRSWYFL-VNQlSTPAKCQEvKRCv",
+   "GSnHSDE-WfvCaWcfYFVISNQSTPAqGPDEKRH",
+   "GSFADCKRQWYFNAVlNQSKTAGMEDKR-",
+   "GSHEGEKqRCFYFLIVNQsFVPA-eCDEakKRK",
+   "VAt-pMEEKrRIWYPT-VNQSyTIAGCHEgTMH"
+  ]
+ },
+ {
+  "id": "residue_class_pref-uniform-pairs-7",
+  "sequence": "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+  "pairs": [
+   [
+    0,
+    20
+   ],
+   [
+    2,
+    18
+   ],
+   [
+    4,
+    30
+   ],
+   [
+    7,
+    25
+   ],
+   [
+    10,
+    28
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "residue_class_pref",
+   "substitution_background": "uniform",
+   "r_POS_NEG": -2.0,
+   "r_SMALL_SMALL": -1.0,
+   "r_POS_POS": 1.5,
+   "o_CYS_CYS": -3.0,
+   "o_ARO_ARO": -1.0
+  },
+  "seed": 7,
+  "msa": [
+   "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+   "tD-TKDhIAFQRM--FVKSHG-FQLEEN-GLIEVK",
+   "MKTAYePAKFRQHSFVSEHHSRQLSERsLGLIMkVQ",
+   "gD-TAYItLKQRkQ-gSFV---F-TQLE-R-AtvLIElVQ",
+   "NKdtrVdALaIAD-RQIPRWKSHFMqTQLKERVVLf-VVQl",
+   "M-EAAIAyK-REqASFNKHHF-RQLEcERDFLIQVQ",
+   "LKVAqngF-AK--Q-FFVsFSHF-DQLETRrPFtLyIEVN",
+   "MKT-YIKT-R-ISF-KWWFcSRrQLvEEtR--IIaEV-",
+   "MKSdAYIAKQ-EISFVAIHFSHQLEGRpLGi-ITVR",
+   "MeckKTAYP-KQHYTS---YhdHFSRQHESDLGmR-FVlQ",
+   "MKTIYrIAWAe-QI-EVKScHASRQLEERLGFFEvVQp",
+   "MKTAYIDrKhQCQISFtVKSHFHRQ-PEETGLIGVQ"
+  ]
+ },
+ {
+  "id": "residue_class_pref-uniform-pairs-42",
+  "sequence": "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+  "pairs": [
+   [
+    0,
+    20
+   ],
+   [
+    2,
+    18
+   ],
+   [
+    4,
+    30
+   ],
+   [
+    7,
+    25
+   ],
+   [
+    10,
+    28
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "residue_class_pref",
+   "substitution_background": "uniform",
+   "r_POS_NEG": -2.0,
+   "r_SMALL_SMALL": -1.0,
+   "r_POS_POS": 1.5,
+   "o_CYS_CYS": -3.0,
+   "o_ARO_ARO": -1.0
+  },
+  "seed": 42,
+  "msa": [
+   "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+   "Mh-NAF--KQRQI--VKSHFSRQ---DLGRIEVQv",
+   "FKTAYIAYQRQwIS-dVKSSN-RQLEEmPL-LMEVQ",
+   "MsEhSLYRqYWQRDMSFI--HSiSRQLEERF-LIAVmQ",
+   "MRInCCIAKQRQq-SFVKmSHhFSRQLEERHCLICC-",
+   "MEyslPiAYgIAKiQRQISFVKSHFdieWRQLEEFLKLItER-",
+   "MKTFYpIA-QRLI-FVKSWFSiRQWEE-cLWLREVkQ",
+   "mMKfFAHSAKdQYQISFe-CSHFSRkQLE-RL-LIEHgfpQ",
+   "M-TAK-AsCQRQdPSFEr-SHISNDLEECmLGL-EVQ",
+   "MKT-YIT-Q-flQIVp-DvKSSFhSVQT-EKLGL-EVQ",
+   "YKTAYIAKQSQ-SFVKwSvHYCRQI-ERpLsGL-cIVQ",
+   "M-TAYI-KQAQISFVKSHdSSRQREEDgLGLMEVSlwh"
+  ]
+ },
+ {
+  "id": "residue_class_pref-uniform-multiplet-7",
+  "sequence": "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+  "pairs": [
+   [
+    1,
+    9,
+    1.0
+   ],
+   [
+    1,
+    14,
+    0.5
+   ],
+   [
+    9,
+    20,
+    0.8
+   ],
+   [
+    3,
+    22,
+    1.0
+   ],
+   [
+    5,
+    11,
+    0.3
+   ],
+   [
+    11,
+    25,
+    1.0
+   ],
+   [
+    8,
+    23,
+    0.9
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "residue_class_pref",
+   "substitution_background": "uniform",
+   "r_POS_NEG": -2.0,
+   "r_SMALL_SMALL": -1.0,
+   "r_POS_POS": 1.5,
+   "o_CYS_CYS": -3.0,
+   "o_ARO_ARO": -1.0
+  },
+  "seed": 7,
+  "msa": [
+   "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+   "GC-FDTCRFWYNkLMVEQST-WGCDEKY-",
+   "TSAkRDEKRCYnYFLIVNQ--PKGCfCEKRH",
+   "GSHMDEKRtyCY-RLIAAVLTts-LGGYp-KmvS-",
+   "GTVMVEKRD-YCLfIPNQS-dPMGsCDpeNknKRH",
+   "GSHMDEGRCSYFLIVNQST-ADvGCEKR-",
+   "GTHMCgEpKdRYWNFLIRiNQTTPvAyGDDEWRH",
+   "GlS-C-F-RDWYFGvISNQT-PLICNEKRF",
+   "-QDMDEKRWWYFLVV--wSTPfAvGCDg-fqCRH",
+   "-S-MDVKRCWeGFcLIVdNhQSTtPAhMQLEKRQ",
+   "GSHMDEKRCGqYFLIVN-STPMGCDEK-H",
+   "GSHMDniLnKRWGYFLSINMSTPAGCDEMR-l"
+  ]
+ },
+ {
+  "id": "residue_class_pref-uniform-multiplet-42",
+  "sequence": "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+  "pairs": [
+   [
+    1,
+    9,
+    1.0
+   ],
+   [
+    1,
+    14,
+    0.5
+   ],
+   [
+    9,
+    20,
+    0.8
+   ],
+   [
+    3,
+    22,
+    1.0
+   ],
+   [
+    5,
+    11,
+    0.3
+   ],
+   [
+    11,
+    25,
+    1.0
+   ],
+   [
+    8,
+    23,
+    0.9
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "residue_class_pref",
+   "substitution_background": "uniform",
+   "r_POS_NEG": -2.0,
+   "r_SMALL_SMALL": -1.0,
+   "r_POS_POS": 1.5,
+   "o_CYS_CYS": -3.0,
+   "o_ARO_ARO": -1.0
+  },
+  "seed": 42,
+  "msa": [
+   "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+   "-qS-MRnEKRiCWYPL-VNQSTPNGADEEN-",
+   "GSHMcDWYQCWvYigQL-VvLTiGdTPAGhCDEYFH",
+   "GSHW-EKRKW-FkLITNqQm--PAGFGEKsRH",
+   "GSHKDVKfRRIlpYFLIpVRQaS-AGGClDEKRHse",
+   "GLHWDHKlRRWEFLIAL-C-PAh-iCysCEKRG",
+   "GSKgMDEKRIWYFL-VNQSTPNGQP-KRH",
+   "GSeHMDCK-LWYFTIRSQSTPR-IPEKCS",
+   "GSHW-EKRYkHYF-IVk-QSTPE-CYEGRH",
+   "GGHMDSKRGWYFNAVlNQSKTAGCD-KwReH",
+   "r-SmHCDEKRCWVILIRNQSTPL-eYDEakKRK",
+   "VAHMDEKRCHmYST-VNQSyTILGCDEWRH"
+  ]
+ },
+ {
+  "id": "residue_class_pref-query-pairs-7",
+  "sequence": "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+  "pairs": [
+   [
+    0,
+    20
+   ],
+   [
+    2,
+    18
+   ],
+   [
+    4,
+    30
+   ],
+   [
+    7,
+    25
+   ],
+   [
+    10,
+    28
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "residue_class_pref",
+   "substitution_background": "query",
+   "r_POS_NEG": -2.0,
+   "r_SMALL_SMALL": -1.0,
+   "r_POS_POS": 1.5,
+   "o_CYS_CYS": -3.0,
+   "o_ARO_ARO": -1.0
+  },
+  "seed": 7,
+  "msa": [
+   "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+   "tE-THYRAGQRL--FVKSHH-GQLEEL-GLIEVT",
+   "MKTAYVAKwESLISFVfLSHISRQLLERLGLmPEkVQ",
+   "gE-TAYItsHLQYNgISF---tHFSKQwLcESR-s-CIEEA",
+   "LLTAY-ARQRQISF-KSHVILQLEEAIGLISG-",
+   "MKTmAYIAK-KCI-FQKSy-IySRQLEEE-eGLI-VFk",
+   "MKHAYI-HQRLqeIS--KSpHQStRYLEEAL-LIS-V",
+   "MKTAYIAEQRN-SA-KSCVSR-L-ERLtGGIWVQ",
+   "V-TAdYhIASLRKISVIKSQQSGQLEEHL-LIEVQq",
+   "qKKSALMdAKQSQISkFVwHaR-FSRQTEERLGmL-GVlQ",
+   "MKTGYIGKQLywfQQdh-w-AQaSHFSWQLE-RL-LIEVQ",
+   "MIlTAWwIAhKARtQYS-EKKiRQdS-FLEESLGLSVVdQ"
+  ]
+ },
+ {
+  "id": "residue_class_pref-query-pairs-42",
+  "sequence": "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+  "pairs": [
+   [
+    0,
+    20
+   ],
+   [
+    2,
+    18
+   ],
+   [
+    4,
+    30
+   ],
+   [
+    7,
+    25
+   ],
+   [
+    10,
+    28
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "residue_class_pref",
+   "substitution_background": "query",
+   "r_POS_NEG": -2.0,
+   "r_SMALL_SMALL": -1.0,
+   "r_POS_POS": 1.5,
+   "o_CYS_CYS": -3.0,
+   "o_ARO_ARO": -1.0
+  },
+  "seed": 42,
+  "msa": [
+   "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+   "Mh-NAF--KQRQI--VKSHFSRQ---ELGRIEVQv",
+   "FKTAYIAYQRQwIS-dVKSLGSR-EEqERKnGLIHVmQ",
+   "MVkTASILKQRPISF-ASRFSEQLEEfELGLKEVQ",
+   "MIaT-VWAHQRQ---VKS-SWRQLEFELMLIsE-iQ",
+   "MKTysl-HIlAKQRQMSEkVKSHFSeRQLEERLGFRQ-Q",
+   "MKQeAYI-rVKRKI-FVKSMFSVQNE-rRLVLLnEVQ",
+   "mMKfFAILAKQNMISF-AS-MSIQ-aFEErLGIlKEVQ",
+   "MKTTYIRKQRC-SFgVKSHHQR-L--R-GLIEVQ",
+   "MGTLYVA-Q-flQILF-KSrHGSMQLqEEQLGQdQQVQg",
+   "MKTAYIAKYRYISFVwKvSHCSRQHKEVMGLPEVQf",
+   "MKT-YIAqfqRQ-PISFVKSHFSqRQLdEgERLIIIS--"
+  ]
+ },
+ {
+  "id": "residue_class_pref-query-multiplet-7",
+  "sequence": "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+  "pairs": [
+   [
+    1,
+    9,
+    1.0
+   ],
+   [
+    1,
+    14,
+    0.5
+   ],
+   [
+    9,
+    20,
+    0.8
+   ],
+   [
+    3,
+    22,
+    1.0
+   ],
+   [
+    5,
+    11,
+    0.3
+   ],
+   [
+    11,
+    25,
+    1.0
+   ],
+   [
+    8,
+    23,
+    0.9
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "residue_class_pref",
+   "substitution_background": "query",
+   "r_POS_NEG": -2.0,
+   "r_SMALL_SMALL": -1.0,
+   "r_POS_POS": 1.5,
+   "o_CYS_CYS": -3.0,
+   "o_ARO_ARO": -1.0
+  },
+  "seed": 7,
+  "msa": [
+   "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+   "GC-EDSCRCWKFLIVKFSTEvnATCDEKRH",
+   "GQHMDEKRCYnYFLIVNQ--PIGCfCEKRH",
+   "GSHMDEKRtyCY-RLIAARSTts-KGGYp-KIHp",
+   "GRYMTEdaKRtAWYlPLcIVNQ-dTPAAEpeDpRK-H",
+   "GqSvHKDFKECCYI-trIVNQStTvPDGADHSRH",
+   "ICHWGYLRCIYA-IVNQAeTPAGGC-K-yH",
+   "GSHNDCKRCAvYSLISRQWTPAGADEfStRyH",
+   "GRHKWSKRYWYAaEID--STCWGCQEPR-",
+   "tGFHMDEAACWdEeFLRVs-lQ--PYGCCFKRT",
+   "KGHEDPKMCWYFLIV-QSTkYDHCDPRRH",
+   "GSHWDKvKPCWmYFL-VRQSTPHlGDDQCR-"
+  ]
+ },
+ {
+  "id": "residue_class_pref-query-multiplet-42",
+  "sequence": "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+  "pairs": [
+   [
+    1,
+    9,
+    1.0
+   ],
+   [
+    1,
+    14,
+    0.5
+   ],
+   [
+    9,
+    20,
+    0.8
+   ],
+   [
+    3,
+    22,
+    1.0
+   ],
+   [
+    5,
+    11,
+    0.3
+   ],
+   [
+    11,
+    25,
+    1.0
+   ],
+   [
+    8,
+    23,
+    0.9
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "residue_class_pref",
+   "substitution_background": "query",
+   "r_POS_NEG": -2.0,
+   "r_SMALL_SMALL": -1.0,
+   "r_POS_POS": 1.5,
+   "o_CYS_CYS": -3.0,
+   "o_ARO_ARO": -1.0
+  },
+  "seed": 42,
+  "msa": [
+   "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+   "-qS-MKEIRDIYFLwIVNQCHRPGCDmEKsRH",
+   "GSaHMGWIRTVYF-IVNQ-VPQGhCDEYVH",
+   "GSHW-EKRKW-FkLITNqQm--PAGFFEKsRH",
+   "GSHKDTKfRRIlpYFLIpVIQS-AAGCEEKRHse",
+   "GKHWDGKlRRWDEE-VN-NTPAGRAEKRD",
+   "GSYMDEKRHWYFL-VNQSTPMGQP-KRH",
+   "GSeHMDCK-KWYFNIVNQLTPYvGIMEKAH",
+   "GSHV-EKRYkHYF-IVk-QSTPE-CYEGRH",
+   "GFHMDRKRFWYFGIVlNQSF-AGKDIKRH",
+   "QSmHCDEKRCWRHLIRNQSTPI-eYDEakKRE",
+   "GAHMDEKRCGmYSQ-VNQSyTEADWDEgKP-"
+  ]
+ },
+ {
+  "id": "covariance_residue_class_pref-uniform-pairs-7",
+  "sequence": "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+  "pairs": [
+   [
+    0,
+    20
+   ],
+   [
+    2,
+    18
+   ],
+   [
+    4,
+    30
+   ],
+   [
+    7,
+    25
+   ],
+   [
+    10,
+    28
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "covariance_residue_class_pref",
+   "substitution_background": "uniform",
+   "r_POS_NEG": -2.0,
+   "r_SMALL_SMALL": -1.0,
+   "r_POS_POS": 1.5,
+   "o_CYS_CYS": -3.0,
+   "o_ARO_ARO": -1.0
+  },
+  "seed": 7,
+  "msa": [
+   "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+   "I-TKM-AlKQRSI-FEKSHF-IQLhQERLTDIV-Q",
+   "MKTFLIAKQAKISF--t-hHFSRQLSERsLGDm-MKQ",
+   "MkdKkyfTANAAKQqgcFVIS---tSHFVRQfLaEtvECLGLIMVQ",
+   "TVTTYlI-SQPQWSFVKI-FSCQL-EWLGL-E--",
+   "RmKTAYI-K-RqQISPVHSaiH-SRQcLR-RLGLkYEVQ",
+   "MKTqngAYWAVQ-QIPCVKHIFSRQLGERL-YnIEVQ",
+   "M-TARI-Klet-RQI-FWWSCFRRvQLihgVERLGgL-Pw-Q",
+   "MMT-YThMAQRSHSwFVKSFFSRQqLEETLGRIEvVQ",
+   "LKqTAVIAKQAHYhdSGVKSHFSEQcLERRLGWMKCQ",
+   "MCTCYywfITAQRQy-S-EKSHFSR---ERLQL-EVQ",
+   "mWwKThAYINKvKVQISI-K-HNKRVLEEtRVGLIQTQs"
+  ]
+ },
+ {
+  "id": "covariance_residue_class_pref-uniform-pairs-42",
+  "sequence": "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+  "pairs": [
+   [
+    0,
+    20
+   ],
+   [
+    2,
+    18
+   ],
+   [
+    4,
+    30
+   ],
+   [
+    7,
+    25
+   ],
+   [
+    10,
+    28
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "covariance_residue_class_pref",
+   "substitution_background": "uniform",
+   "r_POS_NEG": -2.0,
+   "r_SMALL_SMALL": -1.0,
+   "r_POS_POS": 1.5,
+   "o_CYS_CYS": -3.0,
+   "o_ARO_ARO": -1.0
+  },
+  "seed": 42,
+  "msa": [
+   "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+   "Mh-MRYIAKQREISFVcKQHPSRQLn-ERLGRaIEVQ",
+   "MKQAigYI-KQ-QYSFVH-HHWRqQ-EnERLWLmIEsEQh",
+   "VLNnqRNIYEQRFIqiSFVKSHHSAQnLEEHW-GIEV-",
+   "MKAAYIAKQSQI--VKSEGSvR-lLC-R-GLEEysl-iQ",
+   "MGTAY-VLQDQISFVFSHFSRQLEEtRS-S-EVQ",
+   "RKN-YIAGQRQIWTVK-HvDSR-LEEKLSmLIEfvViQk",
+   "LVVYYIAdG-RVISkFVK-HdESRpQ-EEaA-GeTIEVQ",
+   "MKTVSIArTQRCISFVKeSHFSRQLEEAgLRLiITVfvD",
+   "M-nTApMDvATHRGISFVKSHD-RQLEEDLGSIpDVQ",
+   "MGWATIAKQRlQISpFsVeKSWHSRFLEELLGLKLVQ",
+   "MKFAIIAFQRQgISFVKSNFSpLQe---HLGLIEVfQ"
+  ]
+ },
+ {
+  "id": "covariance_residue_class_pref-uniform-multiplet-7",
+  "sequence": "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+  "pairs": [
+   [
+    1,
+    9,
+    1.0
+   ],
+   [
+    1,
+    14,
+    0.5
+   ],
+   [
+    9,
+    20,
+    0.8
+   ],
+   [
+    3,
+    22,
+    1.0
+   ],
+   [
+    5,
+    11,
+    0.3
+   ],
+   [
+    11,
+    25,
+    1.0
+   ],
+   [
+    8,
+    23,
+    0.9
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "covariance_residue_class_pref",
+   "substitution_background": "uniform",
+   "r_POS_NEG": -2.0,
+   "r_SMALL_SMALL": -1.0,
+   "r_POS_POS": 1.5,
+   "o_CYS_CYS": -3.0,
+   "o_ARO_ARO": -1.0
+  },
+  "seed": 7,
+  "msa": [
+   "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+   "GWYfMMcQKRMEYFLIV-QSTPGGCDEKhRH",
+   "GLHRDEkKRCMEFLFMEQSTPA-CDEKRH",
+   "GHHVREKIWWYkdFvLIVNaQTTPApLCC-K-dfHa",
+   "VSHMwDE-A-WKLLcIVNQ-dTPAACpe-pMK-H",
+   "GqSvHIDWHRKWIsVVVVFK-rkTPSGPSECaFC",
+   "-SHHDqFKy-IW-FTIRNeDSTPFGML-FhcRH",
+   "-SHM-EKYAW-FLIVVQSTPLGCPVKTH",
+   "GSQMDEKRGF-ALIT--g-v-PAGCDEKRtHih",
+   "GKHMAwEKRADnYFLY--QSTPKKCISLRH",
+   "GSIRDEKqRRWYGL-VkN-STPSGEYEPRlA",
+   "GSHMDEmKRyCSnYFLIVvDsLSTPfLGCDEKReA"
+  ]
+ },
+ {
+  "id": "covariance_residue_class_pref-uniform-multiplet-42",
+  "sequence": "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+  "pairs": [
+   [
+    1,
+    9,
+    1.0
+   ],
+   [
+    1,
+    14,
+    0.5
+   ],
+   [
+    9,
+    20,
+    0.8
+   ],
+   [
+    3,
+    22,
+    1.0
+   ],
+   [
+    5,
+    11,
+    0.3
+   ],
+   [
+    11,
+    25,
+    1.0
+   ],
+   [
+    8,
+    23,
+    0.9
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "covariance_residue_class_pref",
+   "substitution_background": "uniform",
+   "r_POS_NEG": -2.0,
+   "r_SMALL_SMALL": -1.0,
+   "r_POS_POS": 1.5,
+   "o_CYS_CYS": -3.0,
+   "o_ARO_ARO": -1.0
+  },
+  "seed": 42,
+  "msa": [
+   "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+   "-qS-MRnEKRiCWYMLwIVNQCTPT-CREA-W",
+   "GSHc--RR-TW-WkrQIvVTiGdSTPvCGLDETR-",
+   "SnWMMDmYKRIYYAqYm-VNQSTPETCDEKRH",
+   "GSHMDEnYRCWYFLInVa-FSTPAGCCEKRHr",
+   "mGHHM-KKRHDYFsTFDNQSys-PAGgCDEKRH",
+   "GSHdMDEKRRPYWLIVNsQSVqfSIGdCYEKR-",
+   "rGSHMDVKKCWFWLIV-QWT-WGCnDEC--",
+   "GSHkMDE-RyCGeYFL-dV-QSTWAGCD-DRrH",
+   "GL-GDmEKRCPNFLIVNQST-MHCDpNKRH",
+   "GSIDDTKRCWYFLItVIQdT--EGiwHD-KniRH",
+   "GSIYDEKGnHWYdEfLIVNQD-WVWCYNKRG"
+  ]
+ },
+ {
+  "id": "covariance_residue_class_pref-query-pairs-7",
+  "sequence": "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+  "pairs": [
+   [
+    0,
+    20
+   ],
+   [
+    2,
+    18
+   ],
+   [
+    4,
+    30
+   ],
+   [
+    7,
+    25
+   ],
+   [
+    10,
+    28
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "covariance_residue_class_pref",
+   "substitution_background": "query",
+   "r_POS_NEG": -2.0,
+   "r_SMALL_SMALL": -1.0,
+   "r_POS_POS": 1.5,
+   "o_CYS_CYS": -3.0,
+   "o_ARO_ARO": -1.0
+  },
+  "seed": 7,
+  "msa": [
+   "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+   "QDfPIhYISKQRlSI--VKSHKSShNLEEYLGL-EVQ",
+   "MKnK-YIFeYQREI--t-hKSHESRFREEFm--kHIEcVdQi",
+   "KEkR-YIAK-gRGKG-VKRMFfSaEtvQLEhVE-GCLEVQ",
+   "MKSAYIAKvQRQISi-VKSVSS-QLlFEV-GL-EVsH",
+   "MKT-YQIsFQRSRSRV--h-FSMELEEFiLILIEVmQ",
+   "MNQ-wYA-KQRMFSFVK-HrEERyQYnEERLGnGIEV-",
+   "MKcT-Y--YcQRWsI-F-KSihgHFSRQgL-ADLdFL-kE-Qt",
+   "MA-AHIaALwQRSISFVQ-H-SRQ-EEISGMIkE-Q",
+   "MQSAYIwIaK-KvQRSLrwsVKSHASRQLEElR--LAV-aQ",
+   "MywfKTdh-Y-QydKQREIS-VKSHFSRI-KEELGQIES-",
+   "MKTAG-AISRCLSFVKSSFSRQLQ-RqLGLMSVQ"
+  ]
+ },
+ {
+  "id": "covariance_residue_class_pref-query-pairs-42",
+  "sequence": "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+  "pairs": [
+   [
+    0,
+    20
+   ],
+   [
+    2,
+    18
+   ],
+   [
+    4,
+    30
+   ],
+   [
+    7,
+    25
+   ],
+   [
+    10,
+    28
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "covariance_residue_class_pref",
+   "substitution_background": "query",
+   "r_POS_NEG": -2.0,
+   "r_SMALL_SMALL": -1.0,
+   "r_POS_POS": 1.5,
+   "o_CYS_CYS": -3.0,
+   "o_ARO_ARO": -1.0
+  },
+  "seed": 42,
+  "msa": [
+   "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+   "Mh-MLYViAKQ-GwISFV-SeHISRQmLEERLGLaIEVQ",
+   "MKIAYIAKQ-QVSFVFSvHVSRQ-dEARIGLIEsQQh",
+   "C-TqVmLVAEQRM-SRVKSHFSFEqLsanEERLGqMKEAQ",
+   "EKTRYIYKQVQI--VKSELFHQsL-iEHLGLAEVQ",
+   "MKT-gYIKKQRQISYVKSHFSRR-E-RLGLIlEVcQ",
+   "NLVAGIAKQRRISFvVKSHcNVWKLETmRLGfvLiII-Q",
+   "AKTAYIdARQRFI-F-t-SAFSMhfkQLEmELL-IIEVQ",
+   "MCdLAY-AKQ-QISFVK-HFSRQLEEILLcLIEThQ",
+   "qMSiwqTApYSvASFRGISFVKSHTSKQ-EEQLRYIDV-",
+   "MKLQwTvIAAQRGISsFeVKLHFSRQYEERLGeEILVQ",
+   "MKTAEItADQdRQISFVKIHfFIRQLEERLGVIKVF"
+  ]
+ },
+ {
+  "id": "covariance_residue_class_pref-query-multiplet-7",
+  "sequence": "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+  "pairs": [
+   [
+    1,
+    9,
+    1.0
+   ],
+   [
+    1,
+    14,
+    0.5
+   ],
+   [
+    9,
+    20,
+    0.8
+   ],
+   [
+    3,
+    22,
+    1.0
+   ],
+   [
+    5,
+    11,
+    0.3
+   ],
+   [
+    11,
+    25,
+    1.0
+   ],
+   [
+    8,
+    23,
+    0.9
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "covariance_residue_class_pref",
+   "substitution_background": "query",
+   "r_POS_NEG": -2.0,
+   "r_SMALL_SMALL": -1.0,
+   "r_POS_POS": 1.5,
+   "o_CYS_CYS": -3.0,
+   "o_ARO_ARO": -1.0
+  },
+  "seed": 7,
+  "msa": [
+   "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+   "GdK-MDE-RlCIKFLIVKFSTEvnATCDEKRH",
+   "GQHMDEKReHEYFLITN--TVAgyGFHEKRH",
+   "GCRMKR--DWYFi--TCQt-TPAGAREKR-",
+   "-SHMDEdaKRMWYK-IKNQ-dTPAACAEY-H",
+   "GqSvHGDLiCRFWYYLIYiwSQCrkTPRGHSEKRHp",
+   "gGWkHV-EKRIWSFfyLIVN-STPIFiKlD-L-k-",
+   "GSHM-EKMEDYyHLtIDNQS-PI-tCD-WRH",
+   "GNHMDHKRPMHQvLIAPQNTYvVGtCGEKRHg",
+   "-ANMAE-FYH-esRLSQWQSwTPRHGFIKRH",
+   "GSHMDEKLCWYFqnLIVSPSTPA-wCDAERH",
+   "GS-rwMDE--KW-FLIVSQrSTVaAGSEE---"
+  ]
+ },
+ {
+  "id": "covariance_residue_class_pref-query-multiplet-42",
+  "sequence": "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+  "pairs": [
+   [
+    1,
+    9,
+    1.0
+   ],
+   [
+    1,
+    14,
+    0.5
+   ],
+   [
+    9,
+    20,
+    0.8
+   ],
+   [
+    3,
+    22,
+    1.0
+   ],
+   [
+    5,
+    11,
+    0.3
+   ],
+   [
+    11,
+    25,
+    1.0
+   ],
+   [
+    8,
+    23,
+    0.9
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "covariance_residue_class_pref",
+   "substitution_background": "query",
+   "r_POS_NEG": -2.0,
+   "r_SMALL_SMALL": -1.0,
+   "r_POS_POS": 1.5,
+   "o_CYS_CYS": -3.0,
+   "o_ARO_ARO": -1.0
+  },
+  "seed": 42,
+  "msa": [
+   "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+   "-qS-MKEIRQWYFLwIVNQCHREGCSn-wKv-H",
+   "GSHPWqEK-vMLYILRW-dQSTKGGvCVEGkgRfvH",
+   "IPHEDLK-CYYKIVLNQSTPYGRDEERH",
+   "GVHHDEKRqCAYLLQVNQ-TPTGCDrEMRW",
+   "iGSHMREK-CW-FLIeVNys-STPAGCqDGKKH",
+   "GkSHMDEeMRCWYFLIsMNKSKPA-CDcEKCKlv",
+   "GSHMPPKRCWYFLvIRNQCTPAGCDEQRH",
+   "GS-MDsERNHWYG-YV-KSTPAtRCSEKRlI",
+   "LSHIDEKRQWYFLKYNQgSTPHGVRRK--e",
+   "GSHRDEKKCWYF--V-QsS-PtAGEHEKhRW",
+   "GHHMQnEpKRCFYRLTNNQSlTPrAGeKDEWRaH"
+  ]
+ },
+ {
+  "id": "none-query-pairs-7",
+  "sequence": "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+  "pairs": [
+   [
+    0,
+    20
+   ],
+   [
+    2,
+    18
+   ],
+   [
+    4,
+    30
+   ],
+   [
+    7,
+    25
+   ],
+   [
+    10,
+    28
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "none",
+   "substitution_background": "query"
+  },
+  "seed": 7,
+  "msa": [
+   "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+   "tE-THYRAGQRL--FVKSHH-EQLEEL-GLIEVT",
+   "MKTAYVAKwESLISFVfLSHISRQLLERLGLmPEkVQ",
+   "gE-TAYItsHLQYNgISF---tHFSNQwLcESR-s-CIEEA",
+   "LLTAY-ARQRQISF-KSHVILQLEEAIGLISG-",
+   "MKTmAYIAK-KCI-FQKSy-IySRQLEEF-eGLI-VFk",
+   "MKHAYI-HQRLqeIS--KSpHRStRYLEEAL-LIR-V",
+   "MKTAYIAEQRN-SA-KSCVSR-L-ERLtGGIVVQ",
+   "V-TAdYhIASLRKISVIKSQQSFQLEEHL-LIEVQq",
+   "qKKSALMdAKQSQISkFVwHaR-FSRQTEERLGmL-HVlQ",
+   "MKTGYIGKQLywfQQdh-w-AQaSHFSYQLE-RL-LIEVQ",
+   "MIlTAWwIAhKARtQYS-EKKiRQdS-FLEEVLGLSSVdQ"
+  ]
+ },
+ {
+  "id": "none-query-pairs-42",
+  "sequence": "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+  "pairs": [
+   [
+    0,
+    20
+   ],
+   [
+    2,
+    18
+   ],
+   [
+    4,
+    30
+   ],
+   [
+    7,
+    25
+   ],
+   [
+    10,
+    28
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "none",
+   "substitution_background": "query"
+  },
+  "seed": 42,
+  "msa": [
+   "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+   "Mh-NAF--KQRQI--VKSHFSRQ---ELGRIEVQv",
+   "FKTAYIAYQRQwIS-dVKSLGSR-EEqERKnGLIIVmQ",
+   "MVkTASILKQRPISF-ASRFSEQLEEfILGLKEVQ",
+   "MIaT-VWAHQRQ---VKS-SWRQLEFFLMLIsE-iQ",
+   "MKTysl-HIlAKQRQMSEkVKSHFSeRQLEERLGFRQ-Q",
+   "MKQeAYI-rVKRKI-FVKSMFSYQNE-rRLVLLnEVQ",
+   "mMKfFAILAKQNMISF-AS-MSKQ-aFEHrLGKlKEVQ",
+   "MKTTYIRKQRC-SFgVKSHHQR-L--R-GLIEVQ",
+   "MGTLYVA-Q-flQILF-KSrHGSPQLqEEQLGQdQQVQg",
+   "MKTAYIAKYRYISFVwKvSHCSRQHKEWMGLPEVQf",
+   "MKT-YIAqfqRQ-PISFVKSHFSqRQLdEgERLIKIR--"
+  ]
+ },
+ {
+  "id": "none-query-multiplet-7",
+  "sequence": "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+  "pairs": [
+   [
+    1,
+    9,
+    1.0
+   ],
+   [
+    1,
+    14,
+    0.5
+   ],
+   [
+    9,
+    20,
+    0.8
+   ],
+   [
+    3,
+    22,
+    1.0
+   ],
+   [
+    5,
+    11,
+    0.3
+   ],
+   [
+    11,
+    25,
+    1.0
+   ],
+   [
+    8,
+    23,
+    0.9
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "none",
+   "substitution_background": "query"
+  },
+  "seed": 7,
+  "msa": [
+   "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+   "GC-EDSCRCWKFLIVKFSTEvnATCDEKRH",
+   "GQHMDEKRCYnYFLIVNQ--PKGCfKEKRH",
+   "GSHMDEKRtyCY-RLIAARSTts-KGFYp-KIHp",
+   "GRYMTEdaKRtAWYlPLcIVNQ-dTPAAEpeDpRK-H",
+   "GqSvHKDFKECCYI-trIVNQStTvPKGADHSRH",
+   "ICHWGYLRCRYA-IVNQAeTPAGGG-K-yH",
+   "GSHNDCKRCAvYSLISRQWTPAGADEfStRyH",
+   "GRHKWSKRYWYAaEID--STCVGCPEQR-",
+   "tGFHMDEAACWdEeFLRVs-lQ--PWGCKFKRT",
+   "KGHEDPKMCWYFLIV-QSTkYCHCDPQRH",
+   "GSHWDKvKPCWmYFL-VRQSTPGlGDDQAR-"
+  ]
+ },
+ {
+  "id": "none-query-multiplet-42",
+  "sequence": "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+  "pairs": [
+   [
+    1,
+    9,
+    1.0
+   ],
+   [
+    1,
+    14,
+    0.5
+   ],
+   [
+    9,
+    20,
+    0.8
+   ],
+   [
+    3,
+    22,
+    1.0
+   ],
+   [
+    5,
+    11,
+    0.3
+   ],
+   [
+    11,
+    25,
+    1.0
+   ],
+   [
+    8,
+    23,
+    0.9
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "none",
+   "substitution_background": "query"
+  },
+  "seed": 42,
+  "msa": [
+   "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+   "-qS-MKEIRDIYFLwIVNQCHRPGCDmEKsRH",
+   "GSaHMGWIRTVYF-IVNQ-VPRGhCDEYVH",
+   "GSHW-EKRKW-FkLITNqQm--PAGFKEKsRH",
+   "GSHKDTKfRRIlpYFLIpVIQS-AAGCHEKRHse",
+   "GKHWDGKlRRWDEE-VN-NTPAGQAEKRD",
+   "GSYMDEKRHWYFL-VNQSTPMGRQ-KRH",
+   "GSeHMDCK-KWYFNIVNQLTPYvGIPEKAH",
+   "GSHV-EKRYkHYF-IVk-QSTPH-CYEFRH",
+   "GFHMDRKRFWYFGIVlNQSF-AGKDIKRH",
+   "QSmHCDEKRCWRHLIRNQSTPK-eYDEakKRE",
+   "GAHMDEKRCGmYSQ-VNQSyTEADYDEgKP-"
+  ]
+ },
+ {
+  "id": "covariance-query-pairs-7",
+  "sequence": "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+  "pairs": [
+   [
+    0,
+    20
+   ],
+   [
+    2,
+    18
+   ],
+   [
+    4,
+    30
+   ],
+   [
+    7,
+    25
+   ],
+   [
+    10,
+    28
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "covariance",
+   "substitution_background": "query"
+  },
+  "seed": 7,
+  "msa": [
+   "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+   "tE-THYRAGQRL--FVKSHfFSKQLhQEhWLGEWEVQ",
+   "MATAYIAKQRAISFV--t-Fe-RQLEiFRLsGQnImPVG",
+   "MKTCYIAKQRF--gFVK--SSRQSERcRStvGMIEVQ",
+   "MKtTAMIrpl-KlQ-VISqFvVKSFFiDRQLiEERtLGRfIVVQl",
+   "M-FAAIAyK-REASFqIKy-HF-RQLEcERQENILCiK",
+   "HKTAAD-KQqeRvQISFT-SHKSHQsLEKfRtLyGLInEVQ",
+   "FKTAEIAQ-RSI-Fg-v-ScHFrSYQLtE-ELGAIAVw-",
+   "MKTAIILKIRQIVFVwKSHFSGYLQ-RLGLIqIV-",
+   "MKtmqSAY-IKNRQISFVKHHM-R-LEERLALIQVQ",
+   "F-sTAYIAKwQRQIdhSR-QaSHFSYQLE-RL-LIEVQ",
+   "MIlTAWwIAhKARtQYS-EKKiRQdS-FLEEVLGLSSVdQ"
+  ]
+ },
+ {
+  "id": "covariance-query-pairs-42",
+  "sequence": "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+  "pairs": [
+   [
+    0,
+    20
+   ],
+   [
+    2,
+    18
+   ],
+   [
+    4,
+    30
+   ],
+   [
+    7,
+    25
+   ],
+   [
+    10,
+    28
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "covariance",
+   "substitution_background": "query"
+  },
+  "seed": 42,
+  "msa": [
+   "MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ",
+   "Mh-NAF--KQRQI--VKSHQSVALKERLGLIEaVQ",
+   "MKD-YIApK--QIYFVKShHiESvRQLE-SfvLnGLIEV-",
+   "MKTAYIA-mQVRISFiVA-HRiSRQLEE--GS-EVQ",
+   "MKTAcYAAQQ-SIYFVKmSHhFSRQLEEQvF-L-ELQ",
+   "MKRlAYIARqQFQISKDqchKkSHFSRQLEEHLGLIE-Q",
+   "MKQeAYI-rVKRKI-FVKSMFSYQNE-rRLVRInEVQ",
+   "mMKfFAILAKQNMISF-AS-MSRQGQ-RL-QRhHqGQc",
+   "MKTTYIRKQRC-SFgVKSHFCRLLghmEeERLGLIEQQ",
+   "METiAVdR-qKTnRIIniSFVrKShHmFSRqQLETRLdGQIFFQ",
+   "EKHApMIAV-RQISAVKAHFSDQLWMLLGLIWEQ",
+   "MKTAY--MQRQISFVVSHFSRQ-EERHGMmIEVE"
+  ]
+ },
+ {
+  "id": "covariance-query-multiplet-7",
+  "sequence": "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+  "pairs": [
+   [
+    1,
+    9,
+    1.0
+   ],
+   [
+    1,
+    14,
+    0.5
+   ],
+   [
+    9,
+    20,
+    0.8
+   ],
+   [
+    3,
+    22,
+    1.0
+   ],
+   [
+    5,
+    11,
+    0.3
+   ],
+   [
+    11,
+    25,
+    1.0
+   ],
+   [
+    8,
+    23,
+    0.9
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "covariance",
+   "substitution_background": "query"
+  },
+  "seed": 7,
+  "msa": [
+   "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+   "GC-EDSCRCWKFLIVKFSTEvnATCDEKRH",
+   "GQHMDEKRCYnYFLIVNQ--PKGCfKEKRH",
+   "GSHMDEKRtyCWFFLIAARSTts-KGCDPQnEH",
+   "-dSHYDTK-CWd-FLIVDCST-AGCDsEKRA",
+   "-SHMDEKRLWYF-IVVQSTPSlDCSvEKRL",
+   "HRHMDpYgKpRqCWsYMLIMNiQSfyKPAGDDESRH",
+   "GAHMPhHK-CFnYFCDVCsQSTtPHGCDEARHf",
+   "tGdSHMDSgKRCWYiHScIGwNQSCywPA-CMEGTH",
+   "GSHFDEKgRcAwNYFWIVNQKTPHGSWHKRH",
+   "GSHMDEDWCW-FLIINPLMPAkGqCDEK-H",
+   "GSHMwHElk-RCWrYFLNQN-KCPCGCDEsKRH"
+  ]
+ },
+ {
+  "id": "covariance-query-multiplet-42",
+  "sequence": "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+  "pairs": [
+   [
+    1,
+    9,
+    1.0
+   ],
+   [
+    1,
+    14,
+    0.5
+   ],
+   [
+    9,
+    20,
+    0.8
+   ],
+   [
+    3,
+    22,
+    1.0
+   ],
+   [
+    5,
+    11,
+    0.3
+   ],
+   [
+    11,
+    25,
+    1.0
+   ],
+   [
+    8,
+    23,
+    0.9
+   ]
+  ],
+  "mutation_rate_paired": 0.4,
+  "mutation_rate_unpaired": 0.2,
+  "parameters": {
+   "N": 12,
+   "pair_mutation_approach": "covariance",
+   "substitution_background": "query"
+  },
+  "seed": 42,
+  "msa": [
+   "GSHMDEKRCWYFLIVNQSTPAGCDEKRH",
+   "-qS-MKEIRDWgYFLwIVNQCHRPGCPsaEHQH",
+   "GP-d-GWIRTVYF-IVNQ-VPRGh-EEKVH",
+   "GSHW-EKRKW-FkLITNqQm--PAGFKEKsRH",
+   "GSHKDTKfRRWnYILIVNQSTa-AGCDHRRH",
+   "YSHMmDFWRCWYDLvECAQSFPeNGysDDEKgRH",
+   "GiSHMDHKRCHYYYISNQSTPsAGtCDf-QRHd",
+   "eGSn-pDD-KRLWMSLIVLQSTvPHGCPAMRH",
+   "GSHMDSKRGWYFLPVQQSqTPAGCQEK-Hwp",
+   "GIHCQFKKCGYQV-RN-STPDGNVEKRH",
+   "GSHMDE--DGYFLIVNQSICAGCdD-K-tH",
+   "-PHHDHDRIWYE-IINPTTPE-CDgEKRH"
+  ]
+ }
+]

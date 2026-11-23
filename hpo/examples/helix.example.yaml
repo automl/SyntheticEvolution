@@ -96,8 +96,9 @@ generators:
     python:    # REQUIRED for protein chains: SHS-Generator-Protein Python executable
     # Not optimized in this config (optimize: rna). Move these values to `fixed`
     # entries or keep as the search space for `optimize: protein`. The protein
-    # generator only knows pair_mutation_approach in [covariance, none] and has
-    # no wobble_prob / pair_wc_prob / pair_wobble_prob parameters.
+    # generator has no wobble_prob / pair_wc_prob / pair_wobble_prob parameters;
+    # its further approaches, substitution_background and residue-class table
+    # (r_*/o_*) are printed as search entries by `python SHS-Generator-Protein/generator_config.py`.
     search:
       N: {type: integer, lower: 2, upper: 128, log: true}
       mutation_rate_unpaired: {type: float, lower: 0.0, upper: 1.0}
