@@ -412,6 +412,223 @@ def plot_mutation_rate_comparison(input_rates: np.ndarray, output_rates: np.ndar
     return fig, {"mae": mae, "rmse": rmse, "pearson_r": pearson_r}
 
 
+def _finish(fig, out: Optional[str], show: bool) -> None:
+    fig.tight_layout()
+    if out:
+        fig.savefig(out, dpi=150)
+        logging.info("Figure written to: %s", out)
+    if show:
+        plt.show()
+
+
+def plot_recovered_pairs(cov: np.ndarray, pairs: PairMap,
+                         title: str = "Input vs recovered pairs",
+                         show: bool = True, out: Optional[str] = None):
+    """Compare the input pairs with the pairs recovered from the MSA.
+
+    The k position pairs with the highest covariance (Features.covariance) are
+    the recovered pairs, k = number of input pairs. Left: the covariance (lower
+    triangle) and which pairs were recovered (upper triangle). Right: covariance
+    per input group, a connected set of input contacts (PairMap.partners);
+    pairs that are not input pairs are "no group". Returns the figure and the
+    fraction of the k recovered pairs that are input pairs.
+    """
+    length = cov.shape[0]
+    i, j = np.triu_indices(length, k=1)
+    values = cov[i, j]
+    is_input = np.array([pairs.is_pair(a, b) for a, b in zip(i, j)])
+    k = int(is_input.sum())
+    if k == 0:
+        raise ValueError("Need at least one input pair to compare with.")
+    # Each group is named by its smallest position; "no group" comes last.
+    component = np.array([min(a, *pairs.partners(a)) if p else -1 for a, p in zip(i, is_input)])
+    anchors = np.unique(component[is_input])
+    group = np.where(is_input, np.searchsorted(anchors, component), len(anchors))
+    x = group + np.random.default_rng(0).uniform(-0.35, 0.35, len(group))
+    recovered = np.zeros(len(values), dtype=bool)
+    recovered[np.argsort(-values)[:k]] = True
+    precision = float((is_input & recovered).sum() / k)
+    groups = [
+        (is_input & recovered, dict(c="tab:green", marker="s"), "input pair, recovered"),
+        (is_input & ~recovered, dict(facecolors="none", edgecolors="tab:orange", marker="s"), "input pair, missed"),
+        (~is_input & recovered, dict(c="tab:red", marker="x"), "recovered, not an input pair"),
+    ]
+
+    fig, axes = plt.subplots(1, 2, figsize=(15, 6))
+    lower = np.where(np.tri(length, k=-1, dtype=bool), cov, np.nan)
+    im = axes[0].imshow(lower, cmap="viridis", vmin=0)
+    fig.colorbar(im, ax=axes[0], label="covariance")
+    for mask, style, label in groups:
+        axes[0].scatter(j[mask], i[mask], s=1500 / length, label=label, **style)
+    axes[0].set_title(f"{title}\nlower: covariance · upper: top-{k} recovered vs input")
+    axes[0].set_xlabel("position")
+    axes[0].set_ylabel("position")
+
+    rest = ~is_input & ~recovered
+    axes[1].scatter(x[rest], values[rest], c="lightgray", s=8, label="other position pairs")
+    for mask, style, label in groups:
+        axes[1].scatter(x[mask], values[mask], s=30, label=label, **style)
+    axes[1].axhline(np.sort(values)[-k], color="k", linestyle="--", linewidth=1, label=f"top-{k} cutoff")
+    axes[1].set_title(f"{precision:.0%} of the recovered pairs are input pairs")
+    axes[1].set_xticks(range(len(anchors) + 1), [f"group {n + 1}" for n in range(len(anchors))] + ["no group"])
+    axes[1].set_xlabel("input group (connected input contacts)")
+    axes[1].set_ylabel("covariance")
+    axes[1].legend(bbox_to_anchor=(1.02, 1), loc="upper left")
+    axes[1].grid(True, axis="y", alpha=0.3)
+    _finish(fig, out, show)
+    return fig, {"k": k, "precision": precision}
+
+
+def _codes(residues: np.ndarray) -> np.ndarray:
+    """Index in AMINO_ACIDS per residue; -1 for gaps and non-canonical residues."""
+    codes = np.full(residues.shape, -1)
+    for k, a in enumerate(AMINO_ACIDS):
+        codes[residues == a] = k
+    return codes
+
+
+def _background(seq: str, kind: str) -> np.ndarray:
+    """The generator's substitution_background: 'uniform', or 'query' composition +1 per residue."""
+    if kind not in ("uniform", "query"):
+        raise ValueError(f"Unknown substitution background: {kind}")
+    counts = np.ones(len(AMINO_ACIDS))
+    if kind == "query":
+        counts += [seq.count(a) for a in AMINO_ACIDS]
+    return counts / counts.sum()
+
+
+def _draws(background: np.ndarray, original: int) -> np.ndarray:
+    """A substitution never keeps the original residue: background without it, renormalized."""
+    q = background.copy()
+    q[original] = 0
+    return q / q.sum()
+
+
+def plot_residue_class_preferences(data: MsaData, table: np.ndarray, classes: Dict[str, str],
+                                   background: str = "uniform", min_expected: float = 5,
+                                   title: str = "Residue pair preferences at the input contacts",
+                                   show: bool = True, out: Optional[str] = None):
+    """Input residue pair table (MutationParameters.residue_table()) against the MSA.
+
+    For every input contact i < j and every row where j was substituted (the
+    generator draws j after i), counts the residue pair (a_i, b_j), and the count
+    expected without preferences: the background without j's query residue.
+    The recovered energy is -ln(observed / expected) (+0.5 each), negative = favourable as in
+    the table, and scaled by the contacts' interaction strengths. A constant
+    added to a table row changes no draw, so both are compared row-centered.
+    Cells expected fewer than min_expected times are left out. Residues are
+    ordered by class. Returns the figure and the Pearson r of the comparison.
+    """
+    order = [AMINO_ACIDS.index(a) for members in classes.values() for a in members]
+    bg = _background(data.seq, background)
+    codes = _codes(data.aligned)
+    query = _codes(np.array(list(data.seq)))
+    observed = np.zeros((len(AMINO_ACIDS), len(AMINO_ACIDS)))
+    expected = np.zeros_like(observed)
+    for i, j in data.pairs.unique_pairs:
+        rows = (codes[:, i] >= 0) & (codes[:, j] >= 0) & (codes[:, j] != query[j])
+        if query[j] < 0 or not rows.any():
+            continue
+        np.add.at(observed, (codes[rows, i], codes[rows, j]), 1)
+        expected += np.outer(np.bincount(codes[rows, i], minlength=len(AMINO_ACIDS)), _draws(bg, query[j]))
+    recovered = -np.log((observed + 0.5) / (expected + 0.5))
+    recovered[expected < min_expected] = np.nan
+    with warnings.catch_warnings():  # rows without any kept cell stay NaN
+        warnings.simplefilter("ignore", RuntimeWarning)
+        recovered -= np.nanmean(recovered, axis=1, keepdims=True)
+        centered = np.where(np.isnan(recovered), np.nan, table)
+        centered -= np.nanmean(centered, axis=1, keepdims=True)
+    recovered, centered = recovered[np.ix_(order, order)], centered[np.ix_(order, order)]
+    ok = np.isfinite(recovered) & np.isfinite(centered)
+    pearson_r = float(np.corrcoef(centered[ok], recovered[ok])[0, 1]) if ok.sum() > 2 and centered[ok].std() > 0 else float("nan")
+
+    fig, axes = plt.subplots(1, 3, figsize=(20, 6))
+    labels = [AMINO_ACIDS[k] for k in order]
+    names = list(classes)
+    starts = np.cumsum([0] + [len(m) for m in classes.values()])
+    table = table[np.ix_(order, order)]
+    for ax, matrix, name in ((axes[0], table, "input table"),
+                             (axes[1], recovered, "recovered from the MSA (row-centered)")):
+        limit = np.nanmax(np.abs(matrix)) or 1
+        im = ax.imshow(matrix, cmap="RdBu", vmin=-limit, vmax=limit)
+        fig.colorbar(im, ax=ax, label="energy (negative = favourable)")
+        ax.set_xticks(range(len(labels)), labels)
+        ax.set_yticks(range(len(labels)), labels)
+        for b in starts[1:-1] - 0.5:
+            ax.axhline(b, color="k", linewidth=0.5)
+            ax.axvline(b, color="k", linewidth=0.5)
+        ax.set_title(name)
+    # Name each class block after its r_<class>_<class> parameter.
+    limit = np.abs(table).max() or 1
+    for r, row_class in enumerate(names):
+        for c, col_class in enumerate(names):
+            block = table[starts[r]:starts[r + 1], starts[c]:starts[c + 1]]
+            first, second = sorted((row_class, col_class), key=names.index)
+            axes[0].text((starts[c] + starts[c + 1] - 1) / 2, (starts[r] + starts[r + 1] - 1) / 2,
+                         f"{first}-\n{second}", ha="center", va="center", fontsize=7,
+                         color="white" if abs(np.median(block)) > 0.5 * limit else "black")
+    axes[1].set_ylabel("residue of the earlier contact member")
+    axes[1].set_xlabel("residue drawn for the later member")
+    axes[2].scatter(centered[ok], recovered[ok], s=10, alpha=0.6)
+    axes[2].axhline(0, color="gray", linewidth=0.5)
+    axes[2].axvline(0, color="gray", linewidth=0.5)
+    axes[2].set_title(f"{title}\nPearson r = {pearson_r:.2f} over {int(ok.sum())} residue pairs")
+    axes[2].set_xlabel("input energy (row-centered)")
+    axes[2].set_ylabel("recovered energy (row-centered)")
+    axes[2].grid(True, alpha=0.3)
+    _finish(fig, out, show)
+    return fig, {"pearson_r": pearson_r, "residue_pairs": int(ok.sum()), "draws": int(observed.sum())}
+
+
+def plot_substitution_background(data: MsaData,
+                                 title: str = "Composition of substituted residues",
+                                 show: bool = True, out: Optional[str] = None):
+    """Substituted residues against both substitution_background settings.
+
+    Uses the positions without a lower-index contact partner, where every
+    approach draws from the background alone. A substitution never keeps the
+    original residue, so the expectation leaves it out per position. Returns the
+    figure and the mean log-likelihood per substitution under each setting; the
+    higher one fits the MSA better.
+    """
+    codes = _codes(data.aligned)
+    query = _codes(np.array(list(data.seq)))
+    backgrounds = {kind: _background(data.seq, kind) for kind in ("uniform", "query")}
+    observed = np.zeros(len(AMINO_ACIDS))
+    expected = {kind: np.zeros(len(AMINO_ACIDS)) for kind in backgrounds}
+    loglik = dict.fromkeys(backgrounds, 0.0)
+    for i in range(len(data.seq)):
+        if query[i] < 0 or (data.pairs is not None and any(p < i for p in data.pairs.direct_partners(i))):
+            continue
+        drawn = codes[:, i][(codes[:, i] >= 0) & (codes[:, i] != query[i])]
+        counts = np.bincount(drawn, minlength=len(AMINO_ACIDS))
+        observed += counts
+        for kind, bg in backgrounds.items():
+            q = _draws(bg, query[i])
+            expected[kind] += len(drawn) * q
+            loglik[kind] += counts[q > 0] @ np.log(q[q > 0])
+    n = int(observed.sum())
+    if n == 0:
+        raise ValueError("No substitutions at positions drawn from the background alone.")
+    loglik = {kind: value / n for kind, value in loglik.items()}
+
+    fig, ax = plt.subplots(figsize=(14, 4))
+    x = np.arange(len(AMINO_ACIDS))
+    ax.bar(x, observed / n, color="lightgray", label=f"observed ({n} substitutions)")
+    for kind, marker in (("uniform", "o"), ("query", "x")):
+        ax.scatter(x, expected[kind] / n, marker=marker, zorder=3,
+                   label=f"expected for '{kind}' (log-likelihood {loglik[kind]:.4f})")
+    ax.set_xticks(x, list(AMINO_ACIDS))
+    ax.set_xlabel("substituted residue")
+    ax.set_ylabel("fraction of substitutions")
+    ax.set_title(title)
+    ax.legend(bbox_to_anchor=(1.02, 1), loc="upper left")
+    _finish(fig, out, show)
+    # With a query that holds every residue equally often, both settings are the same.
+    best = "either" if np.isclose(*loglik.values()) else max(loglik, key=loglik.get)
+    return fig, {"substitutions": n, "loglik": loglik, "best": best}
+
+
 def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
     p = argparse.ArgumentParser(
         description="Recover generator parameters from a synthetic MSA.")
