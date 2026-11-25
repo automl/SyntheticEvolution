@@ -209,7 +209,9 @@ class MsaGenerator:
             if self.pair_map.is_paired(i):
                 loop_long_del_len = 0
                 partners =  np.array(self.pair_map.partners(i), int)
-                prev = partners[partners < i]
+                # Earlier partners that were deleted carry no base, so they must not
+                # count as mutated or steer the replacement base.
+                prev = partners[(partners < i) & (new_seq[partners] != '-')]
                 interactions = np.array([self.pair_map.interaction(i, j) for j in prev])
                 partner_mutation_rates = np.array([self.pair_map.mutation_rate(j) for j in prev])
                 if approach == "none":
@@ -222,7 +224,8 @@ class MsaGenerator:
                     new_nt = self.mutate_wc(nt, seq[prev], new_seq[prev], interactions, partner_mutation_rates, mutation_rate, True)
                 if approach == "original" :
                     if self.pair_map.is_basic_pair(i) and i > partners[0]:
-                        partner_nt, new_nt = self.mutate_pair_original(seq[partners[0]], nt, mutation_rate, partner_mutation_rates[0])
+                        partner_nt, new_nt = self.mutate_pair_original(seq[partners[0]], nt, mutation_rate,
+                                                                       self.pair_map.mutation_rate(partners[0]))
                         if new_seq[partners[0]] != "-":
                             new_seq[partners[0]] = partner_nt
                     if self.pair_map.is_multiplet_member(i):

@@ -260,6 +260,20 @@ assert 0.70 < counts['neither'] / total < 0.76
     assert result.returncode == 0, result.stdout + result.stderr
 
 
+@pytest.mark.parametrize('approach', ['covariance', 'watson_crick_cov'])
+def test_deleted_partner_does_not_count_as_mutated(run_api, approach):
+    result = run_api(f'''
+parameters = MutationParameters(N=4001, pair_mutation_approach='{approach}',
+    stem_single_deletion_prob=0.5, stem_pair_deletion_prob=0,
+    stem_single_insertion_prob=0, stem_long_insertion_prob=0,
+    loop_single_insertion_prob=0, loop_long_insertion_prob=0)
+rows = MsaGenerator(parameters, seed=5).generate('AU', build_pair_map('AU', [[0, 1]], 0.3, 0.3))[1:]
+second = [row[1] for row in rows if row[0] == '-' and row[1] != '-']
+assert 0.25 < sum(base != 'U' for base in second) / len(second) < 0.35
+''')
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
 def test_per_position_rates_and_parameter_validation(run_api):
     result = run_api('''
 parameters = MutationParameters(N=4, pair_mutation_approach='none',
