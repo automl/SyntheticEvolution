@@ -289,6 +289,12 @@ def test_export_only_requires_the_run_location(load):
     assert load(config, mode='export') == config
 
 
+def test_scoring_objective_must_be_known(load, standalone):
+    assert load(dict(standalone, scoring_objective='tm'))['scoring_objective'] == 'tm'
+    with pytest.raises(ValueError, match='scoring_objective'):
+        load(dict(standalone, scoring_objective='rmsd'))
+
+
 def test_msa_database_supports_only_protein_chains(standalone):
     rows = [dict(id='r', type='rna', sequence='GGGAAACCC', pairs=[[0, 8]])]
     with pytest.raises(ValueError, match='only protein'):

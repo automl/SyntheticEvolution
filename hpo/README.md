@@ -7,7 +7,7 @@ protein: C-alpha contacts with Biopython) and scores them against the target
 pairs. The trial loss is the mean per-entry loss.
 
 ```text
-NePS samples a config → SHS generator → AlphaFold 3 → DSSR / contacts → F1 / WL loss → NePS
+NePS samples a config → SHS generator → AlphaFold 3 → DSSR / contacts → F1 / WL / TM loss → NePS
 ```
 
 ## Entry points
@@ -26,7 +26,7 @@ Run from the repository root with the controller environment
 | `python -m hpo.make_checks <results> [--heldout <csv>]` | Locally, after an export: write a check run for the best configs (see below). |
 
 The submit scripts check the config and the environment (interpreters and
-their packages, DSSR, AF3 models and module) and report every problem before
+their packages, DSSR, USalign, AF3 models and module) and report every problem before
 anything waits in the queue. They ask before resuming an existing run;
 `submit_neps_hpo` also refuses a run stopped by the failure limit. Jobs run
 `hpo/slurm/controller.slurm`, which loads the AF3 module and starts the
@@ -74,8 +74,9 @@ setting is commented there.
 - **`storage`:** `scratch` (default `/dev/shm`), `keep_artifacts`
   (`all`, the default, or `trajectory`) and `keep_top_k` (default 5).
 - **`scoring_objective`:** `f1` (default), `f1_soft` (F1 with partial credit
-  for pairs slipped by 1–3 nucleotides: 0.75 / 0.5 / 0.25) or `wl`
-  (Weisfeiler-Lehman graph kernel, `wl_iterations`).
+  for pairs slipped by 1–3 nucleotides: 0.75 / 0.5 / 0.25), `wl`
+  (Weisfeiler-Lehman graph kernel, `wl_iterations`) or `tm` (1 − TM-score of
+  the AF3 model against the entry's `reference` structure; see Scoring).
 - **`af3_timeout_seconds`:** per RNA. One AF3 worker per controller loads and
   compiles the model once and predicts the RNAs of every trial.
 - **`af3_buckets`:** optional token sizes AF3 pads to (default: AF3's, from
@@ -120,7 +121,10 @@ Columns: `id` (unique), `sequence` (A, C, G, U) and at least one of
   the generator. Without `pairs`, the pairs with a positive strength are the
   scoring targets.
 
-Optional `mutation_rates`: one rate per position. Examples:
+Optional `mutation_rates`: one rate per position. Optional `reference` (required
+by `scoring_objective: tm`): the reference structure (mmCIF or PDB) of the entry,
+relative to the repository root like the config paths; the fingerprint covers
+its content. Examples:
 [examples/example_input.csv](examples/example_input.csv),
 [examples/weighted_input.csv](examples/weighted_input.csv).
 
@@ -132,6 +136,22 @@ F1 loss: `1 - 2TP / (2TP + FP + FN)`; both empty gives 0, exactly one empty
 gives 1. Every RNA has equal weight. If extraction fails on one chain (e.g.
 DSSR crashes on a tangled AF3 model), that chain is scored with loss 1.0 and
 an `error` and the trial continues. Generator and AF3 failures fail the trial.
+
+TM-score (`tm`): USalign compares the AF3 model with the `reference` file
+(`-TMscore 5`, normalized by the reference length; the first chain of each file
+is used). Residues are matched by a sequence alignment, not by structure:
+structural alignment would also match residues shifted along the sequence and
+give a model with a register shift a TM-score near 1. So the reference may
+number its residues differently or lack some, e.g. residues dropped for low
+pLDDT. If a reference residue aligns to a different residue type, the reference
+does not belong to the sequence and the trial fails. The contacts are still
+extracted and stored. USalign must be built for Linux at `USalign/USalign`
+(gitignored; the binary in `evaluation/USalign/` is for macOS), on Helix inside
+a job:
+
+```bash
+mkdir -p USalign && g++ -O3 -ffast-math -o USalign/USalign evaluation/USalign/USalign.cpp
+```
 
 ## Storage
 

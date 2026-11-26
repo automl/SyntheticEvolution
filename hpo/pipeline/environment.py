@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any
 
 from hpo.pipeline.run import repo_path
+from hpo.pipeline.scoring import USALIGN
 
 NEPS_PACKAGE = 'neural-pipeline-search'
 NEPS_VERSION = '0.16.0'
@@ -73,9 +74,9 @@ def _check_module(module: str) -> list[str]:
 def check_environment(config: dict[str, Any], mode: str) -> list[str]:
     """Problems that would make the controller job fail; empty if none.
 
-    Every generator with a ``python`` configured is checked, and DSSR if
-    ``extraction.dssr`` is set. Protein extraction needs biopython and numpy in
-    the controller environment.
+    Every generator with a ``python`` configured is checked, DSSR if
+    ``extraction.dssr`` is set and USalign for the 'tm' objective. Protein
+    extraction needs biopython and numpy in the controller environment.
     """
     controller_key = 'neps_python' if mode == 'neps' else 'controller_python'
     generators = {
@@ -90,6 +91,13 @@ def check_environment(config: dict[str, Any], mode: str) -> list[str]:
     dssr = config['extraction'].get('dssr')
     if dssr and shutil.which(str(Path(dssr).expanduser())) is None:
         problems.append(f'extraction.dssr: {dssr} is neither an executable path nor on PATH')
+
+    if config.get('scoring_objective') == 'tm':
+        problems += [
+            f'{problem}; build it: mkdir -p {USALIGN.parent} && '
+            f'g++ -O3 -ffast-math -o {USALIGN} evaluation/USalign/USalign.cpp'
+            for problem in _check_executable('scoring_objective tm: USalign', USALIGN)
+        ]
 
     model_dir = Path(config['model_dir']).expanduser()
     if not model_dir.is_dir() or not any(model_dir.iterdir()):

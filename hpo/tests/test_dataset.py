@@ -127,3 +127,11 @@ def test_blank_optional_columns_are_ignored(tmp_path):
 def test_invalid_optional_columns_are_rejected(tmp_path, values):
     with pytest.raises(ValueError):
         dataset(tmp_path, **values)
+
+
+# ---- Reference structure (scoring_objective: tm) ----------------------------
+
+def test_reference_is_relative_to_the_repo_root_kept_as_written_and_must_exist(tmp_path):
+    assert dataset(tmp_path, pairs=[], reference='hpo/README.md')[0]['reference'] == 'hpo/README.md'
+    with pytest.raises(ValueError, match='does not exist'):
+        dataset(tmp_path, pairs=[], reference='missing/reference.cif')

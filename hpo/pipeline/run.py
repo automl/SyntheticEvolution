@@ -163,8 +163,8 @@ def load_config(path, *, mode, submitting_controller=False):
     storage_settings(config)
 
     scoring_objective = config.get('scoring_objective', 'f1')
-    if scoring_objective not in {'f1', 'f1_soft', 'wl'}:
-        raise ValueError("scoring_objective must be 'f1', 'f1_soft' or 'wl'")
+    if scoring_objective not in {'f1', 'f1_soft', 'wl', 'tm'}:
+        raise ValueError("scoring_objective must be 'f1', 'f1_soft', 'wl' or 'tm'")
 
     if 'wl_iterations' in config:
         require_positive(config, 'wl_iterations', integer=True)
@@ -470,9 +470,9 @@ def create_dataset(path) -> Dataset:
 
     The CSV mirrors AF3's ``sequences`` list: one row per chain, rows sharing an
     ``id`` form one entry. Columns: id, chain_id (default A), type (rna|protein,
-    default rna), sequence, pairs, interactions, mutation_rates. Pairs,
-    interactions and mutation_rates describe the entry and are read from its
-    chain row.
+    default rna), sequence, pairs, interactions, mutation_rates, reference.
+    Pairs, interactions, mutation_rates and reference describe the entry and
+    are read from its chain row.
     ### Input:
     @path : single file or dir of files.
     ### returns
@@ -483,6 +483,8 @@ def create_dataset(path) -> Dataset:
         type, sequence : aliases of the only chain (single chains only for now)
         pairs : sorted scoring targets; derived from positive interactions if absent
         interactions, mutation_rates : optional validated generator inputs
+        reference : optional structure file for the 'tm' objective, relative
+            to the repo root like the config paths
     ### Raises
     ValueError for empty dataset, duplicate ids/chains, invalid sequences, or
     entries with more than one chain (complexes are not supported yet).
@@ -543,6 +545,11 @@ def create_dataset(path) -> Dataset:
             for rate in rates:
                 validate_probability(rate, 'mutation rate')
             item['mutation_rates'] = rates
+        reference = (row.get('reference') or '').strip()
+        if reference:
+            if not repo_path(reference).is_file():
+                raise ValueError(f'{name}: reference {reference} does not exist')
+            item['reference'] = reference
         rows.append(item)
     if not rows:
         raise ValueError('Dataset is empty')
@@ -550,7 +557,13 @@ def create_dataset(path) -> Dataset:
 
 
 def validate_config_for_dataset(config, rows: Dataset) -> None:
-    """Require generator and extractor settings for every chain type in the data."""
+    """Require generator and extractor settings for every chain type in the data,
+    and a reference structure for every entry if the objective is 'tm'."""
+    if config.get('scoring_objective') == 'tm':
+        missing = [row['id'] for row in rows if 'reference' not in row]
+        if missing:
+            raise ValueError('scoring_objective tm needs a reference for every entry; missing for '
+                             + ', '.join(missing))
     for chain_type in sorted({row['type'] for row in rows}):
         generator = config['generators'].get(chain_type)
         if generator is None:
@@ -576,7 +589,7 @@ def fingerprint(config, rows):
     """Create an identifying fingerprint of the run. This prevents accidentally 
     reusing old results for a meaningfully different experiment. It includes:
 
-    - Dataset rows
+    - Dataset rows and the content of their reference structures
     - Scientific configuration
     - Relevant source code ('PIPELINE_DIR/*.py', all generator '*.py')
     """
@@ -606,7 +619,11 @@ def fingerprint(config, rows):
         k: v for k, v in config['extraction'].items()
         if k not in ('dssr', 'dssr_timeout_seconds')
     }
-    return hashlib.sha256(json.dumps([scientific, rows, code], sort_keys=True).encode()).hexdigest()
+    references = {
+        row['reference']: hashlib.sha256(repo_path(row['reference']).read_bytes()).hexdigest()
+        for row in rows if 'reference' in row
+    }
+    return hashlib.sha256(json.dumps([scientific, rows, code, references], sort_keys=True).encode()).hexdigest()
 
 
 def prepare_run(config) -> tuple[Path, Dataset, str]:

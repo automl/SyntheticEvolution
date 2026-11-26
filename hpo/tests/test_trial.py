@@ -579,6 +579,23 @@ def test_mixed_dataset_uses_each_chain_types_generator_parameters_and_extractor(
     assert result['parameters'] == {'rna': requests[0]['parameters'], 'protein': {'N': 5}}
 
 
+def test_tm_objective_scores_each_af3_model_against_its_reference(trial_case, monkeypatch):
+    config, rows, directory, *_ = trial_case
+    config['scoring_objective'] = 'tm'
+    rows[0]['reference'], rows[1]['reference'] = '/references/a.cif', '/references/b.cif'
+    calls = []
+
+    def score_tm(model, reference):
+        calls.append((Path(model).read_text(), str(reference)))
+        return dict(tm=0.75, loss=0.25)
+    monkeypatch.setattr(trial.scoring, 'score_tm', score_tm)
+
+    assert run_pipeline(trial_case) == pytest.approx(0.25)
+    assert calls == [('model of rna_00000', '/references/a.cif'), ('model of rna_00001', '/references/b.cif')]
+    scores = json.loads((directory / 'trial_result.json').read_text())['scores']
+    assert [score['tm'] for score in scores] == [0.75, 0.75]
+
+
 def test_parameters_are_stored_only_for_chain_types_in_the_dataset(trial_case):
     config, rows, directory, *_ = trial_case
     config['generators']['protein'] = {'python': '/test/protein/bin/python', 'fixed': {'N': 5}}

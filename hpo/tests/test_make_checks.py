@@ -7,7 +7,7 @@ import pytest
 import yaml
 
 import hpo.pipeline.run as run
-from hpo.make_checks import make_checks
+from hpo.make_checks import make_checks, write_rows
 from hpo.pipeline.run import create_dataset, load_config
 
 FIXTURE = Path(__file__).parent / 'fixtures' / 'valid_standalone_config.yaml'
@@ -102,3 +102,9 @@ def test_an_existing_check_config_is_not_overwritten(export):
     make_checks(export, export.parent / 'checks')
     with pytest.raises(SystemExit, match='exists'):
         make_checks(export, export.parent / 'checks')
+
+
+def test_reference_survives_the_csv_round_trip(tmp_path):
+    rows = [dict(ROWS[1], reference='hpo/README.md')]
+    write_rows(rows, tmp_path / 'train.csv')
+    assert json.loads(json.dumps(create_dataset(tmp_path / 'train.csv'))) == rows

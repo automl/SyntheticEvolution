@@ -53,6 +53,22 @@ def test_fingerprint_covers_scientific_settings_only():
         assert fingerprint(dict(base, **{key: value}), ROWS) == identity, key
 
 
+def test_fingerprint_covers_the_reference_structures_content(tmp_path):
+    reference = tmp_path / 'reference.cif'
+    reference.write_text('first structure')
+    rows = [dict(ROWS[0], reference=str(reference))]
+    identity = fingerprint(CONFIG, rows)
+    reference.write_text('regenerated structure')
+    assert fingerprint(CONFIG, rows) != identity
+
+
+def test_tm_objective_needs_a_reference_for_every_entry():
+    config = dict(CONFIG, scoring_objective='tm')
+    validate_config_for_dataset(config, [dict(ROWS[0], reference='reference.cif')])
+    with pytest.raises(ValueError, match='missing for rna'):
+        validate_config_for_dataset(config, ROWS)
+
+
 # ---- Generation request and per-type settings -------------------------------
 
 def test_generation_request_keeps_only_generator_fields_and_the_rows_type_parameters():

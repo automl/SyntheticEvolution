@@ -51,7 +51,7 @@ def top_configs(full_csv: Path, search: dict, n: int) -> list[tuple[int, float, 
 def write_rows(rows: list[dict], path: Path) -> None:
     """Write validated dataset rows back as an input CSV."""
     columns = ['id', 'chain_id', 'type', 'sequence', 'pairs'] + [
-        key for key in ('interactions', 'mutation_rates') if any(key in row for row in rows)
+        key for key in ('interactions', 'mutation_rates', 'reference') if any(key in row for row in rows)
     ]
     with path.open('w', newline='') as stream:
         writer = csv.DictWriter(stream, fieldnames=columns)
@@ -61,7 +61,7 @@ def write_rows(rows: list[dict], path: Path) -> None:
             (chain,) = row['chains']
             values = {**row, 'chain_id': chain['id']}
             writer.writerow({
-                key: values[key] if key in ('id', 'chain_id', 'type', 'sequence') else json.dumps(values[key])
+                key: values[key] if key in ('id', 'chain_id', 'type', 'sequence', 'reference') else json.dumps(values[key])
                 for key in columns if key in values
             })
 

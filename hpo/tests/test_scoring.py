@@ -1,8 +1,10 @@
-"""Scoring objectives (F1, soft F1, Weisfeiler-Lehman) and the dataset loss."""
+"""Scoring objectives (F1, soft F1, Weisfeiler-Lehman, TM-score) and the dataset loss."""
+import os
+
 import numpy as np
 import pytest
 
-from hpo.pipeline.scoring import aggregate, score_pairs, score_row, score_soft_pairs, score_wl
+from hpo.pipeline.scoring import USALIGN, aggregate, score_pairs, score_row, score_soft_pairs, score_tm, score_wl
 
 
 # ---- F1 ---------------------------------------------------------------------
@@ -98,6 +100,63 @@ def test_wl_matches_the_reference_grakel_implementation(n_iter):
     assert actual['wl'] == pytest.approx(expected)
     assert actual['loss'] == pytest.approx(1.0 - expected)
     assert actual['wl'] < 1.0
+
+
+# ---- TM-score ---------------------------------------------------------------
+
+needs_usalign = pytest.mark.skipif(
+    not os.access(USALIGN, os.X_OK) or USALIGN.read_bytes()[:4] != b'\x7fELF',
+    reason=f'no Linux USalign at {USALIGN} (see hpo/README.md, Scoring)',
+)
+SEQUENCE = 'MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ'
+THREE = dict(zip('ACDEFGHIKLMNPQRSTVWY', 'ALA CYS ASP GLU PHE GLY HIS ILE LYS LEU '
+                                         'MET ASN PRO GLN ARG SER THR VAL TRP TYR'.split()))
+# A random C-alpha trace (3.8 A steps): unlike a helix, a shifted copy does not fit it.
+_steps = np.random.default_rng(0).normal(size=(len(SEQUENCE), 3))
+TRACE = np.cumsum(3.8 * _steps / np.linalg.norm(_steps, axis=1, keepdims=True), axis=0)
+
+
+def ca_pdb(path, sequence=SEQUENCE, coordinates=TRACE, numbers=None):
+    """A C-alpha-only PDB file of chain A."""
+    numbers = numbers or range(1, len(sequence) + 1)
+    path.write_text(''.join(
+        f'ATOM  {serial:5d}  CA  {THREE[code]} A{number:4d}    {x:8.3f}{y:8.3f}{z:8.3f}  1.00  0.00           C\n'
+        for serial, (code, number, (x, y, z)) in enumerate(zip(sequence, numbers, coordinates), 1)
+    ) + 'END\n')
+    return path
+
+
+@needs_usalign
+def test_tm_of_the_reference_itself_is_one(tmp_path):
+    reference = ca_pdb(tmp_path / 'reference.pdb')
+    metrics = score_row(dict(reference=str(reference)), set(), objective='tm',
+                        model=ca_pdb(tmp_path / 'model.pdb'))
+    assert (metrics['tm'], metrics['loss']) == (pytest.approx(1.0), pytest.approx(0.0))
+
+
+@needs_usalign
+def test_tm_matches_residues_by_sequence_not_by_number(tmp_path):
+    # PDB numbering starting at 3, low-pLDDT residues 10-15 dropped: still a perfect model.
+    kept = [i for i in range(len(SEQUENCE)) if not 10 <= i < 16]
+    reference = ca_pdb(tmp_path / 'reference.pdb', ''.join(SEQUENCE[i] for i in kept),
+                       TRACE[kept], [i + 3 for i in kept])
+    assert score_tm(ca_pdb(tmp_path / 'model.pdb'), reference)['tm'] == pytest.approx(1.0)
+
+
+@needs_usalign
+def test_tm_punishes_a_register_shift(tmp_path):
+    # Every residue sits where its fourth neighbour belongs. A structural alignment
+    # would match the shifted residues and score this close to 1.
+    shifted = np.concatenate([TRACE[4:], TRACE[-1] + np.arange(1, 5)[:, None] * 3.8 * np.eye(3)[0]])
+    metrics = score_tm(ca_pdb(tmp_path / 'model.pdb', coordinates=shifted), ca_pdb(tmp_path / 'reference.pdb'))
+    assert metrics['tm'] < 0.5
+
+
+@needs_usalign
+def test_tm_rejects_a_reference_of_another_sequence(tmp_path):
+    other = ca_pdb(tmp_path / 'reference.pdb', 'MKTAYIAKQRQISFVKSHFSRQLEERLGLIEVW')
+    with pytest.raises(ValueError, match='does not match'):
+        score_tm(ca_pdb(tmp_path / 'model.pdb'), other)
 
 
 # ---- Dataset loss -----------------------------------------------------------

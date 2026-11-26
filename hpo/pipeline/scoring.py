@@ -13,13 +13,22 @@ based on evaluate_secondary_structure_data.py in this repo:
 
 GraKeL is imported lazily so that the existing F1 objective remains usable in
 environments where the optional WL dependency is not installed.
+
+The ``tm`` objective compares the predicted 3D model with the row's
+``reference`` structure using USalign, as evaluation/extractEvalMetrics.py does.
 """
 
 import math
+import subprocess
 from typing import Iterable
 
+from hpo.pipeline.run import ROOT, repo_path
 
-SCORING_OBJECTIVES = ("f1", "f1_soft", "wl")
+
+SCORING_OBJECTIVES = ("f1", "f1_soft", "wl", "tm")
+# Linux build of evaluation/USalign/USalign.cpp (the binary committed there is
+# for macOS); /USalign/ is gitignored. See hpo/README.md, "Scoring".
+USALIGN = ROOT / "USalign" / "USalign"
 DEFAULT_WL_ITERATIONS = 5
 # Soft F1: a pair off by d = |i - i'| + |j - j'| nucleotides earns 1 - d / 4.
 SOFT_F1_CUTOFF = 4
@@ -144,6 +153,32 @@ def score_wl(target, predicted, length, *, n_iter=DEFAULT_WL_ITERATIONS):
     }
 
 
+def score_tm(model, reference, usalign=USALIGN):
+    """TM-score of a predicted model against a reference structure (USalign).
+
+    ``-TMscore 5`` superposes the residues that a sequence alignment matches.
+    Structural alignment (USalign's default) would also match residues shifted
+    along the sequence and score a model with a register shift almost 1. The
+    reference may number its residues differently or lack some (e.g. dropped
+    low-pLDDT residues); the TM-score is normalized by its length. Every
+    reference residue must align to the same residue type, otherwise the
+    reference does not belong to the sequence.
+    """
+    output = subprocess.run(
+        [str(usalign), str(model), str(reference), "-TMscore", "5", "-outfmt", "2"],
+        capture_output=True, text=True, check=True, timeout=120,
+    ).stdout
+    # Columns: chain1 chain2 TM1 TM2 RMSD ID1 ID2 IDali L1 L2 Lali
+    fields = output.strip().splitlines()[-1].split("\t")
+    tm, rmsd, identity = float(fields[3]), float(fields[4]), float(fields[6])
+    if identity != 1.0:
+        raise ValueError(
+            f"Reference {reference} does not match the predicted sequence: "
+            f"{identity:.3f} of its residues align to the same residue type"
+        )
+    return dict(tm=tm, rmsd=rmsd, loss=1.0 - tm)
+
+
 def aggregate(scores):
     """Return the arithmetic mean of finite per-RNA losses.
 
@@ -157,13 +192,17 @@ def aggregate(scores):
     return sum(values) / len(values)
 
 
-def score_row(row, predicted, *, objective="f1", wl_iterations=DEFAULT_WL_ITERATIONS):
+def score_row(row, predicted, *, objective="f1", wl_iterations=DEFAULT_WL_ITERATIONS, model=None):
     """Score one dataset row using the selected objective.
 
     ``objective='f1'`` preserves the existing behavior, ``objective='f1_soft'``
-    gives partial credit to slipped pairs and ``objective='wl'`` uses the
-    reference GraKeL Weisfeiler-Lehman graph kernel.
+    gives partial credit to slipped pairs, ``objective='wl'`` uses the
+    reference GraKeL Weisfeiler-Lehman graph kernel and ``objective='tm'``
+    compares the predicted ``model`` file with the row's reference structure.
     """
+    if objective == "tm":
+        return score_tm(model, repo_path(row["reference"]))
+
     if objective == "f1":
         return score_pairs(map(tuple, row["pairs"]), predicted)
 

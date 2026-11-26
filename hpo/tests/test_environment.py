@@ -125,3 +125,13 @@ def test_missing_protein_interpreter_is_reported(setup, tmp_path, monkeypatch):
     assert environment.check_environment(setup, 'standalone') == [
         f'generators.protein.python: {tmp_path / "nope"} does not exist',
     ]
+
+
+def test_tm_objective_needs_a_built_usalign(setup, tmp_path, monkeypatch):
+    usalign = tmp_path / 'USalign' / 'USalign'
+    monkeypatch.setattr(environment, 'USALIGN', usalign)
+    setup['scoring_objective'] = 'tm'
+    (problem,) = environment.check_environment(setup, 'standalone')
+    assert problem.startswith(f'scoring_objective tm: USalign: {usalign} does not exist; build it: mkdir')
+    executable(usalign)
+    assert environment.check_environment(setup, 'standalone') == []

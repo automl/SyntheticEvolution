@@ -438,6 +438,7 @@ def _run_stages(
             normalized_pairs,
             objective=config.get('scoring_objective', 'f1'),
             wl_iterations=config.get('wl_iterations', 5),
+            model=content / model_name,
         )
 
         task_evaluation = dict(
