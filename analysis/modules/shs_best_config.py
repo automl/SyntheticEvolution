@@ -45,10 +45,25 @@ def _selected_config_ids(context: ResultsContext) -> list[int]:
         raise ValueError("Analysis config field 'shs.top_n' must be a positive integer")
     if top_n == 1 and not context.standalone:
         return [_best_config_id(context.best_config_text)]
+    # A trial with N = 1 (AF3 without MSA) has nothing to plot.
+    empty = [c for c in context.config_ids if not _has_msa_samples(context.trial_dirs[c])]
+    if empty:
+        LOGGER.info("Skipping trials whose MSAs hold only the query: %s", ", ".join(map(str, empty)))
     return sorted(
-        context.config_ids,
+        (c for c in context.config_ids if c not in empty),
         key=lambda config_id: context.trial_results[config_id].get("loss", float("inf")),
     )[:top_n]
+
+
+def _has_msa_samples(trial_dir: Path) -> bool:
+    """Whether the trial's MSAs hold sample rows besides the query."""
+    return all(
+        msa.count(">") > 1
+        for path in (trial_dir / "shs").glob("rna_*/af3_input.json")
+        for chain in json.loads(path.read_text())["sequences"]
+        for entity in chain.values()
+        if (msa := entity.get("unpairedMsa"))
+    )
 
 
 def _shs_modules(chain_type: str) -> tuple[Any, Any]:
