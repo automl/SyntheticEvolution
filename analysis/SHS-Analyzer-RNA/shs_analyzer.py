@@ -4,12 +4,13 @@ import argparse
 import logging
 import json
 from collections import Counter
-from dataclasses import dataclass, field, replace
+from dataclasses import asdict, dataclass, field, replace
 from functools import cached_property
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple
 
 import numpy as np
 import matplotlib.pyplot as plt
+import pandas as pd
 
 from pair_map import PairMap, build_pair_map
 
@@ -72,14 +73,16 @@ class MsaData:
 
     @classmethod
     def from_text(cls, content: str, pairs: Optional[PairMap] = None) -> "MsaData":
-        fasta = _extract_fasta(content)
         # Sequence lines only (drop headers); first is the seq, rest samples.
-        lines = fasta.splitlines()[1::2]
-        if len(lines) < 2:
+        return cls.from_rows(_extract_fasta(content).splitlines()[1::2], pairs=pairs)
+
+    @classmethod
+    def from_rows(cls, rows: Sequence[str], pairs: Optional[PairMap] = None) -> "MsaData":
+        """Parse A3M rows without headers: the query, then the samples."""
+        if len(rows) < 2:
             logger.error("Recovered MSA is empty (need a query and >=1 sample)")
             raise ValueError("Invalid Input, aborting.")
-        seq_list, *sample_rows = lines
-        seq = ''.join(seq_list)
+        seq, *sample_rows = rows
         raw = np.array(sample_rows)
 
         aligned_rows: List[List[str]] = []
@@ -353,6 +356,60 @@ def analyze_data(data: MsaData,
     return {e.name: e for est in estimators for e in est(feat)}
 
 
+def known_parameters(data: MsaData, parameters) -> Dict[str, float]:
+    """The generator input each estimator tries to recover (ground truth).
+
+    parameters is the generator's MutationParameters; the mutation rates come from
+    data.pairs, so per-position rates are averaged per class."""
+    pairs, L = data.pairs, len(data.seq)
+    rates = np.array([pairs.mutation_rate(i) for i in range(L)])
+    paired = np.array([pairs.is_paired(i) for i in range(L)])
+    return {
+        **asdict(parameters),
+        "n_sequences": parameters.N,
+        "mutation_rate_unpaired": float(rates[~paired].mean()) if (~paired).any() else None,
+        "mutation_rate_paired": float(rates[paired].mean()) if paired.any() else None,
+        # Long insertions have at most max(int(L * fraction), 2) bases.
+        "loop_max_insertion_fraction": max(int(L * parameters.loop_max_insertion_fraction), 2) / L,
+        "stem_max_insertion_fraction": max(int(L * parameters.stem_max_insertion_fraction), 2) / L,
+        "interaction_strength": (float(np.mean([pairs.interaction(a, b) for a, b in pairs.basic_pairs]))
+                                 if pairs.basic_pairs else None),
+    }
+
+
+def compare_parameters(report: Dict[str, Estimate], known: Dict[str, float]) -> pd.DataFrame:
+    """Table of each recovered parameter next to its known value."""
+    rows = []
+    for name, est in report.items():
+        value = known.get(name)
+        error = abs(est.value - value) if value is not None and not np.isnan(est.value) else None
+        rows.append({
+            "parameter": name,
+            "known": value,
+            "recovered": round(est.value, 4),
+            "abs_error": None if error is None else round(error, 4),
+            "detail": " · ".join(f"{k}={v}" for k, v in est.detail.items()),
+        })
+    return pd.DataFrame(rows).set_index("parameter")
+
+
+def expected_covariance(data: MsaData, approach: str) -> np.ndarray:
+    """Covariance the generator should produce, with the mutation rates on the diagonal.
+
+    With covariance and watson_crick_cov, the later base b of a pair (a, b) mutates
+    more often if a mutated: cov(a, b) = I * m_b * (1 - m_a) / (k + 1), where k is
+    the number of earlier partners of b (1 for a basic pair). none and watson_crick
+    mutate pair members independently (0). original has no closed form (also 0)."""
+    pairs = data.pairs
+    rates = np.array([pairs.mutation_rate(i) for i in range(len(data.seq))])
+    cov = np.diag(rates)
+    if approach in ("covariance", "watson_crick_cov"):
+        for a, b in pairs.unique_pairs:
+            k = sum(j < b for j in pairs.partners(b))
+            cov[a, b] = cov[b, a] = pairs.interaction(a, b) * rates[b] * (1 - rates[a]) / (k + 1)
+    return cov
+
+
 # ---------------------------------------------------------------------------
 # Plotting / CLI
 # ---------------------------------------------------------------------------
@@ -382,6 +439,19 @@ def plot_covariance(seq: str, cov: np.ndarray, title: str = "Recovered covarianc
     if show:
         plt.show()
     return fig
+
+
+def plot_covariance_comparison(seq: str, expected: np.ndarray, recovered: np.ndarray) -> None:
+    """Expected and recovered covariance on one scale, then their difference."""
+    vmin = min(np.nanmin(expected), np.nanmin(recovered))
+    vmax = max(np.nanmax(expected), np.nanmax(recovered))
+    plot_covariance(seq, expected, title="Expected covariance and input mutation rates", vmin=vmin, vmax=vmax)
+    plot_covariance(seq, recovered, vmin=vmin, vmax=vmax)
+    # Own symmetric scale, so that systematic errors stand out from the sampling noise.
+    error = recovered - expected
+    e = np.nanmax(np.abs(error))
+    plot_covariance(seq, error, title="Error (recovered - expected)", vmin=-e, vmax=e)
+
 
 def plot_covariance_classification(seq: str, cov: np.ndarray, pairs: Optional[PairMap] = None,
                                    title: str = "Spread of recovered covariance",
