@@ -206,7 +206,7 @@ class MsaGenerator:
             if self.pair_map.is_paired(i):
                 loop_long_del_len = 0
                 partners =  np.array(self.pair_map.partners(i), int)
-                prev = partners[partners < i]
+                prev = np.array([j for j in self.pair_map.direct_partners(i) if j < i], int)
                 interactions = np.array([self.pair_map.interaction(i, j) for j in prev])
                 partner_mutation_rates = np.array([self.pair_map.mutation_rate(j) for j in prev])
                 if approach == "none":

@@ -161,7 +161,7 @@ class MsaGenerator:
                   interactions: np.ndarray, partner_mutation_rates: np.ndarray, mutation_rate: float, increase_cov: bool) -> str:
         """Try to maximize the number of watson crick base pairs while also trying to leave no partner.
         The replacement base is drawn from pair_wc_prob / pair_wobble_prob given the mutated partners."""
-        # first in the multiplet is random with mutation rate
+        # no earlier, non-deleted direct partner: random with mutation rate
         if len(partners_original) == 0:
             return self.mutate_random(nt, mutation_rate)
         # use mutate_cov to decide if it should mutate for high covariance or decide randomly if nt should mutate for low covariance
@@ -209,9 +209,10 @@ class MsaGenerator:
             if self.pair_map.is_paired(i):
                 loop_long_del_len = 0
                 partners =  np.array(self.pair_map.partners(i), int)
-                # Earlier partners that were deleted carry no base, so they must not
-                # count as mutated or steer the replacement base.
-                prev = partners[(partners < i) & (new_seq[partners] != '-')]
+                # Only earlier direct partners count. Deleted ones carry no base, so they
+                # must not count as mutated or steer the replacement base.
+                prev = np.array([j for j in self.pair_map.direct_partners(i)
+                                 if j < i and new_seq[j] != '-'], int)
                 interactions = np.array([self.pair_map.interaction(i, j) for j in prev])
                 partner_mutation_rates = np.array([self.pair_map.mutation_rate(j) for j in prev])
                 if approach == "none":
